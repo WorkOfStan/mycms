@@ -35,4 +35,30 @@ class MyCMS {
         $tmp = ob_end_flush();
     } 
 
+    /** Execute an SQL, fetch resultset into an array reindexed by first field.
+     * If the query selects only two fields, the first one is a key and the second one a value of the result array
+     * Example: 'SELECT id,name FROM employees' --> [1=>"John", 2=>"Mary", 5=>"Joe"]
+     * If the result set has more than two fields, whole resultset is fetched into each array item
+     * Example: 'SELECT id,name,surname FROM employees' --> [[id=>1, name=>"John", surname=>"Smith"], [...]]
+     * @param string SQL to be executed
+     * @result mixed - either associative array, empty array on empty select, or false on error
+     */
+    public function fetchAndReindex($sql)
+    {
+        $result = array();
+        $query = $this->dbms->query($sql);
+        if (is_object($query)) {
+            while ($row = $query->fetch_assoc()) {
+                $key = reset($row);
+                if (isset($result[$key]) && count($row) == 2) {
+                    $result[$key] = (array) $result[$key] + array(
+                        count($result[$key]) => next($row)
+                    );
+                } else {
+                    $result[$key] = count($row) == 2 ? next($row) : $row;
+                }
+            }
+        }
+        return $result;
+    }
 }
