@@ -2,7 +2,13 @@
 namespace GodsDev\MyCMS;
 
 class MyCMS {
-    public $dbms;
+    
+    /**
+     *
+     * @var \mysqli
+     */
+    public $dbms = null;
+    
     public $PAGES;
     public $PAYMENTS;
     public $PAGES_SPECIAL;
@@ -32,6 +38,22 @@ class MyCMS {
         foreach ($this->myCmsConf as $myCmsVariable => $myCmsContent) {
             $this->{$myCmsVariable} = $myCmsContent;
         }
+        if(!is_null($this->dbms)){
+            $this->dbms->query('SET NAMES UTF8 COLLATE "utf8_general_ci"');
+        }
+    }
+    
+    /**
+     * 
+     * @param array $inputs
+     * @return string to be used as $_SESSION['language']
+     */
+    public function getSessionLanguage(array $inputs){
+        //@todo add logic
+        $resultLanguage = DEFAULT_LANGUAGE;
+        //@todo add logic
+        include_once './language-' . $resultLanguage . '.inc.php';
+        return $resultLanguage;
     }
 
     /** Execute an SQL, fetch resultset into an array reindexed by first field.
