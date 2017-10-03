@@ -20,6 +20,20 @@ class MyCMS {
     public $template; //which Latte template to load
     public $context = array(); //array of variables for template rendering
 
+    /**
+     * 
+     * @param array $myCmsConf
+     */
+    public function __construct(array $myCmsConf = array()) {
+        $this->myCmsConf = array_merge(
+                array(//default values
+                ), $myCmsConf);
+        //@todo do not use $this->myCmsConf but set the class properties right here accordingly; and also provide means to set the values otherwise later
+        foreach ($this->myCmsConf as $myCmsVariable => $myCmsContent) {
+            $this->{$myCmsVariable} = $myCmsContent;
+        }
+    }
+
     /** Execute an SQL, fetch resultset into an array reindexed by first field.
      * If the query selects only two fields, the first one is a key and the second one a value of the result array
      * Example: 'SELECT id,name FROM employees' --> [3=>"John", 4=>"Mary", 5=>"Joe"]
