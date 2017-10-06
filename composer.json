@@ -1,0 +1,33 @@
+{
+    "name": "godsdev/mycms",
+    "description": "MyCMS",
+    "type": "library",
+
+    "require": {
+        "php": "^5.6 || ^7.0",
+        "latte/latte": "^2.4.6",
+        "texy/texy": "^2.7.1",
+        "godsdev/tools": "^0.2.0",
+        "godsdev/backyard": "^3.2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4|^5"
+    },
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Karel Seidl",
+            "email": "seidl@gods.cz"
+        },
+        {
+            "name": "Stanislav Rejthar",
+            "email": "rejthar@gods.cz"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "GodsDev\\MyCMS\\": ["classes/"]           
+        }
+    }    
+}
