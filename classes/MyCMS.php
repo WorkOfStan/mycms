@@ -2,7 +2,13 @@
 namespace GodsDev\MyCMS;
 
 class MyCMS {
-    public $dbms;
+    
+    /**
+     *
+     * @var \mysqli
+     */
+    public $dbms = null;
+    
     public $PAGES;
     public $PAYMENTS;
     public $PAGES_SPECIAL;
@@ -19,6 +25,46 @@ class MyCMS {
     public $TRANSLATION;
     public $template; //which Latte template to load
     public $context = array(); //array of variables for template rendering
+
+    /**
+     * 
+     * @param array $myCmsConf
+     */
+    public function __construct(array $myCmsConf = array()) {
+        $this->myCmsConf = array_merge(
+                array(//default values
+                ), $myCmsConf);
+        //@todo do not use $this->myCmsConf but set the class properties right here accordingly; and also provide means to set the values otherwise later
+        foreach ($this->myCmsConf as $myCmsVariable => $myCmsContent) {
+            $this->{$myCmsVariable} = $myCmsContent;
+        }
+        if(!is_null($this->dbms)){
+            $this->dbms->query('SET NAMES UTF8 COLLATE "utf8_general_ci"');
+        }
+    }
+    
+    /**
+     * 
+     * @param array $getArray $_GET or its equivalent
+     * @param array $sessionArray $_SESSION or its equivalent
+     * @return bool $makeInclude for testing may be set to false as mycms itself does not contain the language-XX.inc.php files
+     * @return string to be used as $_SESSION['language']
+     * 
+     * @todo perfect candidate for PHPUnit test viz testGetSessionLanguage() v Test/MyCMSTest.php
+     */
+    public function getSessionLanguage(array $getArray, array $sessionArray, $makeInclude = true){
+        //@todo add logic
+        $resultLanguage = DEFAULT_LANGUAGE;
+        //@todo add logic
+        
+        if($makeInclude) {
+            include_once './language-' . $resultLanguage . '.inc.php';
+            //@todo language-něco.inc.php nově by měl obsahovat pole s TRANSLATION a zd ena řádku níž bych měl:
+            //pseudocode: $this->TRANSLATION = to co jsem includnul z language-něco.inc.php
+        }
+        
+        return $resultLanguage;
+    }
 
     /** Execute an SQL, fetch resultset into an array reindexed by first field.
      * If the query selects only two fields, the first one is a key and the second one a value of the result array
