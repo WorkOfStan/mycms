@@ -45,14 +45,24 @@ class MyCMS {
     
     /**
      * 
-     * @param array $inputs
+     * @param array $getArray $_GET or its equivalent
+     * @param array $sessionArray $_SESSION or its equivalent
+     * @return bool $makeInclude for testing may be set to false as mycms itself does not contain the language-XX.inc.php files
      * @return string to be used as $_SESSION['language']
+     * 
+     * @todo perfect candidate for PHPUnit test viz testGetSessionLanguage() v Test/MyCMSTest.php
      */
-    public function getSessionLanguage(array $inputs){
+    public function getSessionLanguage(array $getArray, array $sessionArray, $makeInclude = true){
         //@todo add logic
         $resultLanguage = DEFAULT_LANGUAGE;
         //@todo add logic
-        include_once './language-' . $resultLanguage . '.inc.php';
+        
+        if($makeInclude) {
+            include_once './language-' . $resultLanguage . '.inc.php';
+            //@todo language-něco.inc.php nově by měl obsahovat pole s TRANSLATION a zd ena řádku níž bych měl:
+            //pseudocode: $this->TRANSLATION = to co jsem includnul z language-něco.inc.php
+        }
+        
         return $resultLanguage;
     }
 

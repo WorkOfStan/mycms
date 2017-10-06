@@ -16,5 +16,13 @@ define('DEFAULT_LANGUAGE', 'en');
 Following files are expected to exist within the Application
 * './language-' . $resultLanguage . '.inc.php';
 
+
+# Testing
+
+Run from a command line:
+```sh
+./vendor/bin/phpunit
+```
+
 # @todo
 
