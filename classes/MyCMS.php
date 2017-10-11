@@ -3,14 +3,16 @@ namespace GodsDev\MyCMS;
 
 class MyCMS {
     
-    /**
+    /** Class for a MyCMS object. 
+     * It holds all variables needed for the used project.
+     * Among others, it translates multilingual texts.
      *
      * @var \mysqli
      */
-    public $dbms = null;
+    public $dbms = null; //database management system
     
     public $PAGES;
-    public $PAGES_SPECIAL;
+    public $PAGES_SPECIAL; //special pages that are not fetched from database (e.g. sitemap etc.)
     public $PAYMENTS;
     public $SETTINGS = null;
     public $WEBSITE = null; //main info about this website
@@ -19,7 +21,7 @@ class MyCMS {
     public $CURRENCIES;
     public $COMMISSION;
     public $ITEM_ORDER;
-    public $LOG_SETTINGS;
+    public $LOG_SETTINGS; //@todo migrate to a standard logger
     public $TRANSLATION;
     public $template; //which Latte template to load
     public $context = array(); //array of variables for template rendering
@@ -33,10 +35,13 @@ class MyCMS {
                 array(//default values
                 ), $myCmsConf);
         //@todo do not use $this->myCmsConf but set the class properties right here accordingly; and also provide means to set the values otherwise later
+        $classAttributes = explode(' ', 'PAGES PAGES_SPECIAL PAYMENTS SETTINGS WEBSITE CART_ITEM COUNTRIES CURRENCIES COMMISSION ITEM_ORDER LOG_SETTINGS TRANSLATION template context');
         foreach ($this->myCmsConf as $myCmsVariable => $myCmsContent) {
-            $this->{$myCmsVariable} = $myCmsContent;
+            if (in_array($myCmsVariable, $classAttributes, true)) {
+                $this->{$myCmsVariable} = $myCmsContent;
+            }
         }
-        if(!is_null($this->dbms)){
+        if (is_object($this->dbms)) {
             $this->dbms->query('SET NAMES UTF8 COLLATE "utf8_general_ci"');
         }
     }
@@ -55,7 +60,7 @@ class MyCMS {
         $resultLanguage = DEFAULT_LANGUAGE;
         //@todo add logic
         
-        if($makeInclude) {
+        if ($makeInclude) {
             include_once './language-' . $resultLanguage . '.inc.php';
             //@todo language-něco.inc.php nově by měl obsahovat pole s TRANSLATION a zd ena řádku níž bych měl:
             //pseudocode: $this->TRANSLATION = to co jsem includnul z language-něco.inc.php
