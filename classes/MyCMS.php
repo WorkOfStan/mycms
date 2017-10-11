@@ -10,16 +10,14 @@ class MyCMS {
     public $dbms = null;
     
     public $PAGES;
-    public $PAYMENTS;
     public $PAGES_SPECIAL;
+    public $PAYMENTS;
     public $SETTINGS = null;
     public $WEBSITE = null; //main info about this website
     public $CART_ITEM; //items in cart
     public $COUNTRIES;
     public $CURRENCIES;
-    public $COMMISSION_FIELDS;
-    public $COMMISSION_MANDATORY_FIELDS;
-    public $COMMISSION_PERSON;
+    public $COMMISSION;
     public $ITEM_ORDER;
     public $LOG_SETTINGS;
     public $TRANSLATION;
