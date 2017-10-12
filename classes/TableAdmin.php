@@ -59,146 +59,7 @@ class TableAdmin extends TableLister {
             if (!in_array($key, $options['include-fields']) || in_array($key, $options['exclude-fields'])) {
                 continue;
             }
-            $value = $record[$key];
-            $output .= '<tr><td><label for="' . Tools::h($key) . $this->rand . '">' . Tools::h($key) . ':</label></td>' . PHP_EOL . '<td>' 
-                . Tools::htmlInput(($field['type'] == 'enum' ? $key : "nulls[$key]"), ($field['type'] == 'enum' && $field['null'] ? 'null' : ''), 1, 
-                    array(
-                        'type' => ($field['type'] == 'enum' ? 'radio' : 'checkbox'),
-                        'title' => ($field['null'] ? 'null' : null),
-                        'disabled' => ($field['null'] ? null : 'disabled'),
-                        'checked' => (is_null($value) ? 'checked' : null),
-                        'class' => 'input-null'
-                    )
-                ) . '</td>' . PHP_EOL .'<td>';
-            $input = array('id' => "$key$this->rand");
-            if (function_exists('TableAdminCustomInput')) {
-                $custom = TableAdminCustomInput($this->table, $key, $value, $this);
-                if ($custom !== false) {
-                    $input = $custom;
-                    $field['type'] = null;
-                }
-            }
-            $comment = json_decode((isset($field['comment']) ? $field['comment'] : '') ?: '{}', true);
-            Tools::setifnull($comment['display']); 
-            if ($comment['display'] == 'option') {
-                $query = $this->dbms->query($sql = 'SELECT DISTINCT ' . Tools::escapeDbIdentifier($key) 
-                    . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' ORDER BY ' . Tools::escapeDbIdentifier($key) . ' LIMIT 1000');
-                $input = '<select name="' . Tools::h($key) . '" id="' . Tools::h($key . $this->rand) . '"'
-                    . ($comment['display'] == 'option+' ? ' onchange="$(\'#' . Tools::h($key . $this->rand) . '_\').val(null)"' : '') . '>';
-                while ($row = $query->fetch_row()) {
-                    $input .= Tools::htmlOption($row[0], $row[0], $value);
-                }
-                $input .= '</select>';
-                if (isset($comment['display-own']) && $comment['display-own']) {
-                    $input .= ' ' . Tools::htmlInput("own[$key]", 'vlastní:', '', 
-                        array('id' => $key . $this->rand . '_', 'onchange' => "$('#$key$this->rand').val(null);"));
-                }
-                $field['type'] = null;
-            }
-            if (isset($comment['edit']) && $comment['edit'] == 'json') {
-                $tmp = json_decode($value, true);
-                $output .= '<fieldset class="input-expanded">' . Tools::htmlInput($key . EXPAND_INFIX, '', 1, 'hidden');
-                if (!is_array($tmp) && isset($comment['subfields']) && is_array($comment['subfields'])) {
-                    foreach ($comment['subfields'] as $v) {
-                        Tools::setifnull($tmp[$v], null);
-                    }
-                }
-                if (is_array($tmp)) {
-                    foreach ($tmp as $k => $v) {
-                        $output .= '<label>' . Tools::h($k) . ': ' . Tools::htmlInput($key . EXPAND_INFIX . $k, '', $v, array('class' => 'form-control')) . "</label><br />\n";
-                    }
-                }
-                $output .= '</fieldset>';
-                $input = false;
-                $field['type'] = null;
-            }
-            switch ($field['type']) {
-                case 'tinyint': case 'smallint': case 'int': case 'mediumint': case 'bigint': case 'year':
-                    $input += array('type' => 'number', 'step' => 1, 'class' => 'form-control');
-                    if ($field['key'] == 'PRI') {
-                        $input['readonly'] = 'readonly';
-                    }
-                    break;
-                case 'date':
-                    $input += array(/*'type' => 'date',*/ 'class' => 'form-control input-date');
-                    break;
-                case 'time':
-                    $input += array(/*'type' => 'time', 'step' => 1,*/ 'class' => 'form-control input-time');
-                    break;
-                case 'decimal': case 'float': case 'double':
-                    $value = +$value;
-                    $input += array('class' => 'form-control text-right');
-                    break;
-                case 'datetime': case 'timestamp':
-                    if (isset($value[10]) && $value[10] == ' ') {
-                        $value[10] = 'T';
-                    }
-                    $input += array('type' => 'datetime-local', 'step' => 1, 'class' => 'form-control input-datetime');
-                    break;
-                case 'bit':
-                    $input += array('type' => 'checkbox', 'step' => 1, 'checked' => ($value ? 'checked' : null));
-                    break;
-                case 'enum':
-                    eval('$choices = array(' . str_replace("''", "\\'", $field['size']) . ');'); //@todo safety
-                    if (is_array($choices)) {
-                        foreach ($choices as $k => $v) {
-                            $input[$k] = Tools::htmlInput($key, $v, 1 << $k, array(
-                                'type' => 'radio', 
-                                'id' => "$key-" . (1 << $k),
-                                'value' => (1 << $k)
-                            ));
-                        }
-                        $input = array_merge(array(Tools::htmlInput($key, 'prázdné', 0, 
-                            array(
-                                'type' => 'radio', 
-                                'id' => "$key-0",
-                                'value' => 0
-                            ))), $input
-                        );
-                        $input = implode(', ', $input);
-                    }
-                    break;
-                case 'set':
-                    eval('$choices = array(' . str_replace("''", "\\'", $field['size']) . ');'); //@todo safety
-                    $checked = explode(',', $value);
-                    if (is_array($choices)) {
-                        $temp = array();
-                        foreach ($choices as $k => $v) {
-                            $temp[$k] = Tools::htmlInput("$key-$k", $v, 1 >> ($k + 1), array(
-                                'type' => 'checkbox',
-                                'checked' => in_array($v, $checked) ? 'checked' : null,
-                                'id' => "$key-$k-$this->rand"
-                            ));
-                        }
-                        $input = implode(', ', $temp);
-                    }
-                    break;
-                case 'tinyblob': case 'mediumblob': case 'blob': case 'longblob': case 'binary':
-                    $input = '<a href="special.php?action=fetch'
-                        . '&amp;table=' . urlencode($this->table)
-                        . '&amp;column=' . urlencode($key);
-                    foreach ($where as $k => $v) {
-                    	$input .= '&amp;key[]=' . urlencode($k) . '&amp;value[]=' . urlencode($v);
-                    }
-                    $input .= '&amp;form-csrf=' . $_SESSION['csrf-' . $this->table]
-                        . '" target="_blank" >download</a>' . PHP_EOL;
-                    break;
-                case null:
-                    break;
-                case 'char': case 'varchar':
-                    if ($field['size'] > 1024) {
-                        $input = Tools::htmlTextarea("fields[$key]", $value, false, false, 
-                            array('id' => $key . $this->rand, 'class' => 'form-control'));
-                    }
-                default:
-                    $input = Tools::htmlTextarea("fields[$key]", $value, false, false, 
-                        array('id' => $key . $this->rand, 'class' => 'form-control' . ($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : ''))
-                    );
-            }
-            if (is_array($input)) {
-                $input = Tools::htmlInput("fields[$key]", false, $value, $input);
-            }
-            $output .= $input . '</td></tr>' . PHP_EOL;
+            $output .= $this->outputField($field, $key, $record);
         }
         $output .= '</table>' . PHP_EOL;
         if (function_exists('TableAdminCustomRecordDetail')) {
@@ -219,6 +80,151 @@ class TableAdmin extends TableLister {
         }
         $output .= (isset($options['exclude-form']) ? '' : '</fieldset></form>') . PHP_EOL;
         echo $output;
+    }
+
+    protected function outputField($field, $key, $record)
+    {
+        $value = $record[$key];
+        $output = '<tr><td><label for="' . Tools::h($key) . $this->rand . '">' . Tools::h($key) . ':</label></td>' . PHP_EOL . '<td>' 
+            . Tools::htmlInput(($field['type'] == 'enum' ? $key : "nulls[$key]"), ($field['type'] == 'enum' && $field['null'] ? 'null' : ''), 1, 
+                array(
+                    'type' => ($field['type'] == 'enum' ? 'radio' : 'checkbox'),
+                    'title' => ($field['null'] ? 'null' : null),
+                    'disabled' => ($field['null'] ? null : 'disabled'),
+                    'checked' => (is_null($value) ? 'checked' : null),
+                    'class' => 'input-null'
+                )
+            ) . '</td>' . PHP_EOL .'<td>';
+        $input = array('id' => $key . $this->rand);
+        if (function_exists('TableAdminCustomInput')) {
+            $custom = TableAdminCustomInput($this->table, $key, $value, $this);
+            if ($custom !== false) {
+                $input = $custom;
+                $field['type'] = null;
+            }
+        }
+        $comment = json_decode((isset($field['comment']) ? $field['comment'] : '') ?: '{}', true);
+        Tools::setifnull($comment['display']); 
+        if ($comment['display'] == 'option') {
+            $query = $this->dbms->query($sql = 'SELECT DISTINCT ' . Tools::escapeDbIdentifier($key) 
+                . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' ORDER BY ' . Tools::escapeDbIdentifier($key) . ' LIMIT 1000');
+            $input = '<select name="' . Tools::h($key) . '" id="' . Tools::h($key . $this->rand) . '"'
+                . ($comment['display'] == 'option+' ? ' onchange="$(\'#' . Tools::h($key . $this->rand) . '_\').val(null)"' : '') . '>';
+            while ($row = $query->fetch_row()) {
+                $input .= Tools::htmlOption($row[0], $row[0], $value);
+            }
+            $input .= '</select>';
+            if (isset($comment['display-own']) && $comment['display-own']) {
+                $input .= ' ' . Tools::htmlInput("own[$key]", 'vlastní:', '', 
+                    array('id' => $key . $this->rand . '_', 'onchange' => "$('#$key$this->rand').val(null);"));
+            }
+            $field['type'] = null;
+        }
+        if (isset($comment['edit']) && $comment['edit'] == 'json') {
+            $tmp = json_decode($value, true);
+            $output .= '<fieldset class="input-expanded">' . Tools::htmlInput($key . EXPAND_INFIX, '', 1, 'hidden');
+            if (!is_array($tmp) && isset($comment['subfields']) && is_array($comment['subfields'])) {
+                foreach ($comment['subfields'] as $v) {
+                    Tools::setifnull($tmp[$v], null);
+                }
+            }
+            if (is_array($tmp)) {
+                foreach ($tmp as $k => $v) {
+                    $output .= '<label>' . Tools::h($k) . ': ' . Tools::htmlInput($key . EXPAND_INFIX . $k, '', $v, array('class' => 'form-control')) . "</label><br />\n";
+                }
+            }
+            $output .= '</fieldset>';
+            $input = false;
+            $field['type'] = null;
+        }
+        switch ($field['type']) {
+            case 'tinyint': case 'smallint': case 'int': case 'mediumint': case 'bigint': case 'year':
+                $input += array('type' => 'number', 'step' => 1, 'class' => 'form-control');
+                if ($field['key'] == 'PRI') {
+                    $input['readonly'] = 'readonly';
+                }
+                break;
+            case 'date':
+                $input += array(/*'type' => 'date',*/ 'class' => 'form-control input-date');
+                break;
+            case 'time':
+                $input += array(/*'type' => 'time', 'step' => 1,*/ 'class' => 'form-control input-time');
+                break;
+            case 'decimal': case 'float': case 'double':
+                $value = +$value;
+                $input += array('class' => 'form-control text-right');
+                break;
+            case 'datetime': case 'timestamp':
+                if (isset($value[10]) && $value[10] == ' ') {
+                    $value[10] = 'T';
+                }
+                $input += array('type' => 'datetime-local', 'step' => 1, 'class' => 'form-control input-datetime');
+                break;
+            case 'bit':
+                $input += array('type' => 'checkbox', 'step' => 1, 'checked' => ($value ? 'checked' : null));
+                break;
+            case 'enum':
+                eval('$choices = array(' . str_replace("''", "\\'", $field['size']) . ');'); //@todo safety
+                if (is_array($choices)) {
+                    foreach ($choices as $k => $v) {
+                        $input[$k] = Tools::htmlInput($key, $v, 1 << $k, array(
+                            'type' => 'radio', 
+                            'id' => "$key-" . (1 << $k),
+                            'value' => (1 << $k)
+                        ));
+                    }
+                    $input = array_merge(array(Tools::htmlInput($key, 'prázdné', 0, 
+                        array(
+                            'type' => 'radio', 
+                            'id' => "$key-0",
+                            'value' => 0
+                        ))), $input
+                    );
+                    $input = implode(', ', $input);
+                }
+                break;
+            case 'set':
+                eval('$choices = array(' . str_replace("''", "\\'", $field['size']) . ');'); //@todo safety
+                $checked = explode(',', $value);
+                if (is_array($choices)) {
+                    $temp = array();
+                    foreach ($choices as $k => $v) {
+                        $temp[$k] = Tools::htmlInput("$key-$k", $v, 1 >> ($k + 1), array(
+                            'type' => 'checkbox',
+                            'checked' => in_array($v, $checked) ? 'checked' : null,
+                            'id' => "$key-$k-$this->rand"
+                        ));
+                    }
+                    $input = implode(', ', $temp);
+                }
+                break;
+            case 'tinyblob': case 'mediumblob': case 'blob': case 'longblob': case 'binary':
+                $input = '<a href="special.php?action=fetch'
+                    . '&amp;table=' . urlencode($this->table)
+                    . '&amp;column=' . urlencode($key);
+                foreach ($where as $k => $v) {
+                	$input .= '&amp;key[]=' . urlencode($k) . '&amp;value[]=' . urlencode($v);
+                }
+                $input .= '&amp;form-csrf=' . $_SESSION['csrf-' . $this->table]
+                    . '" target="_blank" >download</a>' . PHP_EOL;
+                break;
+            case null:
+                break;
+            case 'char': case 'varchar':
+                if ($field['size'] > 1024) {
+                    $input = Tools::htmlTextarea("fields[$key]", $value, false, false, 
+                        array('id' => $key . $this->rand, 'class' => 'form-control'));
+                }
+            default:
+                $input = Tools::htmlTextarea("fields[$key]", $value, false, false, 
+                    array('id' => $key . $this->rand, 'class' => 'form-control' . ($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : ''))
+                );
+        }
+        if (is_array($input)) {
+            $input = Tools::htmlInput("fields[$key]", false, $value, $input);
+        }
+        $output .= $input . '</td></tr>' . PHP_EOL;
+        return $output;
     }
 
     /** Get all tables (and comments to them) in the database and store them to tables
@@ -345,7 +351,7 @@ class TableAdmin extends TableLister {
 
     public function dashboard()
     {
-        $query = $this->dbms->query('SELECT SQL_CALC_FOUND_ROWS type,COUNT(type) FROM ' . TAB_PREFIX . 'content GROUP BY type WITH ROLLUP LIMIT 100');
+        $query = $this->dbms->query('SELECT SQL_CALC_FOUND_ROWS type,COUNT(type) FROM ' . TAB_PREFIX . 'page GROUP BY type WITH ROLLUP LIMIT 100');
         if (!$query) {
             return;
         }
