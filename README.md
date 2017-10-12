@@ -5,6 +5,17 @@ Simple framework for website generation.
 
 It uses Latte for templates.
 
+# Initiation
+
+```php
+$MyCMS = new \GodsDev\MyCMS\MyCMS(
+    array(
+        // compulsory
+        'logger' => $logger, // object \Psr\Log\LoggerInterface
+        //optional
+    )
+);
+```
 
 # Deployment
 

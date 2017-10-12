@@ -15,6 +15,10 @@ define('EXPAND_INFIX', "\t"); // infix for JSON-exapandable values
 define('DIR_TEMPLATE', __DIR__ . '/../template'); //for Latte
 define('DIR_TEMPLATE_CACHE', __DIR__ . '/../cache'); //for Latte
 
+$backyardConf = array(
+    'logging_level' => 3,
+);
+
 ini_set('display_errors', 0); //errors only in the log
 
 if(file_exists(__DIR__ . '/env_config_private.php')) {

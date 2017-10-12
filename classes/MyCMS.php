@@ -1,8 +1,11 @@
 <?php
+
 namespace GodsDev\MyCMS;
 
+use Psr\Log\LoggerInterface;
+
 class MyCMS {
-    
+
     /** Class for a MyCMS object. 
      * It holds all variables needed for the used project.
      * Among others, it translates multilingual texts.
@@ -10,7 +13,6 @@ class MyCMS {
      * @var \mysqli
      */
     public $dbms = null; //database management system
-    
     public $PAGES;
     public $PAGES_SPECIAL; //special pages that are not fetched from database (e.g. sitemap etc.)
     public $PAYMENTS;
@@ -22,9 +24,28 @@ class MyCMS {
     public $COMMISSION;
     public $ITEM_ORDER;
     public $LOG_SETTINGS; //@todo migrate to a standard logger
+
+    /**
+     * Selected locale strings
+     * 
+     * @var array
+     */
     public $TRANSLATION;
+
+    /**
+     * Available languages
+     * 
+     * @var array
+     */
+    public $TRANSLATIONS;
     public $template; //which Latte template to load
     public $context = array(); //array of variables for template rendering
+
+    /**
+     *
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger;
 
     /**
      * 
@@ -35,17 +56,24 @@ class MyCMS {
                 array(//default values
                 ), $myCmsConf);
         //@todo do not use $this->myCmsConf but set the class properties right here accordingly; and also provide means to set the values otherwise later
-        $classAttributes = explode(' ', 'PAGES PAGES_SPECIAL PAYMENTS SETTINGS WEBSITE CART_ITEM COUNTRIES CURRENCIES COMMISSION ITEM_ORDER LOG_SETTINGS TRANSLATION template context');
+        $classAttributes = explode(' ', 'PAGES PAGES_SPECIAL PAYMENTS SETTINGS WEBSITE CART_ITEM COUNTRIES CURRENCIES COMMISSION ITEM_ORDER LOG_SETTINGS TRANSLATION TRANSLATIONS template context logger dbms');
         foreach ($this->myCmsConf as $myCmsVariable => $myCmsContent) {
             if (in_array($myCmsVariable, $classAttributes, true)) {
                 $this->{$myCmsVariable} = $myCmsContent;
             }
         }
+        // Logger is obligatory
+        if(!is_object($this->logger)){
+            error_log("Error: MyCMS constructed without logger.");
+            die('Fatal error - project is not configured.'); //@todo nicely formatted error page            
+        }
         if (is_object($this->dbms)) {
             $this->dbms->query('SET NAMES UTF8 COLLATE "utf8_general_ci"');
+        } else {
+            $this->logger->info("No database connection set!");
         }
     }
-    
+
     /**
      * 
      * @param array $getArray $_GET or its equivalent
@@ -53,19 +81,36 @@ class MyCMS {
      * @return bool $makeInclude for testing may be set to false as mycms itself does not contain the language-XX.inc.php files
      * @return string to be used as $_SESSION['language']
      * 
-     * @todo perfect candidate for PHPUnit test viz testGetSessionLanguage() v Test/MyCMSTest.php
      */
-    public function getSessionLanguage(array $getArray, array $sessionArray, $makeInclude = true){
-        //@todo add logic
-        $resultLanguage = DEFAULT_LANGUAGE;
-        //@todo add logic
-        
+    public function getSessionLanguage(array $getArray, array $sessionArray, $makeInclude = true) {
+        $resultLanguage = (isset($getArray['language']) && isset($this->TRANSLATIONS[$getArray['language']])) ?
+                $getArray['language'] :
+                ((isset($sessionArray['language']) && isset($this->TRANSLATIONS[$sessionArray['language']])) ? $sessionArray['language'] : DEFAULT_LANGUAGE);
+
         if ($makeInclude) {
-            include_once './language-' . $resultLanguage . '.inc.php';
-            //@todo language-něco.inc.php nově by měl obsahovat pole s TRANSLATION a zd ena řádku níž bych měl:
-            //pseudocode: $this->TRANSLATION = to co jsem includnul z language-něco.inc.php
+            $languageFile = './language-' . $resultLanguage . '.inc.php';
+            if (file_exists($languageFile)) {
+                include_once $languageFile; //MUST containt $translation = array(...);
+                $this->TRANSLATION = $translation;
+
+                // universal loader of project (and language) specific tags from database
+                //@todo $row statements replace with queryArray($sql, true) from Backyard?            
+                if (($row = $this->dbms->query('SELECT context FROM ' . TAB_PREFIX . 'page WHERE code="SETTINGS"')) && $row = $row->fetch_row()) {
+                    $this->SETTINGS = json_decode($row[0], true);
+                } //else fail in universal check
+                // universal
+                if (($row = $this->dbms->query('SELECT content_' . $_SESSION['language'] . ' FROM ' . TAB_PREFIX . 'page WHERE code="WEBSITE"')) && $row = $row->fetch_row()) {
+                    $this->WEBSITE = json_decode($row[0], true);
+                } //else fail in universal check
+                // universal check @todo stop by else above?
+                if (!$this->SETTINGS || !$this->WEBSITE) {
+                    die('Fatal error - project is not configured.'); //@todo nicely formatted error page
+                }
+            } else {
+                $this->logger->error("Missing expected language file {$languageFile}");
+            }
         }
-        
+
         return $resultLanguage;
     }
 
@@ -77,8 +122,7 @@ class MyCMS {
      * @param string SQL to be executed
      * @result mixed - either associative array, empty array on empty select, or false on error
      */
-    public function fetchAndReindex($sql)
-    {
+    public function fetchAndReindex($sql) {
         $result = false;
         $query = $this->dbms->query($sql);
         if (is_object($query)) {
@@ -104,8 +148,7 @@ class MyCMS {
      * @param mixed $options case transposition - either null or one of MB_CASE_UPPER, MB_CASE_LOWER, MB_CASE_TITLE or L_UCFIRST
      * @return string
      */
-    public function translate($id, $options = null)
-    {
+    public function translate($id, $options = null) {
         if (!isset($this->TRANSLATION[$id]) && isset($_SESSION['test-translations']) && $_SESSION['language'] != DEFAULT_LANGUAGE) {
             error_log('Translation does not exist - ' . $id); //@todo replace with a standard logger
         }
@@ -117,4 +160,5 @@ class MyCMS {
         }
         return $result;
     }
+
 }
