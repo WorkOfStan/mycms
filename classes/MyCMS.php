@@ -63,7 +63,7 @@ class MyCMS {
             }
         }
         // Logger is obligatory
-        if(!is_object($this->logger)){
+        if (!is_object($this->logger)) {
             error_log("Error: MyCMS constructed without logger.");
             die('Fatal error - project is not configured.'); //@todo nicely formatted error page            
         }
@@ -79,14 +79,20 @@ class MyCMS {
      * @param array $getArray $_GET or its equivalent
      * @param array $sessionArray $_SESSION or its equivalent
      * @return bool $makeInclude for testing may be set to false as mycms itself does not contain the language-XX.inc.php files
+     * @param array $options open to customization project by project
      * @return string to be used as $_SESSION['language']
      * 
      * constant TAB_PREFIX expected
      */
-    public function getSessionLanguage(array $getArray, array $sessionArray, $makeInclude = true) {
+    public function getSessionLanguage(array $getArray, array $sessionArray, $makeInclude = true, array $options = array()) {
         $resultLanguage = (isset($getArray['language']) && isset($this->TRANSLATIONS[$getArray['language']])) ?
                 $getArray['language'] :
                 ((isset($sessionArray['language']) && isset($this->TRANSLATIONS[$sessionArray['language']])) ? $sessionArray['language'] : DEFAULT_LANGUAGE);
+
+        $config = array_merge(array(
+            'query_settings' => 'SELECT context FROM ' . TAB_PREFIX . 'page WHERE code="SETTINGS"',
+            'query_website' => 'SELECT content_' . $resultLanguage . ' FROM ' . TAB_PREFIX . 'page WHERE code="WEBSITE"',
+                ), $options);
 
         if ($makeInclude) {
             $languageFile = './language-' . $resultLanguage . '.inc.php';
@@ -96,11 +102,11 @@ class MyCMS {
 
                 // universal loader of project (and language) specific tags from database
                 //@todo $row statements replace with queryArray($sql, true) from Backyard?            
-                if (($row = $this->dbms->query('SELECT context FROM ' . TAB_PREFIX . 'page WHERE code="SETTINGS"')) && $row = $row->fetch_row()) {
+                if (($row = $this->dbms->query($config['query_settings'])) && $row = $row->fetch_row()) {
                     $this->SETTINGS = json_decode($row[0], true);
                 } //else fail in universal check
                 // universal
-                if (($row = $this->dbms->query('SELECT content_' . $resultLanguage . ' FROM ' . TAB_PREFIX . 'page WHERE code="WEBSITE"')) && $row = $row->fetch_row()) {
+                if (($row = $this->dbms->query($config['query_website'])) && $row = $row->fetch_row()) {
                     $this->WEBSITE = json_decode($row[0], true);
                 } //else fail in universal check
                 // universal check @todo stop by else above?
@@ -160,6 +166,26 @@ class MyCMS {
             $result = mb_convert_case($result, $options);
         }
         return $result;
+    }
+
+    /**
+     * In case of form processing includes either admin-process.php or process.php.
+     * 
+     */
+    public function formController() {
+        // fork for for admin and form processing
+        if (isset($_POST) && is_array($_POST)) {
+            require_once basename($_SERVER['PHP_SELF']) == 'admin.php' ? './admin-process.php' : './process.php';
+        }
+    }
+    
+    /**
+     * CSRF
+     */
+    public function csrf() {
+        if (!isset($_GET['keep-token'])) {
+            $_SESSION['token'] = rand(1e8, 1e9);
+        }
     }
 
 }

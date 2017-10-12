@@ -17,6 +17,8 @@ $MyCMS = new \GodsDev\MyCMS\MyCMS(
 );
 ```
 
+Files `process.php` and `admin-process.php` MUST exist and process forms.
+
 # Deployment
 
 Following settings are expected from the Application that uses MyCMS
