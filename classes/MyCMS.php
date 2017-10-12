@@ -81,6 +81,7 @@ class MyCMS {
      * @return bool $makeInclude for testing may be set to false as mycms itself does not contain the language-XX.inc.php files
      * @return string to be used as $_SESSION['language']
      * 
+     * constant TAB_PREFIX expected
      */
     public function getSessionLanguage(array $getArray, array $sessionArray, $makeInclude = true) {
         $resultLanguage = (isset($getArray['language']) && isset($this->TRANSLATIONS[$getArray['language']])) ?
@@ -99,7 +100,7 @@ class MyCMS {
                     $this->SETTINGS = json_decode($row[0], true);
                 } //else fail in universal check
                 // universal
-                if (($row = $this->dbms->query('SELECT content_' . $_SESSION['language'] . ' FROM ' . TAB_PREFIX . 'page WHERE code="WEBSITE"')) && $row = $row->fetch_row()) {
+                if (($row = $this->dbms->query('SELECT content_' . $resultLanguage . ' FROM ' . TAB_PREFIX . 'page WHERE code="WEBSITE"')) && $row = $row->fetch_row()) {
                     $this->WEBSITE = json_decode($row[0], true);
                 } //else fail in universal check
                 // universal check @todo stop by else above?
