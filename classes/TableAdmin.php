@@ -349,9 +349,16 @@ class TableAdmin extends TableLister {
         $this->resolveSQL($sql, 'Záznam smazán.', 'Záznam se nepodařilo smazat.');
     }
 
-    public function dashboard()
+    public function dashboard($options = array())
     {
-        $query = $this->dbms->query('SELECT SQL_CALC_FOUND_ROWS type,COUNT(type) FROM ' . TAB_PREFIX . 'page GROUP BY type WITH ROLLUP LIMIT 100');
+        $this->contentByType($options);
+    }
+
+    public function contentByType($options = array())
+    {
+        Tools::setifnull($options['table'], 'content');
+        Tools::setifnull($options['type'], 'type');
+        $query = $this->dbms->query("SELECT SQL_CALC_FOUND_ROWS $options[type],COUNT($options[type]) FROM " . TAB_PREFIX . "$options[table] GROUP BY $options[type] WITH ROLLUP LIMIT 100");
         if (!$query) {
             return;
         }
