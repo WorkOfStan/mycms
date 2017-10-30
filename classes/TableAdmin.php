@@ -71,10 +71,10 @@ class TableAdmin extends TableLister {
                 $output .= TableAdminCustomRecordAction($this->table, $record, $this);
             }
             $output .= '<button type="submit" name="record-save" value="1" '
-                . 'class="btn btn-default btn-primary"><span class="glyphicon glyphicon-floppy-save"></span> Uložit</button> '; 
+                . 'class="btn btn-default btn-primary"><span class="glyphicon glyphicon-floppy-save fa fa-floppy-o"></span> Uložit</button> '; 
             if (is_array($record)) {
                 $output .= '<button type="submit" name="record-delete" class="btn btn-default" value="1" onclick="return confirm(\'Opravdu smazat?\');">'
-                    . '<span class="glyphicon glyphicon-floppy-remove"></span> Smazat</button>';
+                    . '<span class="glyphicon glyphicon-floppy-remove fa fa-trash-o"></span> Smazat</button>';
             }
             $output .= '</div>';
         }
