@@ -272,6 +272,31 @@ class TableAdmin extends TableLister {
         return $output;
     }
 
+    public function outputForeignId($field, $values, $default = null, $options = array())
+    {
+        $result = '<select name="' . Tools::h($field) 
+            . '" class="' . Tools::h(isset($options['class']) ? $options['class'] : '') 
+            . '" id="' . Tools::h(isset($options['id']) ? $options['id'] : '') . '">'
+            . '<option />';
+        $options['exclude'] = isset($options['exclude']) ? $options['exclude'] : ''; 
+        if (is_array($values)) { // array - just output them as <option>s
+            foreach ($values as $key => $value) {
+                if ($row['name'] != $options['exclude']) {
+                    $result .= Tools::htmlOption($key, $value, $default);
+                }
+            }
+        } elseif (is_string($values)) { // string - SELECT id,name FROM ...
+            $query = $this->dbms->query($values);
+            while ($row = $query->fetch_assoc()) {
+                if ($row['name'] != $options['exclude']) {
+                    $result .= Tools::htmlOption($row['id'], $row['name'], $default);
+                }
+            }            
+        }
+        $result .= '</select>';
+        return $result;
+    }
+
     /** Is user authorized to proceed with data-changing operation?
      * @return bool
      */
