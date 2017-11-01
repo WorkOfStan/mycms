@@ -160,6 +160,17 @@ class MyCMS {
         return $result;
     }
 
+    public function fetchSingle(string $sql) {
+        $query = $this->dbms->query($sql);
+        if (is_object($query)) {
+            $row = $query->fetch_row();
+            if (isset($row[0])) {
+                return $row[0];
+            }
+        }
+        return false;
+    }
+
     /** Translate defined string to the language stored in $_SESSION['language'].
      * Returns original text if translation not found.
      * 
