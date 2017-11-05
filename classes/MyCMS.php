@@ -2,7 +2,7 @@
 
 namespace GodsDev\MyCMS;
 
-use Psr\Log\LoggerInterface;
+//use Psr\Log\LoggerInterface;
 
 class MyCMS {
 
@@ -111,6 +111,7 @@ class MyCMS {
                 } //else fail in universal check
                 // universal check @todo stop by else above?
                 if (!$this->SETTINGS || !$this->WEBSITE) {
+                    $this->logger->emergency((!$this->SETTINGS?"SETTINGS missing. ":"").(!$this->WEBSITE?"WEBSITE missing. ":""));                    
                     die('Fatal error - project is not configured.'); //@todo nicely formatted error page
                 }
             } else {
@@ -157,7 +158,7 @@ class MyCMS {
      */
     public function translate($id, $options = null) {
         if (!isset($this->TRANSLATION[$id]) && isset($_SESSION['test-translations']) && $_SESSION['language'] != DEFAULT_LANGUAGE) {
-            error_log('Translation does not exist - ' . $id); //@todo replace with a standard logger
+            $this->logger->warning('Translation does not exist - ' . $id);
         }
         $result = isset($this->TRANSLATION[$id]) ? $this->TRANSLATION[$id] : $id;
         if ($options === L_UCFIRST) {
@@ -171,6 +172,8 @@ class MyCMS {
     /**
      * In case of form processing includes either admin-process.php or process.php.
      * 
+     * @todo - test fully
+     * 
      */
     public function formController() {
         // fork for for admin and form processing
@@ -181,6 +184,8 @@ class MyCMS {
     
     /**
      * CSRF
+     * 
+     * @todo - test fully
      */
     public function csrf() {
         if (!isset($_GET['keep-token'])) {
