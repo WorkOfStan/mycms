@@ -97,21 +97,22 @@ class MyCMS {
         if ($makeInclude) {
             $languageFile = './language-' . $resultLanguage . '.inc.php';
             if (file_exists($languageFile)) {
-                include_once $languageFile; //MUST containt $translation = array(...);
+                include_once $languageFile; //MUST contain $translation = array(...);
+                //@todo assert $translation is set and it is an array
                 $this->TRANSLATION = $translation;
 
                 // universal loader of project (and language) specific tags from database
                 //@todo $row statements replace with queryArray($sql, true) from Backyard?            
                 if (($row = $this->dbms->query($config['query_settings'])) && $row = $row->fetch_row()) {
-                    $this->SETTINGS = json_decode($row[0], true);
+                    $this->SETTINGS = json_decode($row[0], true);//If SETTINGS missing but the SQL statement returns something, then look for error within JSON.
                 } //else fail in universal check
                 // universal
                 if (($row = $this->dbms->query($config['query_website'])) && $row = $row->fetch_row()) {
-                    $this->WEBSITE = json_decode($row[0], true);
+                    $this->WEBSITE = json_decode($row[0], true);//If WEBSITE missing but the SQL statement returns something, then look for error within JSON.
                 } //else fail in universal check
-                // universal check @todo stop by else above?
+                // universal check
                 if (!$this->SETTINGS || !$this->WEBSITE) {
-                    $this->logger->emergency((!$this->SETTINGS?"SETTINGS missing. ":"").(!$this->WEBSITE?"WEBSITE missing. ":""));                    
+                    $this->logger->emergency((!$this->SETTINGS?"SETTINGS missing. ({$config['query_settings']}) ":"").(!$this->WEBSITE?"WEBSITE missing. ({$config['query_website']}) ":""));                    
                     die('Fatal error - project is not configured.'); //@todo nicely formatted error page
                 }
             } else {
