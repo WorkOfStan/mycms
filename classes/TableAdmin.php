@@ -71,10 +71,10 @@ class TableAdmin extends TableLister {
                 $output .= TableAdminCustomRecordAction($this->table, $record, $this);
             }
             $output .= '<button type="submit" name="record-save" value="1" '
-                . 'class="btn btn-default btn-primary"><span class="glyphicon glyphicon-floppy-save"></span> Uložit</button> '; 
+                . 'class="btn btn-default btn-primary"><span class="glyphicon glyphicon-floppy-save fa fa-floppy-o"></span> Uložit</button> '; 
             if (is_array($record)) {
                 $output .= '<button type="submit" name="record-delete" class="btn btn-default" value="1" onclick="return confirm(\'Opravdu smazat?\');">'
-                    . '<span class="glyphicon glyphicon-floppy-remove"></span> Smazat</button>';
+                    . '<span class="glyphicon glyphicon-floppy-remove fa fa-trash-o"></span> Smazat</button>';
             }
             $output .= '</div>';
         }
@@ -272,6 +272,31 @@ class TableAdmin extends TableLister {
         return $output;
     }
 
+    public function outputForeignId($field, $values, $default = null, $options = array())
+    {
+        $result = '<select name="' . Tools::h($field) 
+            . '" class="' . Tools::h(isset($options['class']) ? $options['class'] : '') 
+            . '" id="' . Tools::h(isset($options['id']) ? $options['id'] : '') . '">'
+            . '<option />';
+        $options['exclude'] = isset($options['exclude']) ? $options['exclude'] : ''; 
+        if (is_array($values)) { // array - just output them as <option>s
+            foreach ($values as $key => $value) {
+                if ($row['name'] != $options['exclude']) {
+                    $result .= Tools::htmlOption($key, $value, $default);
+                }
+            }
+        } elseif (is_string($values)) { // string - SELECT id,name FROM ...
+            $query = $this->dbms->query($values);
+            while ($row = $query->fetch_assoc()) {
+                if ($row['name'] != $options['exclude']) {
+                    $result .= Tools::htmlOption($row['id'], $row['name'], $default);
+                }
+            }            
+        }
+        $result .= '</select>';
+        return $result;
+    }
+
     /** Is user authorized to proceed with data-changing operation?
      * @return bool
      */
@@ -349,9 +374,16 @@ class TableAdmin extends TableLister {
         $this->resolveSQL($sql, 'Záznam smazán.', 'Záznam se nepodařilo smazat.');
     }
 
-    public function dashboard()
+    public function dashboard($options = array())
     {
-        $query = $this->dbms->query('SELECT SQL_CALC_FOUND_ROWS type,COUNT(type) FROM ' . TAB_PREFIX . 'page GROUP BY type WITH ROLLUP LIMIT 100');
+        $this->contentByType($options);
+    }
+
+    public function contentByType($options = array())
+    {
+        Tools::setifnull($options['table'], 'content');
+        Tools::setifnull($options['type'], 'type');
+        $query = $this->dbms->query("SELECT SQL_CALC_FOUND_ROWS $options[type],COUNT($options[type]) FROM " . TAB_PREFIX . "$options[table] GROUP BY $options[type] WITH ROLLUP LIMIT 100");
         if (!$query) {
             return;
         }

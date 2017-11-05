@@ -17,6 +17,10 @@ $MyCMS = new \GodsDev\MyCMS\MyCMS(
 );
 ```
 
+Files `process.php` and `admin-process.php` MUST exist and process forms.
+
+Note: $MyCMS name is expected by ProjectSpecific extends ProjectCommon (@todo replace global $MyCMS by proper parameter handling)
+
 # Deployment
 
 Following settings are expected from the Application that uses MyCMS

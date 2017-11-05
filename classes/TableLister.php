@@ -42,7 +42,7 @@ class TableLister
         'PAGESIZE' => 10,
         'MAXPAGESIZE' => 10000,
         'TEXTSIZE' => 100,
-        'PAGES_AROUND' => 2,
+        'PAGES_AROUND' => 2, // used in pagination
         'FOREIGNLINK' => '-link' //suffix added to POST variables for links
     );
 
@@ -173,7 +173,7 @@ class TableLister
         }
         if (!$columns) {
             foreach ($this->fields as $key => $value) {
-            	$columns[$key] = Tools::escapeDbIdentifier($key);
+                $columns[$key] = Tools::escapeDbIdentifier($key);
             }
         }
         if (isset($options['exclude']) && is_array($options['exclude'])) {
@@ -214,18 +214,23 @@ class TableLister
         }
         if ($join) {
             foreach ($columns as $key => $value) {
-            	if ($value == Tools::escapeDbIdentifier($key)) {
+                if ($value == Tools::escapeDbIdentifier($key)) {
                     $columns[$key] = Tools::escapeDbIdentifier($this->table) . '.' . $value;
                 }
             }
         }
         if (isset($_GET['col']) && is_array($_GET['col'])) {
+            $filterColumn = array('');
+            foreach ($columns as $key => $value) {
+                $filterColumn []= $key;
+            }
+            unset($filterColumn[0]);
             foreach ($_GET['col'] as $key => $value) {
-                if (isset($_GET['op'][$key], $_GET['val'][$key]) && in_array($value, array_keys($columns))) {
+                if (isset($filterColumn[$value], $_GET['val'][$key])) {
                     $where .= ' AND ';
                     switch ($_GET['op'][$key]) {
                         default:
-                            $where .= Tools::escapeDbIdentifier($this->table) . '.' . Tools::escapeDbIdentifier($value) 
+                            $where .= Tools::escapeDbIdentifier($this->table) . '.' . Tools::escapeDbIdentifier($filterColumn[$value]) 
                                 . '="' . Tools::escapeSQL($_GET['val'][$key]) . '"';
                     }
                 }
@@ -236,7 +241,7 @@ class TableLister
                 $sort .= ',' . array_values($columns)[(int)$value - 1] . (isset($_GET['desc'][$key]) && $_GET['desc'][$key] ? ' DESC' : '');
             }
         }
-        $sql = $sql = 'SELECT SQL_CALC_FOUND_ROWS ' . implode(',', $columns) . ' FROM ' 
+        $sql = 'SELECT SQL_CALC_FOUND_ROWS ' . implode(',', $columns) . ' FROM ' 
             . Tools::escapeDbIdentifier($this->table) . $join
             . Tools::wrap(substr($where, 4), ' WHERE ')
             . Tools::wrap(substr($sort, 1), ' ORDER BY ')  
@@ -244,16 +249,18 @@ class TableLister
         $query = $this->dbms->query($sql);
         $totalRows = $this->dbms->query('SELECT FOUND_ROWS()')->fetch_row()[0];
         if (!$options['read-only']) {
-            echo '<a href="?table=' . urlencode($this->table) . '&amp;where[]="><span class="glyphicon glyphicon-plus" /></span> Nová položka</a>' . PHP_EOL;
-        }
-        if (!$totalRows) {
-            echo '<p class="text-danger">Žádné řádky.</p>';
-            return;
+            echo '<a href="?table=' . urlencode($this->table) . '&amp;where[]="><span class="glyphicon glyphicon-plus fa fa-plus-circle" /></span> Nová položka</a>' . PHP_EOL;
         }
         $this->viewInputs($options);
-        $this->viewTable($query, $columns, $options);
-        $this->pagination($limit, $totalRows);
-        echo '<p class="text-success"><small>Celkem řádků: ' . $totalRows . '.</small></p>';
+        if ($totalRows) {
+            $this->viewTable($query, $columns, $options);
+            $this->pagination($limit, $totalRows);
+        }
+        if (!$totalRows && isset($_GET['col'])) {
+            echo '<p class="alert alert-danger"><small>Nebyly nalezeny žádné záznamy.</small></p>';
+        } else {
+            echo '<p class="text-success"><small>Celkem řádků: ' . $totalRows . '.</small></p>';
+        }
     }
 
     /** Part of the view() method to output the controls
@@ -264,27 +271,27 @@ class TableLister
         echo '<form action="" method="get" class="table-controls">' . PHP_EOL;
         if (!isset($option['no-search']) || !$option['no-search']) {
             echo '<fieldset><legend><a href="javascript:;" onclick="$(\'#search-div\').toggle()">'
-                . '<span class="glyphicon glyphicon-search"></span> Vyhledat</a></legend>'
+                . '<span class="glyphicon glyphicon-search fa fa-search"></span> Vyhledat</a></legend>'
                 . '<div id="search-div"></div></fieldset>' . PHP_EOL;
         }
         if (!isset($option['no-sort']) || !$option['no-sort']) {
             echo '<fieldset><legend><a href="javascript:;" onclick="$(\'#sort-div\').toggle()">'
-                . '<span class="glyphicon glyphicon-sort"></span> Seřadit</a></legend>'
+                . '<span class="glyphicon glyphicon-sort fa fa-sort"></span> Seřadit</a></legend>'
                 . '<div id="sort-div"></div></fieldset>' . PHP_EOL;
         }
-        echo '<fieldset><legend><span class="glyphicon glyphicon-list-alt"></span> Zobrazit</legend>
+        echo '<fieldset><legend><span class="glyphicon glyphicon-list-alt fa fa-list-alt"></span> Zobrazit</legend>
             <input type="hidden" name="table" value="' . Tools::h($this->table) . '" />
             <label title="velikost textů">
-                <span class="glyphicon glyphicon-option-horizontal"></span>
+                <span class="glyphicon glyphicon-option-horizontal fa fa-ellipsis-h"></span>
                 <input type="text" name="textsize" value="' . Tools::setifnull($_GET['textsize'], $this->DEFAULTS['TEXTSIZE']) . '" size="3" />
             </label>
             <label title="řádek na stránku">
-                <span class="glyphicon glyphicon-option-vertical"></span>
+                <span class="glyphicon glyphicon-option-vertical fa fa-ellipsis-v"></span>
                 <input type="text" name="limit" value="' . Tools::setifnull($_GET['limit'], $this->DEFAULTS['PAGESIZE']) . '" size="3" />
             </label>
             <input type="hidden" name="offset" value="' . (int)Tools::setifnull($_GET['offset'], 0) . '" />
             <button type="submit" class="btn btn-sm" title="Zobrazit"/>
-                <span class="glyphicon glyphicon-list-alt"></span>
+                <span class="glyphicon glyphicon-list-alt fa fa-list-alt"></span>
             </button>
             </fieldset></form>
             <script type="text/javascript"> 
@@ -357,7 +364,7 @@ class TableLister
                 }
                 if ($primary) {
                     echo '<a href="?table=' . urlencode($this->table) . Tools::h($url) . '" title="upravit">'
-                        . '<small class="glyphicon glyphicon-edit" aria-hidden="true"></small></a>';
+                        . '<small class="glyphicon glyphicon-edit fa fa-pencil" aria-hidden="true"></small></a>';
                 }
                 echo'</td>';
                 foreach ($row as $key => $value) {
