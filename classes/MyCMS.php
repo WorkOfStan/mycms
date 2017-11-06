@@ -127,27 +127,50 @@ class MyCMS {
      * If the query selects only two fields, the first one is a key and the second one a value of the result array
      * Example: 'SELECT id,name FROM employees' --> [3=>"John", 4=>"Mary", 5=>"Joe"]
      * If the result set has more than two fields, whole resultset is fetched into each array item
-     * Example: 'SELECT id,name,surname FROM employees' --> [3=>[id=>3, name=>"John", surname=>"Smith"], [...]]
+     * Example: 'SELECT id,name,surname FROM employees' --> [3=>[name=>"John", surname=>"Smith"], [...]]
+     * If the first column is non-unique, results are joined into an array.
+     * Example: 'SELECT department_id,name FROM employees' --> [1=>['John', 'Mary'], 2=>['Joe','Pete','Sally']]
+     * Example: 'SELECT division_id,name,surname FROM employees' --> [1=>[[name=>'John',surname=>'Doe'], [name=>'Mary',surname=>'Saint']], 2=>[...]]
      * @param string SQL to be executed
      * @result mixed - either associative array, empty array on empty select, or false on error
      */
-    public function fetchAndReindex($sql) {
+    public function fetchAndReindex(string $sql) {
         $result = false;
         $query = $this->dbms->query($sql);
         if (is_object($query)) {
             $result = array();
             while ($row = $query->fetch_assoc()) {
                 $key = reset($row);
-                if (isset($result[$key]) && count($row) == 2) {
-                    $result[$key] = (array) $result[$key] + array(
-                        count($result[$key]) => next($row)
-                    );
+                $value = count($row) == 2 ? next($row) : $row; 
+                if (count($row) > 2) {
+                    array_shift($value);
+                }
+                if (isset($result[$key])) {
+                    if (is_array($value)) {
+                        if (!is_array(reset($result[$key]))) {
+                            $result[$key] = array($result[$key]);
+                        } 
+                        $result[$key] []= $value;
+                    } else {
+                        $result[$key] = array_merge((array)$result[$key], (array)$value);
+                    }
                 } else {
-                    $result[$key] = count($row) == 2 ? next($row) : $row;
+                    $result[$key] = $value;
                 }
             }
         }
         return $result;
+    }
+
+    public function fetchSingle(string $sql) {
+        $query = $this->dbms->query($sql);
+        if (is_object($query)) {
+            $row = $query->fetch_row();
+            if (isset($row[0])) {
+                return $row[0];
+            }
+        }
+        return false;
     }
 
     /** Translate defined string to the language stored in $_SESSION['language'].
@@ -184,7 +207,7 @@ class MyCMS {
     }
     
     /**
-     * CSRF
+     * Create a general CSRF token, keep it in session
      * 
      * @todo - test fully
      */
