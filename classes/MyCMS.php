@@ -134,7 +134,7 @@ class MyCMS {
      * @param string SQL to be executed
      * @result mixed - either associative array, empty array on empty select, or false on error
      */
-    public function fetchAndReindex(string $sql) {
+    public function fetchAndReindex($sql) {
         $result = false;
         $query = $this->dbms->query($sql);
         if (is_object($query)) {
@@ -162,7 +162,7 @@ class MyCMS {
         return $result;
     }
 
-    public function fetchSingle(string $sql) {
+    public function fetchSingle($sql) {
         $query = $this->dbms->query($sql);
         if (is_object($query)) {
             $row = $query->fetch_row();
