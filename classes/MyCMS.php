@@ -79,7 +79,6 @@ class MyCMS {
      * @param array $getArray $_GET or its equivalent
      * @param array $sessionArray $_SESSION or its equivalent
      * @return bool $makeInclude for testing may be set to false as mycms itself does not contain the language-XX.inc.php files
-     * @param array $options open to customization project by project
      * @return string to be used as $_SESSION['language']
      * 
      * constant TAB_PREFIX expected
