@@ -84,43 +84,50 @@ class MyCMS {
      * 
      * constant TAB_PREFIX expected
      */
-    public function getSessionLanguage(array $getArray, array $sessionArray, $makeInclude = true, array $options = array()) {
+    public function getSessionLanguage(array $getArray, array $sessionArray, $makeInclude = true) {
         $resultLanguage = (isset($getArray['language']) && isset($this->TRANSLATIONS[$getArray['language']])) ?
                 $getArray['language'] :
                 ((isset($sessionArray['language']) && isset($this->TRANSLATIONS[$sessionArray['language']])) ? $sessionArray['language'] : DEFAULT_LANGUAGE);
-
-        $config = array_merge(array(
-            'query_settings' => 'SELECT context FROM ' . TAB_PREFIX . 'page WHERE code="SETTINGS"',
-            'query_website' => 'SELECT content_' . $resultLanguage . ' FROM ' . TAB_PREFIX . 'page WHERE code="WEBSITE"',
-                ), $options);
-
         if ($makeInclude) {
             $languageFile = './language-' . $resultLanguage . '.inc.php';
             if (file_exists($languageFile)) {
                 include_once $languageFile; //MUST contain $translation = array(...);
                 //@todo assert $translation is set and it is an array
                 $this->TRANSLATION = $translation;
-
-                // universal loader of project (and language) specific tags from database
-                //@todo $row statements replace with queryArray($sql, true) from Backyard?            
-                if (($row = $this->dbms->query($config['query_settings'])) && $row = $row->fetch_row()) {
-                    $this->SETTINGS = json_decode($row[0], true);//If SETTINGS missing but the SQL statement returns something, then look for error within JSON.
-                } //else fail in universal check
-                // universal
-                if (($row = $this->dbms->query($config['query_website'])) && $row = $row->fetch_row()) {
-                    $this->WEBSITE = json_decode($row[0], true);//If WEBSITE missing but the SQL statement returns something, then look for error within JSON.
-                } //else fail in universal check
-                // universal check
-                if (!$this->SETTINGS || !$this->WEBSITE) {
-                    $this->logger->emergency((!$this->SETTINGS?"SETTINGS missing. ({$config['query_settings']}) ":"").(!$this->WEBSITE?"WEBSITE missing. ({$config['query_website']}) ":""));                    
-                    die('Fatal error - project is not configured.'); //@todo nicely formatted error page
-                }
             } else {
                 $this->logger->error("Missing expected language file {$languageFile}");
             }
         }
 
         return $resultLanguage;
+    }
+
+    /** Load specific settings from database to $this->SETTINGS and $this->WEBSITE
+     * @param mixed array or SQL SELECT statement to get project-specific settings
+     * @param mixed array or SQL SELECT statement to get language-specific website settings
+     * @param bool die on error (i.e. if $this->SETTINGS or $this->WEBSITE is not loaded)?
+     */
+    public function loadSettings($selectSettings, $selectWebsite, $die = true) {
+        if (is_array($selectSettings)) {
+            $this->SETTINGS = $selectSettings;
+        } elseif ($row = $this->fetchSingle($selectSettings)) {
+            $this->SETTINGS = json_decode($row, true);//If SETTINGS missing but the SQL statement returns something, then look for error within JSON.
+        } //else fail in universal check
+        if (is_array($selectWebsite)) {
+            $this->WEBSITE = $selectSettings;
+        } elseif ($row = $this->fetchSingle($selectWebsite)) {
+            $this->WEBSITE = json_decode($row, true);//If WEBSITE missing but the SQL statement returns something, then look for error within JSON.
+        } //else fail in universal check
+        // universal check
+        if (!$this->SETTINGS || !$this->WEBSITE) {
+            $this->logger->emergency((!$this->SETTINGS ? "SETTINGS missing ($selectSettings).\n" : "") . (!$this->WEBSITE ? "WEBSITE missing ($selectWebsite).\n" : ""));
+            if ($die) {
+                die('Fatal error - project is not configured.'); //@todo nicely formatted error page
+            } else {
+                return false;
+            }
+        }
+        return true;
     }
 
     /** Execute an SQL, fetch resultset into an array reindexed by first field.
