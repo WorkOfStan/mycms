@@ -51,7 +51,7 @@ class TableAdmin extends TableLister {
                 $record = $record->fetch_assoc();
             }
         }
-        $output = (isset($options['exclude-form']) ? '' : '<form method="post"><fieldset>') . PHP_EOL
+        $output = (isset($options['exclude-form']) ? '' : '<form method="post" enctype="multipart/form-data"><fieldset>') . PHP_EOL
             . Tools::htmlInput('database-table', '', $this->table, 'hidden') . PHP_EOL
             . Tools::htmlInput('form-csrf', '', $_SESSION['csrf-' . $this->table] = rand(1e8, 1e9 - 1), 'hidden') . PHP_EOL
             . '<table class="database">';
@@ -355,8 +355,11 @@ class TableAdmin extends TableLister {
         }
         if ($sql) {
             $sql = 'UPDATE ' . Tools::escapeDbIdentifier($this->table) . ' SET ' . mb_substr($sql, 1) . Tools::wrap(mb_substr($where, 5), ' WHERE ') . ' LIMIT 1';
-            if (!$this->resolveSQL($sql, $messageSuccess ?: 'Záznam uložen.', $messageError ?: 'Záznam se nepodařilo uložit. #%errno%: %error%')) {
+            if ($this->resolveSQL($sql, $messageSuccess ?: 'Záznam uložen.', $messageError ?: 'Záznam se nepodařilo uložit. #%errno%: %error%')) {
+                return true;
+            } else {
                 //@todo if unsuccessful, store data being saved to session
+                return false;
             }
         }
     }
