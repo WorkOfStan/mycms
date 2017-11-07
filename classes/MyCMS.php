@@ -2,7 +2,7 @@
 
 namespace GodsDev\MyCMS;
 
-use Psr\Log\LoggerInterface;
+//use Psr\Log\LoggerInterface;
 
 class MyCMS {
 
@@ -97,20 +97,22 @@ class MyCMS {
         if ($makeInclude) {
             $languageFile = './language-' . $resultLanguage . '.inc.php';
             if (file_exists($languageFile)) {
-                include_once $languageFile; //MUST containt $translation = array(...);
+                include_once $languageFile; //MUST contain $translation = array(...);
+                //@todo assert $translation is set and it is an array
                 $this->TRANSLATION = $translation;
 
                 // universal loader of project (and language) specific tags from database
                 //@todo $row statements replace with queryArray($sql, true) from Backyard?            
                 if (($row = $this->dbms->query($config['query_settings'])) && $row = $row->fetch_row()) {
-                    $this->SETTINGS = json_decode($row[0], true);
+                    $this->SETTINGS = json_decode($row[0], true);//If SETTINGS missing but the SQL statement returns something, then look for error within JSON.
                 } //else fail in universal check
                 // universal
                 if (($row = $this->dbms->query($config['query_website'])) && $row = $row->fetch_row()) {
-                    $this->WEBSITE = json_decode($row[0], true);
+                    $this->WEBSITE = json_decode($row[0], true);//If WEBSITE missing but the SQL statement returns something, then look for error within JSON.
                 } //else fail in universal check
-                // universal check @todo stop by else above?
+                // universal check
                 if (!$this->SETTINGS || !$this->WEBSITE) {
+                    $this->logger->emergency((!$this->SETTINGS?"SETTINGS missing. ({$config['query_settings']}) ":"").(!$this->WEBSITE?"WEBSITE missing. ({$config['query_website']}) ":""));                    
                     die('Fatal error - project is not configured.'); //@todo nicely formatted error page
                 }
             } else {
@@ -126,7 +128,7 @@ class MyCMS {
      * Example: 'SELECT id,name FROM employees' --> [3=>"John", 4=>"Mary", 5=>"Joe"]
      * If the result set has more than two fields, whole resultset is fetched into each array item
      * Example: 'SELECT id,name,surname FROM employees' --> [3=>[name=>"John", surname=>"Smith"], [...]]
-     * If the first column is non-unique, results are accumulated.
+     * If the first column is non-unique, results are joined into an array.
      * Example: 'SELECT department_id,name FROM employees' --> [1=>['John', 'Mary'], 2=>['Joe','Pete','Sally']]
      * Example: 'SELECT division_id,name,surname FROM employees' --> [1=>[[name=>'John',surname=>'Doe'], [name=>'Mary',surname=>'Saint']], 2=>[...]]
      * @param string SQL to be executed
@@ -180,7 +182,7 @@ class MyCMS {
      */
     public function translate($id, $options = null) {
         if (!isset($this->TRANSLATION[$id]) && isset($_SESSION['test-translations']) && $_SESSION['language'] != DEFAULT_LANGUAGE) {
-            error_log('Translation does not exist - ' . $id); //@todo replace with a standard logger
+            $this->logger->warning('Translation does not exist - ' . $id);
         }
         $result = isset($this->TRANSLATION[$id]) ? $this->TRANSLATION[$id] : $id;
         if ($options === L_UCFIRST) {
@@ -194,6 +196,8 @@ class MyCMS {
     /**
      * In case of form processing includes either admin-process.php or process.php.
      * 
+     * @todo - test fully
+     * 
      */
     public function formController() {
         // fork for for admin and form processing
@@ -203,7 +207,9 @@ class MyCMS {
     }
     
     /**
-     * CSRF
+     * Create a general CSRF token, keep it in session
+     * 
+     * @todo - test fully
      */
     public function csrf() {
         if (!isset($_GET['keep-token'])) {
