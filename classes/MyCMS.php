@@ -97,21 +97,22 @@ class MyCMS {
         if ($makeInclude) {
             $languageFile = './language-' . $resultLanguage . '.inc.php';
             if (file_exists($languageFile)) {
-                include_once $languageFile; //MUST containt $translation = array(...);
+                include_once $languageFile; //MUST contain $translation = array(...);
+                //@todo assert $translation is set and it is an array
                 $this->TRANSLATION = $translation;
 
                 // universal loader of project (and language) specific tags from database
                 //@todo $row statements replace with queryArray($sql, true) from Backyard?            
                 if (($row = $this->dbms->query($config['query_settings'])) && $row = $row->fetch_row()) {
-                    $this->SETTINGS = json_decode($row[0], true);
+                    $this->SETTINGS = json_decode($row[0], true);//If SETTINGS missing but the SQL statement returns something, then look for error within JSON.
                 } //else fail in universal check
                 // universal
                 if (($row = $this->dbms->query($config['query_website'])) && $row = $row->fetch_row()) {
-                    $this->WEBSITE = json_decode($row[0], true);
+                    $this->WEBSITE = json_decode($row[0], true);//If WEBSITE missing but the SQL statement returns something, then look for error within JSON.
                 } //else fail in universal check
-                // universal check @todo stop by else above?
+                // universal check
                 if (!$this->SETTINGS || !$this->WEBSITE) {
-                    $this->logger->emergency((!$this->SETTINGS?"SETTINGS missing. ":"").(!$this->WEBSITE?"WEBSITE missing. ":""));                    
+                    $this->logger->emergency((!$this->SETTINGS?"SETTINGS missing. ({$config['query_settings']}) ":"").(!$this->WEBSITE?"WEBSITE missing. ({$config['query_website']}) ":""));                    
                     die('Fatal error - project is not configured.'); //@todo nicely formatted error page
                 }
             } else {
@@ -126,7 +127,10 @@ class MyCMS {
      * If the query selects only two fields, the first one is a key and the second one a value of the result array
      * Example: 'SELECT id,name FROM employees' --> [3=>"John", 4=>"Mary", 5=>"Joe"]
      * If the result set has more than two fields, whole resultset is fetched into each array item
-     * Example: 'SELECT id,name,surname FROM employees' --> [3=>[id=>3, name=>"John", surname=>"Smith"], [...]]
+     * Example: 'SELECT id,name,surname FROM employees' --> [3=>[name=>"John", surname=>"Smith"], [...]]
+     * If the first column is non-unique, results are joined into an array.
+     * Example: 'SELECT department_id,name FROM employees' --> [1=>['John', 'Mary'], 2=>['Joe','Pete','Sally']]
+     * Example: 'SELECT division_id,name,surname FROM employees' --> [1=>[[name=>'John',surname=>'Doe'], [name=>'Mary',surname=>'Saint']], 2=>[...]]
      * @param string SQL to be executed
      * @result mixed - either associative array, empty array on empty select, or false on error
      */
@@ -137,16 +141,36 @@ class MyCMS {
             $result = array();
             while ($row = $query->fetch_assoc()) {
                 $key = reset($row);
-                if (isset($result[$key]) && count($row) == 2) {
-                    $result[$key] = (array) $result[$key] + array(
-                        count($result[$key]) => next($row)
-                    );
+                $value = count($row) == 2 ? next($row) : $row; 
+                if (count($row) > 2) {
+                    array_shift($value);
+                }
+                if (isset($result[$key])) {
+                    if (is_array($value)) {
+                        if (!is_array(reset($result[$key]))) {
+                            $result[$key] = array($result[$key]);
+                        } 
+                        $result[$key] []= $value;
+                    } else {
+                        $result[$key] = array_merge((array)$result[$key], (array)$value);
+                    }
                 } else {
-                    $result[$key] = count($row) == 2 ? next($row) : $row;
+                    $result[$key] = $value;
                 }
             }
         }
         return $result;
+    }
+
+    public function fetchSingle($sql) {
+        $query = $this->dbms->query($sql);
+        if (is_object($query)) {
+            $row = $query->fetch_row();
+            if (isset($row[0])) {
+                return $row[0];
+            }
+        }
+        return false;
     }
 
     /** Translate defined string to the language stored in $_SESSION['language'].
@@ -183,7 +207,7 @@ class MyCMS {
     }
     
     /**
-     * CSRF
+     * Create a general CSRF token, keep it in session
      * 
      * @todo - test fully
      */
