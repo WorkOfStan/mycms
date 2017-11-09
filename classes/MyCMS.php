@@ -47,8 +47,8 @@ class MyCMS {
      */
     private $logger;
 
-    /**
-     * 
+    /** Constructor
+     *
      * @param array $myCmsConf
      */
     public function __construct(array $myCmsConf = array()) {
@@ -102,8 +102,8 @@ class MyCMS {
     }
 
     /** Load specific settings from database to $this->SETTINGS and $this->WEBSITE
-     * @param mixed array or SQL SELECT statement to get project-specific settings
-     * @param mixed array or SQL SELECT statement to get language-specific website settings
+     * @param mixed $selectSettings array or SQL SELECT statement to get project-specific settings
+     * @param mixed $selectWebsite array or SQL SELECT statement to get language-specific website settings
      * @param bool die on error (i.e. if $this->SETTINGS or $this->WEBSITE is not loaded)?
      */
     public function loadSettings($selectSettings, $selectWebsite, $die = true) {
@@ -137,7 +137,7 @@ class MyCMS {
      * If the first column is non-unique, results are joined into an array.
      * Example: 'SELECT department_id,name FROM employees' --> [1=>['John', 'Mary'], 2=>['Joe','Pete','Sally']]
      * Example: 'SELECT division_id,name,surname FROM employees' --> [1=>[[name=>'John',surname=>'Doe'], [name=>'Mary',surname=>'Saint']], 2=>[...]]
-     * @param string SQL to be executed
+     * @param string $sql SQL to be executed
      * @result mixed - either associative array, empty array on empty select, or false on error
      */
     public function fetchAndReindex($sql) {
@@ -168,12 +168,33 @@ class MyCMS {
         return $result;
     }
 
+    /** Execute an SQL, fetch and return all resulting rows
+     * @param string $sql
+     * @param mixed array of associative arrays for each result row or empty array on error or no results
+     */
+    public function fetchAll($sql) {
+        $result = array();
+        $query = $this->dbms->query($sql);
+        if (is_object($query)) {
+            while ($row = $query->fetch_assoc()) {
+                $result []= $row;
+            }
+        }
+        return $result;
+    }
+
+    /** Execute an SQL, fetch resultset into an array reindexed by first field.
+     * @param string $sql SQL to be executed
+     * @result mixed - either scalar value, null or empty SELECT or false on error
+     */
     public function fetchSingle($sql) {
         $query = $this->dbms->query($sql);
         if (is_object($query)) {
             $row = $query->fetch_row();
             if (isset($row[0])) {
                 return $row[0];
+            } else {
+                return null;
             }
         }
         return false;
