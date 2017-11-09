@@ -183,16 +183,19 @@ class MyCMS {
         return $result;
     }
 
-    /** Execute an SQL, fetch resultset into an array reindexed by first field.
+    /** Execute an SQL and fetch the first row of a resultset.
+     * If only one column is selected, return it, otherwise return whole row.
      * @param string $sql SQL to be executed
-     * @result mixed - either scalar value, null or empty SELECT or false on error
+     * @result mixed - first row (first column if only one is selected), null on empty SELECT, or false on error
      */
     public function fetchSingle($sql) {
         $query = $this->dbms->query($sql);
         if (is_object($query)) {
-            $row = $query->fetch_row();
-            if (isset($row[0])) {
-                return $row[0];
+            $row = $query->fetch_assoc();
+            if (count($row) > 1) {
+                return $row;
+            } elseif (is_array($row)) {
+                return reset($row);
             } else {
                 return null;
             }
