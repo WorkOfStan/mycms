@@ -55,7 +55,7 @@ class TableLister
     {
         $this->dbms = $dbms;
         $this->table = $table;
-        $this->options = (array) $options;
+        $this->options = (array)$options;
         if ($query = $this->dbms->query('SELECT DATABASE()')) {
             $this->options['database'] = $query->fetch_row()[0];
         }
@@ -249,7 +249,7 @@ class TableLister
         $query = $this->dbms->query($sql);
         $totalRows = $this->dbms->query('SELECT FOUND_ROWS()')->fetch_row()[0];
         if (!$options['read-only']) {
-            echo '<a href="?table=' . urlencode($this->table) . '&amp;where[]="><span class="glyphicon glyphicon-plus fa fa-plus-circle" /></span> Nová položka</a>' . PHP_EOL;
+            echo '<a href="?table=' . urlencode($this->table) . '&amp;where[]="><span class="glyphicon glyphicon-plus fa fa-plus-circle" /></span> ' . $this->translate('New row') . '</a>' . PHP_EOL;
         }
         $this->viewInputs($options);
         if ($totalRows) {
@@ -257,9 +257,9 @@ class TableLister
             $this->pagination($limit, $totalRows);
         }
         if (!$totalRows && isset($_GET['col'])) {
-            echo '<p class="alert alert-danger"><small>Nebyly nalezeny žádné záznamy.</small></p>';
+            echo '<p class="alert alert-danger"><small>' . $this->translate('No records found.') . '</small></p>';
         } else {
-            echo '<p class="text-success"><small>Celkem řádků: ' . $totalRows . '.</small></p>';
+            echo '<p class="text-success"><small>' . $this->translate('Total rows: ') . $totalRows . '.</small></p>';
         }
     }
 
@@ -271,26 +271,26 @@ class TableLister
         echo '<form action="" method="get" class="table-controls">' . PHP_EOL;
         if (!isset($option['no-search']) || !$option['no-search']) {
             echo '<fieldset><legend><a href="javascript:;" onclick="$(\'#search-div\').toggle()">'
-                . '<span class="glyphicon glyphicon-search fa fa-search"></span> Vyhledat</a></legend>'
+                . '<span class="glyphicon glyphicon-search fa fa-search"></span> ' . $this->translate('Search') . '</a></legend>'
                 . '<div id="search-div"></div></fieldset>' . PHP_EOL;
         }
         if (!isset($option['no-sort']) || !$option['no-sort']) {
             echo '<fieldset><legend><a href="javascript:;" onclick="$(\'#sort-div\').toggle()">'
-                . '<span class="glyphicon glyphicon-sort fa fa-sort"></span> Seřadit</a></legend>'
+                . '<span class="glyphicon glyphicon-sort fa fa-sort"></span> ' . $this->translate('Sort') . '</a></legend>'
                 . '<div id="sort-div"></div></fieldset>' . PHP_EOL;
         }
-        echo '<fieldset><legend><span class="glyphicon glyphicon-list-alt fa fa-list-alt"></span> Zobrazit</legend>
+        echo '<fieldset><legend><span class="glyphicon glyphicon-list-alt fa fa-list-alt"></span> ' . $this->translate('View') . '</legend>
             <input type="hidden" name="table" value="' . Tools::h($this->table) . '" />
-            <label title="velikost textů">
+            <label title="' . $this->translate('Text lengths') . '">
                 <span class="glyphicon glyphicon-option-horizontal fa fa-ellipsis-h"></span>
                 <input type="text" name="textsize" value="' . Tools::setifnull($_GET['textsize'], $this->DEFAULTS['TEXTSIZE']) . '" size="3" />
             </label>
-            <label title="řádek na stránku">
+            <label title="' . $this->translate('Rows per page') . '">
                 <span class="glyphicon glyphicon-option-vertical fa fa-ellipsis-v"></span>
                 <input type="text" name="limit" value="' . Tools::setifnull($_GET['limit'], $this->DEFAULTS['PAGESIZE']) . '" size="3" />
             </label>
             <input type="hidden" name="offset" value="' . (int)Tools::setifnull($_GET['offset'], 0) . '" />
-            <button type="submit" class="btn btn-sm" title="Zobrazit"/>
+            <button type="submit" class="btn btn-sm" title="' . $this->translate('View') . '"/>
                 <span class="glyphicon glyphicon-list-alt fa fa-list-alt"></span>
             </button>
             </fieldset></form>
@@ -338,12 +338,12 @@ class TableLister
         echo '<form action="" method="post">' . PHP_EOL
             . '<table class="table table-bordered table-striped table-admin" data-order="0">' 
             . PHP_EOL . '<thead><tr>' . ($options['no-multi-options'] ? '' 
-            : '<th>' . Tools::htmlInput('', '', '', array('type' => 'checkbox', 'class' => 'check-all')) . '</th>');
+            : '<th>' . Tools::htmlInput('', '', '', array('type' => 'checkbox', 'class' => 'check-all', 'title' => $this->translate('Check all'))) . '</th>');
         $i = 1;
         $primary = array();
         foreach ($columns as $key => $value) {
             echo '<th' . (count($_GET['sort']) == 1 && $_GET['sort'][0] == $i ? ' class="active"' : '') . '>'
-                . '<a href="?' . Tools::urlchange(array('sort%5B0%5D' => null)) . '&amp;sort%5B0%5D=' . ($i * ($_GET['sort'] == $i ? -1 : 1)) . '">' . Tools::h($key) . '</a>'
+                . '<a href="?' . Tools::urlchange(array('sort%5B0%5D' => null)) . '&amp;sort%5B0%5D=' . ($i * ($_GET['sort'] == $i ? -1 : 1)) . '" title="' . $this->translate('Sort') . '">' . Tools::h($key) . '</a>'
                 . '</th>' . PHP_EOL;
             if ($this->fields[$key]['key'] == 'PRI') {
                 $primary []= $key;
@@ -363,7 +363,7 @@ class TableLister
                     echo Tools::htmlInput('check[]', '', mb_substr($url, 1), array('type' => 'checkbox', 'data-order' => $i));
                 }
                 if ($primary) {
-                    echo '<a href="?table=' . urlencode($this->table) . Tools::h($url) . '" title="upravit">'
+                    echo '<a href="?table=' . urlencode($this->table) . Tools::h($url) . '" title="' . $this->translate('Edit') . '">'
                         . '<small class="glyphicon glyphicon-edit fa fa-pencil" aria-hidden="true"></small></a>';
                 }
                 echo'</td>';
@@ -399,9 +399,12 @@ class TableLister
 
     public function pagination($rowsPerPage, $totalRows, $offset = null)
     {
+        $title = $this->translate('Go to page');
         function addPage($page, $currentPage, $rowsPerPage, $label = null) {
+            global $title;
             echo '<li' . ($page == $currentPage ? ' class="active"' : '') . '>'
-                . '<a href="?' . Tools::urlChange(array('offset' => ($page - 1) * $rowsPerPage)) . '">' . Tools::ifnull($label, $page) . '</a></li>' . PHP_EOL;
+                . '<a href="?' . Tools::urlChange(array('offset' => ($page - 1) * $rowsPerPage)) . '"' . Tools::wrap($title, ' title="', '"') . '>' 
+                . Tools::ifnull($label, $page) . '</a></li>' . PHP_EOL;
         }
 
         if (is_null($offset)) {
@@ -413,20 +416,20 @@ class TableLister
         if ($pages <= 1) {
             return;
         }
-        echo '<nav><ul class="pagination"><li><a name="" class="go-to-page non-page" data-pages="' . $pages . '">Stránka:</a></li>';
-        if ($pages <= 10) { // pagination with all pages
+        echo '<nav><ul class="pagination"><li><a name="" class="go-to-page non-page" data-pages="' . $pages . '">' . $this->translate('Page') . ':</a></li>';
+        if ($pages <= $this->DEFAULTS['PAGES_AROUND'] * 2 + 3) { // pagination with all pages
             if ($currentPage > 1) {
-                addPage($currentPage - 1, $currentPage, $rowsPerPage, 'Předchozí');
+                addPage($currentPage - 1, $currentPage, $rowsPerPage, $this->translate('Previous'));
             }
             for ($page = 1; $page <= $pages; $page++) {
-                addPage($page, $currentPage, $rowsPerPage);
+                addPage($page, $currentPage, $rowsPerPage, null, $this->translate('Go to page'));
             }
             if ($currentPage < $pages) {
-                addPage($currentPage + 1, $currentPage, $rowsPerPage, 'Další');
+                addPage($currentPage + 1, $currentPage, $rowsPerPage, $this->translate('Next'));
             }
         } else { // pagination with first, current, last pages and "..."s in between
             if ($currentPage > 1) {
-                addPage($currentPage - 1, $currentPage, $rowsPerPage, 'Předchozí');
+                addPage($currentPage - 1, $currentPage, $rowsPerPage, $this->translate('Previous'));
             }
             addPage(1, $currentPage, $rowsPerPage);
             echo $currentPage - $this->DEFAULTS['PAGES_AROUND'] > 2 ? '<li><a name="" class="non-page">…</a></li>' : '';
@@ -438,7 +441,7 @@ class TableLister
                 addPage($pages, $currentPage, $rowsPerPage);
             }
             if ($currentPage < $pages) {
-                addPage($currentPage + 1, $currentPage, $rowsPerPage, 'Další');
+                addPage($currentPage + 1, $currentPage, $rowsPerPage, $this->translate('Next'));
             }
         }
         echo '</ul></nav>' . PHP_EOL;
@@ -488,6 +491,19 @@ class TableLister
             Tools::addMessage('success', strtr($success, array('%insertId%' => $insertId, '%affectedRows%' => $affectedRows)));
         } else {
             Tools::addMessage('error', strtr($error, array('%error%' => $this->dbms->error, '%errno%' => $this->dbms->errno)));
+        }
+        return $result;
+    }
+
+    public function translate($text, $escape = true)
+    {
+        if (function_exists('TableListerTranslate')) {
+            $result = TableListerTranslate($text);
+        } else {
+            $result = $text;
+        }
+        if ($escape) {
+            $result = Tools::h($result);
         }
         return $result;
     }

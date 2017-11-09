@@ -71,10 +71,10 @@ class TableAdmin extends TableLister {
                 $output .= TableAdminCustomRecordAction($this->table, $record, $this);
             }
             $output .= '<button type="submit" name="record-save" value="1" '
-                . 'class="btn btn-default btn-primary"><span class="glyphicon glyphicon-floppy-save fa fa-floppy-o"></span> Uložit</button> ';
+                . 'class="btn btn-default btn-primary"><span class="glyphicon glyphicon-floppy-save fa fa-floppy-o"></span> ' . $this->translate('Save') . '</button> ';
             if (is_array($record)) {
-                $output .= '<button type="submit" name="record-delete" class="btn btn-default" value="1" onclick="return confirm(\'Opravdu smazat?\');">'
-                    . '<span class="glyphicon glyphicon-floppy-remove fa fa-trash-o"></span> Smazat</button>';
+                $output .= '<button type="submit" name="record-delete" class="btn btn-default" value="1" onclick="return confirm(\'' . $this->translate('Really delete?') . '\');">'
+                    . '<span class="glyphicon glyphicon-floppy-remove fa fa-trash-o"></span> ' . $this->translate('Delete') . '</button>';
             }
             $output .= '</div>';
         }
@@ -89,7 +89,7 @@ class TableAdmin extends TableLister {
             . Tools::htmlInput(($field['type'] == 'enum' ? $key : "nulls[$key]"), ($field['type'] == 'enum' && $field['null'] ? 'null' : ''), 1,
                 array(
                     'type' => ($field['type'] == 'enum' ? 'radio' : 'checkbox'),
-                    'title' => ($field['null'] ? 'null' : null),
+                    'title' => ($field['null'] ? $this->translate('Insert NULL') : null),
                     'disabled' => ($field['null'] ? null : 'disabled'),
                     'checked' => (is_null($value) ? 'checked' : null),
                     'class' => 'input-null'
@@ -115,7 +115,7 @@ class TableAdmin extends TableLister {
             }
             $input .= '</select>';
             if (isset($comment['display-own']) && $comment['display-own']) {
-                $input .= ' ' . Tools::htmlInput("own[$key]", 'vlastní:', '',
+                $input .= ' ' . Tools::htmlInput("own[$key]", $this->translate('Own value:'), '',
                     array('id' => $key . $this->rand . '_', 'onchange' => "$('#$key$this->rand').val(null);"));
             }
             $field['type'] = null;
@@ -256,7 +256,7 @@ class TableAdmin extends TableLister {
         $output = '<select name="' . Tools::h(isset($options['name']) ? $options['name'] : 'path_id')
             . '" class="' . Tools::h(isset($options['class']) ? $options['class'] : '')
             . '" id="' . Tools::h(isset($options['id']) ? $options['id'] : '') . '">'
-            . Tools::htmlOption('', '--vyberte--');
+            . Tools::htmlOption('', $this->translate('--choose--'));
         $query = $this->dbms->query($sql='SELECT id,LENGTH(path)/' . $module . '-1 AS path_length,' . Tools::escapeDbIdentifier($name)
             . ' FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name) . ' ORDER BY path');
         if (!$query) {
@@ -277,7 +277,7 @@ class TableAdmin extends TableLister {
         $result = '<select name="' . Tools::h($field)
             . '" class="' . Tools::h(isset($options['class']) ? $options['class'] : '')
             . '" id="' . Tools::h(isset($options['id']) ? $options['id'] : '') . '">'
-            . '<option />';
+            . '<option value=""></option>';
         $options['exclude'] = isset($options['exclude']) ? $options['exclude'] : '';
         if (is_array($values)) { // array - just output them as <option>s
             foreach ($values as $key => $value) {
@@ -360,7 +360,7 @@ class TableAdmin extends TableLister {
         }
         if ($sql) {
             $sql = $command . Tools::escapeDbIdentifier($this->table) . ' SET ' . mb_substr($sql, 1) . Tools::wrap(mb_substr($where, 5), ' WHERE ') . ($command == 'UPDATE ' ? ' LIMIT 1' : '');
-            if ($this->resolveSQL($sql, $messageSuccess ?: 'Záznam uložen.', $messageError ?: 'Záznam se nepodařilo uložit. #%errno%: %error%')) {
+            if ($this->resolveSQL($sql, $messageSuccess ?: $this->translate('Record saved.'), $messageError ?: $this->translate('Could not save the record.') . ' #%errno%: %error%')) {
                 return true;
             } else {
                 //@todo if unsuccessful, store data being saved to session
@@ -379,7 +379,7 @@ class TableAdmin extends TableLister {
             }
             $sql = 'DELETE FROM ' . Tools::escapeDbIdentifier($_GET['table']) . ' WHERE ' . implode(' AND ', $sql);
         }
-        $this->resolveSQL($sql, 'Záznam smazán.', 'Záznam se nepodařilo smazat.');
+        $this->resolveSQL($sql, $this->translate('Record deleted.'), $this->translate('Could not delete the record.'));
     }
 
     public function dashboard($options = array())
@@ -391,11 +391,13 @@ class TableAdmin extends TableLister {
     {
         Tools::setifnull($options['table'], 'content');
         Tools::setifnull($options['type'], 'type');
-        $query = $this->dbms->query("SELECT SQL_CALC_FOUND_ROWS $options[type],COUNT($options[type]) FROM " . TAB_PREFIX . "$options[table] GROUP BY $options[type] WITH ROLLUP LIMIT 100");
+        $query = $this->dbms->query('SELECT SQL_CALC_FOUND_ROWS ' . Tools::escapeDbIdentifier($options['type']) . ',COUNT(' . Tools::escapeDbIdentifier($options['type']) . ')'
+            . ' FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $options['table']) 
+            . ' GROUP BY ' . Tools::escapeDbIdentifier($options['type']) . ' WITH ROLLUP LIMIT 100');
         if (!$query) {
             return;
         }
-        $typeIndex = -1;
+        $typeIndex = 0;
         foreach (array_keys($this->fields) as $key => $value) {
             if ($value == $options['type']) {
                 $typeIndex = $key + 1;
@@ -403,12 +405,12 @@ class TableAdmin extends TableLister {
             }
         }
         $totalRows = $this->dbms->query('SELECT FOUND_ROWS()')->fetch_row()[0];
-        echo '<details><summary><h2 class="sub-header">Content by type</h2></summary>' . PHP_EOL
+        echo '<details><summary><h2 class="sub-header">' . $this->translate('By type') . '</h2></summary>' . PHP_EOL
             . '<table class="table table-striped">' . PHP_EOL
-            . '<tr><th>Type</th><th class="text-right">Count</th></tr>' . PHP_EOL;
+            . '<tr><th>' . $this->translate('Type') . '</th><th class="text-right">' . $this->translate('Count') . '</th></tr>' . PHP_EOL;
         while ($row = $query->fetch_row()) {
-            echo '<tr><td>' . ($row[0] ? Tools::h($row[0]) : ($row[0] === '' ? '<i class="insipid">(empty)</i>' : '<big>&Sum;</big>'))
-                . '</td><td class="text-right"><a href="?table=' . Tools::h(TAB_PREFIX . $options['table']) . '&amp;col[0]=' . $typeIndex . '&amp;val[0]=' . Tools::h($row[0]) . '">' . (int)$row[1] . '</td></tr>' . PHP_EOL;
+            echo '<tr><td>' . ($row[0] ? Tools::h($row[0]) : ($row[0] === '' ? '<i class="insipid">(' . $this->translate('empty') . ')</i>' : '<big>&Sum;</big>'))
+                . '</td><td class="text-right"><a href="?table=' . Tools::h(TAB_PREFIX . $options['table']) . '&amp;col[0]=' . $typeIndex . '&amp;val[0]=' . Tools::h($row[0]) . '" title="' . $this->translate('Filter records') . '">' . (int)$row[1] . '</td></tr>' . PHP_EOL;
         }
         echo '</table></details>';
     }
