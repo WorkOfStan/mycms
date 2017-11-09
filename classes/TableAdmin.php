@@ -405,7 +405,7 @@ class TableAdmin extends TableLister {
             }
         }
         $totalRows = $this->dbms->query('SELECT FOUND_ROWS()')->fetch_row()[0];
-        echo '<details><summary><h2 class="sub-header">' . $this->translate('By type') . '</h2></summary>' . PHP_EOL
+        echo '<details><summary><big>' . $this->translate('By type') . '</big></summary>' . PHP_EOL
             . '<table class="table table-striped">' . PHP_EOL
             . '<tr><th>' . $this->translate('Type') . '</th><th class="text-right">' . $this->translate('Count') . '</th></tr>' . PHP_EOL;
         while ($row = $query->fetch_row()) {
