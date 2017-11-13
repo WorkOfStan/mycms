@@ -298,6 +298,7 @@ class TableAdmin extends TableLister {
      */       
     public function outputForeignId($field, $values, $default = null, $options = array())
     {
+        //@todo kdy může nastat situace, že GodsDev\\MyCMS\\addHtmlOption neexistuje?
         if (!function_exists('GodsDev\\MyCMS\\addHtmlOption')) {
             function addHtmlOption($value, $text, $group, $default, $options) {
                 global $lastGroup;
