@@ -10,6 +10,7 @@ use \GodsDev\Tools\Tools;
  */
 class TableLister
 {
+
     // @var mysqli database management system
     protected $dbms;
     // @var string table to list
@@ -63,7 +64,7 @@ class TableLister
         $this->setTable($table);
         $this->rand = rand(1e5, 1e6 - 1);
     }
-    
+
     /** Set (or change) serviced table, get its fields.
      * @param string $table table name
      * @return void
@@ -196,8 +197,8 @@ class TableLister
                 $primary = $key;
             }
             if (isset($this->fields[$key]['foreign_table']) && $this->fields[$key]['foreign_table']) {
-                $join .= ' LEFT JOIN ' . $this->fields[$key]['foreign_table'] 
-                    . ' ON ' . $this->table . '.' . $key 
+                $join .= ' LEFT JOIN ' . $this->fields[$key]['foreign_table']
+                    . ' ON ' . $this->table . '.' . $key
                     . '=' . $this->fields[$key]['foreign_table'] . '.' . $this->fields[$key]['foreign_column'];
                 // try if column of the same name as the table exists (as a replacement for foreign table); use the first field in the table if it doesn't exist 
                 $tmp = $this->dbms->query('SHOW FIELDS FROM ' . Tools::escapeDbIdentifier($this->fields[$key]['foreign_table']))->fetch_all();
@@ -207,8 +208,8 @@ class TableLister
                 }
                 $foreign_link = mb_substr($this->fields[$key]['foreign_table'], mb_strlen(TAB_PREFIX));
                 $foreign_link = isset($tmp[$foreign_link]) && $foreign_link ? $foreign_link : reset($tmp);
-                $columns[$key] = Tools::escapeDbIdentifier($this->table) . '.' . $value . ',' 
-                    . Tools::escapeDbIdentifier($this->fields[$key]['foreign_table']) . '.' 
+                $columns[$key] = Tools::escapeDbIdentifier($this->table) . '.' . $value . ','
+                    . Tools::escapeDbIdentifier($this->fields[$key]['foreign_table']) . '.'
                     . Tools::escapeDbIdentifier($foreign_link) . ' AS ' . Tools::escapeDbIdentifier($key . $this->DEFAULTS['FOREIGNLINK']);
             }
         }
@@ -222,7 +223,7 @@ class TableLister
         if (isset($_GET['col']) && is_array($_GET['col'])) {
             $filterColumn = array('');
             foreach ($columns as $key => $value) {
-                $filterColumn []= $key;
+                $filterColumn [] = $key;
             }
             unset($filterColumn[0]);
             foreach ($_GET['col'] as $key => $value) {
@@ -230,7 +231,7 @@ class TableLister
                     $where .= ' AND ';
                     switch ($_GET['op'][$key]) {
                         default:
-                            $where .= Tools::escapeDbIdentifier($this->table) . '.' . Tools::escapeDbIdentifier($filterColumn[$value]) 
+                            $where .= Tools::escapeDbIdentifier($this->table) . '.' . Tools::escapeDbIdentifier($filterColumn[$value])
                                 . '="' . Tools::escapeSQL($_GET['val'][$key]) . '"';
                     }
                 }
@@ -241,10 +242,10 @@ class TableLister
                 $sort .= ',' . array_values($columns)[(int)$value - 1] . (isset($_GET['desc'][$key]) && $_GET['desc'][$key] ? ' DESC' : '');
             }
         }
-        $sql = 'SELECT SQL_CALC_FOUND_ROWS ' . implode(',', $columns) . ' FROM ' 
+        $sql = 'SELECT SQL_CALC_FOUND_ROWS ' . implode(',', $columns) . ' FROM '
             . Tools::escapeDbIdentifier($this->table) . $join
             . Tools::wrap(substr($where, 4), ' WHERE ')
-            . Tools::wrap(substr($sort, 1), ' ORDER BY ')  
+            . Tools::wrap(substr($sort, 1), ' ORDER BY ')
             . " LIMIT $offset, $limit";
         $query = $this->dbms->query($sql);
         $totalRows = $this->dbms->query('SELECT FOUND_ROWS()')->fetch_row()[0];
@@ -336,9 +337,8 @@ class TableLister
     {
         Tools::setifnull($_GET['sort']);
         echo '<form action="" method="post">' . PHP_EOL
-            . '<table class="table table-bordered table-striped table-admin" data-order="0">' 
-            . PHP_EOL . '<thead><tr>' . ($options['no-multi-options'] ? '' 
-            : '<th>' . Tools::htmlInput('', '', '', array('type' => 'checkbox', 'class' => 'check-all', 'title' => $this->translate('Check all'))) . '</th>');
+            . '<table class="table table-bordered table-striped table-admin" data-order="0">'
+            . PHP_EOL . '<thead><tr>' . ($options['no-multi-options'] ? '' : '<th>' . Tools::htmlInput('', '', '', array('type' => 'checkbox', 'class' => 'check-all', 'title' => $this->translate('Check all'))) . '</th>');
         $i = 1;
         $primary = array();
         foreach ($columns as $key => $value) {
@@ -388,7 +388,7 @@ class TableLister
                                 break;
                         }
                     }
-                    echo '<td' . Tools::wrap(implode(' ', $class), ' class="', '"') . '>' 
+                    echo '<td' . Tools::wrap(implode(' ', $class), ' class="', '"') . '>'
                         . $output . '</td>' . PHP_EOL;
                 }
                 echo '</tr>' . PHP_EOL;
@@ -397,15 +397,17 @@ class TableLister
         echo '</tbody></table>' . PHP_EOL . '</form>';
     }
 
+    private function addPage($page, $currentPage, $rowsPerPage, $label = null)
+    {
+        global $title;
+        echo '<li' . ($page == $currentPage ? ' class="active"' : '') . '>'
+        . '<a href="?' . Tools::urlChange(array('offset' => ($page - 1) * $rowsPerPage)) . '"' . Tools::wrap($title, ' title="', '"') . '>'
+        . Tools::ifnull($label, $page) . '</a></li>' . PHP_EOL;
+    }
+
     public function pagination($rowsPerPage, $totalRows, $offset = null)
     {
         $title = $this->translate('Go to page');
-        function addPage($page, $currentPage, $rowsPerPage, $label = null) {
-            global $title;
-            echo '<li' . ($page == $currentPage ? ' class="active"' : '') . '>'
-                . '<a href="?' . Tools::urlChange(array('offset' => ($page - 1) * $rowsPerPage)) . '"' . Tools::wrap($title, ' title="', '"') . '>' 
-                . Tools::ifnull($label, $page) . '</a></li>' . PHP_EOL;
-        }
 
         if (is_null($offset)) {
             $offset = max(isset($_GET['offset']) ? +$_GET['offset'] : 0, 0);
@@ -419,29 +421,29 @@ class TableLister
         echo '<nav><ul class="pagination"><li><a name="" class="go-to-page non-page" data-pages="' . $pages . '">' . $this->translate('Page') . ':</a></li>';
         if ($pages <= $this->DEFAULTS['PAGES_AROUND'] * 2 + 3) { // pagination with all pages
             if ($currentPage > 1) {
-                addPage($currentPage - 1, $currentPage, $rowsPerPage, $this->translate('Previous'));
+                $this->addPage($currentPage - 1, $currentPage, $rowsPerPage, $this->translate('Previous'));
             }
             for ($page = 1; $page <= $pages; $page++) {
-                addPage($page, $currentPage, $rowsPerPage, null, $this->translate('Go to page'));
+                $this->addPage($page, $currentPage, $rowsPerPage, null, $this->translate('Go to page'));
             }
             if ($currentPage < $pages) {
-                addPage($currentPage + 1, $currentPage, $rowsPerPage, $this->translate('Next'));
+                $this->addPage($currentPage + 1, $currentPage, $rowsPerPage, $this->translate('Next'));
             }
         } else { // pagination with first, current, last pages and "..."s in between
             if ($currentPage > 1) {
-                addPage($currentPage - 1, $currentPage, $rowsPerPage, $this->translate('Previous'));
+                $this->addPage($currentPage - 1, $currentPage, $rowsPerPage, $this->translate('Previous'));
             }
-            addPage(1, $currentPage, $rowsPerPage);
+            $this->addPage(1, $currentPage, $rowsPerPage);
             echo $currentPage - $this->DEFAULTS['PAGES_AROUND'] > 2 ? '<li><a name="" class="non-page">…</a></li>' : '';
             for ($page = max($currentPage - $this->DEFAULTS['PAGES_AROUND'], 2); $page <= min($currentPage + $this->DEFAULTS['PAGES_AROUND'], $pages); $page++) {
-                addPage($page, $currentPage, $rowsPerPage);
+                $this->addPage($page, $currentPage, $rowsPerPage);
             }
             echo $currentPage < $pages - $this->DEFAULTS['PAGES_AROUND'] - 1 ? '<li><a name="" class="non-page">…</a></li>' : '';
             if ($currentPage < $pages - $this->DEFAULTS['PAGES_AROUND']) {
-                addPage($pages, $currentPage, $rowsPerPage);
+                $this->addPage($pages, $currentPage, $rowsPerPage);
             }
             if ($currentPage < $pages) {
-                addPage($currentPage + 1, $currentPage, $rowsPerPage, $this->translate('Next'));
+                $this->addPage($currentPage + 1, $currentPage, $rowsPerPage, $this->translate('Next'));
             }
         }
         echo '</ul></nav>' . PHP_EOL;
@@ -497,6 +499,7 @@ class TableLister
 
     public function translate($text, $escape = true)
     {
+        //@todo kdy může nastat situace, že TableListerTranslate neexistuje? Proč to nenadefinovat jako GodsDev\mycms\Utils\TableListerTranslate ?
         if (function_exists('TableListerTranslate')) {
             $result = TableListerTranslate($text);
         } else {
@@ -507,4 +510,5 @@ class TableLister
         }
         return $result;
     }
+
 }

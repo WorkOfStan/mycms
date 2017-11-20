@@ -122,21 +122,24 @@ class TableAdmin extends TableLister {
         }
         if (!is_null($field['type']) && isset($comment['edit']) && $comment['edit'] == 'json') {
             $json = json_decode($value, true);
-            $output .= '<fieldset class="input-expanded">' . Tools::htmlInput($key . EXPAND_INFIX, '', 1, 'hidden');
+            $output .= '<div class="input-expanded">' . Tools::htmlInput($key . EXPAND_INFIX, '', 1, 'hidden');
             if (!is_array($json) && isset($comment['subfields']) && is_array($comment['subfields'])) {
                 foreach ($comment['subfields'] as $v) {
                     Tools::setifnull($json[$v], null);
                 }
             }
             if (is_array($json)) {
-                foreach ($json as $k => $v) {
-                    $output .= '<label>' . Tools::h($k) . ': ' . Tools::htmlInput($key . EXPAND_INFIX . $k, '', $v, array('class' => 'form-control')) . "</label><br />\n";
+                $output .= '<table class="w-100 json-expanded">';
+                foreach ($json + array('' => '') as $k => $v) {
+                    $output .= '<tr><td class="first w-25">' . Tools::htmlInput(EXPAND_INFIX . $key . '[]', '', $k, array('class' => 'form-control form-control-sm')) . '</td>'
+                        . '<td class="second w-75">' . Tools::htmlInput(EXPAND_INFIX . EXPAND_INFIX . $key . '[]', '', $v, array('class' => 'form-control form-control-sm')) . '</td></tr>' . PHP_EOL;
                 }
+                $output .= '</table>';
             }
             if (!$json) {
                 $output .= '<textarea name="fields[' . Tools::h($key) . ']" class="w-100"></textarea>';
             }
-            $output .= '</fieldset>';
+            $output .= '</div>';
             $input = false;
             $field['type'] = null;
         }
@@ -298,6 +301,7 @@ class TableAdmin extends TableLister {
      */       
     public function outputForeignId($field, $values, $default = null, $options = array())
     {
+        //@todo kdy může nastat situace, že GodsDev\\MyCMS\\addHtmlOption neexistuje?
         if (!function_exists('GodsDev\\MyCMS\\addHtmlOption')) {
             function addHtmlOption($value, $text, $group, $default, $options) {
                 global $lastGroup;
@@ -357,16 +361,11 @@ class TableAdmin extends TableLister {
         $command = 'UPDATE ';
         if (is_array($this->fields)) {
             foreach ($_POST as $key => $value) {
-                if (Tools::ends($key, EXPAND_INFIX)) {
-                    $tmp = array();
-                    foreach ($_POST as $k => $v) {
-                        if (Tools::begins($k, $key) && $k != $key) {
-                            $tmp[substr($k, strlen($key))] = $v;
-                            unset($_POST[$k]);
-                        }
-                    }
-                    $_POST[substr($key, 0, strlen($key) - strlen(EXPAND_INFIX))] = json_encode($tmp);
-                    unset($_POST[$key]);
+                if (Tools::begins($key, EXPAND_INFIX) && !Tools::begins($key, EXPAND_INFIX . EXPAND_INFIX)) {
+                    $_POST['fields'][$key = substr($key, strlen(EXPAND_INFIX))] = array_combine($_POST[EXPAND_INFIX . $key], $_POST[EXPAND_INFIX . EXPAND_INFIX . $key]);
+                    unset($_POST['fields'][$key]['']);
+                    $_POST['fields'][$key] = json_encode($_POST['fields'][$key]);
+                    unset($_POST[$key], $_POST[EXPAND_INFIX . $key]);
                 }
             }
             foreach ($this->fields as $key => $field) {
@@ -386,7 +385,7 @@ class TableAdmin extends TableLister {
                 switch ($field['basictype']) {
                     case 'integer': case 'rational':
                         $sql .= ',' . Tools::escapeDbIdentifier($key) . '='
-                            . (is_null($value) ? 'NULL' : +$value);
+                            . (is_null($value) ? 'NULL' : ($field['basictype'] == 'integer' ? (int)$value : (double)$value));
                         break;
                     default:
                         $sql .= ',' . Tools::escapeDbIdentifier($key) . '='
