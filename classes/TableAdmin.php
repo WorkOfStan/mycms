@@ -128,16 +128,15 @@ class TableAdmin extends TableLister {
                     Tools::setifnull($json[$v], null);
                 }
             }
-            if (is_array($json)) {
+            if (is_array($json) && is_scalar(reset($json))) {
                 $output .= '<table class="w-100 json-expanded">';
                 foreach ($json + array('' => '') as $k => $v) {
                     $output .= '<tr><td class="first w-25">' . Tools::htmlInput(EXPAND_INFIX . $key . '[]', '', $k, array('class' => 'form-control form-control-sm')) . '</td>'
                         . '<td class="second w-75">' . Tools::htmlInput(EXPAND_INFIX . EXPAND_INFIX . $key . '[]', '', $v, array('class' => 'form-control form-control-sm')) . '</td></tr>' . PHP_EOL;
                 }
                 $output .= '</table>';
-            }
-            if (!$json) {
-                $output .= '<textarea name="fields[' . Tools::h($key) . ']" class="w-100"></textarea>';
+            } else {
+                $output .= '<textarea name="fields[' . Tools::h($key) . ']" class="w-100">' . $value . '</textarea>';
             }
             $output .= '</div>';
             $input = false;
@@ -364,7 +363,7 @@ class TableAdmin extends TableLister {
                 if (Tools::begins($key, EXPAND_INFIX) && !Tools::begins($key, EXPAND_INFIX . EXPAND_INFIX)) {
                     $_POST['fields'][$key = substr($key, strlen(EXPAND_INFIX))] = array_combine($_POST[EXPAND_INFIX . $key], $_POST[EXPAND_INFIX . EXPAND_INFIX . $key]);
                     unset($_POST['fields'][$key]['']);
-                    $_POST['fields'][$key] = json_encode($_POST['fields'][$key]);
+                    $_POST['fields'][$key] = json_encode($_POST['fields'][$key], JSON_PRETTY_PRINT);
                     unset($_POST[$key], $_POST[EXPAND_INFIX . $key]);
                 }
             }
