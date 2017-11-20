@@ -379,7 +379,7 @@ class TableLister
                             . Tools::h($row[$key]) . '</a>';
                     } else {
                         switch ($field['basictype']) {
-                            case 'integer': 
+                            case 'integer':
                             case 'rational':
                                 $class []= 'text-right';
                             case 'text':
