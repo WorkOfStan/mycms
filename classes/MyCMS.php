@@ -66,11 +66,12 @@ class MyCMS
             }
         }
         // Logger is obligatory
-        if (!is_object($this->logger)) {
-            error_log("Error: MyCMS constructed without logger.");
+        if (!is_object($this->logger) || !($this->logger instanceof \Psr\Log\LoggerInterface)
+        ) {
+            error_log("Error: MyCMS constructed without logger. (" . get_class($this->logger) . ")");
             die('Fatal error - project is not configured.'); //@todo nicely formatted error page            
         }
-        if (is_object($this->dbms)) {
+        if (is_object($this->dbms) && is_a($this->dbms, '\mysqli')) {
             $this->dbms->query('SET NAMES UTF8 COLLATE "utf8_general_ci"');
         } else {
             $this->logger->info("No database connection set!");
