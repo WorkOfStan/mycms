@@ -23,8 +23,12 @@ class TableAdmin extends TableLister {
 
     /** Output HTML form to edit specific row in the table
      * @param mixed $where to identify which row to fetch and offer for edit
-     *     e.g. array('id' => 5) translates as "WHERE id=5" in SQL
+     *      e.g. array('id' => 5) translates as "WHERE id=5" in SQL
      * @param array $options additional options
+     *      [include-fields] - array of fields to include only
+     *      [exclude-fields] - array of fields to exclude
+     *      [exclude-form] - exclude the <form> element
+     *      [layout-row] - non-zero: divide labels and input elements by <br />, by default they're in <table>
      * @return void
      */
     public function outputForm($where, $options = array())
@@ -51,17 +55,18 @@ class TableAdmin extends TableLister {
                 $record = $record->fetch_assoc();
             }
         }
+        Tools::setifempty($options['layout-row'], true);
         $output = (isset($options['exclude-form']) ? '' : '<form method="post" enctype="multipart/form-data"><fieldset>') . PHP_EOL
             . Tools::htmlInput('database-table', '', $this->table, 'hidden') . PHP_EOL
             . Tools::htmlInput('form-csrf', '', $_SESSION['csrf-' . $this->table] = rand(1e8, 1e9 - 1), 'hidden') . PHP_EOL
-            . '<table class="database">';
+            . ($options['layout-row'] ? '<div class="database">' : '<table class="database">');
         foreach ($this->fields as $key => $field) {
             if (!in_array($key, $options['include-fields']) || in_array($key, $options['exclude-fields'])) {
                 continue;
             }
-            $output .= $this->outputField($field, $key, $record);
+            $output .= $this->outputField($field, $key, $record, $options);
         }
-        $output .= '</table>' . PHP_EOL;
+        $output .= ($options['layout-row'] ? '</div>' : '</table>') . PHP_EOL;
         if (function_exists('TableAdminCustomRecordDetail')) {
             $output .= TableAdminCustomRecordDetail($this->table, $record, $this);
         }
@@ -82,10 +87,12 @@ class TableAdmin extends TableLister {
         echo $output;
     }
 
-    protected function outputField($field, $key, $record)
+    protected function outputField($field, $key, $record, $options = array())
     {
         $value = $record[$key];
-        $output = '<tr><td><label for="' . Tools::h($key) . $this->rand . '">' . Tools::h($key) . ':</label></td>' . PHP_EOL . '<td>'
+        $output = ($options['layout-row'] ? '' : '<tr><td>') 
+            . '<label for="' . Tools::h($key) . $this->rand . '">' . Tools::h($key) . ':</label>'
+            . ($options['layout-row'] ? ' ' : '</td><td>')
             . Tools::htmlInput(($field['type'] == 'enum' ? $key : "fields-null[$key]"), ($field['type'] == 'enum' && $field['null'] ? 'null' : ''), 1,
                 array(
                     'type' => ($field['type'] == 'enum' ? 'radio' : 'checkbox'),
@@ -94,7 +101,7 @@ class TableAdmin extends TableLister {
                     'checked' => (is_null($value) ? 'checked' : null),
                     'class' => 'input-null'
                 )
-            ) . '</td>' . PHP_EOL .'<td>';
+            ) . ($options['layout-row'] ? '<br />' : '</td><td>') . PHP_EOL;
         $input = array('id' => $key . $this->rand);
         if (function_exists('TableAdminCustomInput')) {
             $custom = TableAdminCustomInput($this->table, $key, $value, $this);
@@ -115,8 +122,8 @@ class TableAdmin extends TableLister {
             }
             $input .= '</select>';
             if (isset($comment['display-own']) && $comment['display-own']) {
-                $input .= ' ' . Tools::htmlInput("fields-own[$key]", $this->translate('Own value:'), '',
-                    array('id' => $key . $this->rand . '_', 'class' => 'form-control d-inline-block w-initial', 'onchange' => "$('#$key$this->rand').val(null);"));
+                $input .= ' ' . Tools::htmlInput("fields-own[$key]", ' ' . $this->translate('Own value:') . ' ', '',
+                    array('id' => $key . $this->rand . '_', 'class' => 'form-control d-inline-block w-initial', 'onchange' => "$('#$key$this->rand').val(null);")) . '<br />';
             }
             $field['type'] = null;
         }
@@ -292,6 +299,8 @@ class TableAdmin extends TableLister {
      * @param scalar $default original value
      * @param array $options additional options for the element rendition; plus
      *        [exclude] => value to exclude from select's options
+     *        [class]
+     *        [id]
      * @return string result
      * note: $values as an array can have scalar values (then they're used as each <option>'s text/label)
      *       or it can be an array of arrays (then first element is used as label and second as a group (for <optgroup>)).
