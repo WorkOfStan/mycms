@@ -12,11 +12,11 @@ class TableAdmin extends TableLister {
     private $csrf;
 
     /** Constructor
-     * @param object $dbms database management system (e.g. new mysqli())
+     * @param \mysqli $dbms database management system (e.g. new mysqli())
      * @param string $table table name
      * @param array $options
      */
-    function __construct($dbms, $table, $options = array())
+    function __construct(\mysqli $dbms, $table, array $options = array())
     {
         parent::__construct($dbms, $table, $options);
     }
@@ -27,7 +27,7 @@ class TableAdmin extends TableLister {
      * @param array $options additional options
      * @return void
      */
-    public function outputForm($where, $options = array())
+    public function outputForm($where, array $options = array())
     {
         $record = array();
         $options['include-fields'] = isset($options['include-fields']) && is_array($options['include-fields']) ? $options['include-fields'] : array_keys($this->fields);
@@ -82,7 +82,14 @@ class TableAdmin extends TableLister {
         echo $output;
     }
 
-    protected function outputField($field, $key, $record)
+    /**
+     * 
+     * @param array $field
+     * @param string $key
+     * @param array $record
+     * @return string
+     */
+    protected function outputField(array $field, $key, array $record)
     {
         $value = $record[$key];
         $output = '<tr><td><label for="' . Tools::h($key) . $this->rand . '">' . Tools::h($key) . ':</label></td>' . PHP_EOL . '<td>'
@@ -348,8 +355,12 @@ class TableAdmin extends TableLister {
             && $_SESSION['csrf-' . $_POST['database-table']] == $_POST['form-csrf'];
     }
 
-    /** Perform the detault record saving command.
-     * @return void
+    /**
+     * Perform the detault record saving command.
+     * 
+     * @param bool $messageSuccess
+     * @param bool $messageError
+     * @return bool
      */
     public function recordSave($messageSuccess = false, $messageError = false)
     {
@@ -419,12 +430,21 @@ class TableAdmin extends TableLister {
         $this->resolveSQL($sql, $this->translate('Record deleted.'), $this->translate('Could not delete the record.'));
     }
 
-    public function dashboard($options = array())
+    /**
+     * 
+     * @param array $options OPTIONAL
+     */
+    public function dashboard(array $options = array())
     {
         $this->contentByType($options);
     }
 
-    public function contentByType($options = array())
+    /**
+     * 
+     * @param array $options OPTIONAL
+     * @return type
+     */
+    public function contentByType(array $options = array())
     {
         Tools::setifnull($options['table'], 'content');
         Tools::setifnull($options['type'], 'type');

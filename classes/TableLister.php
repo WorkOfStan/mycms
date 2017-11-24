@@ -11,7 +11,10 @@ use \GodsDev\Tools\Tools;
 class TableLister
 {
 
-    // @var mysqli database management system
+    /**
+     *
+     * @var \mysqli database management system
+     */
     protected $dbms;
     // @var string table to list
     protected $table;
@@ -48,11 +51,11 @@ class TableLister
     );
 
     /** Constructor - stores passed parameters to object's attributes
-     * @param object database management system already connected to wanted database
+     * @param \mysqli database management system already connected to wanted database
      * @param string table to view
      * @param array options
      */
-    function __construct($dbms, $table, $options = array())
+    function __construct(\mysqli $dbms, $table, array $options = array())
     {
         $this->dbms = $dbms;
         $this->table = $table;
@@ -150,7 +153,7 @@ class TableLister
      *  $options['exclude']=array - columns to exclude
      *  $options['columns']=array - special treatment of columns
      */
-    public function view($options = array())
+    public function view(array $options = array())
     {
         $limit = isset($_GET['limit']) && $_GET['limit'] ? (int) $_GET['limit'] : $this->DEFAULTS['PAGESIZE'];
         if ($limit < 1 || $limit > $this->DEFAULTS['MAXPAGESIZE']) {
@@ -333,7 +336,7 @@ class TableLister
      * @param array columns selected columns
      * @param array options same as in view()
      */
-    protected function viewTable($query, $columns, $options)
+    protected function viewTable($query, array $columns, array $options)
     {
         Tools::setifnull($_GET['sort']);
         echo '<form action="" method="post">' . PHP_EOL
@@ -405,6 +408,13 @@ class TableLister
         . Tools::ifnull($label, $page) . '</a></li>' . PHP_EOL;
     }
 
+    /**
+     * 
+     * @param int $rowsPerPage
+     * @param int $totalRows
+     * @param int $offset
+     * @return type
+     */
     public function pagination($rowsPerPage, $totalRows, $offset = null)
     {
         $title = $this->translate('Go to page');
@@ -497,6 +507,12 @@ class TableLister
         return $result;
     }
 
+    /**
+     * 
+     * @param string $text
+     * @param bool $escape
+     * @return string
+     */
     public function translate($text, $escape = true)
     {
         //@todo kdy může nastat situace, že TableListerTranslate neexistuje? Proč to nenadefinovat jako GodsDev\mycms\Utils\TableListerTranslate ?
