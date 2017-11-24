@@ -12,11 +12,11 @@ class TableAdmin extends TableLister {
     private $csrf;
 
     /** Constructor
-     * @param object $dbms database management system (e.g. new mysqli())
+     * @param \mysqli $dbms database management system (e.g. new mysqli())
      * @param string $table table name
      * @param array $options
      */
-    function __construct($dbms, $table, $options = array())
+    function __construct(\mysqli $dbms, $table, array $options = array())
     {
         parent::__construct($dbms, $table, $options);
     }
@@ -24,6 +24,7 @@ class TableAdmin extends TableLister {
     /** Output HTML form to edit specific row in the table
      * @param mixed $where to identify which row to fetch and offer for edit
      *      e.g. array('id' => 5) translates as "WHERE id=5" in SQL
+     *      scalar value translates as array('id' => value)
      * @param array $options additional options
      *      [include-fields] - array of fields to include only
      *      [exclude-fields] - array of fields to exclude
@@ -33,7 +34,7 @@ class TableAdmin extends TableLister {
      *      [prefill] - assoc. array with initial field values (only when inserting new record)
      * @return void
      */
-    public function outputForm($where, $options = array())
+    public function outputForm($where, array $options = array())
     {
         $record = array();
         $options['include-fields'] = isset($options['include-fields']) && is_array($options['include-fields']) ? $options['include-fields'] : array_keys($this->fields);
@@ -66,7 +67,7 @@ class TableAdmin extends TableLister {
             if (!in_array($key, $options['include-fields']) || in_array($key, $options['exclude-fields'])) {
                 continue;
             }
-            $output .= $this->outputField($field, $key, $record, $options);
+            $output .= $this->outputField($field, $key, is_array($record) ? $record : array(), $options);
         }
         $output .= ($options['layout-row'] ? '</div>' : '</table>') . PHP_EOL;
         if (function_exists('TableAdminCustomRecordDetail')) {
@@ -89,9 +90,17 @@ class TableAdmin extends TableLister {
         echo $output;
     }
 
-    protected function outputField($field, $key, $record, $options = array())
+    /**
+     * 
+     * @param array $field
+     * @param string $key
+     * @param array $record
+     * @param array $options
+     * @return string
+     */
+    protected function outputField(array $field, $key, array $record, array $options)
     {
-        $value = $record[$key];
+        $value = isset($record[$key]) ? $record[$key] : false;
         if ($record === false && isset($options['prefill'][$key]) && is_scalar($options['prefill'][$key])) {
             $value = $options['prefill'][$key];
         }
@@ -185,7 +194,7 @@ class TableAdmin extends TableLister {
                 }
                 $input += array('type' => 'datetime-local', 'step' => 1, 'class' => 'form-control input-datetime');
                 $input = '<div class="input-group">' . Tools::htmlInput("fields[$key]", false, $value, $input) 
-                    . '<span class="input-group-btn"><button class="btn btn-secondary btn-fill-now" type="button" title="' . $this->translate('Now') . '"><i class="fa fa-clock-o" aria-hidden="true"></i></button></span></div>';
+                    . '<span class="input-group-btn"><button class="btn btn-secondary btn-fill-now" type="button" title="' . $this->translate('Now') . '"><i class="glyphicon glyphicon-time fa fa-clock-o" aria-hidden="true"></i></button></span></div>';
                 break;
             case 'bit':
                 $input += array('type' => 'checkbox', 'step' => 1, 'checked' => ($value ? 'checked' : null));
@@ -365,8 +374,12 @@ class TableAdmin extends TableLister {
             && $_SESSION['csrf-' . $_POST['database-table']] == $_POST['form-csrf'];
     }
 
-    /** Perform the detault record saving command.
-     * @return void
+    /**
+     * Perform the detault record saving command.
+     * 
+     * @param bool $messageSuccess
+     * @param bool $messageError
+     * @return bool
      */
     public function recordSave($messageSuccess = false, $messageError = false)
     {
@@ -436,12 +449,21 @@ class TableAdmin extends TableLister {
         $this->resolveSQL($sql, $this->translate('Record deleted.'), $this->translate('Could not delete the record.'));
     }
 
-    public function dashboard($options = array())
+    /**
+     * 
+     * @param array $options OPTIONAL
+     */
+    public function dashboard(array $options = array())
     {
         $this->contentByType($options);
     }
 
-    public function contentByType($options = array())
+    /**
+     * 
+     * @param array $options OPTIONAL
+     * @return type
+     */
+    public function contentByType(array $options = array())
     {
         Tools::setifnull($options['table'], 'content');
         Tools::setifnull($options['type'], 'type');
