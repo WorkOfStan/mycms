@@ -12,11 +12,11 @@ class TableAdmin extends TableLister {
     private $csrf;
 
     /** Constructor
-     * @param object $dbms database management system (e.g. new mysqli())
+     * @param \mysqli $dbms database management system (e.g. new mysqli())
      * @param string $table table name
      * @param array $options
      */
-    function __construct($dbms, $table, $options = array())
+    function __construct(\mysqli $dbms, $table, array $options = array())
     {
         parent::__construct($dbms, $table, $options);
     }
@@ -27,7 +27,7 @@ class TableAdmin extends TableLister {
      * @param array $options additional options
      * @return void
      */
-    public function outputForm($where, $options = array())
+    public function outputForm($where, array $options = array())
     {
         $record = array();
         $options['include-fields'] = isset($options['include-fields']) && is_array($options['include-fields']) ? $options['include-fields'] : array_keys($this->fields);
@@ -37,13 +37,13 @@ class TableAdmin extends TableLister {
                 unset($options['include-fields'][$key]);
             }
         }
-        if (!is_null($where)) { 
+        if (!is_null($where)) {
             if (is_scalar($where)) {
                 $where = array('id' => $where);
             }
             $sql = array();
             foreach ($where as $key => $value) {
-                $sql []= Tools::escapeDbIdentifier($key) . '="' . $this->escape($value) . '"'; 
+                $sql []= Tools::escapeDbIdentifier($key) . '="' . $this->escape($value) . '"';
             }
             $sql = 'SELECT ' . Tools::arrayListed($options['include-fields'], 64, ',', '`', '`') . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' WHERE ' . implode(' AND ', $sql) . ' LIMIT 1';
             $record = $this->dbms->query($sql);
@@ -71,10 +71,10 @@ class TableAdmin extends TableLister {
                 $output .= TableAdminCustomRecordAction($this->table, $record, $this);
             }
             $output .= '<button type="submit" name="record-save" value="1" '
-                . 'class="btn btn-default btn-primary"><span class="glyphicon glyphicon-floppy-save fa fa-floppy-o"></span> Uložit</button> '; 
+                . 'class="btn btn-default btn-primary"><span class="glyphicon glyphicon-floppy-save fa fa-floppy-o"></span> ' . $this->translate('Save') . '</button> ';
             if (is_array($record)) {
-                $output .= '<button type="submit" name="record-delete" class="btn btn-default" value="1" onclick="return confirm(\'Opravdu smazat?\');">'
-                    . '<span class="glyphicon glyphicon-floppy-remove fa fa-trash-o"></span> Smazat</button>';
+                $output .= '<button type="submit" name="record-delete" class="btn btn-default" value="1" onclick="return confirm(\'' . $this->translate('Really delete?') . '\');">'
+                    . '<span class="glyphicon glyphicon-floppy-remove fa fa-trash-o"></span> ' . $this->translate('Delete') . '</button>';
             }
             $output .= '</div>';
         }
@@ -82,14 +82,21 @@ class TableAdmin extends TableLister {
         echo $output;
     }
 
-    protected function outputField($field, $key, $record)
+    /**
+     * 
+     * @param array $field
+     * @param string $key
+     * @param array $record
+     * @return string
+     */
+    protected function outputField(array $field, $key, array $record)
     {
         $value = $record[$key];
-        $output = '<tr><td><label for="' . Tools::h($key) . $this->rand . '">' . Tools::h($key) . ':</label></td>' . PHP_EOL . '<td>' 
-            . Tools::htmlInput(($field['type'] == 'enum' ? $key : "nulls[$key]"), ($field['type'] == 'enum' && $field['null'] ? 'null' : ''), 1, 
+        $output = '<tr><td><label for="' . Tools::h($key) . $this->rand . '">' . Tools::h($key) . ':</label></td>' . PHP_EOL . '<td>'
+            . Tools::htmlInput(($field['type'] == 'enum' ? $key : "fields-null[$key]"), ($field['type'] == 'enum' && $field['null'] ? 'null' : ''), 1,
                 array(
                     'type' => ($field['type'] == 'enum' ? 'radio' : 'checkbox'),
-                    'title' => ($field['null'] ? 'null' : null),
+                    'title' => ($field['null'] ? $this->translate('Insert NULL') : null),
                     'disabled' => ($field['null'] ? null : 'disabled'),
                     'checked' => (is_null($value) ? 'checked' : null),
                     'class' => 'input-null'
@@ -104,36 +111,49 @@ class TableAdmin extends TableLister {
             }
         }
         $comment = json_decode((isset($field['comment']) ? $field['comment'] : '') ?: '{}', true);
-        Tools::setifnull($comment['display']); 
-        if ($comment['display'] == 'option') {
-            $query = $this->dbms->query($sql = 'SELECT DISTINCT ' . Tools::escapeDbIdentifier($key) 
+        Tools::setifnull($comment['display']);
+        if (!is_null($field['type']) && $comment['display'] == 'option') {
+            $query = $this->dbms->query($sql = 'SELECT DISTINCT ' . Tools::escapeDbIdentifier($key)
                 . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' ORDER BY ' . Tools::escapeDbIdentifier($key) . ' LIMIT 1000');
-            $input = '<select name="' . Tools::h($key) . '" id="' . Tools::h($key . $this->rand) . '"'
-                . ($comment['display'] == 'option+' ? ' onchange="$(\'#' . Tools::h($key . $this->rand) . '_\').val(null)"' : '') . '>';
+            $input = '<select name="fields[' . Tools::h($key) . ']" id="' . Tools::h($key . $this->rand) . '" class="form-control d-inline-block w-initial"'
+                . (isset($comment['display-own']) ? ' onchange="$(\'#' . Tools::h($key . $this->rand) . '_\').val(null)"' : '') . '>';
             while ($row = $query->fetch_row()) {
                 $input .= Tools::htmlOption($row[0], $row[0], $value);
             }
             $input .= '</select>';
             if (isset($comment['display-own']) && $comment['display-own']) {
-                $input .= ' ' . Tools::htmlInput("own[$key]", 'vlastní:', '', 
-                    array('id' => $key . $this->rand . '_', 'onchange' => "$('#$key$this->rand').val(null);"));
+                $input .= ' ' . Tools::htmlInput("fields-own[$key]", $this->translate('Own value:'), '',
+                    array('id' => $key . $this->rand . '_', 'class' => 'form-control d-inline-block w-initial', 'onchange' => "$('#$key$this->rand').val(null);"));
             }
             $field['type'] = null;
         }
-        if (isset($comment['edit']) && $comment['edit'] == 'json') {
-            $tmp = json_decode($value, true);
-            $output .= '<fieldset class="input-expanded">' . Tools::htmlInput($key . EXPAND_INFIX, '', 1, 'hidden');
-            if (!is_array($tmp) && isset($comment['subfields']) && is_array($comment['subfields'])) {
+        if (!is_null($field['type']) && isset($comment['edit']) && $comment['edit'] == 'json') {
+            $json = json_decode($value, true);
+            $output .= '<div class="input-expanded">' . Tools::htmlInput($key . EXPAND_INFIX, '', 1, 'hidden');
+            if (!is_array($json) && isset($comment['subfields']) && is_array($comment['subfields'])) {
                 foreach ($comment['subfields'] as $v) {
-                    Tools::setifnull($tmp[$v], null);
+                    Tools::setifnull($json[$v], null);
                 }
             }
-            if (is_array($tmp)) {
-                foreach ($tmp as $k => $v) {
-                    $output .= '<label>' . Tools::h($k) . ': ' . Tools::htmlInput($key . EXPAND_INFIX . $k, '', $v, array('class' => 'form-control')) . "</label><br />\n";
+            if (is_array($json) && is_scalar(reset($json))) {
+                $output .= '<table class="w-100 json-expanded">';
+                foreach ($json + array('' => '') as $k => $v) {
+                    $output .= '<tr><td class="first w-25">' . Tools::htmlInput(EXPAND_INFIX . $key . '[]', '', $k, array('class' => 'form-control form-control-sm')) . '</td>'
+                        . '<td class="second w-75">' . Tools::htmlInput(EXPAND_INFIX . EXPAND_INFIX . $key . '[]', '', $v, array('class' => 'form-control form-control-sm')) . '</td></tr>' . PHP_EOL;
                 }
+                $output .= '</table>';
+            } else {
+                $output .= '<textarea name="fields[' . Tools::h($key) . ']" class="w-100">' . $value . '</textarea>';
             }
-            $output .= '</fieldset>';
+            $output .= '</div>';
+            $input = false;
+            $field['type'] = null;
+        }
+        if (!is_null($field['type']) && isset($comment['foreign-table'], $comment['foreign-column']) && $comment['foreign-table'] && $comment['foreign-column']) {
+            $output .= $this->outputForeignId(
+                "fields[$key]", 
+                'SELECT id,' . Tools::escapeDbIdentifier($comment['foreign-column']) . ' FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $comment['foreign-table']),
+                $value, array('class' => 'form-control'));
             $input = false;
             $field['type'] = null;
         }
@@ -168,14 +188,14 @@ class TableAdmin extends TableLister {
                 if (is_array($choices)) {
                     foreach ($choices as $k => $v) {
                         $input[$k] = Tools::htmlInput($key, $v, 1 << $k, array(
-                            'type' => 'radio', 
+                            'type' => 'radio',
                             'id' => "$key-" . (1 << $k),
                             'value' => (1 << $k)
                         ));
                     }
-                    $input = array_merge(array(Tools::htmlInput($key, 'prázdné', 0, 
+                    $input = array_merge(array(Tools::htmlInput($key, 'prázdné', 0,
                         array(
-                            'type' => 'radio', 
+                            'type' => 'radio',
                             'id' => "$key-0",
                             'value' => 0
                         ))), $input
@@ -206,17 +226,17 @@ class TableAdmin extends TableLister {
                 	$input .= '&amp;key[]=' . urlencode($k) . '&amp;value[]=' . urlencode($v);
                 }
                 $input .= '&amp;form-csrf=' . $_SESSION['csrf-' . $this->table]
-                    . '" target="_blank" >download</a>' . PHP_EOL;
+                    . '" target="_blank" >' . $this->translate('Download') . '</a>' . PHP_EOL;
                 break;
             case null:
                 break;
             case 'char': case 'varchar':
                 if ($field['size'] > 1024) {
-                    $input = Tools::htmlTextarea("fields[$key]", $value, false, false, 
+                    $input = Tools::htmlTextarea("fields[$key]", $value, false, false,
                         array('id' => $key . $this->rand, 'class' => 'form-control'));
                 }
             default:
-                $input = Tools::htmlTextarea("fields[$key]", $value, false, false, 
+                $input = Tools::htmlTextarea("fields[$key]", $value, false, false,
                     array('id' => $key . $this->rand, 'class' => 'form-control' . ($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : ''))
                 );
         }
@@ -253,11 +273,11 @@ class TableAdmin extends TableLister {
         } else {
             $module = 10;
         }
-        $output = '<select name="' . Tools::h(isset($options['name']) ? $options['name'] : 'path_id') 
-            . '" class="' . Tools::h(isset($options['class']) ? $options['class'] : '') 
-            . '" id="' . Tools::h(isset($options['id']) ? $options['id'] : '') . '">' 
-            . Tools::htmlOption('', '--vyberte--');
-        $query = $this->dbms->query($sql='SELECT id,LENGTH(path)/' . $module . '-1 AS path_length,' . Tools::escapeDbIdentifier($name) 
+        $output = '<select name="' . Tools::h(isset($options['name']) ? $options['name'] : 'path_id')
+            . '" class="' . Tools::h(isset($options['class']) ? $options['class'] : '')
+            . '" id="' . Tools::h(isset($options['id']) ? $options['id'] : '') . '">'
+            . Tools::htmlOption('', $this->translate('--choose--'));
+        $query = $this->dbms->query($sql='SELECT id,LENGTH(path)/' . $module . '-1 AS path_length,' . Tools::escapeDbIdentifier($name)
             . ' FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name) . ' ORDER BY path');
         if (!$query) {
             return $output . '</select>';
@@ -272,28 +292,57 @@ class TableAdmin extends TableLister {
         return $output;
     }
 
+    /** Output HTML <select name=$field> with $values as its items
+     * @param string $field name of the select element
+     * @param mixed $values either array of values for the <select>
+     *        or string with the SQL SELECT statement
+     * @param scalar $default original value
+     * @param array $options additional options for the element rendition; plus
+     *        [exclude] => value to exclude from select's options
+     * @return string result
+     * note: $values as an array can have scalar values (then they're used as each <option>'s text/label)
+     *       or it can be an array of arrays (then first element is used as label and second as a group (for <optgroup>)).
+     *       Similarly, $values as string can select 2 columns (same as first case)
+     *        or 3+ columns (then first will be <option>'s value, second its label, and third <optgroup>)
+     */       
     public function outputForeignId($field, $values, $default = null, $options = array())
     {
-        $result = '<select name="' . Tools::h($field) 
-            . '" class="' . Tools::h(isset($options['class']) ? $options['class'] : '') 
+        //@todo kdy může nastat situace, že GodsDev\\MyCMS\\addHtmlOption neexistuje?
+        if (!function_exists('GodsDev\\MyCMS\\addHtmlOption')) {
+            function addHtmlOption($value, $text, $group, $default, $options) {
+                global $lastGroup;
+                $result = '';
+                if ($lastGroup != $group) {
+                    $result .= ($lastGroup === false ? '' : '</optgroup>') . '<optgroup label="' . Tools::h($lastGroup = $group) . '" />';
+                }
+                if ($value != $options['exclude']) {
+                    $result .= Tools::htmlOption($value, $text, $default);
+                }
+                return $result;
+            }
+        }
+        $result = '<select name="' . Tools::h($field)
+            . '" class="' . Tools::h(isset($options['class']) ? $options['class'] : '')
             . '" id="' . Tools::h(isset($options['id']) ? $options['id'] : '') . '">'
-            . '<option />';
-        $options['exclude'] = isset($options['exclude']) ? $options['exclude'] : ''; 
+            . '<option value=""></option>';
+        $options['exclude'] = isset($options['exclude']) ? $options['exclude'] : '';
+        $group = $lastGroup = false;
         if (is_array($values)) { // array - just output them as <option>s
             foreach ($values as $key => $value) {
-                if ($row['name'] != $options['exclude']) {
-                    $result .= Tools::htmlOption($key, $value, $default);
+                if (is_array($value)) {
+                    $group = next($value);
+                    $value = reset($value);
                 }
+                $result .= addHtmlOption($key, $value, $group, $default, $options);
             }
         } elseif (is_string($values)) { // string - SELECT id,name FROM ...
-            $query = $this->dbms->query($values);
-            while ($row = $query->fetch_assoc()) {
-                if ($row['name'] != $options['exclude']) {
-                    $result .= Tools::htmlOption($row['id'], $row['name'], $default);
+            if ($query = $this->dbms->query($values)) {
+                while ($row = $query->fetch_row()) {
+                    $result .= addHtmlOption($row[0], $row[1], isset($row[2]) ? $row[2] : false, $default, $options);
                 }
-            }            
+            }
         }
-        $result .= '</select>';
+        $result .= ($lastGroup === false ? '' : '</optgroup>') . '</select>';
         return $result;
     }
 
@@ -302,12 +351,16 @@ class TableAdmin extends TableLister {
      */
     public function authorized()
     {
-        return isset($_POST['database-table'], $_SESSION['csrf-' . $_POST['database-table']], $_POST['form-csrf']) 
+        return isset($_POST['database-table'], $_SESSION['csrf-' . $_POST['database-table']], $_POST['form-csrf'])
             && $_SESSION['csrf-' . $_POST['database-table']] == $_POST['form-csrf'];
     }
 
-    /** Perform the detault record saving command.
-     * @return void
+    /**
+     * Perform the detault record saving command.
+     * 
+     * @param bool $messageSuccess
+     * @param bool $messageError
+     * @return bool
      */
     public function recordSave($messageSuccess = false, $messageError = false)
     {
@@ -315,37 +368,37 @@ class TableAdmin extends TableLister {
             return false;
         }
         $sql = $where = '';
+        $command = 'UPDATE ';
         if (is_array($this->fields)) {
             foreach ($_POST as $key => $value) {
-                if (Tools::ends($key, EXPAND_INFIX)) {
-                    $tmp = array();
-                    foreach ($_POST as $k => $v) {
-                        if (Tools::begins($k, $key) && $k != $key) {
-                            $tmp[substr($k, strlen($key))] = $v;
-                            unset($_POST[$k]);
-                        }
-                    }
-                    $_POST[substr($key, 0, strlen($key) - strlen(EXPAND_INFIX))] = json_encode($tmp);
-                    unset($_POST[$key]);
+                if (Tools::begins($key, EXPAND_INFIX) && !Tools::begins($key, EXPAND_INFIX . EXPAND_INFIX)) {
+                    $_POST['fields'][$key = substr($key, strlen(EXPAND_INFIX))] = array_combine($_POST[EXPAND_INFIX . $key], $_POST[EXPAND_INFIX . EXPAND_INFIX . $key]);
+                    unset($_POST['fields'][$key]['']);
+                    $_POST['fields'][$key] = json_encode($_POST['fields'][$key], JSON_PRETTY_PRINT);
+                    unset($_POST[$key], $_POST[EXPAND_INFIX . $key]);
                 }
             }
             foreach ($this->fields as $key => $field) {
+                if (isset($_POST['fields-null'][$key]) || (isset($field['foreign_table']) && $value === '')) {
+                    $_POST['fields'][$key] = null;
+                } elseif (isset($_POST['fields-own'][$key]) && $_POST['fields-own'][$key]) {
+                    $_POST['fields'][$key] = $_POST['fields-own'][$key];
+                }
                 if (!isset($_POST['fields'][$key]) || !is_scalar($_POST['fields'][$key])) {
                     continue;
-                } 
+                }
                 $value = $_POST['fields'][$key];
-                if (isset($_POST['nulls'][$key]) || (isset($field['foreign_table']) && $value === '')) {
-                    $value = null;
-                } elseif (isset($_POST['own'][$key]) && $_POST['own'][$key]) {
-                    $value = $_POST['own'][$key];
+                if ($field['key'] == 'PRI' && ($value === '' || $value === null)) {
+                    $command = 'INSERT INTO ';
+                    continue;
                 }
                 switch ($field['basictype']) {
                     case 'integer': case 'rational':
-                        $sql .= ',' . Tools::escapeDbIdentifier($key) . '=' 
-                            . (is_null($value) ? 'NULL' : +$value);
+                        $sql .= ',' . Tools::escapeDbIdentifier($key) . '='
+                            . (is_null($value) ? 'NULL' : ($field['basictype'] == 'integer' ? (int)$value : (double)$value));
                         break;
                     default:
-                        $sql .= ',' . Tools::escapeDbIdentifier($key) . '=' 
+                        $sql .= ',' . Tools::escapeDbIdentifier($key) . '='
                             . (is_null($value) ? 'NULL' : '"' . $this->escape($value) . '"');
                 }
                 if (Tools::among($field['key'], 'PRI', 'UNI')) {
@@ -354,8 +407,8 @@ class TableAdmin extends TableLister {
             }
         }
         if ($sql) {
-            $sql = 'UPDATE ' . Tools::escapeDbIdentifier($this->table) . ' SET ' . mb_substr($sql, 1) . Tools::wrap(mb_substr($where, 5), ' WHERE ') . ' LIMIT 1';
-            if ($this->resolveSQL($sql, $messageSuccess ?: 'Záznam uložen.', $messageError ?: 'Záznam se nepodařilo uložit. #%errno%: %error%')) {
+            $sql = $command . Tools::escapeDbIdentifier($this->table) . ' SET ' . mb_substr($sql, 1) . Tools::wrap(mb_substr($where, 5), ' WHERE ') . ($command == 'UPDATE ' ? ' LIMIT 1' : '');
+            if ($this->resolveSQL($sql, $messageSuccess ?: $this->translate('Record saved.'), $messageError ?: $this->translate('Could not save the record.') . ' #%errno%: %error%')) {
                 return true;
             } else {
                 //@todo if unsuccessful, store data being saved to session
@@ -370,34 +423,52 @@ class TableAdmin extends TableLister {
         if ($this->authorized() && isset($_GET['where'], $_GET['table']) && $_GET['table']
             && is_array($_GET['where']) && count($_GET['where'])) {
             foreach ($_GET['where'] as $key => $value) {
-                $sql []= Tools::escapeDbIdentifier($key) . '="' . $this->escape($value) . '"'; 
+                $sql []= Tools::escapeDbIdentifier($key) . '="' . $this->escape($value) . '"';
             }
             $sql = 'DELETE FROM ' . Tools::escapeDbIdentifier($_GET['table']) . ' WHERE ' . implode(' AND ', $sql);
-        }                                                       
-        $this->resolveSQL($sql, 'Záznam smazán.', 'Záznam se nepodařilo smazat.');
+        }
+        $this->resolveSQL($sql, $this->translate('Record deleted.'), $this->translate('Could not delete the record.'));
     }
 
-    public function dashboard($options = array())
+    /**
+     * 
+     * @param array $options OPTIONAL
+     */
+    public function dashboard(array $options = array())
     {
         $this->contentByType($options);
     }
 
-    public function contentByType($options = array())
+    /**
+     * 
+     * @param array $options OPTIONAL
+     * @return type
+     */
+    public function contentByType(array $options = array())
     {
         Tools::setifnull($options['table'], 'content');
         Tools::setifnull($options['type'], 'type');
-        $query = $this->dbms->query("SELECT SQL_CALC_FOUND_ROWS $options[type],COUNT($options[type]) FROM " . TAB_PREFIX . "$options[table] GROUP BY $options[type] WITH ROLLUP LIMIT 100");
+        $query = $this->dbms->query('SELECT SQL_CALC_FOUND_ROWS ' . Tools::escapeDbIdentifier($options['type']) . ',COUNT(' . Tools::escapeDbIdentifier($options['type']) . ')'
+            . ' FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $options['table']) 
+            . ' GROUP BY ' . Tools::escapeDbIdentifier($options['type']) . ' WITH ROLLUP LIMIT 100');
         if (!$query) {
             return;
         }
-        $totalRows = $this->dbms->query('SELECT FOUND_ROWS()')->fetch_row()[0];
-        echo '<h2 class="sub-header">Obsah podle typů</h2>' . PHP_EOL 
-            . '<table class="table table-striped">' . PHP_EOL 
-            . '<tr><th>Typ</th><th class="text-right">Počet</th></tr>' . PHP_EOL;
-        while ($row = $query->fetch_row()) {
-            echo '<tr><td>' . ($row[0] ? Tools::h($row[0]) : ($row[0] === '' ? '<i class="insipid">(empty)</i>' : '<big>&Sum;</big>')) 
-                . '</td><td class="text-right">' . +$row[1] . '</td></tr>' . PHP_EOL;
+        $typeIndex = 0;
+        foreach (array_keys($this->fields) as $key => $value) {
+            if ($value == $options['type']) {
+                $typeIndex = $key + 1;
+                break;
+            }
         }
-        echo '</table>';
+        $totalRows = $this->dbms->query('SELECT FOUND_ROWS()')->fetch_row()[0];
+        echo '<details><summary><big>' . $this->translate('By type') . '</big></summary>' . PHP_EOL
+            . '<table class="table table-striped">' . PHP_EOL
+            . '<tr><th>' . $this->translate('Type') . '</th><th class="text-right">' . $this->translate('Count') . '</th></tr>' . PHP_EOL;
+        while ($row = $query->fetch_row()) {
+            echo '<tr><td>' . ($row[0] ? Tools::h($row[0]) : ($row[0] === '' ? '<i class="insipid">(' . $this->translate('empty') . ')</i>' : '<big>&Sum;</big>'))
+                . '</td><td class="text-right"><a href="?table=' . Tools::h(TAB_PREFIX . $options['table']) . '&amp;col[0]=' . $typeIndex . '&amp;val[0]=' . Tools::h($row[0]) . '" title="' . $this->translate('Filter records') . '">' . (int)$row[1] . '</td></tr>' . PHP_EOL;
+        }
+        echo '</table></details>';
     }
 }
