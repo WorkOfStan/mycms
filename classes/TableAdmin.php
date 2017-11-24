@@ -28,7 +28,9 @@ class TableAdmin extends TableLister {
      *      [include-fields] - array of fields to include only
      *      [exclude-fields] - array of fields to exclude
      *      [exclude-form] - exclude the <form> element
+     *      [exclude-actions] - exclude form actions (save, delete)
      *      [layout-row] - non-zero: divide labels and input elements by <br />, by default they're in <table>
+     *      [prefill] - assoc. array with initial field values (only when inserting new record)
      * @return void
      */
     public function outputForm($where, $options = array())
@@ -90,7 +92,10 @@ class TableAdmin extends TableLister {
     protected function outputField($field, $key, $record, $options = array())
     {
         $value = $record[$key];
-        $output = ($options['layout-row'] ? '' : '<tr><td>') 
+        if ($record === false && isset($options['prefill'][$key]) && is_scalar($options['prefill'][$key])) {
+            $value = $options['prefill'][$key];
+        }
+        $output = ($options['layout-row'] ? '' : '<tr><td>')
             . '<label for="' . Tools::h($key) . $this->rand . '">' . Tools::h($key) . ':</label>'
             . ($options['layout-row'] ? ' ' : '</td><td>')
             . Tools::htmlInput(($field['type'] == 'enum' ? $key : "fields-null[$key]"), ($field['type'] == 'enum' && $field['null'] ? 'null' : ''), 1,
@@ -151,7 +156,7 @@ class TableAdmin extends TableLister {
         }
         if (!is_null($field['type']) && isset($comment['foreign-table'], $comment['foreign-column']) && $comment['foreign-table'] && $comment['foreign-column']) {
             $output .= $this->outputForeignId(
-                "fields[$key]", 
+                "fields[$key]",
                 'SELECT id,' . Tools::escapeDbIdentifier($comment['foreign-column']) . ' FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $comment['foreign-table']),
                 $value, array('class' => 'form-control'));
             $input = false;
@@ -179,6 +184,8 @@ class TableAdmin extends TableLister {
                     $value[10] = 'T';
                 }
                 $input += array('type' => 'datetime-local', 'step' => 1, 'class' => 'form-control input-datetime');
+                $input = '<div class="input-group">' . Tools::htmlInput("fields[$key]", false, $value, $input) 
+                    . '<span class="input-group-btn"><button class="btn btn-secondary btn-fill-now" type="button" title="' . $this->translate('Now') . '"><i class="fa fa-clock-o" aria-hidden="true"></i></button></span></div>';
                 break;
             case 'bit':
                 $input += array('type' => 'checkbox', 'step' => 1, 'checked' => ($value ? 'checked' : null));
@@ -186,14 +193,15 @@ class TableAdmin extends TableLister {
             case 'enum':
                 eval('$choices = array(' . str_replace("''", "\\'", $field['size']) . ');'); //@todo safety
                 if (is_array($choices)) {
+                    $input = array();
                     foreach ($choices as $k => $v) {
-                        $input[$k] = Tools::htmlInput($key, $v, 1 << $k, array(
+                        $input[$k] = Tools::htmlInput($key, $v === '0' ? '0 ' : "$v ", 1 << $k, array(
                             'type' => 'radio',
                             'id' => "$key-" . (1 << $k),
                             'value' => (1 << $k)
                         ));
                     }
-                    $input = array_merge(array(Tools::htmlInput($key, 'prázdné', 0,
+                    $input = array_merge(array(Tools::htmlInput($key, $this->translate('empty') . ' ', 0,
                         array(
                             'type' => 'radio',
                             'id' => "$key-0",
@@ -223,7 +231,7 @@ class TableAdmin extends TableLister {
                     . '&amp;table=' . urlencode($this->table)
                     . '&amp;column=' . urlencode($key);
                 foreach ($where as $k => $v) {
-                	$input .= '&amp;key[]=' . urlencode($k) . '&amp;value[]=' . urlencode($v);
+                    $input .= '&amp;key[]=' . urlencode($k) . '&amp;value[]=' . urlencode($v);
                 }
                 $input .= '&amp;form-csrf=' . $_SESSION['csrf-' . $this->table]
                     . '" target="_blank" >' . $this->translate('Download') . '</a>' . PHP_EOL;
@@ -306,7 +314,7 @@ class TableAdmin extends TableLister {
      *       or it can be an array of arrays (then first element is used as label and second as a group (for <optgroup>)).
      *       Similarly, $values as string can select 2 columns (same as first case)
      *        or 3+ columns (then first will be <option>'s value, second its label, and third <optgroup>)
-     */       
+     */
     public function outputForeignId($field, $values, $default = null, $options = array())
     {
         //@todo kdy může nastat situace, že GodsDev\\MyCMS\\addHtmlOption neexistuje?
@@ -438,7 +446,7 @@ class TableAdmin extends TableLister {
         Tools::setifnull($options['table'], 'content');
         Tools::setifnull($options['type'], 'type');
         $query = $this->dbms->query('SELECT SQL_CALC_FOUND_ROWS ' . Tools::escapeDbIdentifier($options['type']) . ',COUNT(' . Tools::escapeDbIdentifier($options['type']) . ')'
-            . ' FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $options['table']) 
+            . ' FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $options['table'])
             . ' GROUP BY ' . Tools::escapeDbIdentifier($options['type']) . ' WITH ROLLUP LIMIT 100');
         if (!$query) {
             return;
