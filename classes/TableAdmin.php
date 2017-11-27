@@ -139,9 +139,14 @@ class TableAdmin extends TableLister {
                 $input .= Tools::htmlOption($row[0], $row[0], $value);
             }
             $input .= '</select>';
-            if (Tools::nonzero($comment['display-own']) {
+            if (Tools::nonzero($comment['display-own'])) {
                 $input .= ' ' . Tools::htmlInput("fields-own[$key]", ' ' . $this->translate('Own value:') . ' ', '',
-                    array('id' => $key . $this->rand . '_', 'class' => 'form-control d-inline-block w-initial', 'onchange' => "$('#$key$this->rand').val(null);")) . '<br />';
+                        array(
+                            'id' => $key . $this->rand . '_', 
+                            'class' => 'form-control d-inline-block w-initial', 
+                            'onchange' => "$('#$key{$this->rand}').val(null);"
+                        )
+                    ) . '<br />';
             }
             $field['type'] = null;
         }
