@@ -33,7 +33,7 @@ class TableAdmin extends TableLister {
      *      [layout-row] - non-zero: divide labels and input elements by <br />, by default they're in <table>
      *      [prefill] - assoc. array with initial field values (only when inserting new record)
      *      [original] - keep original values (to update only changed fields)
-     *      [tabs] - divide fields into Bootstrap tabs
+     *      [tabs] - divide fields into Bootstrap tabs, e.g. [null, 'English'=>'/^.+_en$/i', 'Chinese'=>'/^.+_cn$/i']
      * @return void
      */
     public function outputForm($where, array $options = array())
@@ -64,14 +64,38 @@ class TableAdmin extends TableLister {
         $output = (Tools::set($options['exclude-form']) ? '' : '<form method="post" enctype="multipart/form-data"><fieldset>') . PHP_EOL
             . Tools::htmlInput('database-table', '', $this->table, 'hidden') . PHP_EOL
             . Tools::htmlInput('form-csrf', '', $_SESSION['csrf-' . $this->table] = rand(1e8, 1e9 - 1), 'hidden') . PHP_EOL;
-        $output .= ($options['layout-row'] ? '<div class="database">' : '<table class="database">');
-        foreach ($this->fields as $key => $field) {
-            if (!in_array($key, $options['include-fields']) || in_array($key, $options['exclude-fields'])) {
-                continue;
+        $groups = array($this->fields);
+        if (Tools::setarray($options['tabs'])) {
+            foreach ($options['tabs'] as $key => $value) {
+                foreach ($this->fields as $k => $field) {
+                    if ($value && preg_match($value, $k)) {
+                        $groups[$key][$k] = $field;
+                        unset($groups[0][$k]);
+                    }
+                }
             }
-            $output .= $this->outputField($field, $key, is_array($record) ? $record : array(), $options);
         }
-        $output .= ($options['layout-row'] ? '</div>' : '</table>') . PHP_EOL;
+        if (count($groups) > 1) {
+            $output .= '<nav class="nav nav-tabs" role="tablist">';
+            foreach ($groups as $groupKey => $group) {
+                $tmp = Tools::webalize($this->table . '-' . $groupKey);
+                $output .= '<a class="nav-item nav-link' . ($groupKey === 0 ? ' active' : '') . '" id="nav-' . $tmp . '" data-toggle="tab" href="#tab-' . $tmp . '" role="tab" aria-controls="nav-profile" aria-selected="' . ($groupKey === 0 ? 'true' : 'false') . '">' . Tools::h($groupKey === 0 ? $this->translate('Other') : $groupKey) . '</a>' . PHP_EOL;
+            }
+            $output .= '</nav>' . PHP_EOL . '<div class="tab-content">';
+        }
+        foreach ($groups as $groupKey => $group) {
+            $output .= (count($groups) > 1 ? '<div class="tab-pane fade' . ($groupKey === 0 ? ' show active' : '') . '" id="tab-' . ($tmp = Tools::webalize($this->table . '-' . $groupKey)) . '" role="tabpanel" aria-labelledby="nav-' . $tmp . '">' : '') 
+                . ($options['layout-row'] ? '<div class="database">' : '<table class="database">');
+            foreach ($group as $key => $field) {
+                if (!in_array($key, $options['include-fields']) || in_array($key, $options['exclude-fields'])) {
+                    continue;
+                }
+                $output .= $this->outputField($field, $key, is_array($record) ? $record : array(), $options);
+            }
+            $output .= ($options['layout-row'] ? '</div>' : '</table>') . PHP_EOL
+                . (count($groups) > 1 ? '</div>' : '');
+        }
+        $output .= count($groups) > 1 ? '</div>' : '';
         if (function_exists('TableAdminCustomRecordDetail')) {
             $output .= TableAdminCustomRecordDetail($this->table, $record, $this);
         }
