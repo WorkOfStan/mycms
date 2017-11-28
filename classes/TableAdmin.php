@@ -209,6 +209,8 @@ class TableAdmin extends TableLister {
                 $input += array('type' => 'number', 'step' => 1, 'class' => 'form-control');
                 if ($field['key'] == 'PRI') {
                     $input['readonly'] = 'readonly';
+                    $input = '<div class="input-group">' . Tools::htmlInput("fields[$key]", false, $value, $input) 
+                        . '<span class="input-group-btn"><button class="btn btn-secondary btn-id-unlock" type="button" title="' . $this->translate('Unlock') . '"><i class="glyphicon glyphicon-lock fa fa-lock" aria-hidden="true"></i></button></span></div>';
                 }
                 break;
             case 'date':
