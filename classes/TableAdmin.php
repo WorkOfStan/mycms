@@ -198,7 +198,7 @@ class TableAdmin extends TableLister {
                 $input += array('class' => 'form-control text-right');
                 break;
             case 'datetime': case 'timestamp':
-                if (Tools::equal($value[10], ' ')) {
+                if (isset($value[10]) && $value[10] == ' ') {
                     $value[10] = 'T';
                 }
                 $input += array('type' => 'datetime-local', 'step' => 1, 'class' => 'form-control input-datetime');
