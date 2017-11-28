@@ -79,7 +79,7 @@ class TableAdmin extends TableLister {
             $output .= '<nav class="nav nav-tabs" role="tablist">';
             foreach ($groups as $groupKey => $group) {
                 $tmp = Tools::webalize($this->table . '-' . $groupKey);
-                $output .= '<a class="nav-item nav-link' . ($groupKey === 0 ? ' active' : '') . '" id="nav-' . $tmp . '" data-toggle="tab" href="#tab-' . $tmp . '" role="tab" aria-controls="nav-profile" aria-selected="' . ($groupKey === 0 ? 'true' : 'false') . '">' . Tools::h($groupKey === 0 ? $this->translate('Other') : $groupKey) . '</a>' . PHP_EOL;
+                $output .= '<a class="nav-item nav-link' . ($groupKey === 0 ? ' active' : '') . '" id="nav-' . $tmp . '" data-toggle="tab" href="#tab-' . $tmp . '" role="tab" aria-controls="nav-profile" aria-selected="' . ($groupKey === 0 ? 'true' : 'false') . '">' . ($groupKey === 0 ? '<span class="glyphicon glyphicon-list fa fa-list"></span>' : Tools::h($groupKey)) . '</a>' . PHP_EOL;
             }
             $output .= '</nav>' . PHP_EOL . '<div class="tab-content">';
         }
