@@ -38,7 +38,6 @@ class TableAdmin extends TableLister {
      */
     public function outputForm($where, array $options = array())
     {
-        $record = array();
         $options['include-fields'] = Tools::setarray($options['include-fields']) ? $options['include-fields'] : array_keys($this->fields);
         $options['exclude-fields'] = Tools::setarray($options['exclude-fields']) ? $options['exclude-fields'] : array();
         foreach ($options['exclude-fields'] as $key => $value) {
@@ -46,7 +45,7 @@ class TableAdmin extends TableLister {
                 unset($options['include-fields'][$key]);
             }
         }
-        if (!is_null($where)) {
+        if (!is_null($where) && $where != array('')) {
             if (is_scalar($where)) {
                 $where = array('id' => $where);
             }
@@ -60,42 +59,43 @@ class TableAdmin extends TableLister {
                 $record = $record->fetch_assoc();
             }
         }
+        $record = Tools::setarray($record) ? $record : array();
         Tools::setifempty($options['layout-row'], true);
         $output = (Tools::set($options['exclude-form']) ? '' : '<form method="post" enctype="multipart/form-data"><fieldset>') . PHP_EOL
             . Tools::htmlInput('database-table', '', $this->table, 'hidden') . PHP_EOL
             . Tools::htmlInput('form-csrf', '', $_SESSION['csrf-' . $this->table] = rand(1e8, 1e9 - 1), 'hidden') . PHP_EOL;
-        $groups = array($this->fields);
+        $tabs = array($this->fields);
         if (Tools::setarray($options['tabs'])) {
             foreach ($options['tabs'] as $key => $value) {
                 foreach ($this->fields as $k => $field) {
                     if ($value && preg_match($value, $k)) {
-                        $groups[$key][$k] = $field;
-                        unset($groups[0][$k]);
+                        $tabs[$key][$k] = $field;
+                        unset($tabs[0][$k]);
                     }
                 }
             }
         }
-        if (count($groups) > 1) {
+        if (count($tabs) > 1) {
             $output .= '<nav class="nav nav-tabs" role="tablist">';
-            foreach ($groups as $groupKey => $group) {
-                $tmp = Tools::webalize($this->table . '-' . $groupKey);
-                $output .= '<a class="nav-item nav-link' . ($groupKey === 0 ? ' active' : '') . '" id="nav-' . $tmp . '" data-toggle="tab" href="#tab-' . $tmp . '" role="tab" aria-controls="nav-profile" aria-selected="' . ($groupKey === 0 ? 'true' : 'false') . '">' . ($groupKey === 0 ? '<span class="glyphicon glyphicon-list fa fa-list"></span>' : Tools::h($groupKey)) . '</a>' . PHP_EOL;
+            foreach ($tabs as $tabKey => $tab) {
+                $tmp = Tools::webalize($this->table . '-' . $tabKey);
+                $output .= '<a class="nav-item nav-link' . ($tabKey === 0 ? ' active' : '') . '" id="nav-' . $tmp . '" data-toggle="tab" href="#tab-' . $tmp . '" role="tab" aria-controls="nav-profile" aria-selected="' . ($tabKey === 0 ? 'true' : 'false') . '">' . ($tabKey === 0 ? '<span class="glyphicon glyphicon-list fa fa-list"></span>' : Tools::h($tabKey)) . '</a>' . PHP_EOL;
             }
             $output .= '</nav>' . PHP_EOL . '<div class="tab-content">';
         }
-        foreach ($groups as $groupKey => $group) {
-            $output .= (count($groups) > 1 ? '<div class="tab-pane fade' . ($groupKey === 0 ? ' show active' : '') . '" id="tab-' . ($tmp = Tools::webalize($this->table . '-' . $groupKey)) . '" role="tabpanel" aria-labelledby="nav-' . $tmp . '">' : '') 
+        foreach ($tabs as $tabKey => $tab) {
+            $output .= (count($tabs) > 1 ? '<div class="tab-pane fade' . ($tabKey === 0 ? ' show active' : '') . '" id="tab-' . ($tmp = Tools::webalize($this->table . '-' . $tabKey)) . '" role="tabpanel" aria-labelledby="nav-' . $tmp . '">' : '') 
                 . ($options['layout-row'] ? '<div class="database">' : '<table class="database">');
-            foreach ($group as $key => $field) {
+            foreach ($tab as $key => $field) {
                 if (!in_array($key, $options['include-fields']) || in_array($key, $options['exclude-fields'])) {
                     continue;
                 }
-                $output .= $this->outputField($field, $key, is_array($record) ? $record : array(), $options);
+                $output .= $this->outputField($field, $key, $record, $options);
             }
             $output .= ($options['layout-row'] ? '</div>' : '</table>') . PHP_EOL
-                . (count($groups) > 1 ? '</div>' : '');
+                . (count($tabs) > 1 ? '</div>' : '');
         }
-        $output .= count($groups) > 1 ? '</div>' : '';
+        $output .= count($tabs) > 1 ? '</div>' : '';
         if (function_exists('TableAdminCustomRecordDetail')) {
             $output .= TableAdminCustomRecordDetail($this->table, $record, $this);
         }
@@ -106,7 +106,7 @@ class TableAdmin extends TableLister {
             }
             $output .= '<button type="submit" name="record-save" value="1" '
                 . 'class="btn btn-default btn-primary"><span class="glyphicon glyphicon-floppy-save fa fa-floppy-o"></span> ' . $this->translate('Save') . '</button> ';
-            if (is_array($record)) {
+            if ($record) {
                 $output .= '<button type="submit" name="record-delete" class="btn btn-default" value="1" onclick="return confirm(\'' . $this->translate('Really delete?') . '\');">'
                     . '<span class="glyphicon glyphicon-floppy-remove fa fa-trash-o"></span> ' . $this->translate('Delete') . '</button>';
             }
@@ -126,9 +126,16 @@ class TableAdmin extends TableLister {
      */
     protected function outputField(array $field, $key, array $record, array $options)
     {
-        $value = Tools::ifset($record[$key], false);
-        if ($record === false && Tools::setscalar($options['prefill'][$key])) {
-            $value = $options['prefill'][$key];
+        $value = isset($record[$key]) ? $record[$key] : false;
+        if (Tools::among($record, false, array())) {
+            if (Tools::setscalar($options['prefill'][$key])) {
+                $value = $options['prefill'][$key];
+                if (Tools::among($field['type'], 'datetime', 'timestamp') && $options['prefill'][$key] == 'now') {
+                    $value = date('Y-m-d\TH:i:s');
+                }
+            } elseif ($field['default']) {
+                $value = $field['default'];
+            }
         } elseif (Tools::among($field['type'], 'datetime', 'timestamp') && Tools::among($value, '0000-00-00', '0000-00-00 00:00:00')) {
             $value = '';
         }
@@ -158,7 +165,8 @@ class TableAdmin extends TableLister {
             $query = $this->dbms->query($sql = 'SELECT DISTINCT ' . Tools::escapeDbIdentifier($key)
                 . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' ORDER BY ' . Tools::escapeDbIdentifier($key) . ' LIMIT 1000');
             $input = '<select name="fields[' . Tools::h($key) . ']" id="' . Tools::h($key . $this->rand) . '" class="form-control d-inline-block w-initial"'
-                . (Tools::nonzero($comment['display-own']) ? ' onchange="$(\'#' . Tools::h($key . $this->rand) . '_\').val(null)"' : '') . '>';
+                . (Tools::nonzero($comment['display-own']) ? ' onchange="$(\'#' . Tools::h($key . $this->rand) . '_\').val(null)"' : '') . '>'
+                . '<option></option>';
             while ($row = $query->fetch_row()) {
                 $input .= Tools::htmlOption($row[0], $row[0], $value);
             }
@@ -242,7 +250,8 @@ class TableAdmin extends TableLister {
                         $input[$k] = Tools::htmlInput($key, $v === '0' ? '0 ' : "$v ", 1 << $k, array(
                             'type' => 'radio',
                             'id' => "$key-" . (1 << $k),
-                            'value' => (1 << $k)
+                            'value' => (1 << $k),
+                            'checked' => ($v == $value ? 'checked' : null)
                         ));
                     }
                     $input = array_merge(array(Tools::htmlInput($key, $this->translate('empty') . ' ', 0,
@@ -295,10 +304,10 @@ class TableAdmin extends TableLister {
         if (is_array($input)) {
             $input = Tools::htmlInput("fields[$key]", false, $value, $input);
         }
-        if ($value !== false && Tools::set($options['original'])) {
-            $input .= Tools::htmlInput("original[$key]", false, $value, 'hidden');
+        if (Tools::set($options['original'])) {
+            $input .= Tools::htmlInput("original[$key]", false, Tools::setscalar($options['prefill'][$key]) ? '' : $value, 'hidden');
         }
-        $output .= $input . '</td></tr>' . PHP_EOL;
+        $output .= $input . ($options['layout-row'] ? '' : '</td></tr>') . PHP_EOL;
         return $output;
     }
 
@@ -315,36 +324,40 @@ class TableAdmin extends TableLister {
     }
 
     /** Output HTML select for picking a path (project-specific)
-     * @param string name of the table (without prefix) and main column
-     * @param int path_id reference to the path
-     * @param array options
+     * @param string $name of the table (without prefix) and main column
+     * @param int $path_id reference to the path
+     * @param array $options
      * @return string HTML <select>
      */
     public function outputSelectPath($name, $path_id = null, $options = array())
     {
-        if ($module = $this->dbms->query($sql='SHOW FULL COLUMNS FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name) . ' WHERE FIELD="' . $this->escape($name) . '"')) {
+        if (!is_array($name)) {
+            $name = array('table' => $name, 'column' => $name);
+        }
+        if ($module = $this->dbms->query($sql='SHOW FULL COLUMNS FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name['table']) . ' WHERE FIELD="' . $this->escape($name['column']) . '"')) {
             $module = json_decode($module->fetch_assoc()['Comment'], true);
             $module = Tools::ifset($module['module'], 10);
         } else {
             $module = 10;
         }
-        $output = '<select name="' . Tools::h(Tools::ifset($options['name'], 'path_id'))
+        $result = '<select name="' . Tools::h(Tools::ifset($options['name'], 'path_id'))
             . '" class="' . Tools::h(Tools::ifset($options['class']))
             . '" id="' . Tools::h(Tools::ifset($options['id'])) . '">'
             . Tools::htmlOption('', $this->translate('--choose--'));
-        $query = $this->dbms->query($sql='SELECT id,LENGTH(path)/' . $module . '-1 AS path_length,' . Tools::escapeDbIdentifier($name)
-            . ' FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name) . ' ORDER BY path');
+        $query = $this->dbms->query($sql='SELECT id,path,' . Tools::escapeDbIdentifier($name['column']) . ' AS category_
+            FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name['table']) . ' ORDER BY path');
         if (!$query) {
-            return $output . '</select>';
+            return $result . '</select>';
         }
         Tools::setifnotset($options['exclude']);
+        Tools::setifnotset($options['path-value'], false);
         while ($row = $query->fetch_assoc()) {
-            if ($row[$name] != $options['exclude']) {
-                $output .= Tools::htmlOption($row['id'], str_repeat('…', $row['path_length']) . $row['category'], $path_id);
+            if ($row['id'] != $options['exclude']) {
+                $result .= Tools::htmlOption($row['id'], str_repeat('. ', strlen($row['path']) / $module - 1) . $row['category_'], $row['path'] === $options['path-value'] ? $row['id'] : $path_id);
             }
         }
-        $output .= '</select>';
-        return $output;
+        $result .= '</select>';
+        return $result;
     }
 
     protected function addForeignOption($value, $text, $group, &$lastGroup, $default, $options) {
@@ -442,15 +455,18 @@ class TableAdmin extends TableLister {
                     continue;
                 }
                 $value = $_POST['fields'][$key];
-                if ($field['key'] == 'PRI' && ($value === '' || $value === null)) {
+                $original = Tools::ifset($_POST['original'][$key], $value);
+                if ($field['key'] == 'PRI' && Tools::among($value, '', null)) {
                     $command = 'INSERT INTO ';
-                    continue;
                 }
-                if (isset($_POST['original'][$key]) && $_POST['original'][$key] === $value) {
+                if ($original === $value && !Tools::among($field['key'], 'PRI', 'UNI')) {
                     continue;
                 }
                 switch ($field['basictype']) {
                     case 'integer': case 'rational':
+                        if (Tools::among($field['key'], 'PRI', 'UNI') && $original === $value && $value === '') {
+                            $value = null;
+                        }
                         $sql .= ',' . Tools::escapeDbIdentifier($key) . '='
                             . (is_null($value) ? 'NULL' : ($field['basictype'] == 'integer' ? (int)$value : (double)$value));
                         break;
@@ -459,9 +475,13 @@ class TableAdmin extends TableLister {
                             . (is_null($value) ? 'NULL' : '"' . $this->escape($value) . '"');
                 }
                 if (Tools::among($field['key'], 'PRI', 'UNI')) {
-                    $where .= ' AND ' . Tools::escapeDbIdentifier($key) . '=' . (is_null($value) ? 'NULL' : '"' . $this->escape($value) . '"');
+                    if ($original) {
+                        $where .= ' AND ' . Tools::escapeDbIdentifier($key) . '=' . (is_null($original) ? 'NULL' : '"' . $this->escape($original) . '"');
+                    }
                 }
             }
+        } else {
+            // @todo empty fields
         }
         if ($sql) {
             $sql = $command . Tools::escapeDbIdentifier($this->table) . ' SET ' . mb_substr($sql, 1) . Tools::wrap(mb_substr($where, 5), ' WHERE ') . ($command == 'UPDATE ' ? ' LIMIT 1' : '');
