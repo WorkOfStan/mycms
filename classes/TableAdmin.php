@@ -38,8 +38,8 @@ class TableAdmin extends TableLister {
      */
     public function outputForm($where, array $options = array())
     {
-        $options['include-fields'] = Tools::setarray($options['include-fields']) ? $options['include-fields'] : array_keys($this->fields);
-        $options['exclude-fields'] = Tools::setarray($options['exclude-fields']) ? $options['exclude-fields'] : array();
+        $options['include-fields'] = isset($options['include-fields']) && is_array($options['include-fields']) ? $options['include-fields'] : array_keys($this->fields);
+        $options['exclude-fields'] = isset($options['exclude-fields']) && is_array($options['exclude-fields']) ? $options['exclude-fields'] : array();
         foreach ($options['exclude-fields'] as $key => $value) {
             if (in_array($value, $options['include-fields'])) {
                 unset($options['include-fields'][$key]);
@@ -59,13 +59,13 @@ class TableAdmin extends TableLister {
                 $record = $record->fetch_assoc();
             }
         }
-        $record = Tools::setarray($record) ? $record : array();
+        $record = isset($record) && is_array($record) ? $record : array();
         Tools::setifempty($options['layout-row'], true);
-        $output = (Tools::set($options['exclude-form']) ? '' : '<form method="post" enctype="multipart/form-data"><fieldset>') . PHP_EOL
+        $output = (isset($options['exclude-form']) && $options['exclude-form'] ? '' : '<form method="post" enctype="multipart/form-data"><fieldset>') . PHP_EOL
             . Tools::htmlInput('database-table', '', $this->table, 'hidden') . PHP_EOL
             . Tools::htmlInput('form-csrf', '', $_SESSION['csrf-' . $this->table] = rand(1e8, 1e9 - 1), 'hidden') . PHP_EOL;
         $tabs = array($this->fields);
-        if (Tools::setarray($options['tabs'])) {
+        if (isset($options['tabs']) && is_array($options['tabs'])) {
             foreach ($options['tabs'] as $key => $value) {
                 foreach ($this->fields as $k => $field) {
                     if ($value && preg_match($value, $k)) {
@@ -99,7 +99,7 @@ class TableAdmin extends TableLister {
         if (function_exists('TableAdminCustomRecordDetail')) {
             $output .= TableAdminCustomRecordDetail($this->table, $record, $this);
         }
-        if (!Tools::nonzero($options['exclude-actions'])) {
+        if (!isset($options['exclude-actions']) || !$options['exclude-actions']) {
             $output .= '<hr /><div class="form-actions">' . PHP_EOL;
             if (function_exists('TableAdminCustomRecordAction')) {
                 $output .= TableAdminCustomRecordAction($this->table, $record, $this);
@@ -112,7 +112,7 @@ class TableAdmin extends TableLister {
             }
             $output .= '</div>';
         }
-        $output .= (Tools::nonzero($options['exclude-form']) ? '' : '</fieldset></form>') . PHP_EOL;
+        $output .= (isset($options['exclude-form']) && $options['exclude-form'] ? '' : '</fieldset></form>') . PHP_EOL;
         echo $output;
     }
 
@@ -128,7 +128,7 @@ class TableAdmin extends TableLister {
     {
         $value = isset($record[$key]) ? $record[$key] : false;
         if (Tools::among($record, false, array())) {
-            if (Tools::setscalar($options['prefill'][$key])) {
+            if (isset($options['prefill'][$key]) && is_scalar($options['prefill'][$key])) {
                 $value = $options['prefill'][$key];
                 if (Tools::among($field['type'], 'datetime', 'timestamp') && $options['prefill'][$key] == 'now') {
                     $value = date('Y-m-d\TH:i:s');
@@ -159,13 +159,13 @@ class TableAdmin extends TableLister {
                 $field['type'] = null;
             }
         }
-        $comment = json_decode(Tools::set($field['comment'], '{}'), true);
+        $comment = json_decode(isset($field['comment']) ? $field['comment'] : '{}', true);
         Tools::setifnull($comment['display']);
         if (!is_null($field['type']) && $comment['display'] == 'option') {
             $query = $this->dbms->query($sql = 'SELECT DISTINCT ' . Tools::escapeDbIdentifier($key)
                 . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' ORDER BY ' . Tools::escapeDbIdentifier($key) . ' LIMIT 1000');
             $input = '<select name="fields[' . Tools::h($key) . ']" id="' . Tools::h($key . $this->rand) . '" class="form-control d-inline-block w-initial"'
-                . (Tools::nonzero($comment['display-own']) ? ' onchange="$(\'#' . Tools::h($key . $this->rand) . '_\').val(null)"' : '') . '>'
+                . (isset($comment['display-own']) && $comment['display-own'] ? ' onchange="$(\'#' . Tools::h($key . $this->rand) . '_\').val(null)"' : '') . '>'
                 . '<option></option>';
             while ($row = $query->fetch_row()) {
                 $input .= Tools::htmlOption($row[0], $row[0], $value);
@@ -182,10 +182,10 @@ class TableAdmin extends TableLister {
             }
             $field['type'] = null;
         }
-        if (!is_null($field['type']) && Tools::equal($comment['edit'], 'json')) {
+        if (!is_null($field['type']) && isset($comment['edit']) && $comment['edit'] === 'json') {
             $json = json_decode($value, true);
             $output .= '<div class="input-expanded">' . Tools::htmlInput($key . EXPAND_INFIX, '', 1, 'hidden');
-            if (!is_array($json) && Tools::setarray($comment['subfields'])) {
+            if (!is_array($json) && isset($comment['subfields']) && is_array($comment['subfields'])) {
                 foreach ($comment['subfields'] as $v) {
                     Tools::setifnull($json[$v], null);
                 }
@@ -304,8 +304,8 @@ class TableAdmin extends TableLister {
         if (is_array($input)) {
             $input = Tools::htmlInput("fields[$key]", false, $value, $input);
         }
-        if (Tools::set($options['original'])) {
-            $input .= Tools::htmlInput("original[$key]", false, Tools::setscalar($options['prefill'][$key]) ? '' : $value, 'hidden');
+        if (isset($options['original']) && $options['original']) {
+            $input .= Tools::htmlInput("original[$key]", false, isset($options['prefill'][$key]) && is_scalar($options['prefill'][$key]) ? '' : $value, 'hidden');
         }
         $output .= $input . ($options['layout-row'] ? '' : '</td></tr>') . PHP_EOL;
         return $output;
@@ -336,21 +336,21 @@ class TableAdmin extends TableLister {
         }
         if ($module = $this->dbms->query($sql='SHOW FULL COLUMNS FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name['table']) . ' WHERE FIELD="' . $this->escape($name['column']) . '"')) {
             $module = json_decode($module->fetch_assoc()['Comment'], true);
-            $module = Tools::ifset($module['module'], 10);
+            $module = isset($module['module']) && $module['module'] ? $module['module'] : 10;
         } else {
             $module = 10;
         }
-        $result = '<select name="' . Tools::h(Tools::ifset($options['name'], 'path_id'))
-            . '" class="' . Tools::h(Tools::ifset($options['class']))
-            . '" id="' . Tools::h(Tools::ifset($options['id'])) . '">'
+        $result = '<select name="' . Tools::h(isset($options['name']) ? $options['name'] : 'path_id')
+            . '" class="' . Tools::h(isset($options['class']) ? $options['class'] : '')
+            . '" id="' . Tools::h(isset($options['id']) ? $options['id'] : '') . '">'
             . Tools::htmlOption('', $this->translate('--choose--'));
         $query = $this->dbms->query($sql='SELECT id,path,' . Tools::escapeDbIdentifier($name['column']) . ' AS category_
             FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name['table']) . ' ORDER BY path');
         if (!$query) {
             return $result . '</select>';
         }
-        Tools::setifnotset($options['exclude']);
-        Tools::setifnotset($options['path-value'], false);
+        $options['exclude'] = isset($options['exclude']) ? $options['exclude'] : array();
+        $options['path-value'] = isset($options['path-value']) ? $options['path-value'] : false;
         while ($row = $query->fetch_assoc()) {
             if ($row['id'] != $options['exclude']) {
                 $result .= Tools::htmlOption($row['id'], str_repeat('. ', strlen($row['path']) / $module - 1) . $row['category_'], $row['path'] === $options['path-value'] ? $row['id'] : $path_id);
@@ -389,10 +389,10 @@ class TableAdmin extends TableLister {
     public function outputForeignId($field, $values, $default = null, $options = array())
     {
         $result = '<select name="' . Tools::h($field)
-            . '" class="' . Tools::h(Tools::ifset($options['class']))
-            . '" id="' . Tools::h(Tools::ifset($options['id'])) . '">'
+            . '" class="' . Tools::h(isset($options['class']) ? $options['class'] : '')
+            . '" id="' . Tools::h(isset($options['id']) ? $options['id'] : '') . '">'
             . '<option value=""></option>';
-        $options['exclude'] = Tools::ifset($options['exclude']);
+        $options['exclude'] = isset($options['exclude']) ? $options['exclude'] : array();
         $group = $lastGroup = false;
         if (is_array($values)) { // array - just output them as <option>s
             foreach ($values as $key => $value) {
@@ -405,7 +405,7 @@ class TableAdmin extends TableLister {
         } elseif (is_string($values)) { // string - SELECT id,name FROM ...
             if ($query = $this->dbms->query($values)) {
                 while ($row = $query->fetch_row()) {
-                    $result .= $this->addForeignOption($row[0], $row[1], Tools::ifset($row[2], false), $lastGroup, $default, $options);
+                    $result .= $this->addForeignOption($row[0], $row[1], isset($row[2]) ? $row[2] : false, $lastGroup, $default, $options);
                 }
             }
         }
@@ -448,14 +448,14 @@ class TableAdmin extends TableLister {
             foreach ($this->fields as $key => $field) {
                 if (isset($_POST['fields-null'][$key]) || (isset($field['foreign_table']) && $value === '')) {
                     $_POST['fields'][$key] = null;
-                } elseif (Tools::nonzero($_POST['fields-own'][$key])) {
+                } elseif (isset($_POST['fields-own'][$key]) && $_POST['fields-own'][$key]) {
                     $_POST['fields'][$key] = $_POST['fields-own'][$key];
                 }
                 if (!isset($_POST['fields'][$key]) || !is_scalar($_POST['fields'][$key])) {
                     continue;
                 }
                 $value = $_POST['fields'][$key];
-                $original = Tools::ifset($_POST['original'][$key], $value);
+                $original = isset($_POST['original'][$key]) ? $_POST['original'][$key] : $value;
                 if ($field['key'] == 'PRI' && Tools::among($value, '', null)) {
                     $command = 'INSERT INTO ';
                 }
