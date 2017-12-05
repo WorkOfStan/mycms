@@ -239,11 +239,17 @@ class MyCMS
      * @todo - test fully
      * 
      */
-    public function formController()
+    public function formController($databaseTable = '')
     {
         // fork for for admin and form processing
         if (isset($_POST) && is_array($_POST)) {
-            require_once basename($_SERVER['PHP_SELF']) == 'admin.php' ? './admin-process.php' : './process.php';
+            if (basename($_SERVER['PHP_SELF']) == 'admin.php') {
+                require_once './user-defined.php';
+                $GLOBALS['TableAdmin'] = new \GodsDev\MyCMS\TableAdmin($this->dbms, $databaseTable);
+                require_once './admin-process.php';
+            } else {
+                require_once './process.php';
+            }
         }
     }
 
