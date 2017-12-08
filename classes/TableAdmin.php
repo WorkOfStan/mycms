@@ -139,8 +139,11 @@ class TableAdmin extends TableLister {
         } elseif (Tools::among($field['type'], 'datetime', 'timestamp') && Tools::among($value, '0000-00-00', '0000-00-00 00:00:00')) {
             $value = '';
         }
+        if (($custom = $this->translate("column:$key")) == "column:$key") {
+            $custom = $key;
+        }
         $output = ($options['layout-row'] ? '' : '<tr><td>')
-            . '<label for="' . Tools::h($key) . $this->rand . '">' . Tools::h($key) . ':</label>'
+            . '<label for="' . Tools::h($key) . $this->rand . '">' . Tools::h($custom) . ':</label>'
             . ($options['layout-row'] ? ' ' : '</td><td>')
             . Tools::htmlInput(($field['type'] == 'enum' ? $key : "fields-null[$key]"), ($field['type'] == 'enum' && $field['null'] ? 'null' : ''), 1,
                 array(
@@ -193,8 +196,8 @@ class TableAdmin extends TableLister {
             if (is_array($json) && is_scalar(reset($json))) {
                 $output .= '<table class="w-100 json-expanded">';
                 foreach ($json + array('' => '') as $k => $v) {
-                    $output .= '<tr><td class="first w-25">' . Tools::htmlInput(EXPAND_INFIX . $key . '[]', '', $k, array('class' => 'form-control form-control-sm')) . '</td>'
-                        . '<td class="second w-75">' . Tools::htmlInput(EXPAND_INFIX . EXPAND_INFIX . $key . '[]', '', $v, array('class' => 'form-control form-control-sm')) . '</td></tr>' . PHP_EOL;
+                    $output .= '<tr><td class="first w-25">' . Tools::htmlInput(EXPAND_INFIX . $key . '[]', '', $k, array('class' => 'form-control form-control-sm', 'placeholder' => $this->translate('variable'))) . '</td>'
+                        . '<td class="second w-75">' . Tools::htmlInput(EXPAND_INFIX . EXPAND_INFIX . $key . '[]', '', $v, array('class' => 'form-control form-control-sm', 'placeholder' => $this->translate('value'))) . '</td></tr>' . PHP_EOL;
                 }
                 $output .= '</table>';
             } else {
