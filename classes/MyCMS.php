@@ -10,10 +10,9 @@ class MyCMS
     /** Class for a MyCMS object. 
      * It holds all variables needed for the used project.
      * Among others, it translates multilingual texts.
-     *
-     * @var \mysqli
      */
-    public $dbms = null; //database management system
+    // @var \mysqli - database management system
+    public $dbms = null;
     public $PAGES;
     public $PAGES_SPECIAL; //special pages that are not fetched from database (e.g. sitemap etc.)
     public $PAYMENTS;
@@ -265,4 +264,12 @@ class MyCMS
         }
     }
 
+    /** Shortcut for mysqli::real_escape_string($link, $str)
+     * @param string string
+     * @result string
+     */
+    public function escapeSQL($string)
+    {
+        return $this->dbms->real_escape_string($string);
+    }
 }

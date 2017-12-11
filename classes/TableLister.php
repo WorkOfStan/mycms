@@ -11,10 +11,7 @@ use \GodsDev\Tools\Tools;
 class TableLister
 {
 
-    /**
-     *
-     * @var \mysqli database management system
-     */
+    // @var \mysqli database management system
     protected $dbms;
     // @var string table to list
     protected $table;
@@ -235,7 +232,7 @@ class TableLister
                     switch ($_GET['op'][$key]) {
                         default:
                             $where .= Tools::escapeDbIdentifier($this->table) . '.' . Tools::escapeDbIdentifier($filterColumn[$value])
-                                    . '="' . Tools::escapeSQL($_GET['val'][$key]) . '"';
+                                    . '="' . $this->escape($_GET['val'][$key]) . '"';
                     }
                 }
             }
@@ -507,10 +504,9 @@ class TableLister
         return $result;
     }
 
-    /**
-     * 
+    /**  Attempt to a user-defined translation
      * @param string $text
-     * @param bool $escape
+     * @param bool $escape escape for HTML (ie. tranfer ' " <… to &#39; &quot; &lt;…) ?
      * @return string
      */
     public function translate($text, $escape = true)
@@ -526,5 +522,4 @@ class TableLister
         }
         return $result;
     }
-
 }
