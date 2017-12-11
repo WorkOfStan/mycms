@@ -487,10 +487,13 @@ class TableLister
      * @param string SQL to execute
      * @param string message in case of success
      * @param string error in case of an error
-     * @return bool true/false of success of the query
+     * @return mixed true for success, false for failure of the query; if the query is empty return null (with no messages)
      */
     public function resolveSQL($sql, $success, $error)
     {
+        if (!$sql) {
+            return null;
+        }
         if ($result = $this->dbms->query($sql)) {
             $insertId = $affectedRows = '';
             if (strtoupper(substr(trim($sql), 0, 7)) == 'INSERT ') {

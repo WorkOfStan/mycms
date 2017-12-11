@@ -449,7 +449,7 @@ class TableAdmin extends TableLister {
                 }
             }
             foreach ($this->fields as $key => $field) {
-                if (isset($_POST['fields-null'][$key]) || (isset($field['foreign_table']) && $value === '')) {
+                if (isset($_POST['fields-null'][$key]) || isset($field['foreign_table']) && $value === '') {
                     $_POST['fields'][$key] = null;
                 } elseif (isset($_POST['fields-own'][$key]) && $_POST['fields-own'][$key]) {
                     $_POST['fields'][$key] = $_POST['fields-own'][$key];
@@ -458,11 +458,14 @@ class TableAdmin extends TableLister {
                     continue;
                 }
                 $value = $_POST['fields'][$key];
-                $original = isset($_POST['original'][$key]) ? $_POST['original'][$key] : $value;
-                if ($field['key'] == 'PRI' && Tools::among($value, '', null)) {
-                    $command = 'INSERT INTO ';
-                }
-                if ($original === $value && !Tools::among($field['key'], 'PRI', 'UNI')) {
+                $original = isset($_POST['original'][$key]) ? $_POST['original'][$key] : null;
+                if (Tools::among($field['key'], 'PRI', 'UNI')) {
+                    if ($field['key'] == 'PRI' && Tools::among($value, '', null)) {
+                        $command = 'INSERT INTO ';
+                    } else {
+                        $where .= ' AND ' . Tools::escapeDbIdentifier($key) . (is_null($original) ? ' IS NULL' : '="' . $this->escape($original) . '"');
+                    }
+                } elseif (isset($_POST['original'][$key]) && $original === $value) {
                     continue;
                 }
                 switch ($field['basictype']) {
@@ -477,15 +480,11 @@ class TableAdmin extends TableLister {
                         $sql .= ',' . Tools::escapeDbIdentifier($key) . '='
                             . (is_null($value) ? 'NULL' : '"' . $this->escape($value) . '"');
                 }
-                if (Tools::among($field['key'], 'PRI', 'UNI')) {
-                    if ($original) {
-                        $where .= ' AND ' . Tools::escapeDbIdentifier($key) . '=' . (is_null($original) ? 'NULL' : '"' . $this->escape($original) . '"');
-                    }
-                }
             }
         } else {
-            // @todo empty fields
+            Tools::addMessage('info', 'Nothing to save.');
         }
+
         if ($sql) {
             $sql = $command . Tools::escapeDbIdentifier($this->table) . ' SET ' . mb_substr($sql, 1) . Tools::wrap(mb_substr($where, 5), ' WHERE ') . ($command == 'UPDATE ' ? ' LIMIT 1' : '');
             if ($this->resolveSQL($sql, $messageSuccess ?: $this->translate('Record saved.'), $messageError ?: $this->translate('Could not save the record.') . ' #%errno%: %error%')) {
@@ -499,8 +498,18 @@ class TableAdmin extends TableLister {
         }
     }
 
-    public function recordDelete()
+    /**
+     * Perform the detault record delete command.
+     * 
+     * @param bool $messageSuccess
+     * @param bool $messageError
+     * @return bool success
+     */
+    public function recordDelete($messageSuccess = false, $messageError = false)
     {
+        if (!$this->authorized()) {
+            return false;
+        }
         $sql = array();
         if ($this->authorized() && isset($_GET['where'], $_GET['table']) && $_GET['table']
             && is_array($_GET['where']) && count($_GET['where'])) {
@@ -509,7 +518,7 @@ class TableAdmin extends TableLister {
             }
             $sql = 'DELETE FROM ' . Tools::escapeDbIdentifier($_GET['table']) . ' WHERE ' . implode(' AND ', $sql);
         }
-        $this->resolveSQL($sql, $this->translate('Record deleted.'), $this->translate('Could not delete the record.'));
+        return $this->resolveSQL($sql, $messageSuccess ?: $this->translate('Record deleted.'), $messageError ?: $this->translate('Could not delete the record.') . '#%errno%: %error%');
     }
 
     /**
