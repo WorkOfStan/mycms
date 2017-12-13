@@ -15,6 +15,9 @@ $MyCMS = new \GodsDev\MyCMS\MyCMS(
         //optional
     )
 );
+
+//Finish with Latte initialization & Mark-up output
+$MyCMS->renderLatte(DIR_TEMPLATE_CACHE, "\\GodsDev\\ProjectName\\Latte\\CustomFilters::common", $params);
 ```
 
 Files `process.php` and `admin-process.php` MUST exist and process forms.

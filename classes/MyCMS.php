@@ -2,16 +2,21 @@
 
 namespace GodsDev\MyCMS;
 
-//use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerInterface;
+use Tracy\Debugger;
 
+/**
+ * Class for a MyCMS object.
+ * It holds all variables needed for the used project.
+ * Among others, it translates multilingual texts.
+ */
 class MyCMS
 {
 
-    /** Class for a MyCMS object. 
-     * It holds all variables needed for the used project.
-     * Among others, it translates multilingual texts.
+    /**
+     *
+     * @var \mysqli - database management system
      */
-    // @var \mysqli - database management system
     public $dbms = null;
     public $PAGES;
     public $PAGES_SPECIAL; //special pages that are not fetched from database (e.g. sitemap etc.)
@@ -23,7 +28,7 @@ class MyCMS
     public $CURRENCIES;
     public $COMMISSION;
     public $ITEM_ORDER;
-    public $LOG_SETTINGS; //@todo migrate to a standard logger
+    public $LOG_SETTINGS; //@todo migrate to a standard logger ?? obsoleted by $logger
 
     /**
      * Selected locale strings
@@ -39,7 +44,12 @@ class MyCMS
      */
     public $TRANSLATIONS;
     public $template; //which Latte template to load
-    public $context = array(); //array of variables for template rendering
+
+    /**
+     *
+     * @var array of variables for template rendering
+     */
+    public $context = array();
 
     /**
      * Logger SHOULD by available to the application using mycms
@@ -48,7 +58,8 @@ class MyCMS
      */
     public $logger;
 
-    /** Constructor
+    /**
+     * Constructor
      *
      * @param array $myCmsConf
      */
@@ -65,7 +76,7 @@ class MyCMS
             }
         }
         // Logger is obligatory
-        if (!is_object($this->logger) || !($this->logger instanceof \Psr\Log\LoggerInterface)
+        if (!is_object($this->logger) || !($this->logger instanceof LoggerInterface)
         ) {
             error_log("Error: MyCMS constructed without logger. (" . get_class($this->logger) . ")");
             die('Fatal error - project is not configured.'); //@todo nicely formatted error page            
@@ -105,7 +116,8 @@ class MyCMS
         return $resultLanguage;
     }
 
-    /** Load specific settings from database to $this->SETTINGS and $this->WEBSITE
+    /**
+     * Load specific settings from database to $this->SETTINGS and $this->WEBSITE
      * @param mixed $selectSettings array or SQL SELECT statement to get project-specific settings
      * @param mixed $selectWebsite array or SQL SELECT statement to get language-specific website settings
      * @param bool die on error (i.e. if $this->SETTINGS or $this->WEBSITE is not loaded)?
@@ -134,7 +146,8 @@ class MyCMS
         return true;
     }
 
-    /** Execute an SQL, fetch resultset into an array reindexed by first field.
+    /**
+     * Execute an SQL, fetch resultset into an array reindexed by first field.
      * If the query selects only two fields, the first one is a key and the second one a value of the result array
      * Example: 'SELECT id,name FROM employees' --> [3=>"John", 4=>"Mary", 5=>"Joe"]
      * If the result set has more than two fields, whole resultset is fetched into each array item
@@ -142,6 +155,7 @@ class MyCMS
      * If the first column is non-unique, results are joined into an array.
      * Example: 'SELECT department_id,name FROM employees' --> [1=>['John', 'Mary'], 2=>['Joe','Pete','Sally']]
      * Example: 'SELECT division_id,name,surname FROM employees' --> [1=>[[name=>'John',surname=>'Doe'], [name=>'Mary',surname=>'Saint']], 2=>[...]]
+     * 
      * @param string $sql SQL to be executed
      * @result mixed - either associative array, empty array on empty select, or false on error
      */
@@ -174,7 +188,9 @@ class MyCMS
         return $result;
     }
 
-    /** Execute an SQL, fetch and return all resulting rows
+    /**
+     * Execute an SQL, fetch and return all resulting rows
+     * 
      * @param string $sql
      * @param mixed array of associative arrays for each result row or empty array on error or no results
      */
@@ -190,8 +206,10 @@ class MyCMS
         return $result;
     }
 
-    /** Execute an SQL and fetch the first row of a resultset.
+    /**
+     * Execute an SQL and fetch the first row of a resultset.
      * If only one column is selected, return it, otherwise return whole row.
+     * 
      * @param string $sql SQL to be executed
      * @result mixed - first row (first column if only one is selected), null on empty SELECT, or false on error
      */
@@ -211,7 +229,8 @@ class MyCMS
         return false;
     }
 
-    /** Translate defined string to the language stored in $_SESSION['language'].
+    /**
+     * Translate defined string to the language stored in $_SESSION['language'].
      * Returns original text if translation not found.
      * 
      * @param string $id text to translate
@@ -254,8 +273,6 @@ class MyCMS
 
     /**
      * Create a general CSRF token, keep it in session
-     * 
-     * @todo - test fully
      */
     public function csrf()
     {
@@ -264,7 +281,9 @@ class MyCMS
         }
     }
 
-    /** Shortcut for mysqli::real_escape_string($link, $str)
+    /**
+     * Shortcut for mysqli::real_escape_string($link, $str)
+     * 
      * @param string string
      * @result string
      */
@@ -272,4 +291,23 @@ class MyCMS
     {
         return $this->dbms->real_escape_string($string);
     }
+
+    /**
+     * Latte initialization & Mark-up output
+     * 
+     * @param string $dirTemplateCache
+     * @param string $customFilters
+     * @param array $params
+     */
+    public function renderLatte($dirTemplateCache, $customFilters, array $params)
+    {
+        $Latte = new \Latte\Engine;
+        $Latte->setTempDirectory($dirTemplateCache);
+        $Latte->addFilter(null, $customFilters);
+        Debugger::barDump($params, 'Params');
+        Debugger::barDump($_SESSION, 'Session'); //mainly for  $_SESSION['language']
+        $Latte->render('template/' . $this->template . '.latte', $params);
+        unset($_SESSION['messages']);
+    }
+
 }
