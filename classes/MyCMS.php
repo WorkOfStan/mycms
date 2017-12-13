@@ -13,6 +13,11 @@ use Tracy\Debugger;
 class MyCMS
 {
 
+    /** Class for a MyCMS object. 
+     * It holds all variables needed for the used project.
+     * Among others, it translates multilingual texts.
+     */
+
     /**
      *
      * @var \mysqli - database management system
@@ -28,7 +33,6 @@ class MyCMS
     public $CURRENCIES;
     public $COMMISSION;
     public $ITEM_ORDER;
-    public $LOG_SETTINGS; //@todo migrate to a standard logger ?? obsoleted by $logger
 
     /**
      * Selected locale strings
@@ -69,7 +73,7 @@ class MyCMS
                 array(//default values
                 ), $myCmsConf);
         //@todo do not use $this->myCmsConf but set the class properties right here accordingly; and also provide means to set the values otherwise later
-        $classAttributes = explode(' ', 'PAGES PAGES_SPECIAL PAYMENTS SETTINGS WEBSITE CART_ITEM COUNTRIES CURRENCIES COMMISSION ITEM_ORDER LOG_SETTINGS TRANSLATION TRANSLATIONS template context logger dbms');
+        $classAttributes = explode(' ', 'PAGES PAGES_SPECIAL PAYMENTS SETTINGS WEBSITE CART_ITEM COUNTRIES CURRENCIES COMMISSION ITEM_ORDER TRANSLATION TRANSLATIONS template context logger dbms');
         foreach ($this->myCmsConf as $myCmsVariable => $myCmsContent) {
             if (in_array($myCmsVariable, $classAttributes, true)) {
                 $this->{$myCmsVariable} = $myCmsContent;
@@ -273,6 +277,8 @@ class MyCMS
 
     /**
      * Create a general CSRF token, keep it in session
+     * 
+     * @todo - test fully
      */
     public function csrf()
     {

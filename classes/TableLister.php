@@ -24,7 +24,7 @@ class TableLister
     // @var string JavaScript code gathered to show the listing
     public $script;
     // @var int random item used in HTML
-    protected $rand;
+    public $rand;
     // @var array arithmetical and logical operations for searching
     public $WHERE_OPS = array(
         '=',

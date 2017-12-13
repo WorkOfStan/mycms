@@ -79,7 +79,8 @@ class TableAdmin extends TableLister {
             $output .= '<nav class="nav nav-tabs" role="tablist">';
             foreach ($tabs as $tabKey => $tab) {
                 $tmp = Tools::webalize($this->table . '-' . $tabKey);
-                $output .= '<a class="nav-item nav-link' . ($tabKey === 0 ? ' active' : '') . '" id="nav-' . $tmp . '" data-toggle="tab" href="#tab-' . $tmp . '" role="tab" aria-controls="nav-profile" aria-selected="' . ($tabKey === 0 ? 'true' : 'false') . '">' . ($tabKey === 0 ? '<span class="glyphicon glyphicon-list fa fa-list"></span>' : Tools::h($tabKey)) . '</a>' . PHP_EOL;
+                $output .= '<a class="nav-item nav-link' . ($tabKey === 0 ? ' active' : '') . '" id="nav-' . $tmp . '" data-toggle="tab" href="#tab-' . $tmp . '" role="tab" aria-controls="nav-profile" aria-selected="' . ($tabKey === 0 ? 'true' : 'false') . '">' 
+                    . ($tabKey === 0 ? '<span class="glyphicon glyphicon-list fa fa-list" aria-hidden="true"></span>' : Tools::h($tabKey)) . '</a>' . PHP_EOL;
             }
             $output .= '</nav>' . PHP_EOL . '<div class="tab-content">';
         }
@@ -105,10 +106,10 @@ class TableAdmin extends TableLister {
                 $output .= TableAdminCustomRecordAction($this->table, $record, $this);
             }
             $output .= '<button type="submit" name="record-save" value="1" '
-                . 'class="btn btn-default btn-primary"><span class="glyphicon glyphicon-floppy-save fa fa-floppy-o"></span> ' . $this->translate('Save') . '</button> ';
+                . 'class="btn btn-default btn-primary"><span class="glyphicon glyphicon-floppy-save fa fa-floppy-o" aria-hidden="true"></span> ' . $this->translate('Save') . '</button> ';
             if ($record) {
                 $output .= '<button type="submit" name="record-delete" class="btn btn-default" value="1" onclick="return confirm(\'' . $this->translate('Really delete?') . '\');">'
-                    . '<span class="glyphicon glyphicon-floppy-remove fa fa-trash-o"></span> ' . $this->translate('Delete') . '</button>';
+                    . '<span class="glyphicon glyphicon-floppy-remove fa fa-trash-o" aria-hidden="true"></span> ' . $this->translate('Delete') . '</button>';
             }
             $output .= '</div>';
         }
@@ -154,7 +155,7 @@ class TableAdmin extends TableLister {
                     'class' => 'input-null'
                 )
             ) . ($options['layout-row'] ? '<br />' : '</td><td>') . PHP_EOL;
-        $input = array('id' => $key . $this->rand);
+        $input = array('id' => $key . $this->rand, 'class' => 'form-control');
         if (function_exists('TableAdminCustomInput')) {
             $custom = TableAdminCustomInput($this->table, $key, $value, $this);
             if ($custom !== false) {
@@ -186,7 +187,7 @@ class TableAdmin extends TableLister {
             $field['type'] = null;
         }
         if (!is_null($field['type']) && isset($comment['edit']) && $comment['edit'] === 'json') {
-            $json = json_decode($value, true);
+            $json = json_decode($value, true) ?: (Tools::among($value, '', '[]', '{}') ? array() : $value);
             $output .= '<div class="input-expanded">' . Tools::htmlInput($key . EXPAND_INFIX, '', 1, 'hidden');
             if (!is_array($json) && isset($comment['subfields']) && is_array($comment['subfields'])) {
                 foreach ($comment['subfields'] as $v) {
@@ -211,7 +212,7 @@ class TableAdmin extends TableLister {
             $output .= $this->outputForeignId(
                 "fields[$key]",
                 'SELECT id,' . Tools::escapeDbIdentifier($comment['foreign-column']) . ' FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $comment['foreign-table']),
-                $value, array('class' => 'form-control'));
+                $value, array('class' => 'form-control', 'id' => $input['id']));
             $input = false;
             $field['type'] = null;
         }
@@ -252,7 +253,7 @@ class TableAdmin extends TableLister {
                     foreach ($choices as $k => $v) {
                         $input[$k] = Tools::htmlInput($key, $v === '0' ? '0 ' : "$v ", 1 << $k, array(
                             'type' => 'radio',
-                            'id' => "$key-" . (1 << $k),
+                            'id' => "fields[$key-" . (1 << $k) . "]",
                             'value' => (1 << $k),
                             'checked' => ($v == $value ? 'checked' : null)
                         ));
@@ -260,7 +261,7 @@ class TableAdmin extends TableLister {
                     $input = array_merge(array(Tools::htmlInput($key, $this->translate('empty') . ' ', 0,
                         array(
                             'type' => 'radio',
-                            'id' => "$key-0",
+                            'id' => "fields[$key-0]",
                             'value' => 0
                         ))), $input
                     );
@@ -294,15 +295,15 @@ class TableAdmin extends TableLister {
                 break;
             case null:
                 break;
-            case 'char': case 'varchar':
-                if ($field['size'] > 1024) {
-                    $input = Tools::htmlTextarea("fields[$key]", $value, false, false,
-                        array('id' => $key . $this->rand, 'class' => 'form-control'));
-                }
             default:
+                if (Tools::among($field['type'], 'char', 'varchar') && $field['size'] < 256) {
+                    break;
+                }
                 $input = Tools::htmlTextarea("fields[$key]", $value, false, false,
-                    array('id' => $key . $this->rand, 'class' => 'form-control' . ($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : ''))
-                );
+                    array('id' => $key . $this->rand, 'data-maxlength' => $field['size'],
+                        'class' => 'form-control type-' . Tools::webalize($field['type']) . ($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : '')
+                    ))
+                    . '<i class="fa fa-stack-overflow input-limit" aria-hidden="true" data-fields="' . Tools::h($key) . '"></i>';
         }
         if (is_array($input)) {
             $input = Tools::htmlInput("fields[$key]", false, $value, $input);
