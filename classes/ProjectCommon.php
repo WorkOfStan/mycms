@@ -4,7 +4,9 @@ namespace GodsDev\MyCMS;
 
 use Psr\Log\LoggerInterface;
 
-class ProjectCommon {
+class ProjectCommon
+{    
+    use \Nette\SmartObject;
 
     /** 
      * Shortcut for echo'<pre>'; var_dump(); and exit;

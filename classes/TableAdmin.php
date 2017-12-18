@@ -7,8 +7,11 @@ use \GodsDev\Tools\Tools;
 /**
  * This class facilitates administration of a database table
  */
-class TableAdmin extends TableLister {
+class TableAdmin extends TableLister
+{    
+    use \Nette\SmartObject;
 
+    /** @var type */
     private $csrf;
 
     /** Constructor

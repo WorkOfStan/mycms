@@ -4,28 +4,30 @@ namespace GodsDev\MyCMS;
 
 use \GodsDev\Tools\Tools;
 
-/** Class that can list rows of a database table, with editable search/filter 
+/**
+ * Class that can list rows of a database table, with editable search/filter 
  * functionality, links to edit each particular row, multi-row action, etc.
  * dependencies: Tools
  */
 class TableLister
-{
+{  
+    use \Nette\SmartObject;
 
-    // @var \mysqli database management system
+    /** @var \mysqli database management system */
     protected $dbms;
-    // @var string table to list
+    /** @var string table to list */
     protected $table;
-    // @var array all tables in the database
+    /** @var array all tables in the database */
     public $tables;
-    // @var array all fields in the table
+    /** @var array all fields in the table */
     public $fields;
-    // @var array display options
+    /** @var array display options */
     protected $options;
-    // @var string JavaScript code gathered to show the listing
+    /** @var string JavaScript code gathered to show the listing */
     public $script;
-    // @var int random item used in HTML
+    /** @var int random item used in HTML */
     public $rand;
-    // @var array arithmetical and logical operations for searching
+    /** @var array arithmetical and logical operations for searching */
     public $WHERE_OPS = array(
         '=',
         '<',
@@ -38,7 +40,7 @@ class TableLister
         'IS NULL',
         'BIT AND'
     );
-    // factory setting defaults
+    /** @var array factory setting defaults */
     protected $DEFAULTS = array(
         'PAGESIZE' => 10,
         'MAXPAGESIZE' => 10000,
@@ -47,7 +49,9 @@ class TableLister
         'FOREIGNLINK' => '-link' //suffix added to POST variables for links
     );
 
-    /** Constructor - stores passed parameters to object's attributes
+    /** 
+     * Constructor - stores passed parameters to object's attributes
+     * 
      * @param \mysqli database management system already connected to wanted database
      * @param string table to view
      * @param array options
@@ -65,8 +69,10 @@ class TableLister
         $this->rand = rand(1e5, 1e6 - 1);
     }
 
-    /** Set (or change) serviced table, get its fields.
+    /** 
+     * Set (or change) serviced table, get its fields.
      * @param string $table table name
+     * 
      * @return void
      */
     public function setTable($table)
@@ -264,7 +270,8 @@ class TableLister
         }
     }
 
-    /** Part of the view() method to output the controls
+    /** 
+     * Part of the view() method to output the controls
      * @param array option same as in view()
      */
     protected function viewInputs($options)
@@ -328,7 +335,9 @@ class TableLister
         echo '</script>' . PHP_EOL;
     }
 
-    /** Part of the view() method to output the content of selected table
+    /** 
+     * Part of the view() method to output the content of selected table
+     * 
      * @param object mysqli query
      * @param array columns selected columns
      * @param array options same as in view()
@@ -410,6 +419,7 @@ class TableLister
      * @param int $rowsPerPage
      * @param int $totalRows
      * @param int $offset
+     * 
      * @return type
      */
     public function pagination($rowsPerPage, $totalRows, $offset = null)
@@ -456,8 +466,10 @@ class TableLister
         echo '</ul></nav>' . PHP_EOL;
     }
 
-    /** Return fields which are keys (indexes) of given type
+    /** 
+     * Return fields which are keys (indexes) of given type
      * @param string key type, either "PRI", "MUL", "UNI" or ""
+     * 
      * @result array key names
      */
     public function fieldKeys($filterType)
@@ -474,8 +486,10 @@ class TableLister
         return $result;
     }
 
-    /** Shortcut for mysqli::real_escape_string($link, $str)
+    /** 
+     * Shortcut for mysqli::real_escape_string($link, $str)
      * @param string string
+     * 
      * @result string
      */
     public function escape($string)
@@ -483,10 +497,12 @@ class TableLister
         return $this->dbms->real_escape_string($string);
     }
 
-    /** Resolve an SQL query
+    /** 
+     * Resolve an SQL query
      * @param string SQL to execute
      * @param string message in case of success
      * @param string error in case of an error
+     * 
      * @return mixed true for success, false for failure of the query; if the query is empty return null (with no messages)
      */
     public function resolveSQL($sql, $success, $error)
@@ -507,9 +523,11 @@ class TableLister
         return $result;
     }
 
-    /**  Attempt to a user-defined translation
+    /**  
+     * Attempt to a user-defined translation
      * @param string $text
      * @param bool $escape escape for HTML (ie. tranfer ' " <… to &#39; &quot; &lt;…) ?
+     * 
      * @return string
      */
     public function translate($text, $escape = true)
