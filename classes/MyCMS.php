@@ -12,26 +12,42 @@ use Tracy\Debugger;
  */
 class MyCMS
 {
-
-    /** Class for a MyCMS object. 
-     * It holds all variables needed for the used project.
-     * Among others, it translates multilingual texts.
-     */
+    use \Nette\SmartObject;
 
     /**
      *
      * @var \mysqli - database management system
      */
     public $dbms = null;
+    
+    /** @var type */
     public $PAGES;
-    public $PAGES_SPECIAL; //special pages that are not fetched from database (e.g. sitemap etc.)
+    
+    /** @var type special pages that are not fetched from database (e.g. sitemap etc.) */
+    public $PAGES_SPECIAL;
+    
+    /** @var type */
     public $PAYMENTS;
+    
+    /** @var type */
     public $SETTINGS = null;
-    public $WEBSITE = null; //main info about this website
-    public $CART_ITEM; //items in cart
+    
+    /** @var type main info about this website */
+    public $WEBSITE = null;
+    
+    /** @var type items in cart */
+    public $CART_ITEM;
+
+    /** @var type */
     public $COUNTRIES;
+
+    /** @var type */
     public $CURRENCIES;
+
+    /** @var type */
     public $COMMISSION;
+
+    /** @var type */
     public $ITEM_ORDER;
 
     /**
@@ -47,12 +63,11 @@ class MyCMS
      * @var array
      */
     public $TRANSLATIONS;
+    
+    /** @var string */
     public $template; //which Latte template to load
 
-    /**
-     *
-     * @var array of variables for template rendering
-     */
+    /** @var array of variables for template rendering */
     public $context = array();
 
     /**
@@ -61,6 +76,9 @@ class MyCMS
      * @var \Psr\Log\LoggerInterface
      */
     public $logger;
+    
+    /** @var array $myCmsConf */
+    private $myCmsConf;
 
     /**
      * Constructor

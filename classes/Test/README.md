@@ -1,1 +1,0 @@
-Remove this file when real PHPUnit test files are created
