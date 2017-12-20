@@ -439,7 +439,7 @@ class TableAdmin extends TableLister {
             return false;
         }
         $sql = $where = '';
-        $command = 'UPDATE ';
+        $command = 'UPDATE';
         if (is_array($this->fields)) {
             foreach ($_POST as $key => $value) {
                 if (Tools::begins($key, EXPAND_INFIX) && !Tools::begins($key, EXPAND_INFIX . EXPAND_INFIX)) {
@@ -462,7 +462,7 @@ class TableAdmin extends TableLister {
                 $original = isset($_POST['original'][$key]) ? $_POST['original'][$key] : null;
                 if (Tools::among($field['key'], 'PRI', 'UNI')) {
                     if ($field['key'] == 'PRI' && Tools::among($value, '', null)) {
-                        $command = 'INSERT INTO ';
+                        $command = 'INSERT INTO';
                     } else {
                         $where .= ' AND ' . Tools::escapeDbIdentifier($key) . (is_null($original) ? ' IS NULL' : '="' . $this->escape($original) . '"');
                     }
@@ -487,7 +487,7 @@ class TableAdmin extends TableLister {
         }
 
         if ($sql) {
-            $sql = $command . Tools::escapeDbIdentifier($this->table) . ' SET ' . mb_substr($sql, 1) . Tools::wrap(mb_substr($where, 5), ' WHERE ') . ($command == 'UPDATE ' ? ' LIMIT 1' : '');
+            $sql = $command . ' ' . Tools::escapeDbIdentifier($this->table) . ' SET ' . mb_substr($sql, 1) . Tools::wrap($command == 'UPDATE' ? mb_substr($where, 5) : '', ' WHERE ') . ($command == 'UPDATE' ? ' LIMIT 1' : '');
             if ($this->resolveSQL($sql, $messageSuccess ?: $this->translate('Record saved.'), $messageError ?: $this->translate('Could not save the record.') . ' #%errno%: %error%')) {
                 return true;
             } else {
