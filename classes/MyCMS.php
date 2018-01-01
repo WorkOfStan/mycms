@@ -77,9 +77,6 @@ class MyCMS
      */
     public $logger;
     
-    /** @var array $myCmsConf */
-    private $myCmsConf;
-
     /**
      * Constructor
      *
@@ -87,13 +84,11 @@ class MyCMS
      */
     public function __construct(array $myCmsConf = array())
     {
-        $this->myCmsConf = array_merge(
+        $acceptedAttributes = explode(' ', 'PAGES PAGES_SPECIAL PAYMENTS SETTINGS WEBSITE CART_ITEM COUNTRIES CURRENCIES COMMISSION ITEM_ORDER TRANSLATION TRANSLATIONS template context logger dbms');
+        foreach (array_merge(
                 array(//default values
-                ), $myCmsConf);
-        //@todo do not use $this->myCmsConf but set the class properties right here accordingly; and also provide means to set the values otherwise later
-        $classAttributes = explode(' ', 'PAGES PAGES_SPECIAL PAYMENTS SETTINGS WEBSITE CART_ITEM COUNTRIES CURRENCIES COMMISSION ITEM_ORDER TRANSLATION TRANSLATIONS template context logger dbms');
-        foreach ($this->myCmsConf as $myCmsVariable => $myCmsContent) {
-            if (in_array($myCmsVariable, $classAttributes, true)) {
+                ), $myCmsConf) as $myCmsVariable => $myCmsContent) {
+            if (in_array($myCmsVariable, $acceptedAttributes, true)) {
                 $this->{$myCmsVariable} = $myCmsContent;
             }
         }
@@ -183,28 +178,28 @@ class MyCMS
      */
     public function fetchAndReindex($sql)
     {
-        $result = false;
         $query = $this->dbms->query($sql);
-        if (is_object($query)) {
-            $result = array();
-            while ($row = $query->fetch_assoc()) {
-                $key = reset($row);
-                $value = count($row) == 2 ? next($row) : $row;
-                if (count($row) > 2) {
-                    array_shift($value);
-                }
-                if (isset($result[$key])) {
-                    if (is_array($value)) {
-                        if (!is_array(reset($result[$key]))) {
-                            $result[$key] = array($result[$key]);
-                        }
-                        $result[$key] [] = $value;
-                    } else {
-                        $result[$key] = array_merge((array) $result[$key], (array) $value);
+        if (!is_object($query) || !is_a($query, '\mysqli_result')) {
+            return false;
+        }
+        $result = array();
+        while ($row = $query->fetch_assoc()) {
+            $key = reset($row);
+            $value = count($row) == 2 ? next($row) : $row;
+            if (count($row) > 2) {
+                array_shift($value);
+            }
+            if (isset($result[$key])) {
+                if (is_array($value)) {
+                    if (!is_array(reset($result[$key]))) {
+                        $result[$key] = array($result[$key]);
                     }
+                    $result[$key] [] = $value;
                 } else {
-                    $result[$key] = $value;
+                    $result[$key] = array_merge((array) $result[$key], (array) $value);
                 }
+            } else {
+                $result[$key] = $value;
             }
         }
         return $result;
@@ -220,7 +215,7 @@ class MyCMS
     {
         $result = array();
         $query = $this->dbms->query($sql);
-        if (is_object($query)) {
+        if (is_object($query) && is_a($query, '\mysqli_result')) {
             while ($row = $query->fetch_assoc()) {
                 $result [] = $row;
             }
@@ -238,7 +233,7 @@ class MyCMS
     public function fetchSingle($sql)
     {
         $query = $this->dbms->query($sql);
-        if (is_object($query)) {
+        if (is_object($query) && is_a($query, '\mysqli_result')) {
             $row = $query->fetch_assoc();
             if (count($row) > 1) {
                 return $row;
