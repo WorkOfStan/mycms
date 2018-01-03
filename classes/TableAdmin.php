@@ -198,14 +198,17 @@ class TableAdmin extends TableLister
                 }
             }
             if (is_array($json) && is_scalar(reset($json))) {
-                $output .= '<table class="w-100 json-expanded">';
+                $output .= '<table class="w-100 json-expanded" data-field="' . Tools::h($key) . '">';
                 foreach ($json + array('' => '') as $k => $v) {
                     $output .= '<tr><td class="first w-25">' . Tools::htmlInput(EXPAND_INFIX . $key . '[]', '', $k, array('class' => 'form-control form-control-sm', 'placeholder' => $this->translate('variable'))) . '</td>'
                         . '<td class="second w-75">' . Tools::htmlInput(EXPAND_INFIX . EXPAND_INFIX . $key . '[]', '', $v, array('class' => 'form-control form-control-sm', 'placeholder' => $this->translate('value'))) . '</td></tr>' . PHP_EOL;
                 }
                 $output .= '</table>';
             } else {
-                $output .= '<textarea name="fields[' . Tools::h($key) . ']" class="w-100">' . $value . '</textarea>';
+                $output .= Tools::htmlTextarea("fields[$key]", $value, false, false,
+                    array('id' => $key . $this->rand, 'data-maxlength' => $field['size'],
+                        'class' => 'form-control type-' . Tools::webalize($field['type']) . ($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : '')
+                    )) . '<a href="#" class="json-reset" data-field="' . Tools::h($key) . '"><i class="fa fa-th-list" aria-hidden="true"></i></a>';
             }
             $output .= '</div>';
             $input = false;

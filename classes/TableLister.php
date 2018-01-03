@@ -162,7 +162,7 @@ class TableLister
         if ($limit < 1 || $limit > $this->DEFAULTS['MAXPAGESIZE']) {
             $limit = $this->DEFAULTS['PAGESIZE'];
         }
-        $offset = isset($_GET['offset']) ? +$_GET['offset'] : 0;
+        $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
         if ($offset < 0) {
             $offset = 0;
         }
@@ -291,13 +291,13 @@ class TableLister
             <input type="hidden" name="table" value="' . Tools::h($this->table) . '" />
             <label title="' . $this->translate('Text lengths') . '">
                 <span class="glyphicon glyphicon-option-horizontal fa fa-ellipsis-h"></span>
-                <input type="text" name="textsize" value="' . Tools::setifnull($_GET['textsize'], $this->DEFAULTS['TEXTSIZE']) . '" size="3" />
+                ' . Tools::htmlInput('textsize', '', Tools::setifnull($_GET['textsize'], $this->DEFAULTS['TEXTSIZE']), array('size' => 3, 'class' => 'text-right')) . '
             </label>
             <label title="' . $this->translate('Rows per page') . '">
                 <span class="glyphicon glyphicon-option-vertical fa fa-ellipsis-v"></span>
-                <input type="text" name="limit" value="' . Tools::setifnull($_GET['limit'], $this->DEFAULTS['PAGESIZE']) . '" size="3" />
+                ' . Tools::htmlInput('limit', '', Tools::setifnull($_GET['limit'], $this->DEFAULTS['PAGESIZE']), array('size' => 3, 'class' => 'text-right')) . '
             </label>
-            <input type="hidden" name="offset" value="' . (int) Tools::setifnull($_GET['offset'], 0) . '" />
+            ' . Tools::htmlInput('offset', '', Tools::setifnull($_GET['offset'], 0), 'hidden') . '
             <button type="submit" class="btn btn-sm" title="' . $this->translate('View') . '"/>
                 <span class="glyphicon glyphicon-list-alt fa fa-list-alt"></span>
             </button>
@@ -427,7 +427,7 @@ class TableLister
         $title = $this->translate('Go to page');
 
         if (is_null($offset)) {
-            $offset = max(isset($_GET['offset']) ? +$_GET['offset'] : 0, 0);
+            $offset = max(isset($_GET['offset']) ? (int)$_GET['offset'] : 0, 0);
         }
         $rowsPerPage = max($rowsPerPage, 1);
         $pages = ceil($totalRows / $rowsPerPage);
