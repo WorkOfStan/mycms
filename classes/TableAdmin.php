@@ -257,7 +257,7 @@ class TableAdmin extends TableLister
                 if (is_array($choices)) {
                     $input = array();
                     foreach ($choices as $k => $v) {
-                        $input[$k] = Tools::htmlInput($key, $v === '0' ? '0 ' : "$v ", 1 << $k, array(
+                        $input[$k] = Tools::htmlInput("fields[$key]", $v === '0' ? '0 ' : "$v ", 1 << $k, array(
                             'type' => 'radio',
                             'id' => "fields[$key-" . (1 << $k) . "]",
                             'value' => (1 << $k),
