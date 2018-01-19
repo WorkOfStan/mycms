@@ -2,7 +2,7 @@
 
 namespace GodsDev\MyCMS;
 
-use \GodsDev\Tools\Tools;
+use GodsDev\Tools\Tools;
 
 /**
  * This class facilitates administration of a database table

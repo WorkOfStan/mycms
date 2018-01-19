@@ -2,7 +2,7 @@
 
 namespace GodsDev\MyCMS;
 
-use \GodsDev\Tools\Tools;
+use GodsDev\Tools\Tools;
 
 /**
  * Class that can list rows of a database table, with editable search/filter 
