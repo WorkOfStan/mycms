@@ -23,7 +23,7 @@ class MyCommon
 
 
     /**
-     * Child may pre-populate $acceptedAttributes by addAcceptedmethod, all of them MUST be declared as variables
+     * Child may pre-populate $acceptedAttributes by addAcceptedmethod, all of them MUST be declared as protected/public variables
      * 
      * @param \GodsDev\MyCMS\MyCMS $MyCMS
      * @param array $options that overides default values within constructor
