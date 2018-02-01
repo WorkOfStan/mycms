@@ -7,21 +7,15 @@ namespace GodsDev\MyCMS;
  * 
  * The default template is `home`
  */
-class MyController
+class MyController extends MyCommon
 {
-
-    use \Nette\SmartObject;
-
-    /** @var \GodsDev\MyCMS\MyCMS */
-    protected $MyCMS;
 
     /** @var array */
     protected $result;
-
-    /** @var array */
-    protected $acceptedAttributes;
-
-    //accepted attributes:
+    
+    /**
+     * accepted attributes:
+     */
     /** @var array */
     protected $get;
 
@@ -29,7 +23,7 @@ class MyController
     protected $session;
 
     /**
-     * Child may pre-populate $acceptedAttributes by addAcceptedmethod, all of them MUST be declared as variables
+     * Child may pre-populate $acceptedAttributes by addAcceptedmethod, all of them MUST be declared as protected/public variables
      * 
      * @param \GodsDev\MyCMS\MyCMS $MyCMS
      * @param array $options that overides default values within constructor
@@ -37,24 +31,8 @@ class MyController
     public function __construct(MyCMS $MyCMS, array $options = array())
     {
         $this->addAccepted('get session');
-        foreach (array_merge(
-                array(//default values
-                ), $options) as $optionVariable => $optionContent) {
-            if (in_array($optionVariable, $this->acceptedAttributes, true)) {
-                $this->{$optionVariable} = $optionContent;
-            }
-        }
-        $this->MyCMS = $MyCMS;
+        parent::__construct($MyCMS, $options);
         $this->result = array("template" => "home", "context" => ($this->MyCMS->context ? $this->MyCMS->context : array()));
-    }
-
-    /**
-     * 
-     * @param string $acceptedList space delimited
-     */
-    protected function addAccepted($acceptedList)
-    {
-        $this->acceptedAttributes = array_merge(explode(' ', $acceptedList), $this->acceptedAttributes ? $this->acceptedAttributes : array());
     }
 
     /**

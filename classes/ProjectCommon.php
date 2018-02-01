@@ -2,17 +2,29 @@
 
 namespace GodsDev\MyCMS;
 
-use Psr\Log\LoggerInterface;
-
 class ProjectCommon
-{    
+{
+
     use \Nette\SmartObject;
 
-    /** 
+    /** @var \GodsDev\MyCMS\MyCMS */
+    protected $MyCMS;
+
+    /**
+     * 
+     * @param \GodsDev\MyCMS\MyCMS $MyCMS
+     */
+    public function __construct(MyCMS $MyCMS)
+    {
+        $this->MyCMS = $MyCMS;
+    }
+
+    /**
      * Shortcut for echo'<pre>'; var_dump(); and exit;
      * @param mixed variable(s) or expression to display
      */
-    public static function dump($var) {
+    public static function dump($var)
+    {
         echo '<pre>';
         foreach (func_get_args() as $arg) {
             var_dump($arg);
@@ -21,7 +33,8 @@ class ProjectCommon
     }
 
     //@todo refactor as getTexy() which returns Texy object that is initialized in this dynamic class
-    public static function prepareTexy() {
+    public static function prepareTexy()
+    {
         global $Texy;
         if (!is_object($Texy)) {
             $Texy = new \Texy();
@@ -37,7 +50,8 @@ class ProjectCommon
      * @param string $stringOfTime
      * @param string $language
      */
-    public static function localDate($stringOfTime, $language) {
+    public static function localDate($stringOfTime, $language)
+    {
         switch ($language) {
             case 'cs': return date('j.n.Y', strtotime($stringOfTime));
         }

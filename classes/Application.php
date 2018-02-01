@@ -1,7 +1,7 @@
 <?php
 namespace GodsDev\MyCMS;
 
-use \GodsDev\Tools\Tools;
+//use GodsDev\Tools\Tools;
 
 class Application {
  
