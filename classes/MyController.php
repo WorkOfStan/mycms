@@ -30,7 +30,6 @@ class MyController extends MyCommon
      */
     public function __construct(MyCMS $MyCMS, array $options = array())
     {
-        $this->addAccepted('get session');
         parent::__construct($MyCMS, $options);
         $this->result = array("template" => "home", "context" => ($this->MyCMS->context ? $this->MyCMS->context : array()));
     }
@@ -52,8 +51,10 @@ class MyController extends MyCommon
      */
     public function getVars()
     {
-        return array("get" => $this->get, "session" => $this->session,
-                //"section_styles" => $this->sectionStyles
+        return array(
+            "get" => $this->get, 
+            "session" => $this->session
+            //,"section_styles" => $this->sectionStyles
         );
     }
 
