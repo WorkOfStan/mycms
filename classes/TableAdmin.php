@@ -63,6 +63,9 @@ class TableAdmin extends TableLister
             }
         }
         $record = isset($record) && is_array($record) ? $record : array();
+        $tmp = isset($record[substr($this->table, strlen(TAB_PREFIX))]) ? $record[substr($this->table, strlen(TAB_PREFIX))] : null;
+        $tmp = is_null($tmp) && isset($record[substr($this->table, strlen(TAB_PREFIX)) . '_' . DEFAULT_LANGUAGE]) ? $record[substr($this->table, strlen(TAB_PREFIX)) . '_' . DEFAULT_LANGUAGE] : '';
+        $this->script .= 'AdminRecordName = ' . json_encode($tmp) . ';' . PHP_EOL;
         Tools::setifempty($options['layout-row'], true);
         $output = (isset($options['exclude-form']) && $options['exclude-form'] ? '' : '<form method="post" enctype="multipart/form-data"><fieldset>') . PHP_EOL
             . Tools::htmlInput('database-table', '', $this->table, 'hidden') . PHP_EOL
