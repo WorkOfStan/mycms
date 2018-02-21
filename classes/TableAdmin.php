@@ -308,11 +308,11 @@ class TableAdmin extends TableLister
                 if (Tools::among($field['type'], 'char', 'varchar') && $field['size'] < 256) {
                     break;
                 }
-                $input = Tools::htmlTextarea("fields[$key]", $value, false, false,
+                $input = '<div class="TableAdminTextarea">' . Tools::htmlTextarea("fields[$key]", $value, false, false,
                     array('id' => $key . $this->rand, 'data-maxlength' => $field['size'],
                         'class' => 'form-control type-' . Tools::webalize($field['type']) . ($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : '')
                     ))
-                    . '<i class="fa fa-stack-overflow input-limit" aria-hidden="true" data-fields="' . Tools::h($key) . '"></i>';
+                    . '<i class="fa fa-stack-overflow input-limit" aria-hidden="true" data-fields="' . Tools::h($key) . '"></i></div>';
         }
         if (is_array($input)) {
             $input = Tools::htmlInput("fields[$key]", false, $value, $input);
