@@ -2,9 +2,6 @@
 
 namespace GodsDev\MyCMS;
 
-use Psr\Log\LoggerInterface;
-use Tracy\Debugger;
-
 /**
  * Extension of a MyCMS object with translations.
  * It holds all variables needed for the used project.
@@ -17,6 +14,7 @@ use Tracy\Debugger;
  */
 class MyCMS extends MyCMSMonoLingual
 {
+
     use \Nette\SmartObject;
 
     /**
@@ -26,7 +24,7 @@ class MyCMS extends MyCMSMonoLingual
      */
     public $TRANSLATION;
 
-     /**
+    /**
      * Available languages
      *
      * @var array

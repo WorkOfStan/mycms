@@ -14,7 +14,6 @@ class MyCommon
     /** @var \GodsDev\MyCMS\MyCMS */
     protected $MyCMS;
 
-
     /**
      * 
      * @param \GodsDev\MyCMS\MyCMS $MyCMS
@@ -29,6 +28,5 @@ class MyCommon
         }
         $this->MyCMS = $MyCMS;
     }
-
 
 }

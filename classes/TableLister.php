@@ -10,23 +10,31 @@ use GodsDev\Tools\Tools;
  * dependencies: Tools
  */
 class TableLister
-{  
+{
+
     use \Nette\SmartObject;
 
     /** @var \mysqli database management system */
     protected $dbms;
+
     /** @var string table to list */
     protected $table;
+
     /** @var array all tables in the database */
     public $tables;
+
     /** @var array all fields in the table */
     public $fields;
+
     /** @var array display options */
     protected $options;
+
     /** @var string JavaScript code gathered to show the listing */
     public $script;
+
     /** @var int random item used in HTML */
     public $rand;
+
     /** @var array arithmetical and logical operations for searching */
     public $WHERE_OPS = array(
         '=',
@@ -40,6 +48,7 @@ class TableLister
         'IS NULL',
         'BIT AND'
     );
+
     /** @var array factory setting defaults */
     protected $DEFAULTS = array(
         'PAGESIZE' => 10,
@@ -49,7 +58,7 @@ class TableLister
         'FOREIGNLINK' => '-link' //suffix added to POST variables for links
     );
 
-    /** 
+    /**
      * Constructor - stores passed parameters to object's attributes
      * 
      * @param \mysqli database management system already connected to wanted database
@@ -69,7 +78,7 @@ class TableLister
         $this->rand = rand(1e5, 1e6 - 1);
     }
 
-    /** 
+    /**
      * Set (or change) serviced table, get its fields.
      * @param string $table table name
      * 
@@ -162,7 +171,7 @@ class TableLister
         if ($limit < 1 || $limit > $this->DEFAULTS['MAXPAGESIZE']) {
             $limit = $this->DEFAULTS['PAGESIZE'];
         }
-        $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
+        $offset = isset($_GET['offset']) ? (int) $_GET['offset'] : 0;
         if ($offset < 0) {
             $offset = 0;
         }
@@ -270,7 +279,7 @@ class TableLister
         }
     }
 
-    /** 
+    /**
      * Part of the view() method to output the controls
      * @param array option same as in view()
      */
@@ -335,7 +344,7 @@ class TableLister
         echo '</script>' . PHP_EOL;
     }
 
-    /** 
+    /**
      * Part of the view() method to output the content of selected table
      * 
      * @param object mysqli query
@@ -427,7 +436,7 @@ class TableLister
         $title = $this->translate('Go to page');
 
         if (is_null($offset)) {
-            $offset = max(isset($_GET['offset']) ? (int)$_GET['offset'] : 0, 0);
+            $offset = max(isset($_GET['offset']) ? (int) $_GET['offset'] : 0, 0);
         }
         $rowsPerPage = max($rowsPerPage, 1);
         $pages = ceil($totalRows / $rowsPerPage);
@@ -466,7 +475,7 @@ class TableLister
         echo '</ul></nav>' . PHP_EOL;
     }
 
-    /** 
+    /**
      * Return fields which are keys (indexes) of given type
      * @param string key type, either "PRI", "MUL", "UNI" or ""
      * 
@@ -486,7 +495,7 @@ class TableLister
         return $result;
     }
 
-    /** 
+    /**
      * Shortcut for mysqli::real_escape_string($link, $str)
      * @param string string
      * 
@@ -497,7 +506,7 @@ class TableLister
         return $this->dbms->real_escape_string($string);
     }
 
-    /** 
+    /**
      * Resolve an SQL query
      * @param string SQL to execute
      * @param string message in case of success
@@ -523,7 +532,7 @@ class TableLister
         return $result;
     }
 
-    /**  
+    /**
      * Attempt to a user-defined translation
      * @param string $text
      * @param bool $escape escape for HTML (ie. tranfer ' " <… to &#39; &quot; &lt;…) ?
@@ -543,4 +552,5 @@ class TableLister
         }
         return $result;
     }
+
 }
