@@ -26,6 +26,8 @@ Note: $MyCMS name is expected by ProjectSpecific extends ProjectCommon (@todo re
 
 # Deployment
 
+Folder `dist` contains initial files for a new project using MyCMS. Replace the string `MYCMSPROJECTNAME` with the website name/project namespace.
+
 Following settings are expected from the Application that uses MyCMS
 ```php
 define('DEFAULT_LANGUAGE', 'en');
@@ -43,4 +45,4 @@ Run from a command line:
 ```
 
 # @todo
-
+* 180221: curate `dist` folder so that it may be used out of the box
