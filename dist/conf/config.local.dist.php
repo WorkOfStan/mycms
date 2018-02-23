@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This is specimen content of env_config.local.php:
+ * This is specimen content of config.local.php:
  */
 //ini_set('display_errors', 1); //allow ONLY in your own development environment
 define('DB_USERNAME', 'username');

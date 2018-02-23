@@ -45,34 +45,6 @@ class Controller extends MyController
     }
 
     /**
-     * Returns value of a field in JSON
-     * @todo unused? remove.
-     * 
-     * @param string $jsonString
-     * @param string $fieldName
-     * @return mixed null or value of {"$fieldName":value,...}
-     */
-    public function getJsonField($jsonString, $fieldName)
-    {
-        $arr = json_decode($jsonString, true);
-        return (is_array($arr) && array_key_exists($fieldName, $arr)) ? $arr[$fieldName] : null;
-    }
-
-    /**
-     * Returns array instead of a string comma delimited value of a field in JSON
-     * @todo unused? remove.
-     * 
-     * @param string $jsonString
-     * @param string $fieldName
-     * @return mixed null or array
-     */
-    public function getJsonFieldCommaDelimited($jsonString, $fieldName)
-    {
-        $result = $this->getJsonField($jsonString, $fieldName);
-        return (is_null($result) || !is_string($result)) ? null : explode(',', $result);
-    }
-
-    /**
      * Outputs changed $MyCMS->template and $MyCMS->context as fields of an array
      * 
      * @return array

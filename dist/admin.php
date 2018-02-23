@@ -22,3 +22,4 @@ $MyCMS->csrf();
 
 $admin = new \GodsDev\MYCMSPROJECTNAME\Admin($MyCMS, array('agendas' => $AGENDAS));
 $admin->outputAdmin();
+$admin->endAdmin();

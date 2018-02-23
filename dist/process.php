@@ -20,7 +20,6 @@ if (!isset($MyCMS) && isset($GLOBALS['MyCMS'])) {
     $MyCMS = $GLOBALS['MyCMS'];
 }
 if (isset($_POST['language'], $MyCMS->TRANSLATIONS[$_POST['language']])) {
-    $_SESSION['language'] = $MyCMS->getSessionLanguage($_POST, $_SESSION);
     header('Content-type: application/json');
     exit(json_encode(array('success' => true)));
 }

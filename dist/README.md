@@ -38,7 +38,7 @@ to-be-done - as GA events
 
 Create database with `Collation=utf8_general_ci`
 
-Create `conf/env_config.local.php` based on `env_config.local.dist.php`
+Create `conf/config.local.php` based on `config.local.dist.php`
 
 `composer update`
 
@@ -54,7 +54,7 @@ Under construction mode may be turned on (for non admin IP adresses i.e. not in 
 ```php
 define('UNDER_CONSTRUCTION', true);
 ```
-to `conf/env_config.local.php`. 
+to `conf/config.local.php`. 
 
 Note: Management má iPhone a Mac - testovat na Apple prostředí!
 
@@ -95,7 +95,7 @@ Pro výpis proměnné do logu použij:
 \Tracy\Debugger::log($stringVar, 'DEBUG');
 ```
 
-`$debugIpArray` in `env_config.php` contains IPs for Tracy.
+`$debugIpArray` in `config.php` contains IPs for Tracy.
 
 
 # Error handling

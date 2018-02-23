@@ -72,9 +72,9 @@ $WEBSITE = array(
 );
 
 
-ini_set('display_errors', 0); //errors only in the log; override it in your env_config.local.php if you need
-include_once __DIR__ . '/env_config.local.php'; //use env_config.local.dist.php as specimen
-//constants not set in env_config.local.php
+ini_set('display_errors', 0); //errors only in the log; override it in your config.local.php if you need
+include_once __DIR__ . '/config.local.php'; //use config.local.dist.php as specimen
+//constants not set in config.local.php
 foreach (
 array(
     'UNDER_CONSTRUCTION' => false,
@@ -91,7 +91,7 @@ array(
         define($constant, $value);
     }
 }
-//If you want to receive fatal errors in mail, set in env_config.local.php: $backyardConf['mail_for_admin_enabled'] = true;
+//If you want to receive fatal errors in mail, set in config.local.php: $backyardConf['mail_for_admin_enabled'] = true;
 if (isset($backyardConf['mail_for_admin_enabled']) && $backyardConf['mail_for_admin_enabled']) {
     $backyardConf['mail_for_admin_enabled'] = EMAIL_ADMIN;
 }

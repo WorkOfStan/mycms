@@ -19,7 +19,7 @@ Debugger::$email = EMAIL_ADMIN;
 
 $backyard = new \GodsDev\Backyard\Backyard($backyardConf);
 $myCmsConf['logger'] = $backyard->BackyardError;
-$myCmsConf['dbms'] = new \GodsDev\MYCMSPROJECTNAME\LogMysqli(DB_HOST . ":" . DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE, $myCmsConf['logger']);
+$myCmsConf['dbms'] = new \GodsDev\MyCMS\LogMysqli(DB_HOST . ":" . DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE, $myCmsConf['logger']);
 $MyCMS = new \GodsDev\MYCMSPROJECTNAME\MyCMSProject($myCmsConf);
 //set a known language
 $_SESSION['language'] = $MyCMS->getSessionLanguage($_GET, $_SESSION); //set also in PHPUnit test
