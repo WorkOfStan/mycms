@@ -1,8 +1,8 @@
 <?php
 
-namespace GodsDev\MYCMSPROJECTNAME;
+namespace GodsDev\MYCMSPROJECTNAMESPACE;
 
-use GodsDev\MYCMSPROJECTNAME\MyCMSProject;
+use GodsDev\MYCMSPROJECTNAMESPACE\MyCMSProject;
 use Tracy\Debugger;
 
 require_once __DIR__ . '/../../conf/config.php';
@@ -57,7 +57,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MYCMSPROJECTNAME\Controller::controller
+     * @covers GodsDev\MYCMSPROJECTNAMESPACE\Controller::controller
      */
     public function testControllerNoContext()
     {
@@ -67,7 +67,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MYCMSPROJECTNAME\Controller::controller
+     * @covers GodsDev\MYCMSPROJECTNAMESPACE\Controller::controller
      */
     public function testControllerContext()
     {
@@ -77,7 +77,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MYCMSPROJECTNAME\Controller::controller
+     * @covers GodsDev\MYCMSPROJECTNAMESPACE\Controller::controller
      */
     public function testControllerProduct()
     {
@@ -98,7 +98,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MYCMSPROJECTNAME\Controller::controller
+     * @covers GodsDev\MYCMSPROJECTNAMESPACE\Controller::controller
      */
     public function testControllerLine()
     {
@@ -128,7 +128,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MYCMSPROJECTNAME\Controller::controller
+     * @covers GodsDev\MYCMSPROJECTNAMESPACE\Controller::controller
      */
     public function testControllerSearch()
     {
@@ -152,7 +152,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MYCMSPROJECTNAME\Controller::controller
+     * @covers GodsDev\MYCMSPROJECTNAMESPACE\Controller::controller
      */
     public function testControllerArticle()
     {
@@ -176,7 +176,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MYCMSPROJECTNAME\Controller::controller
+     * @covers GodsDev\MYCMSPROJECTNAMESPACE\Controller::controller
      */
     public function testControllerCategory()
     {
@@ -200,7 +200,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MYCMSPROJECTNAME\Controller::controller
+     * @covers GodsDev\MYCMSPROJECTNAMESPACE\Controller::controller
      */
     public function testControllerAbout()
     {
@@ -222,7 +222,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MYCMSPROJECTNAME\Controller::getVars
+     * @covers GodsDev\MYCMSPROJECTNAMESPACE\Controller::getVars
      */
     public function testGetVars()
     {

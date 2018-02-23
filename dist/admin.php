@@ -12,7 +12,7 @@ $GLOBALS['TableAdmin'] = new \GodsDev\MyCMS\TableAdmin($MyCMS->dbms, (isset($_GE
 require_once './user-defined.php';
 
 if (isset($_POST) && is_array($_POST) && !empty($_POST)) {    
-    $adminProcess = new \GodsDev\MYCMSPROJECTNAME\AdminProcess($MyCMS, array(
+    $adminProcess = new \GodsDev\MYCMSPROJECTNAMESPACE\AdminProcess($MyCMS, array(
         "tableAdmin" => $TableAdmin,
         "agendas" => $AGENDAS,
     ));
@@ -20,6 +20,6 @@ if (isset($_POST) && is_array($_POST) && !empty($_POST)) {
 }
 $MyCMS->csrf();
 
-$admin = new \GodsDev\MYCMSPROJECTNAME\Admin($MyCMS, array('agendas' => $AGENDAS));
+$admin = new \GodsDev\MYCMSPROJECTNAMESPACE\Admin($MyCMS, array('agendas' => $AGENDAS));
 $admin->outputAdmin();
 $admin->endAdmin();

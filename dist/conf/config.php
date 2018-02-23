@@ -5,7 +5,7 @@
  */
 define('DB_HOST', 'localhost');
 define('DB_PORT', ini_get('mysqli.default_port'));
-define('TAB_PREFIX', 'MYCMSPROJECTNAME_'); //prefix for database tables
+define('TAB_PREFIX', 'MYCMSPROJECTSPECIFIC_'); //prefix for database tables
 
 ini_set('session.use_strict_mode', 1);
 define('LOG_FILE', './log/log.txt');
@@ -47,7 +47,7 @@ $myCmsConf = array(
         'sitemap' => 'sitemap'
     ),
     'SETTINGS' => array(
-        'domain' => 'MYCMSPROJECTNAME.com',
+        'domain' => 'MYCMSPROJECTSPECIFIC.com',
         'form-email' => 'seidl@gods.cz',
         'PATH_HOME' => '0000000001',
         'PATH_CATEGORY' => '0000000002'
@@ -58,16 +58,16 @@ $myCmsConf = array(
 );
 $WEBSITE = array(
     'en' => array(
-        'title' => 'MYCMSPROJECTNAME Website name',
-        'navigation-title' => 'MYCMSPROJECTNAME Website name',
-        'slogan' => 'MYCMSPROJECTNAME Website claim',
-        'intro' => 'MYCMSPROJECTNAME Website description',
+        'title' => 'MYCMSPROJECTSPECIFIC Website name',
+        'navigation-title' => 'MYCMSPROJECTSPECIFIC Website name',
+        'slogan' => 'MYCMSPROJECTSPECIFIC Website claim',
+        'intro' => 'MYCMSPROJECTSPECIFIC Website description',
     ),
     'cs' => array(
-        'title' => 'MYCMSPROJECTNAME Website name',
-        'navigation-title' => 'MYCMSPROJECTNAME Website name',
-        'slogan' => 'MYCMSPROJECTNAME Website claim',
-        'intro' => 'MYCMSPROJECTNAME Website description',
+        'title' => 'MYCMSPROJECTSPECIFIC Website name',
+        'navigation-title' => 'MYCMSPROJECTSPECIFIC Website name',
+        'slogan' => 'MYCMSPROJECTSPECIFIC Website claim',
+        'intro' => 'MYCMSPROJECTSPECIFIC Website description',
     )
 );
 
@@ -83,7 +83,7 @@ array(
 //    'PAGINATION_NEWS' => 2,
     'SMTP_HOST' => 'localhost',
     'SMTP_PORT' => 25,
-    'NOTIFY_FROM_ADDRESS' => 'notifier-MYCMSPROJECTNAME@godsapps.eu', //@todo založit příslušnou schránku
+    'NOTIFY_FROM_ADDRESS' => 'notifier-MYCMSPROJECTSPECIFIC@godsapps.eu', //@todo založit příslušnou schránku
     'NOTIFY_FROM_NAME' => 'Notifikátor',
     'EMAIL_ADMIN' => 'rejthar@gods.cz', //email used by Tracy\Debugger
 ) as $constant => $value) {

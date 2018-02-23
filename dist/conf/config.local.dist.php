@@ -14,6 +14,6 @@ define('RECAPTCHA_SECRET', '...');
 //define ('SMTP_HOST', 'localhost');
 //define ('SMTP_PORT', 25);
 define('MAIL_SENDING_ACTIVE', false);
-define('NOTIFY_FROM_ADDRESS', 'notifier-MYCMSPROJECTNAME@godsapps.eu'); //@todo založit příslušnou schránku
+define('NOTIFY_FROM_ADDRESS', 'notifier-MYCMSPROJECTSPECIFIC@godsapps.eu'); //@todo založit příslušnou schránku
 define('NOTIFY_FROM_NAME', 'Notifikátor');
 define('EMAIL_ADMIN', 'rejthar@gods.cz'); //email used by Tracy\Debugger    

@@ -18,7 +18,7 @@ $MyCMS->csrf();
 use Tracy\Debugger;
 
 Debugger::barDump($MyCMS, 'MyCMS before controller');
-$controller = new GodsDev\MYCMSPROJECTNAME\Controller($MyCMS, array("get" => $_GET, "session" => $_SESSION));
+$controller = new GodsDev\MYCMSPROJECTNAMESPACE\Controller($MyCMS, array("get" => $_GET, "session" => $_SESSION));
 $controllerResult = $controller->controller();
 $MyCMS->template = $controllerResult['template'];
 $MyCMS->context = $controllerResult['context'];
@@ -26,11 +26,11 @@ Debugger::barDump($controllerResult, 'ControllerResult');
 
 // texy initialization (@todo refactor) .. used in CustomFilters
 $Texy = null;
-\GodsDev\MYCMSPROJECTNAME\ProjectSpecific::prepareTexy();
+\GodsDev\MYCMSPROJECTNAMESPACE\ProjectSpecific::prepareTexy();
 
 use \GodsDev\Tools\Tools;
 
-$customFilters = new \GodsDev\MYCMSPROJECTNAME\Latte\CustomFilters($MyCMS);
+$customFilters = new \GodsDev\MYCMSPROJECTNAMESPACE\Latte\CustomFilters($MyCMS);
 
 $MyCMS->renderLatte(DIR_TEMPLATE_CACHE, array($customFilters, 'common'), array_merge(
     array(

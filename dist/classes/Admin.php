@@ -1,6 +1,6 @@
 <?php
 
-namespace GodsDev\MYCMSPROJECTNAME;
+namespace GodsDev\MYCMSPROJECTNAMESPACE;
 
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;

@@ -1,11 +1,11 @@
 <?php
 
-namespace GodsDev\MYCMSPROJECTNAME;
+namespace GodsDev\MYCMSPROJECTNAMESPACE;
 
 use GodsDev\MyCMS\MyCMS;
 use GodsDev\MyCMS\MyController;
 use GodsDev\Tools\Tools;
-use GodsDev\MYCMSPROJECTNAME\ProjectSpecific;
+use GodsDev\MYCMSPROJECTNAMESPACE\ProjectSpecific;
 use Tracy\Debugger;
 
 class Controller extends MyController
@@ -17,7 +17,7 @@ class Controller extends MyController
     /** @var array */
     protected $sectionStyles;
 
-    /** @var \GodsDev\MYCMSPROJECTNAME\ProjectSpecific */
+    /** @var \GodsDev\MYCMSPROJECTNAMESPACE\ProjectSpecific */
     private $projectSpecific;
 
     /**
@@ -33,10 +33,9 @@ class Controller extends MyController
      * PATH_MODULE
      * TAB_PREFIX
      *
-     * Child may pre-populate $acceptedAttributes variable with a space delimited list of accepted attributes, these MUST be declared as variables
      * 
      * @param \GodsDev\MyCMS\MyCMS $MyCMS
-     * @param array $options that overides default values within constructor
+     * @param array $options overides default values of declared properties
      */
     public function __construct(MyCMS $MyCMS, array $options = array())
     {

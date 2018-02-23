@@ -1,6 +1,6 @@
 {
-    "name": "godsdev/MYCMSPROJECTNAME",
-    "description": "MYCMSPROJECTNAME xyz website 201x",
+    "name": "godsdev/MYCMSPROJECTNAMESPACE",
+    "description": "MYCMSPROJECTSPECIFIC xyz website 201x",
     "type": "project",
     "repositories": [
         {
@@ -13,7 +13,6 @@
         "robmorgan/phinx": "^0.9.1",
         "beberlei/assert": "^2.7",
         "swiftmailer/swiftmailer": "^5.4",
-        "godsdev/tools": "^0.2.4",
         "godsdev/mycms": "dev-develop"
     },
     "require-dev": {
@@ -21,10 +20,6 @@
     },
     "license": "proprietary",
     "authors": [
-        {
-            "name": "Miroslav Junker",
-            "email": "junker@gods.cz"
-        },
         {
             "name": "Karel Seidl",
             "email": "seidl@gods.cz"
@@ -37,7 +32,7 @@
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
-            "GodsDev\\MYCMSPROJECTNAME\\": ["classes/"]           
+            "GodsDev\\MYCMSPROJECTNAMESPACE\\": ["classes/"]           
         }
     }    
 }

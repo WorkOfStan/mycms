@@ -1,10 +1,10 @@
 <?php
 
-namespace GodsDev\MYCMSPROJECTNAME\Latte;
+namespace GodsDev\MYCMSPROJECTNAMESPACE\Latte;
 
 use GodsDev\Tools\Tools;
-//use GodsDev\MYCMSPROJECTNAME\ProjectSpecific;
-use GodsDev\MYCMSPROJECTNAME\Template;
+//use GodsDev\MYCMSPROJECTNAMESPACE\ProjectSpecific;
+use GodsDev\MYCMSPROJECTNAMESPACE\Template;
 use GodsDev\MyCMS\MyCMS;
 
 /**
@@ -18,7 +18,7 @@ class CustomFilters
     /** @var \GodsDev\MyCMS\MyCMS */
     protected $MyCMS;
 
-    /** @var \GodsDev\MYCMSPROJECTNAME\ProjectSpecific */
+    /** @var \GodsDev\MYCMSPROJECTNAMESPACE\ProjectSpecific */
 //    private $projectSpecific;
 
     /**

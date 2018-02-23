@@ -1,6 +1,6 @@
 <?php
 
-namespace GodsDev\MYCMSPROJECTNAME;
+namespace GodsDev\MYCMSPROJECTNAMESPACE;
 
 use GodsDev\MyCMS\MyCMS;
 use Tracy\Debugger;
@@ -68,7 +68,7 @@ class AdminProcessTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MYCMSPROJECTNAME\AdminProcess::adminProcess
+     * @covers GodsDev\MYCMSPROJECTNAMESPACE\AdminProcess::adminProcess
      * @todo   Implement testAdminProcess().
      */
     public function testAdminProcess()
@@ -80,12 +80,12 @@ class AdminProcessTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MYCMSPROJECTNAME\AdminProcess::getAgenda
+     * @covers GodsDev\MYCMSPROJECTNAMESPACE\AdminProcess::getAgenda
      */
     public function testGetAgenda()
     {
         $adminAgendaCategoryArray = $this->object->getAgenda("category");
-        $this->assertEquals(array('id' => '10', 'name' => 'MYCMSPROJECTNAME', 'path' => '0000000001'), $adminAgendaCategoryArray[0]);
+        $this->assertEquals(array('id' => '10', 'name' => 'MYCMSPROJECTSPECIFIC', 'path' => '0000000001'), $adminAgendaCategoryArray[0]);
     }
 
 }

@@ -22,11 +22,13 @@ $MyCMS->renderLatte(DIR_TEMPLATE_CACHE, "\\GodsDev\\ProjectName\\Latte\\CustomFi
 
 Files `process.php` and `admin-process.php` MUST exist and process forms.
 
-Note: $MyCMS name is expected by ProjectSpecific extends ProjectCommon (@todo replace global $MyCMS by proper parameter handling)
+Note: `$MyCMS` name is expected by `ProjectSpecific extends ProjectCommon` class (@todo replace global $MyCMS by proper parameter handling)
 
 # Deployment
 
-Folder `dist` contains initial files for a new project using MyCMS. Replace the string `MYCMSPROJECTNAME` with the website name/project namespace.
+Folder `dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder.
+Replace the string `MYCMSPROJECTNAMESPACE` with your project namespace.
+Replace the string `MYCMSPROJECTSPECIFIC` with other website specific.
 
 Following settings are expected from the Application that uses MyCMS
 ```php

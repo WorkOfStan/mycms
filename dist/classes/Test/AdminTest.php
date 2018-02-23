@@ -1,6 +1,6 @@
 <?php
 
-namespace GodsDev\MYCMSPROJECTNAME;
+namespace GodsDev\MYCMSPROJECTNAMESPACE;
 
 use GodsDev\MyCMS\MyCMS;
 use Tracy\Debugger;
@@ -58,7 +58,7 @@ class AdminTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MYCMSPROJECTNAME\Admin::outputAdmin
+     * @covers GodsDev\MYCMSPROJECTNAMESPACE\Admin::outputAdmin
      */
     public function testOutputAdmin()
     {
