@@ -1,0 +1,52 @@
+{* page header *}
+<header class="header">
+    <div class="container">
+        <h1>
+            <a href="{dirname($_SERVER['SCRIPT_NAME'])}" title="{="Na úvodní stranu"|translate}">MYCMSPROJECTSPECIFIC</a>
+        </h1>
+
+        <span class="hamburger"><i class="fa fa-bars"></i></span>
+        <ul class="menu">
+        {foreach $categories as $key => $value}
+            <li {if $key == $line || ($ref == 'product' && isset($product['category_id']) && $product['category_id'] == $key)} class="active"{/if}><a href="?line={$key}">{$value}</a></li>
+        {/foreach}
+        </ul>
+
+        <ul class="right-bar">
+            <li class="dropdown"><a href="?category&code=contacts" title="{="Kontakt"|translate}">{="Kontakt"|translate}</a></li>
+            <li class="dropdown">
+                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {$_SESSION['language'] == 'cs' ? 'CZ' : 'EN'}
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink" id="language-menu">
+                    <a class="dropdown-item{$_SESSION['language'] == 'cs' ? ' disabled' : ''}" href="#" data-value="cs" title="{="language:cs"|translate}">CZ</a>
+                    <a class="dropdown-item{$_SESSION['language'] == 'en' ? ' disabled' : ''}" href="#" data-value="en" title="{="language:en"|translate}">EN</a>
+                </div>
+            </li>
+            <li><a href="#" class="toggleSearch" title="{="Hledat"|translate}"><i class="fa fa-search"></i></a></li>
+        </ul>
+    </div>
+
+    <div class="searchbar">
+        <form method="GET" action="{$_SERVER['REQUEST_URI']}">
+            <div class="container">
+                <input type="text" name="search" required />
+                <button type="submit">{="hledat"|translate|firstUpper}</button>
+            </div>
+        </form>
+    </div>
+</header>
+{if ($line && isset($categories[$line]) && !isset($product)) || ($ref == 'product' && isset($product['category_id']))}
+    <div class="productbar">
+        <div class="container">
+            {*<strong>{$categories[$line]}</strong>*}
+            {foreach $items as $value}
+            {if $value['category_id'] == ($ref == 'product' ? $product['category_id'] : $line)}
+                <span class="productbar__item{if isset($_GET['product']) && $_GET['product'] == $value['id']} active{/if}">
+                    <a href="?product={$value['id']}">{$value['title']}</a>
+                </span>
+            {/if}
+            {/foreach}
+        </div>
+    </div>
+{/if}

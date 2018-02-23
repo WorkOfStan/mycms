@@ -1,0 +1,24 @@
+{layout '@layout.latte'}
+{block content}
+<div class="container">
+    {if !$line && $slides}
+    <div class="owl-carousel owl-theme">
+        {foreach $slides as $slide}
+        <div class="owl-slide"{if isset($slide['context']['slideBackground'])} style="background-image:url({stripslashes($slide['context']['slideBackground'])|noescape});"{/if}>
+            <h2>{$slide['title']}</h2>
+            <div>{$slide['description']|noescape}</div>
+            <a href="?product={$slide['id']}" class="round-btn">{="Více o produktu"|translate}</a>
+        </div>
+        {/foreach}
+    </div>
+    {/if}
+
+
+    <ul class="shortcuts" data-aos="fade-up">
+        <li><a class="tile" href="?about" {*"?category&amp;code=about"*}><i class="icon-shortcut1"></i>{="O společnosti"|translate}</a></li>
+        <li><a class="tile" href="?category&amp;code=career"><i class="icon-shortcut2"></i>{="Kariéra"|translate}</a></li>
+        <li><a class="tile" href="?category&amp;references"><i class="icon-shortcut3"></i>{="Reference"|translate}</a></li>
+        <li><a class="tile" href="static/wizzard.html"><i class="icon-shortcut4"></i>{="Průvodce životním cyklem"|translate}</a></li>
+    </ul>
+</div>
+{/block}

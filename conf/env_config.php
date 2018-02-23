@@ -1,5 +1,7 @@
 <?php
-/** Config for the project
+
+/**
+ * Config for the project
  */
 define('DB_HOST', 'localhost');
 define('DB_PORT', ini_get('mysqli.default_port'));
@@ -21,6 +23,6 @@ $backyardConf = array(
 
 ini_set('display_errors', 0); //errors only in the log
 
-if(file_exists(__DIR__ . '/env_config_private.php')) {
+if (file_exists(__DIR__ . '/env_config_private.php')) {
     include_once __DIR__ . '/env_config_private.php';
 }

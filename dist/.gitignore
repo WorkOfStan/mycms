@@ -1,0 +1,31 @@
+#disable project relevant content
+# media/*
+# items/*
+
+#disable temporary and log files and dirs
+log/*
+cache/*
+!/log/.htaccess
+
+#disable private local files
+*.local.php
+/phinx.yml
+*.local.yml
+
+#disable composer-managed libraries
+/vendor/
+#disable composer lock file
+/composer.lock
+
+#disable IDE files
+/nbproject/private/
+/nbproject/
+.idea
+
+#disable db tools
+adminer*.php
+
+#disable image win/mac auxiliary files
+thumbs.db
+__MACOSX/
+.sass-cache/

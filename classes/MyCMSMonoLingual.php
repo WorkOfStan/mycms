@@ -157,6 +157,7 @@ class MyCMSMonoLingual
      * @todo - test fully
      *
      */
+    /* OBSOLETE METHOD - REMOVE SOON
     public function formController($databaseTable = '')
     {
         // fork for for admin and form processing
@@ -170,6 +171,8 @@ class MyCMSMonoLingual
             }
         }
     }
+     * 
+     */
 
     /**
      * Create a general CSRF token, keep it in session

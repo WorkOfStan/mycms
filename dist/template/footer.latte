@@ -1,0 +1,63 @@
+{* page footer *}
+<ul class="social" data-aos="fade-up">
+    <li><a href="https://www.facebook.com/MYCMSPROJECTSPECIFIC" title="{="MYCMSPROJECTSPECIFIC na Facebooku"|translate}"><i class="fa fa-facebook-official"></i></a></li>
+    <li><a href="https://twitter.com/MYCMSPROJECTSPECIFIC" title="{="MYCMSPROJECTSPECIFIC na Twitteru"|translate}"><i class="fa fa-twitter"></i></a></li>
+    <li><a href="https://www.linkedin.com/company/MYCMSPROJECTSPECIFIC" title="{="MYCMSPROJECTSPECIFIC na LinkedIn"|translate}"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+</ul>
+<footer class="footer">
+    <div class="footer__bar" data-aos="fade-up">
+        <div class="container">
+            <h3>MYCMSPROJECTSPECIFIC</h3>
+            <ul class="footer__menu">
+                <li><a href="?category&amp;code=references">{="Reference"|translate}</a></li>
+                {if $development}
+                <li><a href="?article&amp;code=sitemap">{="Mapa stránek"|translate}</a></li>
+                {/if}
+                <li><a href="?article&amp;code=terms">{="Pravidla pro užívání portálu"|translate}</a></li>
+                <li><a href="?category&amp;code=contacts">{="Kontakty"|translate}</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="container">
+        <ul class="footer__brands">
+        {for $i = 1; $i <= 5; $i++}
+            <li><img src="images/partner-{$i}.png" alt=""></li>
+        {/for}
+        </ul>
+        <form action="" method="post" data-aos="fade-up">
+            <div class="footer__newsletter">
+                <h3><label for="newsletter">{="Odebírejte novinky e-mailem, přihlašte se k našemu newsletteru"|translate}</label></h3>
+                <input type="hidden" name="token" value="{$token}" />
+                <input type="email" name="newsletter" id="newsletter" placeholder="{="Zde uveďte vaši e-mailovou adresu"|translate}" required />
+                <button class="round-btn" type="submit">{="Odebírat newsletter"|translate}</button>
+            </div>
+        </form>
+            {* @todo random selection here in template, not by javascript *}
+        <div class="footer__mission" data-aos="fade-up">
+            <p><small>
+                {="footer:integrator"|translate|replace:"\\n":"<br>"|noescape}
+            </small></p>
+        {* show either mission or vision *}
+        {*if rand(0, 1)}
+            <h3 class="footer__mission_vision">{="Vize"|translate}</h3>
+            <p class="footer__mission_vision">
+                {="footer:vision"|translate|replace:"\\n":"<br>"|noescape}
+            </p>
+        {else}
+            <h3 class="footer__mission_mission">{="Mise"|translate}</h3>
+            <p class="footer__mission_mission">
+                {="footer:mission"|translate|replace:"\\n":"<br>"|noescape}
+            </p>
+        {/if*}
+        </div>
+    </div>
+    <div class="footer__copyright">
+        <div class="container">
+            Copyright &copy; 2017–{date('Y')}.
+            {*<br/>*}MYCMSPROJECTSPECIFIC
+            <br/>Address {* namísto &nbsp; jsou zde použity ALT+255 *}
+            <br/>IČO: MYCMSPROJECTSPECIFIC
+            <br/><a href="tel:+420MYCMSPROJECTSPECIFIC">+420 MYCMSPROJECTSPECIFIC</a>
+        </div>
+    </div>
+</footer>

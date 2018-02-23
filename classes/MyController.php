@@ -12,10 +12,11 @@ class MyController extends MyCommon
 
     /** @var array */
     protected $result;
-    
+
     /**
      * accepted attributes:
      */
+
     /** @var array */
     protected $get;
 
@@ -52,9 +53,9 @@ class MyController extends MyCommon
     public function getVars()
     {
         return array(
-            "get" => $this->get, 
+            "get" => $this->get,
             "session" => $this->session
-            //,"section_styles" => $this->sectionStyles
+                //,"section_styles" => $this->sectionStyles
         );
     }
 
