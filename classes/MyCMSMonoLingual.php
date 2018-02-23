@@ -17,6 +17,7 @@ use Tracy\Debugger;
  */
 class MyCMSMonoLingual
 {
+
     use \Nette\SmartObject;
 
     /**
@@ -25,7 +26,7 @@ class MyCMSMonoLingual
      */
     public $dbms = null;
 
-    /**              
+    /**
      * which Latte template to load
      * @var string
      */
@@ -49,7 +50,7 @@ class MyCMSMonoLingual
      * @param array $myCmsConf
      */
     public function __construct(array $myCmsConf = array())
-    {                           
+    {
         foreach ($myCmsConf as $myCmsVariable => $myCmsContent) {
             if (property_exists($this, $myCmsVariable)) {
                 $this->{$myCmsVariable} = $myCmsContent;
@@ -202,6 +203,10 @@ class MyCMSMonoLingual
      */
     public function renderLatte($dirTemplateCache, $customFilters, array $params)
     {
+        Debugger::getBar()->addPanel(new \GodsDev\MyCMS\Tracy\BarPanelTemplate('Template: ' . $this->template, $this->context));
+        if (isset($_SESSION['user'])) {
+            Debugger::getBar()->addPanel(new \GodsDev\MyCMS\Tracy\BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION));
+        }
         $Latte = new \Latte\Engine;
         $Latte->setTempDirectory($dirTemplateCache);
         $Latte->addFilter(null, $customFilters);
@@ -209,5 +214,10 @@ class MyCMSMonoLingual
         Debugger::barDump($_SESSION, 'Session'); //mainly for  $_SESSION['language']
         $Latte->render('template/' . $this->template . '.latte', $params); //@todo make it configurable
         unset($_SESSION['messages']);
+        $sqlStatementsArray = $this->dbms->getStatementsArray();
+        if (!empty($sqlStatementsArray)) {
+            Debugger::getBar()->addPanel(new \GodsDev\MyCMS\Tracy\BarPanelTemplate('SQL: ' . count($sqlStatementsArray), $sqlStatementsArray));
+        }
     }
+
 }
