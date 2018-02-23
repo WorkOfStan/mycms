@@ -157,7 +157,7 @@ class TableAdmin extends TableLister
                     'type' => ($field['type'] == 'enum' ? 'radio' : 'checkbox'),
                     'title' => ($field['null'] ? $this->translate('Insert NULL') : null),
                     'disabled' => ($field['null'] ? null : 'disabled'),
-                    'checked' => (is_null($value) ? 'checked' : null),
+                    'checked' => (Tools::among($value, null, false) ? 'checked' : null),
                     'class' => 'input-null'
                         )
                 ) . ($options['layout-row'] ? '<br />' : '</td><td>') . PHP_EOL;
