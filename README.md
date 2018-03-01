@@ -38,6 +38,10 @@ define('DEFAULT_LANGUAGE', 'en');
 Following files are expected to exist within the Application
 * './language-' . $resultLanguage . '.inc.php';
 
+# Admin notes
+
+`admin.css` may be inherited to a child project, however as vendor folder has usually denied access from browser, the content of that standard `admin.css` MUST be available through method MyAdmin::getAdminCss.
+
 
 # Testing
 

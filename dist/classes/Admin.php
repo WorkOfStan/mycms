@@ -72,7 +72,10 @@ class Admin extends MyAdmin
             <meta name="author" content="">
             <title>' . Tools::h(Tools::wrap($tablePrefixless, '', ' - CMS Admin', 'CMS Admin')) . '</title>
             <link rel="stylesheet" href="styles/bootstrap.css" />
-            <link rel="stylesheet" href="styles/admin.css" />
+            <style type="text/css">';
+        echo $this->getAdminCss();//maybe link rel instead of inline css
+            //<link rel="stylesheet" href="styles/admin.css" />//incl. /vendor/godsdev/mycms/styles/admin.css
+        echo '</style>
             <link rel="stylesheet" href="styles/ie10-viewport-bug-workaround.css" />
             <link rel="stylesheet" href="styles/bootstrap-datetimepicker.css" />
             <link rel="stylesheet" href="styles/font-awesome.css" />
@@ -491,6 +494,17 @@ $(document).ready(function(){
 </script>
     </body>
 </html><?php
+    }
+
+    /**
+     * As vendor folder has usually denied access from browser,
+     * the content of the standard admin.css MUST be available through this method
+     * 
+     * @return string
+     */
+    public function getAdminCss()
+    {
+        return parent::getAdminCss() . file_get_contents(__DIR__ . '/../styles/admin.css');
     }
 
 }

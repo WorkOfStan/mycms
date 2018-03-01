@@ -75,7 +75,7 @@ class AdminProcessTest extends \PHPUnit_Framework_TestCase
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
-                __FUNCTION__ . ' has not been implemented yet.'
+            __FUNCTION__ . ' has not been implemented yet.'
         );
     }
 
@@ -84,7 +84,7 @@ class AdminProcessTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetAgenda()
     {
-        $adminAgendaCategoryArray = $this->object->getAgenda("category");
+        $adminAgendaCategoryArray = $this->object->getAgenda('category');
         $this->assertEquals(array('id' => '10', 'name' => 'MYCMSPROJECTSPECIFIC', 'path' => '0000000001'), $adminAgendaCategoryArray[0]);
     }
 
