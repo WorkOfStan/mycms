@@ -20,6 +20,9 @@ class Controller extends MyController
     /** @var \GodsDev\MYCMSPROJECTNAMESPACE\ProjectSpecific */
     private $projectSpecific;
 
+    /** @var string */
+    protected $language = 'cs'; //default is Czech for MYCMSPROJECTSPECIFIC
+    
     /**
      * Controller ascertain what the request is
      * 
@@ -40,7 +43,7 @@ class Controller extends MyController
     public function __construct(MyCMS $MyCMS, array $options = array())
     {
         parent::__construct($MyCMS, $options);
-        $this->projectSpecific = new ProjectSpecific($this->MyCMS);
+        $this->projectSpecific = new ProjectSpecific($this->MyCMS, array('language' => $this->language));
     }
 
     /**

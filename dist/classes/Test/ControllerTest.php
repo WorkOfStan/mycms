@@ -23,6 +23,9 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
      */
     protected $object;
 
+    /** @var string */
+    protected $language;
+
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
@@ -41,9 +44,10 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             'dbms' => new \GodsDev\Backyard\BackyardMysqli(DB_HOST . ":" . DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE, $backyard->BackyardError), //@todo - use test db instead. Or use other TAB_PREFIX !
         );
         $this->myCms = new MyCMSProject($mycmsOptions);
-        $_SESSION = array(
-            'language' => $this->myCms->getSessionLanguage(array(), array(), false),
-        ); //because $_SESSION is not defined in the PHPUnit mode
+
+//        $_SESSION = array(); //because $_SESSION is not defined in the PHPUnit mode
+        $this->language = $this->myCms->getSessionLanguage(array(), array(), false);
+
         //according to what you test, change $this->myCms->context before invoking $this->object = new Controller; within Test methods
     }
 
@@ -61,7 +65,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function testControllerNoContext()
     {
-        $this->object = new Controller($this->myCms);
+        $this->object = new Controller($this->myCms, array($this->language));
         $controller = $this->object->controller();
         $this->assertArraySubset(array("template" => "home", "context" => array()), $controller);
     }
@@ -86,7 +90,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             "get" => array(
                 "product" => 5,
             ),
-            "session" => $_SESSION,
+//            "session" => $_SESSION,
             "sectionStyles" => array("red"),
         ));
         $controller = $this->object->controller();
@@ -113,7 +117,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             "get" => array(
                 "line" => $lineId,
             ),
-            "session" => $_SESSION,
+//            "session" => $_SESSION,
             "sectionStyles" => array("red"),
         ));
         $controller = $this->object->controller();
@@ -136,7 +140,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             "get" => array(
                 "search" => 'server',
             ),
-            "session" => $_SESSION,
+//            "session" => $_SESSION,
             "sectionStyles" => array("red"),
         ));
         $controller = $this->object->controller();
@@ -162,7 +166,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
                 "article" => '',
                 "id" => $articleId,
             ),
-            "session" => $_SESSION,
+//            "session" => $_SESSION,
             "sectionStyles" => array("red"),
         ));
         $controller = $this->object->controller();
@@ -186,7 +190,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
                 "category" => '',
                 "id" => $categoryId,
             ),
-            "session" => $_SESSION,
+//            "session" => $_SESSION,
             "sectionStyles" => array("red"),
         ));
         $controller = $this->object->controller();
@@ -208,7 +212,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             "get" => array(
                 "about" => '',
             ),
-            "session" => $_SESSION,
+//            "session" => $_SESSION,
             "sectionStyles" => array("red"),
         ));
         $controller = $this->object->controller();

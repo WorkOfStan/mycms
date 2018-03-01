@@ -475,7 +475,7 @@ class Admin extends MyAdmin
 <!--<script type="text/javascript" src="scripts/bootstrap-datetimepicker.js"></script>-->
 <script type="text/javascript" src="scripts/jquery.sha1.js"></script>
 <script type="text/javascript" src="scripts/summernote.js"></script>
-<script type="text/javascript" src="scripts/admin.js" charset="utf-8"></script>
+<script type="text/javascript" src="scripts/admin.js?v=<?php echo PAGE_RESOURCE_VERSION; ?>" charset="utf-8"></script>
 <script type="text/javascript">
 <?php
 $tmp = array_flip(explode('|', 'Descending|Really delete?|New record|Passwords don\'t match!|Please, fill necessary data.|Select at least one file and try again.|No files|Edit|variable|value|name|size'));

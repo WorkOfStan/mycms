@@ -86,6 +86,7 @@ array(
     'NOTIFY_FROM_ADDRESS' => 'notifier-MYCMSPROJECTSPECIFIC@godsapps.eu', //@todo založit příslušnou schránku
     'NOTIFY_FROM_NAME' => 'Notifikátor',
     'EMAIL_ADMIN' => 'rejthar@gods.cz', //email used by Tracy\Debugger
+    'PAGE_RESOURCE_VERSION' => 1,    
 ) as $constant => $value) {
     if (!defined($constant)) {
         define($constant, $value);

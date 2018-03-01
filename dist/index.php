@@ -18,7 +18,11 @@ $MyCMS->csrf();
 use Tracy\Debugger;
 
 Debugger::barDump($MyCMS, 'MyCMS before controller');
-$controller = new \GodsDev\MYCMSPROJECTNAMESPACE\Controller($MyCMS, array('get' => $_GET, 'session' => $_SESSION));
+$controller = new \GodsDev\MYCMSPROJECTNAMESPACE\Controller($MyCMS, array(
+    'get' => $_GET, 
+    'session' => $_SESSION,
+    'language' => $_SESSION['language'],    
+    ));
 $controllerResult = $controller->controller();
 $MyCMS->template = $controllerResult['template'];
 $MyCMS->context = $controllerResult['context'];

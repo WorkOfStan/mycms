@@ -13,6 +13,13 @@ class ProjectSpecific extends ProjectCommon
 
     use \Nette\SmartObject;
 
+    /**
+     * accepted attributes:
+     */
+
+    /** @var string */
+    protected $language;
+
     /** Search for specified text in the database, return results
      * @param string text being searched for
      * @param int offset
@@ -23,14 +30,14 @@ class ProjectSpecific extends ProjectCommon
     {
         $result = array();
         $q = preg_quote($text);
-        $query = $this->MyCMS->dbms->query('SELECT CONCAT("?article&id=", id) AS link,content_' . $_SESSION['language'] . ' AS title,LEFT(description_' . $_SESSION['language'] . ',1000) AS description
-            FROM ' . TAB_PREFIX . 'content WHERE active="1" AND type IN ("page", "news") AND (content_' . $_SESSION['language'] . ' LIKE "%' . $q . '%" OR description_' . $_SESSION['language'] . ' LIKE "%' . $q . '%")
+        $query = $this->MyCMS->dbms->query('SELECT CONCAT("?article&id=", id) AS link,content_' . $this->language . ' AS title,LEFT(description_' . $this->language . ',1000) AS description
+            FROM ' . TAB_PREFIX . 'content WHERE active="1" AND type IN ("page", "news") AND (content_' . $this->language . ' LIKE "%' . $q . '%" OR description_' . $this->language . ' LIKE "%' . $q . '%")
             UNION
-            SELECT CONCAT("?category&id=", id) AS link,category_' . $_SESSION['language'] . ' AS title,LEFT(description_' . $_SESSION['language'] . ',1000) AS description
-            FROM ' . TAB_PREFIX . 'category WHERE active="1" AND (category_' . $_SESSION['language'] . ' LIKE "%' . $q . '%" OR description_' . $_SESSION['language'] . ' LIKE "%' . $q . '%")
+            SELECT CONCAT("?category&id=", id) AS link,category_' . $this->language . ' AS title,LEFT(description_' . $this->language . ',1000) AS description
+            FROM ' . TAB_PREFIX . 'category WHERE active="1" AND (category_' . $this->language . ' LIKE "%' . $q . '%" OR description_' . $this->language . ' LIKE "%' . $q . '%")
             UNION
-            SELECT CONCAT("?product=", id) AS link,product_' . $_SESSION['language'] . ' AS title,LEFT(description_' . $_SESSION['language'] . ',200) AS description
-            FROM ' . TAB_PREFIX . 'product WHERE product_' . $_SESSION['language'] . ' LIKE "%' . $q . '%" OR description_' . $_SESSION['language'] . ' LIKE "%' . $q . '%"
+            SELECT CONCAT("?product=", id) AS link,product_' . $this->language . ' AS title,LEFT(description_' . $this->language . ',200) AS description
+            FROM ' . TAB_PREFIX . 'product WHERE product_' . $this->language . ' LIKE "%' . $q . '%" OR description_' . $this->language . ' LIKE "%' . $q . '%"
             LIMIT 10 OFFSET ' . +$offset);
         $totalRows = $this->MyCMS->fetchSingle('SELECT FOUND_ROWS()');
         if ($query) {

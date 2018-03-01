@@ -2,22 +2,17 @@
 
 namespace GodsDev\MyCMS;
 
-class ProjectCommon
+class ProjectCommon extends MyCommon
 {
 
     use \Nette\SmartObject;
 
-    /** @var \GodsDev\MyCMS\MyCMS */
-    protected $MyCMS;
-
     /**
-     * 
-     * @param \GodsDev\MyCMS\MyCMS $MyCMS
+     * accepted attributes:
      */
-    public function __construct(MyCMS $MyCMS)
-    {
-        $this->MyCMS = $MyCMS;
-    }
+
+    /** @var string */
+    protected $language;
 
     /**
      * Shortcut for echo'<pre>'; var_dump(); and exit;
