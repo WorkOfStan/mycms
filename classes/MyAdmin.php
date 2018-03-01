@@ -34,5 +34,16 @@ class MyAdmin extends MyCommon
             Debugger::getBar()->addPanel(new \GodsDev\MyCMS\Tracy\BarPanelTemplate('SQL: ' . count($sqlStatementsArray), $sqlStatementsArray));
         }
     }
+    
+    /**
+     * As vendor folder has usually denied access from browser,
+     * the content of the standard admin.css MUST be available through this method
+     * 
+     * @return string
+     */
+    public function getAdminCss()
+    {
+        return file_get_contents(__DIR__ . '/../styles/admin.css') . PHP_EOL;
+    }    
 
 }

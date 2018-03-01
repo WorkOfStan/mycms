@@ -12,6 +12,7 @@ require_once __DIR__ . '/../../conf/config.php';
  */
 class AdminTest extends \PHPUnit_Framework_TestCase
 {
+
     /**
      * @var MyCMS
      */
