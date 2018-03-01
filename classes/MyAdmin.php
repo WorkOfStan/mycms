@@ -43,7 +43,7 @@ class MyAdmin extends MyCommon
      */
     public function getAdminCss()
     {
-        return file_get_contents(__DIR__ . '/../styles/admin.css');
+        return file_get_contents(__DIR__ . '/../styles/admin.css') . PHP_EOL;
     }    
 
 }

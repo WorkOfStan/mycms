@@ -504,7 +504,7 @@ $(document).ready(function(){
      */
     public function getAdminCss()
     {
-        return parent::getAdminCss() . file_get_contents(__DIR__ . '/../styles/admin.css');
+        return parent::getAdminCss() . PHP_EOL . file_get_contents(__DIR__ . '/../styles/admin.css') . PHP_EOL;
     }
 
 }
