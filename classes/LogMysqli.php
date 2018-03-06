@@ -28,7 +28,7 @@ class LogMysqli extends BackyardMysqli
     {
         if (!preg_match('/^select |^SET |^SHOW /i', $sql)) {
             //mb_eregi_replace does not destroy e.g. character Š
-            error_log(trim(mb_eregi_replace('/\s+/', ' ', $sql)) . '; -- [' . date("d-M-Y H:i:s") . ']' . (isset($_SESSION['user']) ? " by ({$_SESSION['user']})" : '') . PHP_EOL, 3, 'log/sql' . date("Y-m-d") . '.log');
+            error_log(trim(mb_eregi_replace('/\s+/', ' ', $sql)) . '; -- [' . date("d-M-Y H:i:s") . ']' . (isset($_SESSION['user']) ? " by ({$_SESSION['user']})" : '') . PHP_EOL, 3, 'log/sql' . date("Y-m-d") . '.log.sql');
         }
         $this->sqlStatementsArray[] = $sql;
         return parent::query($sql, $ERROR_LOG_OUTPUT);

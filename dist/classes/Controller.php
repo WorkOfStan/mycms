@@ -51,7 +51,7 @@ class Controller extends MyController
      * 
      * @return array
      */
-    function controller()
+    public function controller()
     {
         $result = parent::controller();
         //@todo move language to __construct($options) incl. tests
