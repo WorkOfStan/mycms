@@ -7,9 +7,9 @@ use GodsDev\Tools\Tools;
 /**
  * Class that can list rows of a database table, with editable search/filter 
  * functionality, links to edit each particular row, multi-row action, etc.
- * dependencies: Tools
+ * dependencies: GodsDev\Tools, MySQL/MariaDB (it uses INFORMATION_SHEMA)
  */
-class TableLister
+class MyTableLister
 {
 
     use \Nette\SmartObject;
@@ -58,6 +58,15 @@ class TableLister
         'FOREIGNLINK' => '-link' //suffix added to POST variables for links
     );
 
+    /** @var array Selected locale strings */
+    public $TRANSLATION = array(
+    );
+
+    /** @var array Available languages */
+    public $TRANSLATIONS = array(
+        'en' => 'English'
+    ); 
+
     /**
      * Constructor - stores passed parameters to object's attributes
      * 
@@ -69,13 +78,25 @@ class TableLister
     {
         $this->dbms = $dbms;
         $this->table = $table;
-        $this->options = (array) $options;
-        if ($query = $this->dbms->query('SELECT DATABASE()')) {
-            $this->options['database'] = $query->fetch_row()[0];
-        }
+        $this->options = $options;
+        $this->options['database'] = $this->dbms->fetchSingle('SELECT DATABASE()');
         $this->getTables();
         $this->setTable($table);
         $this->rand = rand(1e5, 1e6 - 1);
+    }
+
+    /**
+     * Get all tables in the database (including comments) and store them to tables
+     * @return void
+     */
+    public function getTables()
+    {
+        $this->tables = array();
+        $query = $this->dbms->query('SELECT TABLE_NAME, TABLE_COMMENT FROM information_schema.TABLES ' //@todo database-specific
+                . 'WHERE TABLE_SCHEMA = "' . $this->escapeSQL($this->options['database']) . '"');
+        while ($row = $query->fetch_row()) {
+            $this->tables[$row[0]] = $row[1];
+        }
     }
 
     /**
@@ -91,7 +112,7 @@ class TableLister
             return;
         }
         $this->table = $table;
-        if ($query = $this->dbms->query('SHOW FULL COLUMNS IN ' . Tools::escapeDbIdentifier($this->table))) {
+        if ($query = $this->dbms->query('SHOW FULL COLUMNS IN ' . $this->escapeDbIdentifier($this->table))) {
             $result = array();
             while ($row = $query->fetch_assoc()) {
                 $item = array(
@@ -143,8 +164,8 @@ class TableLister
         }
         if ($query = $this->dbms->query('SELECT COLUMN_NAME,REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME 
             FROM information_schema.KEY_COLUMN_USAGE WHERE CONSTRAINT_NAME != "PRIMARY" AND CONSTRAINT_CATALOG = "def" 
-            AND TABLE_SCHEMA = "' . $this->escape($this->options['database']) . '" 
-            AND TABLE_NAME = "' . $this->escape($this->table) . '"')) {
+            AND TABLE_SCHEMA = "' . $this->escapeSQL($this->options['database']) . '" 
+            AND TABLE_NAME = "' . $this->escapeSQL($this->table) . '"')) {
             while ($row = $query->fetch_assoc()) {
                 $this->fields[$row['COLUMN_NAME']]['foreign_table'] = $row['REFERENCED_TABLE_NAME'];
                 $this->fields[$row['COLUMN_NAME']]['foreign_column'] = $row['REFERENCED_COLUMN_NAME'];
@@ -183,13 +204,13 @@ class TableLister
         if (isset($options['include']) && is_array($options['include'])) {
             foreach ($temp as $column) {
                 if (in_array($column, array_keys($this->fields))) {
-                    $columns[$column] = Tools::escapeDbIdentifier($column);
+                    $columns[$column] = $this->escapeDbIdentifier($column);
                 }
             }
         }
         if (!$columns) {
             foreach ($this->fields as $key => $value) {
-                $columns[$key] = Tools::escapeDbIdentifier($key);
+                $columns[$key] = $this->escapeDbIdentifier($key);
             }
         }
         if (isset($options['exclude']) && is_array($options['exclude'])) {
@@ -216,22 +237,22 @@ class TableLister
                         . ' ON ' . $this->table . '.' . $key
                         . '=' . $this->fields[$key]['foreign_table'] . '.' . $this->fields[$key]['foreign_column'];
                 // try if column of the same name as the table exists (as a replacement for foreign table); use the first field in the table if it doesn't exist 
-                $tmp = $this->dbms->query('SHOW FIELDS FROM ' . Tools::escapeDbIdentifier($this->fields[$key]['foreign_table']))->fetch_all();
+                $tmp = $this->dbms->query('SHOW FIELDS FROM ' . $this->escapeDbIdentifier($this->fields[$key]['foreign_table']))->fetch_all();
                 foreach ($tmp as $k => $v) {
                     $tmp[$v[0]] = $v[0];
                     unset($tmp[$k]);
                 }
                 $foreign_link = mb_substr($this->fields[$key]['foreign_table'], mb_strlen(TAB_PREFIX));
                 $foreign_link = isset($tmp[$foreign_link]) && $foreign_link ? $foreign_link : reset($tmp);
-                $columns[$key] = Tools::escapeDbIdentifier($this->table) . '.' . $value . ','
-                        . Tools::escapeDbIdentifier($this->fields[$key]['foreign_table']) . '.'
-                        . Tools::escapeDbIdentifier($foreign_link) . ' AS ' . Tools::escapeDbIdentifier($key . $this->DEFAULTS['FOREIGNLINK']);
+                $columns[$key] = $this->escapeDbIdentifier($this->table) . '.' . $value . ','
+                        . $this->escapeDbIdentifier($this->fields[$key]['foreign_table']) . '.'
+                        . $this->escapeDbIdentifier($foreign_link) . ' AS ' . $this->escapeDbIdentifier($key . $this->DEFAULTS['FOREIGNLINK']);
             }
         }
         if ($join) {
             foreach ($columns as $key => $value) {
-                if ($value == Tools::escapeDbIdentifier($key)) {
-                    $columns[$key] = Tools::escapeDbIdentifier($this->table) . '.' . $value;
+                if ($value == $this->escapeDbIdentifier($key)) {
+                    $columns[$key] = $this->escapeDbIdentifier($this->table) . '.' . $value;
                 }
             }
         }
@@ -246,8 +267,8 @@ class TableLister
                     $where .= ' AND ';
                     switch ($_GET['op'][$key]) {
                         default:
-                            $where .= Tools::escapeDbIdentifier($this->table) . '.' . Tools::escapeDbIdentifier($filterColumn[$value])
-                                    . '="' . $this->escape($_GET['val'][$key]) . '"';
+                            $where .= $this->escapeDbIdentifier($this->table) . '.' . $this->escapeDbIdentifier($filterColumn[$value])
+                                    . '="' . $this->escapeSQL($_GET['val'][$key]) . '"';
                     }
                 }
             }
@@ -258,7 +279,7 @@ class TableLister
             }
         }
         $sql = 'SELECT SQL_CALC_FOUND_ROWS ' . implode(',', $columns) . ' FROM '
-                . Tools::escapeDbIdentifier($this->table) . $join
+                . $this->escapeDbIdentifier($this->table) . $join
                 . Tools::wrap(substr($where, 4), ' WHERE ')
                 . Tools::wrap(substr($sort, 1), ' ORDER BY ')
                 . " LIMIT $offset, $limit";
@@ -287,26 +308,24 @@ class TableLister
     {
         echo '<form action="" method="get" class="table-controls">' . PHP_EOL;
         if (!isset($option['no-search']) || !$option['no-search']) {
-            echo '<fieldset><legend><a href="javascript:;" onclick="$(\'#search-div\').toggle()">'
-            . '<span class="glyphicon glyphicon-search fa fa-search"></span> ' . $this->translate('Search') . '</a></legend>'
-            . '<div id="search-div"></div></fieldset>' . PHP_EOL;
+            echo '<fieldset><legend><a href="javascript:;" onclick="$(\'#search-div\').toggle()">
+                <span class="glyphicon glyphicon-search fa fa-search"></span> ' . $this->translate('Search') . '</a></legend>
+                <div id="search-div"></div></fieldset>' . PHP_EOL;
         }
         if (!isset($option['no-sort']) || !$option['no-sort']) {
-            echo '<fieldset><legend><a href="javascript:;" onclick="$(\'#sort-div\').toggle()">'
-            . '<span class="glyphicon glyphicon-sort fa fa-sort"></span> ' . $this->translate('Sort') . '</a></legend>'
-            . '<div id="sort-div"></div></fieldset>' . PHP_EOL;
+            echo '<fieldset><legend><a href="javascript:;" onclick="$(\'#sort-div\').toggle()">
+                <span class="glyphicon glyphicon-sort fa fa-sort"></span> ' . $this->translate('Sort') . '</a></legend>
+                <div id="sort-div"></div></fieldset>' . PHP_EOL;
         }
         echo '<fieldset><legend><span class="glyphicon glyphicon-list-alt fa fa-list-alt"></span> ' . $this->translate('View') . '</legend>
             <input type="hidden" name="table" value="' . Tools::h($this->table) . '" />
-            <label title="' . $this->translate('Text lengths') . '">
-                <span class="glyphicon glyphicon-option-horizontal fa fa-ellipsis-h"></span>
-                ' . Tools::htmlInput('textsize', '', Tools::setifnull($_GET['textsize'], $this->DEFAULTS['TEXTSIZE']), array('size' => 3, 'class' => 'text-right')) . '
+            <label title="' . $this->translate('Text lengths') . '"><span class="glyphicon glyphicon-option-horizontal fa fa-ellipsis-h"></span>' 
+                . Tools::htmlInput('textsize', '', Tools::setifnull($_GET['textsize'], $this->DEFAULTS['TEXTSIZE']), array('size' => 3, 'class' => 'text-right')) . '
             </label>
-            <label title="' . $this->translate('Rows per page') . '">
-                <span class="glyphicon glyphicon-option-vertical fa fa-ellipsis-v"></span>
-                ' . Tools::htmlInput('limit', '', Tools::setifnull($_GET['limit'], $this->DEFAULTS['PAGESIZE']), array('size' => 3, 'class' => 'text-right')) . '
-            </label>
-            ' . Tools::htmlInput('offset', '', Tools::setifnull($_GET['offset'], 0), 'hidden') . '
+            <label title="' . $this->translate('Rows per page') . '"><span class="glyphicon glyphicon-option-vertical fa fa-ellipsis-v"></span>' 
+                . Tools::htmlInput('limit', '', Tools::setifnull($_GET['limit'], $this->DEFAULTS['PAGESIZE']), array('size' => 3, 'class' => 'text-right')) . '
+            </label>' 
+                . Tools::htmlInput('offset', '', Tools::setifnull($_GET['offset'], 0), 'hidden') . '
             <button type="submit" class="btn btn-sm" title="' . $this->translate('View') . '"/>
                 <span class="glyphicon glyphicon-list-alt fa fa-list-alt"></span>
             </button>
@@ -355,13 +374,13 @@ class TableLister
     {
         Tools::setifnull($_GET['sort']);
         echo '<form action="" method="post">' . PHP_EOL
-        . '<table class="table table-bordered table-striped table-admin" data-order="0">'
-        . PHP_EOL . '<thead><tr>' . ($options['no-multi-options'] ? '' : '<th>' . Tools::htmlInput('', '', '', array('type' => 'checkbox', 'class' => 'check-all', 'title' => $this->translate('Check all'))) . '</th>');
+            . '<table class="table table-bordered table-striped table-admin" data-order="0">'
+            . PHP_EOL . '<thead><tr>' . ($options['no-multi-options'] ? '' : '<th>' . Tools::htmlInput('', '', '', array('type' => 'checkbox', 'class' => 'check-all', 'title' => $this->translate('Check all'))) . '</th>');
         $i = 1;
         $primary = array();
         foreach ($columns as $key => $value) {
             echo '<th' . (count($_GET['sort']) == 1 && $_GET['sort'][0] == $i ? ' class="active"' : '') . '>'
-            . '<a href="?' . Tools::urlchange(array('sort%5B0%5D' => null)) . '&amp;sort%5B0%5D=' . ($i * ($_GET['sort'] == $i ? -1 : 1)) . '" title="' . $this->translate('Sort') . '">' . Tools::h($key) . '</a>'
+            . '<a href="?' . Tools::urlChange(array('sort%5B0%5D' => null)) . '&amp;sort%5B0%5D=' . ($i * ($_GET['sort'] == $i ? -1 : 1)) . '" title="' . $this->translate('Sort') . '">' . Tools::h($key) . '</a>'
             . '</th>' . PHP_EOL;
             if ($this->fields[$key]['key'] == 'PRI') {
                 $primary [] = $key;
@@ -393,7 +412,7 @@ class TableLister
                     $class = array();
                     if (isset($field['foreign_table'])) {
                         $output = '<a href="?' . Tools::urlChange(array('table' => $field['foreign_table'], 'where[id]' => $value)) . '" '
-                                . 'title="' . Tools::h(mb_substr($row[$key . $this->DEFAULTS['FOREIGNLINK']], 0, $this->DEFAULTS['TEXTSIZE']) . (mb_strlen($row[$key . $this->DEFAULTS['FOREIGNLINK']]) > $this->DEFAULTS['TEXTSIZE'] ? '…' : '')) . '">'
+                                . 'title="' . Tools::h(mb_substr($row[$key . $this->DEFAULTS['FOREIGNLINK']], 0, $this->DEFAULTS['TEXTSIZE']) . (mb_strlen($row[$key . $this->DEFAULTS['FOREIGNLINK']]) > $this->DEFAULTS['TEXTSIZE'] ? ' ÄCĹŽ' : '')) . '">'
                                 . Tools::h($row[$key]) . '</a>';
                     } else {
                         switch ($field['basictype']) {
@@ -415,6 +434,7 @@ class TableLister
         echo '</tbody></table>' . PHP_EOL . '</form>';
     }
 
+    // this method is only used in ->pagination(), thus is private
     private function addPage($page, $currentPage, $rowsPerPage, $label = null)
     {
         global $title;
@@ -460,11 +480,11 @@ class TableLister
                 $this->addPage($currentPage - 1, $currentPage, $rowsPerPage, $this->translate('Previous'));
             }
             $this->addPage(1, $currentPage, $rowsPerPage);
-            echo $currentPage - $this->DEFAULTS['PAGES_AROUND'] > 2 ? '<li><a name="" class="non-page">…</a></li>' : '';
+            echo $currentPage - $this->DEFAULTS['PAGES_AROUND'] > 2 ? '<li><a name="" class="non-page"> ÄCĹŽ</a></li>' : '';
             for ($page = max($currentPage - $this->DEFAULTS['PAGES_AROUND'], 2); $page <= min($currentPage + $this->DEFAULTS['PAGES_AROUND'], $pages); $page++) {
                 $this->addPage($page, $currentPage, $rowsPerPage);
             }
-            echo $currentPage < $pages - $this->DEFAULTS['PAGES_AROUND'] - 1 ? '<li><a name="" class="non-page">…</a></li>' : '';
+            echo $currentPage < $pages - $this->DEFAULTS['PAGES_AROUND'] - 1 ? '<li><a name="" class="non-page"> ÄCĹŽ</a></li>' : '';
             if ($currentPage < $pages - $this->DEFAULTS['PAGES_AROUND']) {
                 $this->addPage($pages, $currentPage, $rowsPerPage);
             }
@@ -495,15 +515,19 @@ class TableLister
         return $result;
     }
 
-    /**
-     * Shortcut for mysqli::real_escape_string($link, $str)
-     * @param string string
-     * 
-     * @result string
-     */
-    public function escape($string)
+    public function escapeSQL($string)
     {
-        return $this->dbms->real_escape_string($string);
+        return $this->dbms->escapeSQL($string);
+    }
+
+    public function escapeDbIdentifier($string)
+    {
+        return $this->dbms->escapeDbIdentifier($string);
+    }
+
+    public function errorDuplicateEntry()
+    {
+        return $this->dbms->errorDuplicateEntry();
     }
 
     /**
@@ -535,22 +559,102 @@ class TableLister
     /**
      * Attempt to a user-defined translation
      * @param string $text
-     * @param bool $escape escape for HTML (ie. tranfer ' " <… to &#39; &quot; &lt;…) ?
+     * @param bool $escape escape for HTML?
      * 
      * @return string
      */
     public function translate($text, $escape = true)
     {
-        //@todo kdy může nastat situace, že TableListerTranslate neexistuje? Proč to nenadefinovat jako GodsDev\mycms\Utils\TableListerTranslate ?
-        if (function_exists('TableListerTranslate')) {
-            $result = TableListerTranslate($text);
-        } else {
-            $result = $text;
+        if (isset($this->TRANSLATION[$text])) {
+            $text = $this->TRANSLATION[$text];
         }
         if ($escape) {
-            $result = Tools::h($result);
+            $text = Tools::h($text);
         }
-        return $result;
+        return $text;
+    }
+
+    // custom methods - meant to be rewritten in the class' children
+    
+    /**
+     * Customize particular field's HTML of current $table
+     * @param string $field
+     * @param string $value
+     * @return boolean - true = method was applied so don't proceed with the default, false = method wasn't applied
+     */
+    public function customInput($field, $value)
+    {
+    }
+
+    /**
+     * Custom HTML to be show after detail's edit form but before action buttons
+     * @return string
+     */
+    public function customRecordDetail($record)
+    {
+        return '';
+    }
+
+    /**
+     * Custom HTML to be show after standard action buttons of the detail's form
+     * @return string
+     */
+    public function customRecordActions($record)
+    {
+        return '';
+    }
+
+    /**
+     * Custom saving of a record
+     * @return boolean - true = method was applied so don't proceed with the default, false = method wasn't applied
+     */
+    public function customSave()
+    {
+    }
+
+    /**
+     * Custom deleting of a record
+     * @return boolean - true = method was applied so don't proceed with the default, false = method wasn't applied
+     */
+    public function customAfterDelete()
+    {
+    }
+
+    /**
+     * Called after the $table listing
+     * @return boolean - true = method was applied so don't proceed with the default, false = method wasn't applied
+     */
+    public function customOperation()
+    {
+        return false;
+    }
+
+    /**
+     * Called to optionally fill the search select
+     * @return void
+     */
+    public function customSearch()
+    {
+    }
+
+    /**
+     * Called to optionally fill conditions to WHERE clause of the SQL statement selecting given table
+     * @return void
+     */
+    public function customCondition()
+    {
+    }
+
+    /**
+     * User-defined manipulating with column value of given table  
+     *  
+     * @param string $column
+     * @param array $row
+     * @return mixed
+     */
+    public function customValue($column, array $row)
+    {
+        return $row[$column];
     }
 
 }

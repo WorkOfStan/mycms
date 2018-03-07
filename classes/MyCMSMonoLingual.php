@@ -69,89 +69,6 @@ class MyCMSMonoLingual
     }
 
     /**
-     * Execute an SQL, fetch resultset into an array reindexed by first field.
-     * If the query selects only two fields, the first one is a key and the second one a value of the result array
-     * Example: 'SELECT id,name FROM employees' --> [3=>"John", 4=>"Mary", 5=>"Joe"]
-     * If the result set has more than two fields, whole resultset is fetched into each array item
-     * Example: 'SELECT id,name,surname FROM employees' --> [3=>[name=>"John", surname=>"Smith"], [...]]
-     * If the first column is non-unique, results are joined into an array.
-     * Example: 'SELECT department_id,name FROM employees' --> [1=>['John', 'Mary'], 2=>['Joe','Pete','Sally']]
-     * Example: 'SELECT division_id,name,surname FROM employees' --> [1=>[[name=>'John',surname=>'Doe'], [name=>'Mary',surname=>'Saint']], 2=>[...]]
-     *
-     * @param string $sql SQL to be executed
-     * @result mixed - either associative array, empty array on empty select, or false on error
-     */
-    public function fetchAndReindex($sql)
-    {
-        $query = $this->dbms->query($sql);
-        if (!is_object($query) || !is_a($query, '\mysqli_result')) {
-            return false;
-        }
-        $result = array();
-        while ($row = $query->fetch_assoc()) {
-            $key = reset($row);
-            $value = count($row) == 2 ? next($row) : $row;
-            if (count($row) > 2) {
-                array_shift($value);
-            }
-            if (isset($result[$key])) {
-                if (is_array($value)) {
-                    if (!is_array(reset($result[$key]))) {
-                        $result[$key] = array($result[$key]);
-                    }
-                    $result[$key] [] = $value;
-                } else {
-                    $result[$key] = array_merge((array) $result[$key], (array) $value);
-                }
-            } else {
-                $result[$key] = $value;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * Execute an SQL, fetch and return all resulting rows
-     *
-     * @param string $sql
-     * @param mixed array of associative arrays for each result row or empty array on error or no results
-     */
-    public function fetchAll($sql)
-    {
-        $result = array();
-        $query = $this->dbms->query($sql);
-        if (is_object($query) && is_a($query, '\mysqli_result')) {
-            while ($row = $query->fetch_assoc()) {
-                $result [] = $row;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * Execute an SQL and fetch the first row of a resultset.
-     * If only one column is selected, return it, otherwise return whole row.
-     *
-     * @param string $sql SQL to be executed
-     * @result mixed - first row (first column if only one is selected), null on empty SELECT, or false on error
-     */
-    public function fetchSingle($sql)
-    {
-        $query = $this->dbms->query($sql);
-        if (is_object($query) && is_a($query, '\mysqli_result')) {
-            $row = $query->fetch_assoc();
-            if (count($row) > 1) {
-                return $row;
-            } elseif (is_array($row)) {
-                return reset($row);
-            } else {
-                return null;
-            }
-        }
-        return false;
-    }
-
-    /**
      * In case of form processing includes either admin-process.php or process.php.
      *
      * @todo - test fully
@@ -179,11 +96,22 @@ class MyCMSMonoLingual
      *
      * @todo - test fully
      */
-    public function csrf()
+    public function csrfStart($keep)
     {
-        if (!isset($_GET['keep-token'])) {
-            $_SESSION['token'] = rand(1e8, 1e9);
+        if (!$keep) {
+            if (!is_array($_SESSION['token'])) {
+                $_SESSION['token'] = array();
+            }
+            $_SESSION['token'] []= rand(1e8, 1e9);
         }
+    }
+
+    public function csrfEnd()
+    {
+        if (is_array($_SESSION['token'])) {
+            array_pop($_SESSION['token']);
+        }
+        $_SESSION['token'] = array();
     }
 
     /**
@@ -194,7 +122,22 @@ class MyCMSMonoLingual
      */
     public function escapeSQL($string)
     {
-        return $this->dbms->real_escape_string($string);
+        return $this->dbms->escapeSQL($string);
+    }
+    
+    public function fetchSingle($sql)
+    {
+        return $this->dbms->fetchSingle($sql);
+    }
+
+    public function fetchAll($sql)
+    {
+        return $this->dbms->fetchAll($sql);
+    }
+
+    public function fetchAndReindex($sql)
+    {
+        return $this->dbms->fetchAndReindex($sql);
     }
 
     /**
