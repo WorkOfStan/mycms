@@ -256,7 +256,7 @@ class MyTableAdmin extends MyTableLister
                                     'checked' => ($v == $value ? 'checked' : null)
                         ));
                     }
-                    $input = array_merge(array(Tools::htmlInput($key, $this->translate('empty') . ' ', 0, array(
+                    $input = array_merge(array(Tools::htmlInput('fields[' . $key . ']', $this->translate('empty') . ' ', 0, array(
                             'type' => 'radio',
                             'id' => "fields[$key-0]",
                             'value' => 0

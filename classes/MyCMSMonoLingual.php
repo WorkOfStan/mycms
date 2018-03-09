@@ -106,14 +106,6 @@ class MyCMSMonoLingual
         }
     }
 
-    public function csrfEnd()
-    {
-        if (is_array($_SESSION['token'])) {
-            array_pop($_SESSION['token']);
-        }
-        $_SESSION['token'] = array();
-    }
-
     /**
      * Shortcut for mysqli::real_escape_string($link, $str)
      *
