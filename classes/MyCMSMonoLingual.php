@@ -92,24 +92,37 @@ class MyCMSMonoLingual
      */
 
     /**
-     * Create a general CSRF token, keep it in session
+     * Add a new CSRF token in $_SESSION['token']
      *
+     * @param bool $checkOnly - add new token only if $_SESSION['token'] is empty
+     * @return void
      * @todo - test fully
      */
-    public function csrfStart($keep)
+    public function csrfStart($checkOnly = false)
     {
-        if (!$keep) {
-            if (!is_array($_SESSION['token'])) {
-                $_SESSION['token'] = array();
-            }
+        if (!isset($_SESSION['token']) || !is_array($_SESSION['token'])) {
+            $_SESSION['token'] = array();
+        }
+        if (!$checkOnly || !count($_SESSION['token'])) {
             $_SESSION['token'] []= rand(1e8, 1e9);
         }
     }
 
     /**
+     * Check for CSRF
+     *
+     * @param int $token
+     * @return bool
+     */
+    public function csrfCheck($token)
+    {
+        return isset($token, $_SESSION['token']) && is_array($_SESSION['token']) && in_array($token, $_SESSION['token']);
+    }
+
+    /**
      * Shortcut for mysqli::real_escape_string($link, $str)
      *
-     * @param string string
+     * @param string $string
      * @result string
      */
     public function escapeSQL($string)

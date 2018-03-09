@@ -87,6 +87,7 @@ class MyTableLister
 
     /**
      * Get all tables in the database (including comments) and store them to tables
+     *
      * @return void
      */
     public function getTables()
@@ -101,8 +102,8 @@ class MyTableLister
 
     /**
      * Set (or change) serviced table, get its fields.
+     *
      * @param string $table table name
-     * 
      * @return void
      */
     public function setTable($table)
@@ -175,16 +176,18 @@ class MyTableLister
 
     /**
      * Output a customizable table to browse, search, page and pick its items for editing
-     * @param options configuration Array
-     *  $options['form-action']=send.php - instead of <form action="">
-     *  $options['read-only']=non-zero - no links to admin 
-     *  $options['no-sort']=non-zero - don't offer 'sorting' option  
-     *  $options['no-search']=non-zero - don't offer 'search' option  
-     *  $options['no-display-options']=non-zero - don't offer 'display' option  
-     *  $options['no-multi-options']=non-zero - allow to change values via so called quick column
-     *  $options['include']=array - columns to include 
-     *  $options['exclude']=array - columns to exclude
-     *  $options['columns']=array - special treatment of columns
+     *
+     * @param options configuration array
+     *   $options['form-action']=send.php - instead of <form action="">
+     *   $options['read-only']=non-zero - no links to admin 
+     *   $options['no-sort']=non-zero - don't offer 'sorting' option  
+     *   $options['no-search']=non-zero - don't offer 'search' option  
+     *   $options['no-display-options']=non-zero - don't offer 'display' option  
+     *   $options['no-multi-options']=non-zero - allow to change values via so called quick column
+     *   $options['include']=array - columns to include 
+     *   $options['exclude']=array - columns to exclude
+     *   $options['columns']=array - special treatment of columns
+     * @return void
      */
     public function view(array $options = array())
     {
@@ -234,8 +237,8 @@ class MyTableLister
             }
             if (isset($this->fields[$key]['foreign_table']) && $this->fields[$key]['foreign_table']) {
                 $join .= ' LEFT JOIN ' . $this->fields[$key]['foreign_table']
-                        . ' ON ' . $this->table . '.' . $key
-                        . '=' . $this->fields[$key]['foreign_table'] . '.' . $this->fields[$key]['foreign_column'];
+                    . ' ON ' . $this->table . '.' . $key
+                    . '=' . $this->fields[$key]['foreign_table'] . '.' . $this->fields[$key]['foreign_column'];
                 // try if column of the same name as the table exists (as a replacement for foreign table); use the first field in the table if it doesn't exist 
                 $tmp = $this->dbms->query('SHOW FIELDS FROM ' . $this->escapeDbIdentifier($this->fields[$key]['foreign_table']))->fetch_all();
                 foreach ($tmp as $k => $v) {
@@ -296,13 +299,15 @@ class MyTableLister
         if (!$totalRows && isset($_GET['col'])) {
             echo '<p class="alert alert-danger"><small>' . $this->translate('No records found.') . '</small></p>';
         } else {
-            echo '<p class="text-success"><small>' . $this->translate('Total rows: ') . $totalRows . '.</small></p>';
+            echo '<p class="text-info"><small>' . $this->translate('Total rows: ') . $totalRows . '.</small></p>';
         }
     }
 
     /**
      * Part of the view() method to output the controls
+     *
      * @param array option same as in view()
+     * @return void
      */
     protected function viewInputs($options)
     {
@@ -369,6 +374,7 @@ class MyTableLister
      * @param object mysqli query
      * @param array columns selected columns
      * @param array options same as in view()
+     * @return void
      */
     protected function viewTable($query, array $columns, array $options)
     {
@@ -380,8 +386,8 @@ class MyTableLister
         $primary = array();
         foreach ($columns as $key => $value) {
             echo '<th' . (count($_GET['sort']) == 1 && $_GET['sort'][0] == $i ? ' class="active"' : '') . '>'
-            . '<a href="?' . Tools::urlChange(array('sort%5B0%5D' => null)) . '&amp;sort%5B0%5D=' . ($i * ($_GET['sort'] == $i ? -1 : 1)) . '" title="' . $this->translate('Sort') . '">' . Tools::h($key) . '</a>'
-            . '</th>' . PHP_EOL;
+                . '<a href="?' . Tools::urlChange(array('sort%5B0%5D' => null)) . '&amp;sort%5B0%5D=' . ($i * ($_GET['sort'] == $i ? -1 : 1)) . '" title="' . $this->translate('Sort') . '">' . Tools::h($key) . '</a>'
+                . '</th>' . PHP_EOL;
             if ($this->fields[$key]['key'] == 'PRI') {
                 $primary [] = $key;
             }
@@ -434,22 +440,30 @@ class MyTableLister
         echo '</tbody></table>' . PHP_EOL . '</form>';
     }
 
-    // this method is only used in ->pagination(), thus is private
-    private function addPage($page, $currentPage, $rowsPerPage, $label = null)
+    /**
+     * Output HTML link for one page. Only used in ->pagination(), thus is private
+     * 
+     * @param int $page which page
+     * @param int $currentPage current page
+     * @param int $rowsPerPage rows per page
+     * @param string $label used in HTML <label>
+     * @param string $title used in HTML title="..."
+     * @return void
+     */
+    private function addPage($page, $currentPage, $rowsPerPage, $label = null, $title = '')
     {
-        global $title;
-        echo '<li' . ($page == $currentPage ? ' class="active"' : '') . '>'
-        . '<a href="?' . Tools::urlChange(array('offset' => ($page - 1) * $rowsPerPage)) . '"' . Tools::wrap($title, ' title="', '"') . '>'
-        . Tools::ifnull($label, $page) . '</a></li>' . PHP_EOL;
+        echo '<li class="page-item' . ($page == $currentPage ? ' active' : '') . '">'
+            . '<a href="?' . Tools::urlChange(array('offset' => ($page - 1) * $rowsPerPage)) . '" class="page-link" ' . Tools::wrap($title, ' title="', '"') . '>'
+            . Tools::ifnull($label, $page) . '</a></li>' . PHP_EOL;
     }
 
     /**
-     * 
+     * Output pagination for a table
+     *
      * @param int $rowsPerPage
      * @param int $totalRows
      * @param int $offset
-     * 
-     * @return type
+     * @return void
      */
     public function pagination($rowsPerPage, $totalRows, $offset = null)
     {
@@ -464,32 +478,32 @@ class MyTableLister
         if ($pages <= 1) {
             return;
         }
-        echo '<nav><ul class="pagination"><li><a name="" class="go-to-page non-page" data-pages="' . $pages . '">' . $this->translate('Page') . ':</a></li>';
+        echo '<nav><ul class="pagination"><li class="page-item disabled"><a name="" class="page-link go-to-page non-page" data-pages="' . $pages . '" tabindex="-1">' . $this->translate('Page') . ':</a></li>';
         if ($pages <= $this->DEFAULTS['PAGES_AROUND'] * 2 + 3) { // pagination with all pages
             if ($currentPage > 1) {
-                $this->addPage($currentPage - 1, $currentPage, $rowsPerPage, $this->translate('Previous'));
+                $this->addPage($currentPage - 1, $currentPage, $rowsPerPage, $this->translate('Previous'), $title);
             }
             for ($page = 1; $page <= $pages; $page++) {
-                $this->addPage($page, $currentPage, $rowsPerPage, null, $this->translate('Go to page'));
+                $this->addPage($page, $currentPage, $rowsPerPage, null, $this->translate('Go to page'), $title);
             }
             if ($currentPage < $pages) {
-                $this->addPage($currentPage + 1, $currentPage, $rowsPerPage, $this->translate('Next'));
+                $this->addPage($currentPage + 1, $currentPage, $rowsPerPage, $this->translate('Next'), $title);
             }
         } else { // pagination with first, current, last pages and "..."s in between
             if ($currentPage > 1) {
-                $this->addPage($currentPage - 1, $currentPage, $rowsPerPage, $this->translate('Previous'));
+                $this->addPage($currentPage - 1, $currentPage, $rowsPerPage, $this->translate('Previous'), $title);
             }
-            $this->addPage(1, $currentPage, $rowsPerPage);
-            echo $currentPage - $this->DEFAULTS['PAGES_AROUND'] > 2 ? '<li><a name="" class="non-page"> ÄCĹŽ</a></li>' : '';
+            $this->addPage(1, $currentPage, $rowsPerPage, null, $title);
+            echo $currentPage - $this->DEFAULTS['PAGES_AROUND'] > 2 ? '<li><a name="" class="non-page">…</a></li>' : '';
             for ($page = max($currentPage - $this->DEFAULTS['PAGES_AROUND'], 2); $page <= min($currentPage + $this->DEFAULTS['PAGES_AROUND'], $pages); $page++) {
-                $this->addPage($page, $currentPage, $rowsPerPage);
+                $this->addPage($page, $currentPage, $rowsPerPage, null, $title);
             }
-            echo $currentPage < $pages - $this->DEFAULTS['PAGES_AROUND'] - 1 ? '<li><a name="" class="non-page"> ÄCĹŽ</a></li>' : '';
+            echo $currentPage < $pages - $this->DEFAULTS['PAGES_AROUND'] - 1 ? '<li><a name="" class="non-page">…</a></li>' : '';
             if ($currentPage < $pages - $this->DEFAULTS['PAGES_AROUND']) {
-                $this->addPage($pages, $currentPage, $rowsPerPage);
+                $this->addPage($pages, $currentPage, $rowsPerPage, null, $title);
             }
             if ($currentPage < $pages) {
-                $this->addPage($currentPage + 1, $currentPage, $rowsPerPage, $this->translate('Next'));
+                $this->addPage($currentPage + 1, $currentPage, $rowsPerPage, $this->translate('Next'), $title);
             }
         }
         echo '</ul></nav>' . PHP_EOL;
@@ -497,9 +511,9 @@ class MyTableLister
 
     /**
      * Return fields which are keys (indexes) of given type
-     * @param string key type, either "PRI", "MUL", "UNI" or ""
      * 
-     * @result array key names
+     * @param string key type, either "PRI", "MUL", "UNI" or ""
+     * @return array key names
      */
     public function fieldKeys($filterType)
     {
@@ -532,6 +546,7 @@ class MyTableLister
 
     /**
      * Resolve an SQL query
+     *
      * @param string SQL to execute
      * @param string message in case of success
      * @param string error in case of an error
@@ -557,10 +572,10 @@ class MyTableLister
     }
 
     /**
-     * Attempt to a user-defined translation
+     * Return text translated according to $this->TRANSLATION[]. Return original text, if translation is not found.
+     * 
      * @param string $text
      * @param bool $escape escape for HTML?
-     * 
      * @return string
      */
     public function translate($text, $escape = true)
@@ -568,18 +583,16 @@ class MyTableLister
         if (isset($this->TRANSLATION[$text])) {
             $text = $this->TRANSLATION[$text];
         }
-        if ($escape) {
-            $text = Tools::h($text);
-        }
-        return $text;
+        return $escape ? Tools::h($text) : $text;
     }
 
     // custom methods - meant to be rewritten in the class' children
     
     /**
      * Customize particular field's HTML of current $table
+     * 
      * @param string $field
-     * @param string $value
+     * @param mixed $value field's value
      * @return boolean - true = method was applied so don't proceed with the default, false = method wasn't applied
      */
     public function customInput($field, $value)
@@ -588,6 +601,8 @@ class MyTableLister
 
     /**
      * Custom HTML to be show after detail's edit form but before action buttons
+     *
+     * @param array @record
      * @return string
      */
     public function customRecordDetail($record)
@@ -597,6 +612,8 @@ class MyTableLister
 
     /**
      * Custom HTML to be show after standard action buttons of the detail's form
+     * 
+     * @param array $record
      * @return string
      */
     public function customRecordActions($record)
@@ -606,22 +623,27 @@ class MyTableLister
 
     /**
      * Custom saving of a record
+     * 
      * @return boolean - true = method was applied so don't proceed with the default, false = method wasn't applied
      */
     public function customSave()
     {
+        return false;
     }
 
     /**
      * Custom deleting of a record
+     * 
      * @return boolean - true = method was applied so don't proceed with the default, false = method wasn't applied
      */
     public function customAfterDelete()
     {
+        return false;
     }
 
     /**
-     * Called after the $table listing
+     * Custom operation with table records. Called after the $table listing
+     * 
      * @return boolean - true = method was applied so don't proceed with the default, false = method wasn't applied
      */
     public function customOperation()
@@ -630,7 +652,8 @@ class MyTableLister
     }
 
     /**
-     * Called to optionally fill the search select
+     * Custom search. Called to optionally fill the search select
+     * 
      * @return void
      */
     public function customSearch()
@@ -650,11 +673,11 @@ class MyTableLister
      *  
      * @param string $column
      * @param array $row
-     * @return mixed
+     * @return mixed original or manipulated data
      */
     public function customValue($column, array $row)
     {
-        return $row[$column];
+        return isset($row[$column]) ? $row[$column] : false;
     }
 
 }

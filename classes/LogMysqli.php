@@ -18,7 +18,7 @@ class LogMysqli extends BackyardMysqli
 
     /**
      * Logs SQL statement not starting with SELECT or SET
-     * 
+     *
      * @param string $sql SQL to execute
      * @param bool $ERROR_LOG_OUTPUT
      * @return \mysqli_result Object|false
@@ -39,13 +39,23 @@ class LogMysqli extends BackyardMysqli
         return $this->sqlStatementsArray;
     }
 
-    // escape a string constant - specific to MySQL/MariaDb and current collation
+    /**
+     * Escape a string constant - specific to MySQL/MariaDb and current collation
+     *
+     * @param string $string to escape
+     * @return string
+     */
     public function escapeSQL($string)
     {
         return $this->real_escape_string($string);
     }
 
-    // escape a database identifier (table/column name, etc.) - specific to MySQL/MariaDb 
+    /**
+     * Escape a database identifier (table/column name, etc.) - specific to MySQL/MariaDb
+     *
+     * @param string $string to escape
+     * @return string
+     */
     public function escapeDbIdentifier($string)
     {
         $string = '`' . str_replace('`', '``', $string) . '`';
@@ -55,11 +65,16 @@ class LogMysqli extends BackyardMysqli
         return $string;
     }
 
+    /**
+     * Return if last error is a "duplicate entry"
+     *
+     * @return bool
+     */
     public function errorDuplicateEntry()
     {
         return $this->errno == 1062;
     }
-    
+
     /**
      * Execute an SQL and fetch the first row of a resultset.
      * If only one column is selected, return it, otherwise return whole row.
@@ -111,8 +126,7 @@ class LogMysqli extends BackyardMysqli
      * Example: 'SELECT division_id,name,surname FROM employees' --> [1=>[[name=>'John',surname=>'Doe'], [name=>'Mary',surname=>'Saint']], 2=>[...]]
      *
      * @param string $sql SQL to be executed
-     * @param bool $compress
-     * @result mixed - either associative array, empty array on empty select, or false on error
+     * @result mixed - either associative array, empty array on empty SELECT, or false on error
      */
     public function fetchAndReindex($sql)
     {
