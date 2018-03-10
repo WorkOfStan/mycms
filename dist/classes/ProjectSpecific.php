@@ -24,7 +24,7 @@ class ProjectSpecific extends ProjectCommon
      * @param string text being searched for
      * @param int offset
      * @param type $totalRows
-     * @result array search result
+     * @return array search result
      */
     public function searchResults($text, $offset = 0, &$totalRows = null)
     {
@@ -55,7 +55,7 @@ class ProjectSpecific extends ProjectCommon
     /** 
      * Fetch from database a content of given id
      * @param mixed $id of the content 
-     * @result array resultset
+     * @return array resultset
      */
     public function getContent($id = null, $code = null, $options = array())
     {

@@ -80,7 +80,7 @@ class LogMysqli extends BackyardMysqli
      * If only one column is selected, return it, otherwise return whole row.
      *
      * @param string $sql SQL to be executed
-     * @result mixed first selected row (or its first column if only one column is selected), null on empty SELECT, or false on error
+     * @return mixed first selected row (or its first column if only one column is selected), null on empty SELECT, or false on error
      */
     public function fetchSingle($sql)
     {
@@ -126,7 +126,7 @@ class LogMysqli extends BackyardMysqli
      * Example: 'SELECT division_id,name,surname FROM employees' --> [1=>[[name=>'John',surname=>'Doe'], [name=>'Mary',surname=>'Saint']], 2=>[...]]
      *
      * @param string $sql SQL to be executed
-     * @result mixed - either associative array, empty array on empty SELECT, or false on error
+     * @return mixed - either associative array, empty array on empty SELECT, or false on error
      */
     public function fetchAndReindex($sql)
     {
