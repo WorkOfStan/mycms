@@ -12,14 +12,18 @@ use Tracy\Debugger;
 class MyAdmin extends MyCommon
 {
 
+    /** @var MyTableAdmin */
+    protected $TableAdmin;
+                   
     /**
      * 
      * @param \GodsDev\MyCMS\MyCMS $MyCMS
      * @param array $options that overrides default values within constructor
      */
-    public function __construct(MyCMS $MyCMS, array $options = array())
+    public function __construct(MyCMS $MyCMS, $TableAdmin, array $options = array())
     {
         parent::__construct($MyCMS, $options);
+        $this->TableAdmin = $TableAdmin;
     }
 
     /**
@@ -85,8 +89,9 @@ class MyAdmin extends MyCommon
      * @param object $TableAdmin
      * @result void
      */
-    protected function outputAdminNavigation(&$TableAdmin)
+    protected function outputAdminNavigation()
     {
+        $TableAdmin = $this->TableAdmin;
         echo '<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
                 <a class="nav-item mr-2" href="' . Tools::h($_SERVER['SCRIPT_NAME']) . '">MyCMS</a>
                 <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,7 +100,7 @@ class MyAdmin extends MyCommon
                 <div class="collapse navbar-collapse" id="navbarsExampleDefault">
                     <ul class="navbar-nav mr-auto">';
         if (Tools::nonempty($_SESSION['user'])) {
-            $this->outputAdminProjectSpecificLinks($TableAdmin);
+            $this->outputAdminProjectSpecificLinks();
             echo '<li class="nav-item' . (isset($_GET['media']) ? ' active' : '') . '"><a href="?media" class="nav-link"><i class="fa fa-video-camera" aria-hidden="true"></i> ' . $TableAdmin->translate('Media') . '</a></li>
                 <li class="nav-item dropdown' . (isset($_GET['user']) ? ' active' : '') . '">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="' . $TableAdmin->translate('User') . '"><i class="fa fa-user" aria-hidden="true"></i> ' . $TableAdmin->translate('User') . '</a>
@@ -112,7 +117,7 @@ class MyAdmin extends MyCommon
         echo '<li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="' . $TableAdmin->translate('Settings') . '"><i class="fa fa-cog" aria-hidden="true"></i> ' . $TableAdmin->translate('Settings') . '</a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">';
-        foreach ($this->MyCMS->TRANSLATIONS as $key => $value) {
+        foreach ($TableAdmin->TRANSLATIONS as $key => $value) {
             echo '<a class="dropdown-item' . ($key == $_SESSION['language'] ? ' active' : '') . '" href="?' . Tools::urlChange(array('language' => $key)) . '"><i class="fa fa-flag" aria-hidden="true"></i> ' . Tools::h($value) . '</a>' . PHP_EOL;
         }
         echo '</div>
@@ -132,7 +137,7 @@ class MyAdmin extends MyCommon
      * @param object $TableAdmin
      * @result void
      */
-    protected function outputAdminSpecificLinks(&$TableAdmin)
+    protected function outputAdminSpecificLinks()
     {
     }
 
@@ -142,8 +147,9 @@ class MyAdmin extends MyCommon
      * @param object $TableAdmin
      * @result void
      */
-    protected function outputAdminMedia(&$TableAdmin)
+    protected function outputAdminMedia()
     {
+        $TableAdmin = $this->TableAdmin;
         echo '<h1 class="page-header">' . $TableAdmin->translate('Media') . '</h1>
             <form action="" method="post" enctype="multipart/form-data">
                 <fieldset>
@@ -182,8 +188,9 @@ class MyAdmin extends MyCommon
      * @param object $TableAdmin
      * @result void
      */
-    protected function outputAdminUser(&$TableAdmin)
+    protected function outputAdminUser()
     {
+        $TableAdmin = $this->TableAdmin;
         echo '<h1>' . $TableAdmin->translate('User') . '</h1>';
         // logout
         if (isset($_GET['logout'])) {
@@ -251,8 +258,9 @@ class MyAdmin extends MyCommon
      * @param object $TableAdmin
      * @result void
      */
-    protected function outputAdminLogin(&$TableAdmin)
+    protected function outputAdminLogin()
     {
+        $TableAdmin = $this->TableAdmin;
         $options = array(
             'before' => '<div class="col-sm-3">',
             'between' => '</div><div class="col-sm-9">',
@@ -276,8 +284,9 @@ class MyAdmin extends MyCommon
      * @param object $TableAdmin
      * @result void
      */
-    protected function outputAdminDashboard(&$TableAdmin)
+    protected function outputAdminDashboard()
     {
+        $TableAdmin = $this->TableAdmin;
         echo '<br class="m-3"/><br class="m-3"/><hr />
             <div><small>' . $TableAdmin->translate('For more detailed browsing with filtering etc. you may select one of the following tables…') . '</small></div>
             <div class="detailed-tables">';
@@ -301,8 +310,9 @@ class MyAdmin extends MyCommon
      * @param object $TableAdmin
      * @result void
      */
-    protected function outputAdminAgendas(&$TableAdmin)
+    protected function outputAdminAgendas()
     {
+        $TableAdmin = $this->TableAdmin;
         // show agendas in the sidebar
         echo '<details id="agendas"><summary class="page-header">' . $TableAdmin->translate('Agendas') . '<br />'
             . $TableAdmin->translate('Select your agenda, then particular row.') . '</summary><div class="ml-3">' . PHP_EOL;
@@ -333,8 +343,9 @@ class MyAdmin extends MyCommon
      * @param object $TableAdmin
      * @result void
      */
-    protected function outputAdminBodyEnd(&$TableAdmin)
+    protected function outputAdminBodyEnd()
     {
+        $TableAdmin = $this->TableAdmin;
         echo //<script type="text/javascript" src="https://code.jquery.com/jquery.js"></script>
             '<script type="text/javascript" src="scripts/jquery.js"></script>'
             . '<script type="text/javascript" src="scripts/popper.js"></script>'
@@ -370,8 +381,9 @@ class MyAdmin extends MyCommon
      * @param object $TableAdmin
      * @result void
      */
-    protected function outputImageSelector(&$TableAdmin)
+    protected function outputImageSelector()
     {
+        $TableAdmin = $this->TableAdmin;
         echo '<div class="modal" id="image-selector" tabindex="-1" role="dialog" data-type="modal">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -401,8 +413,9 @@ class MyAdmin extends MyCommon
      * @param object $TableAdmin
      * @result void
      */
-    protected function outputAdminTable(&$TableAdmin)
+    protected function outputAdminTable()
     {
+        $TableAdmin = $this->TableAdmin;
         $tablePrefixless = mb_substr($_GET['table'], mb_strlen(TAB_PREFIX));
         echo '<h1 class="page-header">'
             . '<a href="?table=' . Tools::h($_GET['table']) . '" title="' . $TableAdmin->translate('Back to listing') . '"><i class="fa fa-list-alt" aria-hidden="true"></i></a> '
@@ -420,15 +433,15 @@ class MyAdmin extends MyCommon
                 'original' => true,
                 'tabs' => $tmp
             );
-            $this->outputAdminTableBeforeEdit($TableAdmin);
+            $this->outputAdminTableBeforeEdit();
             $TableAdmin->outputForm($_GET['where'], $options);
-            $this->outputAdminTableAfterEdit($TableAdmin);
+            $this->outputAdminTableAfterEdit();
         } else {
             // table listing
             echo '<h2 class="sub-header">' . $TableAdmin->translate('Listing') . '</h2>';
-            $this->outputAdminTableBeforeListing($TableAdmin);
+            $this->outputAdminTableBeforeListing();
             $TableAdmin->view();
-            $this->outputAdminTableAfterListing($TableAdmin);
+            $this->outputAdminTableAfterListing();
         }
     }
 
@@ -447,7 +460,7 @@ class MyAdmin extends MyCommon
      * @param object $TableAdmin
      * @result void
      */
-    protected function projectSpecificSections(&$TableAdmin)
+    protected function projectSpecificSections()
     {
     }
 
@@ -457,7 +470,7 @@ class MyAdmin extends MyCommon
      * @param object $TableAdmin
      * @result void
      */
-    protected function outputAdminTableBeforeListing(&$TableAdmin)
+    protected function outputAdminTableBeforeListing()
     {
     }
 
@@ -467,7 +480,7 @@ class MyAdmin extends MyCommon
      * @param object $TableAdmin
      * @result void
      */
-    protected function outputAdminTableAfterListing(&$TableAdmin)
+    protected function outputAdminTableAfterListing()
     {
     }
 
@@ -477,7 +490,7 @@ class MyAdmin extends MyCommon
      * @param object $TableAdmin
      * @result void
      */
-    protected function outputAdminTableBeforeEdit(&$TableAdmin)
+    protected function outputAdminTableBeforeEdit()
     {
     }
 
@@ -487,7 +500,7 @@ class MyAdmin extends MyCommon
      * @param object $TableAdmin
      * @result void
      */
-    protected function outputAdminTableAfterEdit(&$TableAdmin)
+    protected function outputAdminTableAfterEdit()
     {
     }
 
@@ -528,10 +541,10 @@ class MyAdmin extends MyCommon
         echo '<!DOCTYPE html><html lang="' . Tools::h($_SESSION['language']) . '">';
         $this->outputAdminHead($tmpTitle);
         echo '<body>' . PHP_EOL . '<header>';
-        $this->outputAdminNavigation($TableAdmin);
+        $this->outputAdminNavigation();
         echo '</header>' . PHP_EOL . '<div class="container-fluid">' . PHP_EOL . '<nav class="col-md-3 bg-light sidebar" id="admin-sidebar">';
         if (isset($_SESSION['user']) && $_SESSION['user']) {
-            $this->outputAdminAgendas($TableAdmin);
+            $this->outputAdminAgendas();
         }
         echo '</nav>' . PHP_EOL . '<main class="ml-sm-auto col-md-9 pt-3" role="main" id="admin-main">
             <a href="" id="toggle-nav" title="' . Tools::h($TableAdmin->translate('Toggle sidebar')) . '"><i class="fa fa-caret-left"></i></a>';
@@ -539,19 +552,19 @@ class MyAdmin extends MyCommon
     
         // table listing/editing
         if ($_GET['table']) {
-            $this->outputAdminTable($TableAdmin);
+            $this->outputAdminTable();
         }
         // media upload etc.
         elseif (isset($_GET['media'])) {
-            $this->outputAdminMedia($TableAdmin);
+            $this->outputAdminMedia();
         }
         // user operations (logout, change password, create user, delete user)
         elseif (isset($_GET['user'])) {
-            $this->outputAdminUser($TableAdmin);
+            $this->outputAdminUser();
         }
         // user not logged in - show a login form
         elseif(!isset($_SESSION['user'])) {
-            $this->outputAdminLogin($TableAdmin);
+            $this->outputAdminLogin();
         }
         // project-specific admin sections
         elseif ($this->projectSpecificSectionsCondition()) {
@@ -560,7 +573,7 @@ class MyAdmin extends MyCommon
             // no agenda selected, showing "dashboard"
         }
         if (isset($_SESSION['user'])) {
-            $this->outputAdminDashboard($TableAdmin);
+            $this->outputAdminDashboard();
         }
         echo '</main>
             </div>
@@ -568,9 +581,9 @@ class MyAdmin extends MyCommon
                 &copy; GODS, s r.o. All rights reserved.
             </footer>';
         if (isset($_SESSION['user'])) {
-            $this->outputImageSelector($TableAdmin);
+            $this->outputImageSelector();
         }
-        $this->outputAdminBodyEnd($TableAdmin);
+        $this->outputAdminBodyEnd();
         echo '</body>' . PHP_EOL .'</html>';
     }
 }
