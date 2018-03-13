@@ -42,11 +42,19 @@ class MyTableLister
         '>',
         '<=',
         '>=',
+        '!=',
         'LIKE',
+        'LIKE %%',
         'REGEXP',
         'IN',
+        'FIND_IN_SET',
         'IS NULL',
-        'BIT AND'
+        'BIT',
+        'NOT LIKE',
+        'NOT REGEXP',
+        'NOT IN',
+        'IS NOT NULL',
+        'NOT BIT'
     );
 
     /** @var array factory setting defaults */
@@ -267,12 +275,37 @@ class MyTableLister
             unset($filterColumn[0]);
             foreach ($_GET['col'] as $key => $value) {
                 if (isset($filterColumn[$value], $_GET['val'][$key])) {
+                    $id = $this->escapeDbIdentifier($this->table) . '.' . $this->escapeDbIdentifier($filterColumn[$value]);
+                    $val = $_GET['val'][$key];
+                    $op = $this->WHERE_OPS[$_GET['op'][$key]];
                     $where .= ' AND ';
-                    switch ($_GET['op'][$key]) {
-                        default:
-                            $where .= $this->escapeDbIdentifier($this->table) . '.' . $this->escapeDbIdentifier($filterColumn[$value])
-                                    . '="' . $this->escapeSQL($_GET['val'][$key]) . '"';
+                    if (substr($op, 0, 4) == 'NOT ') {
+                        $where .= 'NOT ';
+                        $op = substr($op, 4);
                     }
+                    switch ($op) {
+                        case 'LIKE %%':
+                            $where .= $id . ' LIKE "%' . $this->escapeSQL($val) . '%"';
+                            break;
+                        case 'IN':
+                            $where .= $id . ' IN (' . Tools::escapeIn($val) . ')';
+                            break;
+                        case 'IS NULL':
+                            $where .= $id . ' IS NULL';
+                            break;
+                        case 'IS NOT NULL':
+                            $where .= $id . ' IS NOT NULL';
+                            break;
+                        case 'BIT':
+                            $where .= $id . ' & ' . intval($val) . ' != 0';
+                            break;
+                        case 'IN SET':
+                            $where .= 'FIND_IN_SET("' . $this->escapeSQL($val) . '", ' . $id . ')';
+                            break;
+                        default:
+                            $where .= $id . $op . '"' . $this->escapeSQL($val) . '"';
+                    }
+                    unset($id, $val, $op);
                 }
             }
         }
@@ -418,7 +451,7 @@ class MyTableLister
                     $class = array();
                     if (isset($field['foreign_table'])) {
                         $output = '<a href="?' . Tools::urlChange(array('table' => $field['foreign_table'], 'where[id]' => $value)) . '" '
-                                . 'title="' . Tools::h(mb_substr($row[$key . $this->DEFAULTS['FOREIGNLINK']], 0, $this->DEFAULTS['TEXTSIZE']) . (mb_strlen($row[$key . $this->DEFAULTS['FOREIGNLINK']]) > $this->DEFAULTS['TEXTSIZE'] ? ' ÄCĹŽ' : '')) . '">'
+                                . 'title="' . Tools::h(mb_substr($row[$key . $this->DEFAULTS['FOREIGNLINK']], 0, $this->DEFAULTS['TEXTSIZE']) . (mb_strlen($row[$key . $this->DEFAULTS['FOREIGNLINK']]) > $this->DEFAULTS['TEXTSIZE'] ? '&hellip;' : '')) . '">'
                                 . Tools::h($row[$key]) . '</a>';
                     } else {
                         switch ($field['basictype']) {
@@ -494,11 +527,11 @@ class MyTableLister
                 $this->addPage($currentPage - 1, $currentPage, $rowsPerPage, $this->translate('Previous'), $title);
             }
             $this->addPage(1, $currentPage, $rowsPerPage, null, $title);
-            echo $currentPage - $this->DEFAULTS['PAGES_AROUND'] > 2 ? '<li><a name="" class="non-page">…</a></li>' : '';
+            echo $currentPage - $this->DEFAULTS['PAGES_AROUND'] > 2 ? '<li><a name="" class="non-page">&hellip;</a></li>' : '';
             for ($page = max($currentPage - $this->DEFAULTS['PAGES_AROUND'], 2); $page <= min($currentPage + $this->DEFAULTS['PAGES_AROUND'], $pages); $page++) {
                 $this->addPage($page, $currentPage, $rowsPerPage, null, $title);
             }
-            echo $currentPage < $pages - $this->DEFAULTS['PAGES_AROUND'] - 1 ? '<li><a name="" class="non-page">…</a></li>' : '';
+            echo $currentPage < $pages - $this->DEFAULTS['PAGES_AROUND'] - 1 ? '<li><a name="" class="non-page">&hellip;</a></li>' : '';
             if ($currentPage < $pages - $this->DEFAULTS['PAGES_AROUND']) {
                 $this->addPage($pages, $currentPage, $rowsPerPage, null, $title);
             }
@@ -680,4 +713,37 @@ class MyTableLister
         return isset($row[$column]) ? $row[$column] : false;
     }
 
+    /**
+     * Display a break-down of records in given table (default "content") by given column (default "type")
+     * 
+     * @param array $options OPTIONAL
+     * @return type
+     */
+    public function contentByType(array $options = array())
+    {
+        Tools::setifnull($options['table'], 'content');
+        Tools::setifnull($options['type'], 'type');
+        $query = $this->dbms->query('SELECT SQL_CALC_FOUND_ROWS ' . Tools::escapeDbIdentifier($options['type']) . ',COUNT(' . Tools::escapeDbIdentifier($options['type']) . ')'
+                . ' FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $options['table'])
+                . ' GROUP BY ' . Tools::escapeDbIdentifier($options['type']) . ' WITH ROLLUP LIMIT 100');
+        if (!$query) {
+            return;
+        }
+        $typeIndex = 0;
+        foreach (array_keys($this->fields) as $key => $value) {
+            if ($value == $options['type']) {
+                $typeIndex = $key + 1;
+                break;
+            }
+        }
+        $totalRows = $this->dbms->fetchSingle('SELECT FOUND_ROWS()');
+        echo '<details><summary><big>' . $this->translate('By type') . '</big></summary>' . PHP_EOL
+        . '<table class="table table-striped">' . PHP_EOL
+        . '<tr><th>' . $this->translate('Type') . '</th><th class="text-right">' . $this->translate('Count') . '</th></tr>' . PHP_EOL;
+        while ($row = $query->fetch_row()) {
+            echo '<tr><td><a href="' . ($url = '?table=' . urlencode(TAB_PREFIX . $options['table']) . '&amp;col[0]=' . $typeIndex . '&amp;op[0]=0&amp;val[0]=' . urlencode($row[0])) . '" title="' . $this->translate('Filter records') . '">' . ($row[0] ? Tools::h($row[0]) : ($row[0] === '' ? '<i class="insipid">(' . $this->translate('empty') . ')</i>' : '<big>&Sum;</big>')) . '</a>'
+                . '</td><td class="text-right"><a href="' . $url . '" title="' . $this->translate('Filter records') . '">' . (int) $row[1] . '</td></tr>' . PHP_EOL;
+        }
+        echo '</table></details>';
+    }
 }

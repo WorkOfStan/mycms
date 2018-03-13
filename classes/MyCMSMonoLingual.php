@@ -93,9 +93,7 @@ class MyCMSMonoLingual
 
     /**
      * Add a new CSRF token in $_SESSION['token']
-     *
      * @param bool $checkOnly - add new token only if $_SESSION['token'] is empty
-     * @return void
      * @todo - test fully
      */
     public function csrfStart($checkOnly = false)
@@ -110,7 +108,6 @@ class MyCMSMonoLingual
 
     /**
      * Check for CSRF
-     *
      * @param int $token
      * @return bool
      */

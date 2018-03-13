@@ -528,39 +528,6 @@ class MyTableAdmin extends MyTableLister
         $this->contentByType($options);
     }
 
-    /**
-     * 
-     * @param array $options OPTIONAL
-     * @return type
-     */
-    public function contentByType(array $options = array())
-    {
-        Tools::setifnull($options['table'], 'content');
-        Tools::setifnull($options['type'], 'type');
-        $query = $this->dbms->query('SELECT SQL_CALC_FOUND_ROWS ' . Tools::escapeDbIdentifier($options['type']) . ',COUNT(' . Tools::escapeDbIdentifier($options['type']) . ')'
-                . ' FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $options['table'])
-                . ' GROUP BY ' . Tools::escapeDbIdentifier($options['type']) . ' WITH ROLLUP LIMIT 100');
-        if (!$query) {
-            return;
-        }
-        $typeIndex = 0;
-        foreach (array_keys($this->fields) as $key => $value) {
-            if ($value == $options['type']) {
-                $typeIndex = $key + 1;
-                break;
-            }
-        }
-        $totalRows = $this->dbms->query('SELECT FOUND_ROWS()')->fetch_row()[0];
-        echo '<details><summary><big>' . $this->translate('By type') . '</big></summary>' . PHP_EOL
-        . '<table class="table table-striped">' . PHP_EOL
-        . '<tr><th>' . $this->translate('Type') . '</th><th class="text-right">' . $this->translate('Count') . '</th></tr>' . PHP_EOL;
-        while ($row = $query->fetch_row()) {
-            echo '<tr><td>' . ($row[0] ? Tools::h($row[0]) : ($row[0] === '' ? '<i class="insipid">(' . $this->translate('empty') . ')</i>' : '<big>&Sum;</big>'))
-            . '</td><td class="text-right"><a href="?table=' . Tools::h(TAB_PREFIX . $options['table']) . '&amp;col[0]=' . $typeIndex . '&amp;val[0]=' . Tools::h($row[0]) . '" title="' . $this->translate('Filter records') . '">' . (int) $row[1] . '</td></tr>' . PHP_EOL;
-        }
-        echo '</table></details>';
-    }
-
 }
 
 // @todo nekde v cyklu prevest "0" a 0 na string/integer/double podle typu?
