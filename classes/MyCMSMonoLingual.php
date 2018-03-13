@@ -120,7 +120,7 @@ class MyCMSMonoLingual
      * Shortcut for mysqli::real_escape_string($link, $str)
      *
      * @param string $string
-     * @result string
+     * @return string
      */
     public function escapeSQL($string)
     {
