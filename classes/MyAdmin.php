@@ -220,10 +220,10 @@ class MyAdmin extends MyCommon
         if (isset($_GET['create-user'])) {
             $result .= '<h2><small>' . $TableAdmin->translate('Create user') . '</small></h2>
                 <form action="" method="post" class="panel create-user-form"><fieldset class="card p-2">'
-                . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden')
                 . Tools::htmlInput('user', $TableAdmin->translate('User', false) . ':', '', array('class' => 'form-control', 'id' => 'create-user'))
                 . Tools::htmlInput('password', $TableAdmin->translate('Password', false) . ':', '', array('type' => 'password', 'class' => 'form-control', 'id' => 'create-password'))
-                . Tools::htmlInput('retype-password', $TableAdmin->translate('Retype password', false) . ':', '', array('type' => 'password', 'class' => 'form-control', 'id' => 'create-retype-password')) . '
+                . Tools::htmlInput('retype-password', $TableAdmin->translate('Retype password', false) . ':', '', array('type' => 'password', 'class' => 'form-control', 'id' => 'create-retype-password'))
+                . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden') . '
                   <button type="submit" name="create-user" class="btn btn-primary my-2"><i class="fa fa-user-plus" aria-hidden="true"></i> ' . $TableAdmin->translate('Create user') . '</button>
                 </fieldset></form>';
         }
@@ -425,20 +425,20 @@ class MyAdmin extends MyCommon
             foreach ($this->MyCMS->TRANSLATIONS as $key => $value) {
                 $tmp[$value] = "~^.+_$key$~i";
             }
-            $options = array(
-                'layout-row' => true,
-                'prefill' => isset($_GET['prefill']) && is_array($_GET['prefill']) ? $_GET['prefill'] : array(),
-                'original' => true,
-                'tabs' => $tmp
-            );
             $result .= $this->outputAdminTableBeforeEdit()
-                . $TableAdmin->outputForm($_GET['where'], $options)
+                . $TableAdmin->outputForm($_GET['where'], array(
+                    'layout-row' => true,
+                    'prefill' => isset($_GET['prefill']) && is_array($_GET['prefill']) ? $_GET['prefill'] : array(),
+                    'original' => true,
+                    'tabs' => $tmp,
+                    'return-output' => 1
+                ))
                 . $this->outputAdminTableAfterEdit();
         } else {
             // table listing
             $result .= '<h2 class="sub-header">' . $TableAdmin->translate('Listing') . '</h2>'
                 . $this->outputAdminTableBeforeListing()
-                . $TableAdmin->view()
+                . $TableAdmin->view(array('return-output'=>1))
                 . $this->outputAdminTableAfterListing();
         }
         return $result;
@@ -504,7 +504,7 @@ class MyAdmin extends MyCommon
     }
 
     /**
-     * Output HTML for administration
+     * Return the HTML output of all administration page.
      *
      * Expected global variables:
      * * $_GET
@@ -516,73 +516,76 @@ class MyAdmin extends MyCommon
      * * TAB_PREFIX
      * * EXPAND_INFIX
      *
-     * Outputs echo //@todo use Latte or at least return string to be outputted (not output it directly) so that it can be properly PHPUnit tested
+     * @return string
      */
     public function outputAdmin()
     {
         //@todo replace the two local variables by the object wide variables below:
         $MyCMS = $this->MyCMS;
+        $TableAdmin = $this->TableAdmin;
         $MyCMS->csrfStart();
 
         Debugger::barDump($MyCMS, 'MyCMS');
         Debugger::barDump($this->agendas, 'Agendas');
         Debugger::barDump($_SESSION, 'Session');
 
-        $TableAdmin = new \GodsDev\AltronNet\TableAdmin($MyCMS->dbms, Tools::set($_GET['table']), array('SETTINGS' => $MyCMS->SETTINGS));
-        if (!in_array($_GET['table'], array_keys($TableAdmin->tables))) {
+        //$TableAdmin = new \GodsDev\AltronNet\TableAdmin($MyCMS->dbms, Tools::set($_GET['table']), array('SETTINGS' => $MyCMS->SETTINGS));
+        if (!in_array(Tools::set($_GET['table']), array_keys($TableAdmin->tables))) {
             $_GET['table'] = '';
         }
+        $TableAdmin->setTable($_GET['table']);
         $tablePrefixless = mb_substr($_GET['table'], mb_strlen(TAB_PREFIX));
         if (!isset($_SESSION['user'])) {
             $_GET['table'] = $_GET['media'] = $_GET['user'] = null;
         }
         $tmpTitle = $tablePrefixless ?: (isset($_GET['user']) ? $TableAdmin->translate('User') : (isset($_GET['media']) ? $TableAdmin->translate('Media') : (isset($_GET['products']) ? $TableAdmin->translate('Products') : (isset($_GET['pages']) ? $TableAdmin->translate('Pages') : ''))));
-        echo '<!DOCTYPE html><html lang="' . Tools::h($_SESSION['language']) . '">'
+        $output = '<!DOCTYPE html><html lang="' . Tools::h($_SESSION['language']) . '">'
             . $this->outputAdminHead($tmpTitle)
             . '<body>' . PHP_EOL . '<header>'
             . $this->outputAdminNavigation()
             . '</header>' . PHP_EOL . '<div class="container-fluid">' . PHP_EOL . '<nav class="col-md-3 bg-light sidebar" id="admin-sidebar">';
         if (isset($_SESSION['user']) && $_SESSION['user']) {
-            echo $this->outputAdminAgendas();
+            $output .= $this->outputAdminAgendas();
         }
-        echo '</nav>' . PHP_EOL . '<main class="ml-sm-auto col-md-9 pt-3" role="main" id="admin-main">
-            <a href="" id="toggle-nav" title="' . Tools::h($TableAdmin->translate('Toggle sidebar')) . '"><i class="fa fa-caret-left"></i></a>';
-        Tools::showMessages();
+        $output .= '</nav>' . PHP_EOL . '<main class="ml-sm-auto col-md-9 pt-3" role="main" id="admin-main">'
+            . Tools::showMessages(false);
     
         // table listing/editing
         if ($_GET['table']) {
-            echo $this->outputAdminTable();
+            $output .= $this->outputAdminTable();
         }
         // media upload etc.
         elseif (isset($_GET['media'])) {
-            echo $this->outputAdminMedia();
+            $output .= $this->outputAdminMedia();
         }
         // user operations (logout, change password, create user, delete user)
         elseif (isset($_GET['user'])) {
-            echo $this->outputAdminUser();
+            $output .= $this->outputAdminUser();
         }
         // user not logged in - show a login form
         elseif(!isset($_SESSION['user'])) {
-            echo $this->outputAdminLogin();
+            $output .= $this->outputAdminLogin();
         }
         // project-specific admin sections
         elseif ($this->projectSpecificSectionsCondition()) {
-            echo $this->projectSpecificSections($TableAdmin);
+            $output .= $this->projectSpecificSections($TableAdmin);
         } else {
             // no agenda selected, showing "dashboard"
         }
         if (isset($_SESSION['user'])) {
-            echo $this->outputAdminDashboard();
+            $output .= $this->outputAdminDashboard();
         }
-        echo '</main>
+        $output .= '</main>
             </div>
+            <a href="" id="toggle-nav" title="' . Tools::h($TableAdmin->translate('Toggle sidebar')) . '"><i class="fa fa-caret-left"></i></a>
             <footer class="sticky-footer">
                 &copy; GODS, s r.o. All rights reserved.
             </footer>';
         if (isset($_SESSION['user'])) {
-            echo $this->outputImageSelector();
+            $output .= $this->outputImageSelector();
         }
-        echo $this->outputAdminBodyEnd()
+        $output .= $this->outputAdminBodyEnd()
             . '</body>' . PHP_EOL .'</html>';
+        return $output;
     }
 }

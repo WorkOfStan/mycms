@@ -35,7 +35,8 @@ class MyTableAdmin extends MyTableLister
      *      [prefill] - assoc. array with initial field values (only when inserting new record)
      *      [original] - keep original values (to update only changed fields)
      *      [tabs] - divide fields into Bootstrap tabs, e.g. [null, 'English'=>'/^.+_en$/i', 'Chinese'=>'/^.+_cn$/i']
-     * @return void
+     *      [return-output] - non-zero: return output (instead of echo $output)
+     * @return void or string if $option[return-output] is non-zero
      */
     public function outputForm($where, array $options = array())
     {
@@ -113,6 +114,9 @@ class MyTableAdmin extends MyTableLister
             $output .= '</div>';
         }
         $output .= (isset($options['exclude-form']) && $options['exclude-form'] ? '' : '</fieldset></form>') . PHP_EOL;
+        if (isset($options['return-output']) && $options['return-output']) {
+            return $output;
+        }
         echo $output;
     }
 
