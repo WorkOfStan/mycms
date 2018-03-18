@@ -1,5 +1,4 @@
 <?php
-
 namespace GodsDev\MyCMS;
 
 use GodsDev\Tools\Tools;
@@ -105,7 +104,7 @@ class MyAdmin extends MyCommon
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                   <a href="" class="dropdown-item disabled"><i class="fa fa-user" aria-hidden="true"></i> ' . Tools::h($_SESSION['user']) . '</a>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item' . (isset($_GET['logout']) ? ' active' : '') . '" href="?user&amp;logout"><i class="fa fa-flag" aria-hidden="true"></i> ' . $TableAdmin->translate('Logout') . '</a>
+                  <a class="dropdown-item' . (isset($_GET['logout']) ? ' active' : '') . '" href="?user&amp;logout"><i class="fa fa-sign-out" aria-hidden="true"></i> ' . $TableAdmin->translate('Logout') . '</a>
                   <a class="dropdown-item' . (isset($_GET['change-password']) ? ' active' : '') . '" href="?user&amp;change-password"><i class="fa fa-id-card-o" aria-hidden="true"></i> ' . $TableAdmin->translate('Change password') . '</a>
                   <a class="dropdown-item' . (isset($_GET['create-user']) ? ' active' : '') . '" href="?user&amp;create-user"><i class="fa fa-user-plus" aria-hidden="true"></i> ' . $TableAdmin->translate('Create user') . '</a>
                   <a class="dropdown-item' . (isset($_GET['delete-user']) ? ' active' : '') . '" href="?user&amp;delete-user"><i class="fa fa-user-times" aria-hidden="true"></i> ' . $TableAdmin->translate('Delete user') . '</a>
@@ -543,11 +542,11 @@ class MyAdmin extends MyCommon
             . $this->outputAdminHead($tmpTitle)
             . '<body>' . PHP_EOL . '<header>'
             . $this->outputAdminNavigation()
-            . '</header>' . PHP_EOL . '<div class="container-fluid">' . PHP_EOL . '<nav class="col-md-3 bg-light sidebar" id="admin-sidebar">';
+            . '</header>' . PHP_EOL . '<div class="container-fluid">' . PHP_EOL;
         if (isset($_SESSION['user']) && $_SESSION['user']) {
-            $output .= $this->outputAdminAgendas();
+            $output .= '<nav class="col-md-3 bg-light sidebar" id="admin-sidebar">' . $this->outputAdminAgendas() . '</nav>' . PHP_EOL;
         }
-        $output .= '</nav>' . PHP_EOL . '<main class="ml-sm-auto col-md-9 pt-3" role="main" id="admin-main">'
+        $output .= '<main class="ml-sm-auto col-md-9 pt-3" role="main" id="admin-main">'
             . Tools::showMessages(false);
     
         // table listing/editing
@@ -575,10 +574,9 @@ class MyAdmin extends MyCommon
         if (isset($_SESSION['user'])) {
             $output .= $this->outputAdminDashboard();
         }
-        $output .= '</main>
-            </div>
-            <a href="" id="toggle-nav" title="' . Tools::h($TableAdmin->translate('Toggle sidebar')) . '"><i class="fa fa-caret-left"></i></a>
+        $output .= '</main></div>
             <footer class="sticky-footer">
+                ' . (isset($_SESSION['user']) ? '<a href="" id="toggle-nav" title="' . Tools::h($TableAdmin->translate('Toggle sidebar')) . '"><i class="fa fa-caret-left"></i></a>' : '') . '
                 &copy; GODS, s r.o. All rights reserved.
             </footer>';
         if (isset($_SESSION['user'])) {
