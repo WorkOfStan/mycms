@@ -143,18 +143,16 @@ class MyTableAdmin extends MyTableLister
         } elseif (Tools::among($field['type'], 'datetime', 'timestamp') && Tools::among($value, '0000-00-00', '0000-00-00 00:00:00')) {
             $value = '';
         }
-        if (($custom = $this->translate("column:$key")) == "column:$key") {
-            $custom = $key;
-        }
         $output = ($options['layout-row'] ? '' : '<tr><td>')
-                . '<label for="' . Tools::h($key) . $this->rand . '">' . Tools::h($custom) . ':</label>'
+                . '<label for="' . Tools::h($key) . $this->rand . '">' . $this->translateColumn($key) . ':</label>'
                 . ($options['layout-row'] ? ' ' : '</td><td>')
                 . Tools::htmlInput(($field['type'] == 'enum' ? $key : "fields-null[$key]"), ($field['type'] == 'enum' && $field['null'] ? 'null' : ''), 1, array(
                     'type' => ($field['type'] == 'enum' ? 'radio' : 'checkbox'),
                     'title' => ($field['null'] ? $this->translate('Insert NULL') : null),
                     'disabled' => ($field['null'] ? null : 'disabled'),
                     'checked' => (Tools::among($value, null, false) ? 'checked' : null),
-                    'class' => 'input-null'
+                    'class' => 'input-null',
+                    'id' => 'null-' . urlencode($key) . $this->rand
                         )
                 ) . ($options['layout-row'] ? '<br />' : '</td><td>') . PHP_EOL;
         $input = array('id' => $key . $this->rand, 'class' => 'form-control');
@@ -167,7 +165,7 @@ class MyTableAdmin extends MyTableLister
         Tools::setifnull($comment['display']);
         if (!is_null($field['type']) && $comment['display'] == 'option') {
             $query = $this->dbms->query($sql = 'SELECT DISTINCT ' . Tools::escapeDbIdentifier($key)
-                    . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' ORDER BY ' . Tools::escapeDbIdentifier($key) . ' LIMIT 1000');
+                    . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' ORDER BY ' . Tools::escapeDbIdentifier($key) . ' LIMIT ' . $this->DEFAULTS['MAXSELECTSIZE']);
             $input = '<select name="fields[' . Tools::h($key) . ']" id="' . Tools::h($key . $this->rand) . '" class="form-control d-inline-block w-initial"'
                     . (isset($comment['display-own']) && $comment['display-own'] ? ' onchange="$(\'#' . Tools::h($key . $this->rand) . '_\').val(null)"' : '') . '>'
                     . '<option></option>';
@@ -464,7 +462,7 @@ class MyTableAdmin extends MyTableLister
                     if ($field['key'] == 'PRI' && Tools::among($value, '', null)) {
                         $command = 'INSERT INTO';
                     } else {
-                        $where .= ' AND ' . Tools::escapeDbIdentifier($key) . (is_null($original) ? ' IS NULL' : '="' . $this->escapeSQL($original) . '"');
+                        $where .= ' AND ' . (is_null($original) ? Tools::escapeDbIdentifier($key) . ' IS NULL' : ($original . '' === '' ? 'IFNULL(' . Tools::escapeDbIdentifier($key) . ', "")' : Tools::escapeDbIdentifier($key)) .' = "' . $this->escapeSQL($original) . '"');
                     }
                 } elseif (isset($_POST['original'][$key]) && $original === $value) {
                     continue;
@@ -485,7 +483,7 @@ class MyTableAdmin extends MyTableLister
         } else {
             Tools::addMessage('info', 'Nothing to save.');
         }
-
+//echo'<pre>';die(var_dump($command . ' ' . Tools::escapeDbIdentifier($this->table) . ' SET ' . mb_substr($sql, 1) . Tools::wrap($command == 'UPDATE' ? mb_substr($where, 5) : '', ' WHERE ') . ($command == 'UPDATE' ? ' LIMIT 1' : ''), $_POST));
         if ($sql) {
             $sql = $command . ' ' . Tools::escapeDbIdentifier($this->table) . ' SET ' . mb_substr($sql, 1) . Tools::wrap($command == 'UPDATE' ? mb_substr($where, 5) : '', ' WHERE ') . ($command == 'UPDATE' ? ' LIMIT 1' : '');
             //@todo add message when UPDATE didn't change anything

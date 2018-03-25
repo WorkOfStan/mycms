@@ -59,8 +59,9 @@ class MyTableLister
 
     /** @var array factory setting defaults */
     protected $DEFAULTS = array(
-        'PAGESIZE' => 10,
+        'PAGESIZE' => 100,
         'MAXPAGESIZE' => 10000,
+        'MAXSELECTSIZE' => 10000,
         'TEXTSIZE' => 100,
         'PAGES_AROUND' => 2, // used in pagination
         'FOREIGNLINK' => '-link' //suffix added to POST variables for links
@@ -85,7 +86,6 @@ class MyTableLister
     function __construct(\mysqli $dbms, $table, array $options = array())
     {
         $this->dbms = $dbms;
-        $this->table = $table;
         $this->options = $options;
         $this->options['database'] = $this->dbms->fetchSingle('SELECT DATABASE()');
         $this->getTables();
@@ -112,10 +112,14 @@ class MyTableLister
      * Set (or change) serviced table, get its fields.
      *
      * @param string $table table name
+     * @param bool $force do force reload if the current and desired table names are the same
      * @return void
      */
-    public function setTable($table)
+    public function setTable($table, $forceReload = false)
     {
+        if ($this->table && $this->table == $table && !$forceReload) {
+            return;
+        }
         $this->fields = array();
         if (!in_array($table, array_keys($this->tables))) {
             return;
@@ -208,13 +212,13 @@ class MyTableLister
         if ($offset < 0) {
             $offset = 0;
         }
-        foreach (array('read-only', 'no-search', 'no-sort', 'no-display-options', 'no-multi-options') as $i) {
+        foreach (array('read-only', 'no-search', 'no-sort', 'no-toggle', 'no-display-options', 'no-multi-options') as $i) {
             Tools::setifempty($options[$i]);
         }
         // find out what columns to include/exclude
         $columns = array();
         if (isset($options['include']) && is_array($options['include'])) {
-            foreach ($temp as $column) {
+            foreach ($options['include'] as $column) {
                 if (in_array($column, array_keys($this->fields))) {
                     $columns[$column] = $this->escapeDbIdentifier($column);
                 }
@@ -350,16 +354,26 @@ class MyTableLister
      */
     protected function viewInputs($options)
     {
-        $output = '<form action="" method="get" class="table-controls">' . PHP_EOL;
-        if (!isset($option['no-search']) || !$option['no-search']) {
-            $output .= '<fieldset><legend><a href="javascript:;" onclick="$(\'#search-div\').toggle()">
-                <span class="glyphicon glyphicon-search fa fa-search"></span> ' . $this->translate('Search') . '</a></legend>
-                <div id="search-div"></div></fieldset>' . PHP_EOL;
+        $output = '<form action="" method="get" class="table-controls" data-rand="' . $this->rand . '">' . PHP_EOL;
+        if (!Tools::set($option['no-toggle'])) {
+            $output .= '<fieldset><legend><a href="javascript:;" onclick="$(\'#toggle-div' . $this->rand . '\').toggle()">
+                <span class="glyphicon glyphicon-search fa fa-list-alt"></span> ' . $this->translate('Columns') . '</a></legend>
+                <div class="toggle-div" id="toggle-div' . $this->rand . '" data-rand="' . $this->rand . '">
+                <div class="btn-group-toggle btn-group-sm" data-toggle="buttons">';
+            foreach (array_keys($this->fields) as $key => $value) {
+                $output .= '<label class="btn btn-light column-toggle active" title="' . $this->translateColumn($value) . '"><input type="checkbox" checked autocomplete="off" data-column="' . ($key + 1) . '">' . Tools::h($value) . '</label>' . PHP_EOL;
+            }
+            $output .= '</div></div></fieldset>' . PHP_EOL;
         }
-        if (!isset($option['no-sort']) || !$option['no-sort']) {
-            $output .= '<fieldset><legend><a href="javascript:;" onclick="$(\'#sort-div\').toggle()">
+        if (!Tools::set($option['no-search'])) {
+            $output .= '<fieldset><legend><a href="javascript:;" onclick="$(\'#search-div' . $this->rand . '\').toggle()">
+                <span class="glyphicon glyphicon-search fa fa-search"></span> ' . $this->translate('Search') . '</a></legend>
+                <div class="search-div" id="search-div' . $this->rand . '"></div></fieldset>' . PHP_EOL;
+        }
+        if (!Tools::set($option['no-sort'])) {
+            $output .= '<fieldset><legend><a href="javascript:;" onclick="$(\'#sort-div' . $this->rand . '\').toggle()">
                 <span class="glyphicon glyphicon-sort fa fa-sort"></span> ' . $this->translate('Sort') . '</a></legend>
-                <div id="sort-div"></div></fieldset>' . PHP_EOL;
+                <div class="sort-div" id="sort-div' . $this->rand . '"></div></fieldset>' . PHP_EOL;
         }
         $output .= '<fieldset><legend><span class="glyphicon glyphicon-list-alt fa fa-list-alt"></span> ' . $this->translate('View') . '</legend>
             <input type="hidden" name="table" value="' . Tools::h($this->table) . '" />
@@ -379,7 +393,7 @@ class MyTableLister
         if (isset($_GET['col'], $_GET['op']) && is_array($_GET['col'])) {
             foreach ($_GET['col'] as $key => $value) {
                 if ($value) {
-                    $this->script .= 'addSearchRow("' . Tools::escapeJs($value) . '",' . Tools::setifnull($_GET['op'][$key], 0) . ', "' . addslashes(Tools::setifnull($_GET['val'][$key], '')) . '");' . PHP_EOL;
+                    $this->script .= 'addSearchRow($(\'#search-div' . $this->rand . '\'), "' . Tools::escapeJs($value) . '",' . Tools::setifnull($_GET['op'][$key], 0) . ', "' . addslashes(Tools::setifnull($_GET['val'][$key], '')) . '");' . PHP_EOL;
                 } else {
                     unset($_GET['col'][$key], $_GET['op'][$key], $_GET['val'][$key]);
                 }
@@ -390,20 +404,21 @@ class MyTableLister
         if (count($_GET['sort'])) {
             foreach ($_GET['sort'] as $key => $value) {
                 if ($value) {
-                    $this->script .= 'addSortRow("' . Tools::escapeJs($value) . '",' . (isset($_GET['desc']) && $_GET['desc'] ? 'true' : 'false') . ');' . PHP_EOL;
+                    $this->script .= 'addSortRow($(\'#sort-div' . $this->rand . '\'), "' . Tools::escapeJs($value) . '",' . (isset($_GET['desc']) && $_GET['desc'] ? 'true' : 'false') . ');' . PHP_EOL;
                 } else {
                     unset($_GET['sort'][$key], $_GET['desc'][$key]);
                 }
             }
         }
         if (!isset($_GET['sort']) || !$_GET['sort']) {
-            $this->script .= "$('#sort-div').hide();" . PHP_EOL;
+            $this->script .= '$(\'#sort-div' . $this->rand . '\').hide();' . PHP_EOL;
         }
         if (!isset($_GET['col']) || !$_GET['col']) {
-            $this->script .= "$('#search-div').hide();" . PHP_EOL;
+            $this->script .= '$(\'#search-div' . $this->rand . '\').hide();' . PHP_EOL;
         }
-        $this->script .= 'addSortRow(null, false);' . PHP_EOL
-                . 'addSearchRow(null, 0, "");' . PHP_EOL;
+        $this->script .= '$(\'#toggle-div' . $this->rand . '\').hide();' . PHP_EOL
+                . 'addSortRow($(\'#sort-div' . $this->rand . '\'), null, false);' . PHP_EOL
+                . 'addSearchRow($(\'#search-div' . $this->rand . '\'), null, 0, "");' . PHP_EOL;
         $output .= '</script>' . PHP_EOL;
         if (isset($options['return-output']) && $options['return-output']) {
             return $output;
@@ -423,13 +438,13 @@ class MyTableLister
     {
         Tools::setifnull($_GET['sort']);
         $output = '<form action="" method="post">' . PHP_EOL
-            . '<table class="table table-bordered table-striped table-admin" data-order="0">'
+            . '<table class="table table-bordered table-striped table-admin" data-order="0" id="table-admin' . $this->rand . '">'
             . PHP_EOL . '<thead><tr>' . ($options['no-multi-options'] ? '' : '<th>' . Tools::htmlInput('', '', '', array('type' => 'checkbox', 'class' => 'check-all', 'title' => $this->translate('Check all'))) . '</th>');
         $i = 1;
         $primary = array();
         foreach ($columns as $key => $value) {
             $output .= '<th' . (count($_GET['sort']) == 1 && $_GET['sort'][0] == $i ? ' class="active"' : '') . '>'
-                . '<a href="?' . Tools::urlChange(array('sort%5B0%5D' => null)) . '&amp;sort%5B0%5D=' . ($i * ($_GET['sort'] == $i ? -1 : 1)) . '" title="' . $this->translate('Sort') . '">' . Tools::h($key) . '</a>'
+                . '<a href="?' . Tools::urlChange(array('sort%5B0%5D' => null)) . '&amp;sort%5B0%5D=' . ($i * ($_GET['sort'] == $i ? -1 : 1)) . '" title="' . $this->translateColumn($key) . '">' . Tools::h($key) . '</a>'
                 . '</th>' . PHP_EOL;
             if ($this->fields[$key]['key'] == 'PRI') {
                 $primary [] = $key;
@@ -638,6 +653,12 @@ class MyTableLister
             $text = $this->TRANSLATION[$text];
         }
         return $escape ? Tools::h($text) : $text;
+    }
+
+    public function translateColumn($column, $escape = true)
+    {
+        $result = $this->translate("column:$column");
+        return $result == "column:$column" ? $column : $result; 
     }
 
     // custom methods - meant to be rewritten in the class' children

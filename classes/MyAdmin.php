@@ -158,9 +158,6 @@ class MyAdmin extends MyCommon
         if (!is_dir(DIR_ASSETS . $_SESSION['assetsSubfolder'])) {
             $_SESSION['assetsSubfolder'] = '';
         }
-        foreach (glob(DIR_ASSETS . '*', GLOB_ONLYDIR) as $value) {
-            $this->ASSETS_SUBFOLDERS []= substr($value, strlen(DIR_ASSETS));
-        }
         foreach ($this->ASSETS_SUBFOLDERS as $value) {
             $result .= Tools::htmlOption($value, DIR_ASSETS . $value, $_SESSION['assetsSubfolder']);
         }
@@ -352,6 +349,7 @@ class MyAdmin extends MyCommon
             . '<script type="text/javascript" src="scripts/jquery.sha1.js"></script>'
             . '<script type="text/javascript" src="scripts/summernote.js"></script>'
             . '<script type="text/javascript" src="scripts/admin.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
+            . '<script type="text/javascript" src="scripts/admin-specific.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
             . '<script type="text/javascript">' . PHP_EOL;
         $tmp = array_flip(explode('|', 'Descending|Really delete?|New record|Passwords don\'t match!|Please, fill necessary data.|Select at least one file and try again.|No files|Edit|variable|value|name|size|Select'));
         foreach ($tmp as $key => $value) {
@@ -548,7 +546,9 @@ class MyAdmin extends MyCommon
         }
         $output .= '<main class="ml-sm-auto col-md-9 pt-3" role="main" id="admin-main">'
             . Tools::showMessages(false);
-    
+        foreach (glob(DIR_ASSETS . '*', GLOB_ONLYDIR) as $value) {
+            $this->ASSETS_SUBFOLDERS []= substr($value, strlen(DIR_ASSETS));
+        }
         // table listing/editing
         if ($_GET['table']) {
             $output .= $this->outputAdminTable();
