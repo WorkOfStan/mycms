@@ -7,13 +7,10 @@ use GodsDev\Tools\Tools;
 /**
  * This class facilitates administration of a database table
  */
-class TableAdmin extends TableLister
+class MyTableAdmin extends MyTableLister
 {
 
     use \Nette\SmartObject;
-
-    /** @var type */
-    private $csrf;
 
     /** Constructor
      * @param \mysqli $dbms database management system (e.g. new mysqli())
@@ -38,7 +35,8 @@ class TableAdmin extends TableLister
      *      [prefill] - assoc. array with initial field values (only when inserting new record)
      *      [original] - keep original values (to update only changed fields)
      *      [tabs] - divide fields into Bootstrap tabs, e.g. [null, 'English'=>'/^.+_en$/i', 'Chinese'=>'/^.+_cn$/i']
-     * @return void
+     *      [return-output] - non-zero: return output (instead of echo $output)
+     * @return void or string if $option[return-output] is non-zero
      */
     public function outputForm($where, array $options = array())
     {
@@ -55,7 +53,7 @@ class TableAdmin extends TableLister
             }
             $sql = array();
             foreach ($where as $key => $value) {
-                $sql [] = Tools::escapeDbIdentifier($key) . '="' . $this->escape($value) . '"';
+                $sql [] = Tools::escapeDbIdentifier($key) . '="' . $this->escapeSQL($value) . '"';
             }
             $sql = 'SELECT ' . Tools::arrayListed($options['include-fields'], 64, ',', '`', '`') . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' WHERE ' . implode(' AND ', $sql) . ' LIMIT 1';
             $record = $this->dbms->query($sql);
@@ -70,7 +68,7 @@ class TableAdmin extends TableLister
         Tools::setifempty($options['layout-row'], true);
         $output = (isset($options['exclude-form']) && $options['exclude-form'] ? '' : '<form method="post" enctype="multipart/form-data"><fieldset>') . PHP_EOL
                 . Tools::htmlInput('database-table', '', $this->table, 'hidden') . PHP_EOL
-                . Tools::htmlInput('form-csrf', '', $_SESSION['csrf-' . $this->table] = rand(1e8, 1e9 - 1), 'hidden') . PHP_EOL;
+                . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden') . PHP_EOL;
         $tabs = array($this->fields);
         if (isset($options['tabs']) && is_array($options['tabs'])) {
             foreach ($options['tabs'] as $key => $value) {
@@ -103,17 +101,12 @@ class TableAdmin extends TableLister
             $output .= ($options['layout-row'] ? '</div>' : '</table>') . PHP_EOL
                     . (count($tabs) > 1 ? '</div>' : '');
         }
-        $output .= count($tabs) > 1 ? '</div>' : '';
-        if (function_exists('TableAdminCustomRecordDetail')) {
-            $output .= TableAdminCustomRecordDetail($this->table, $record, $this);
-        }
+        $output .= (count($tabs) > 1 ? '</div>' : '') . $this->customRecordDetail($record);
         if (!isset($options['exclude-actions']) || !$options['exclude-actions']) {
-            $output .= '<hr /><div class="form-actions">' . PHP_EOL;
-            if (function_exists('TableAdminCustomRecordAction')) {
-                $output .= TableAdminCustomRecordAction($this->table, $record, $this);
-            }
-            $output .= '<button type="submit" name="record-save" value="1" '
-                    . 'class="btn btn-default btn-primary"><span class="glyphicon glyphicon-floppy-save fa fa-floppy-o" aria-hidden="true"></span> ' . $this->translate('Save') . '</button> ';
+            $output .= '<hr /><div class="form-actions">' . PHP_EOL 
+                . $this->customRecordActions($record)
+                . '<button type="submit" name="record-save" value="1" class="btn btn-default btn-primary">'
+                . '<span class="glyphicon glyphicon-floppy-save fa fa-floppy-o" aria-hidden="true"></span> ' . $this->translate('Save') . '</button> ';
             if ($record) {
                 $output .= '<button type="submit" name="record-delete" class="btn btn-default" value="1" onclick="return confirm(\'' . $this->translate('Really delete?') . '\');">'
                         . '<span class="glyphicon glyphicon-floppy-remove fa fa-trash-o" aria-hidden="true"></span> ' . $this->translate('Delete') . '</button>';
@@ -121,6 +114,9 @@ class TableAdmin extends TableLister
             $output .= '</div>';
         }
         $output .= (isset($options['exclude-form']) && $options['exclude-form'] ? '' : '</fieldset></form>') . PHP_EOL;
+        if (isset($options['return-output']) && $options['return-output']) {
+            return $output;
+        }
         echo $output;
     }
 
@@ -147,33 +143,29 @@ class TableAdmin extends TableLister
         } elseif (Tools::among($field['type'], 'datetime', 'timestamp') && Tools::among($value, '0000-00-00', '0000-00-00 00:00:00')) {
             $value = '';
         }
-        if (($custom = $this->translate("column:$key")) == "column:$key") {
-            $custom = $key;
-        }
         $output = ($options['layout-row'] ? '' : '<tr><td>')
-                . '<label for="' . Tools::h($key) . $this->rand . '">' . Tools::h($custom) . ':</label>'
+                . '<label for="' . Tools::h($key) . $this->rand . '">' . $this->translateColumn($key) . ':</label>'
                 . ($options['layout-row'] ? ' ' : '</td><td>')
                 . Tools::htmlInput(($field['type'] == 'enum' ? $key : "fields-null[$key]"), ($field['type'] == 'enum' && $field['null'] ? 'null' : ''), 1, array(
                     'type' => ($field['type'] == 'enum' ? 'radio' : 'checkbox'),
                     'title' => ($field['null'] ? $this->translate('Insert NULL') : null),
                     'disabled' => ($field['null'] ? null : 'disabled'),
                     'checked' => (Tools::among($value, null, false) ? 'checked' : null),
-                    'class' => 'input-null'
+                    'class' => 'input-null',
+                    'id' => 'null-' . urlencode($key) . $this->rand
                         )
                 ) . ($options['layout-row'] ? '<br />' : '</td><td>') . PHP_EOL;
         $input = array('id' => $key . $this->rand, 'class' => 'form-control');
-        if (function_exists('TableAdminCustomInput')) {
-            $custom = TableAdminCustomInput($this->table, $key, $value, $this);
-            if ($custom !== false) {
-                $input = $custom;
-                $field['type'] = null;
-            }
+        $custom = $this->customInput($key, $value);
+        if ($custom !== false) {
+            $input = $custom;
+            $field['type'] = null;
         }
         $comment = json_decode(isset($field['comment']) ? $field['comment'] : '{}', true);
         Tools::setifnull($comment['display']);
         if (!is_null($field['type']) && $comment['display'] == 'option') {
             $query = $this->dbms->query($sql = 'SELECT DISTINCT ' . Tools::escapeDbIdentifier($key)
-                    . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' ORDER BY ' . Tools::escapeDbIdentifier($key) . ' LIMIT 1000');
+                    . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' ORDER BY ' . Tools::escapeDbIdentifier($key) . ' LIMIT ' . $this->DEFAULTS['MAXSELECTSIZE']);
             $input = '<select name="fields[' . Tools::h($key) . ']" id="' . Tools::h($key . $this->rand) . '" class="form-control d-inline-block w-initial"'
                     . (isset($comment['display-own']) && $comment['display-own'] ? ' onchange="$(\'#' . Tools::h($key . $this->rand) . '_\').val(null)"' : '') . '>'
                     . '<option></option>';
@@ -266,7 +258,7 @@ class TableAdmin extends TableLister
                                     'checked' => ($v == $value ? 'checked' : null)
                         ));
                     }
-                    $input = array_merge(array(Tools::htmlInput($key, $this->translate('empty') . ' ', 0, array(
+                    $input = array_merge(array(Tools::htmlInput('fields[' . $key . ']', $this->translate('empty') . ' ', 0, array(
                             'type' => 'radio',
                             'id' => "fields[$key-0]",
                             'value' => 0
@@ -297,8 +289,7 @@ class TableAdmin extends TableLister
                 foreach ($where as $k => $v) {
                     $input .= '&amp;key[]=' . urlencode($k) . '&amp;value[]=' . urlencode($v);
                 }
-                $input .= '&amp;form-csrf=' . $_SESSION['csrf-' . $this->table]
-                        . '" target="_blank" >' . $this->translate('Download') . '</a>' . PHP_EOL;
+                $input .= '&amp;token=' . end($_SESSION['token']) . '" target="_blank" >' . $this->translate('Download') . '</a>' . PHP_EOL;
                 break;
             case null:
                 break;
@@ -322,13 +313,13 @@ class TableAdmin extends TableLister
         return $output;
     }
 
-    /** Get all tables (and comments to them) in the database and store them to tables
+    /** Get all tables in the database (including comments) and store them to tables
      */
     public function getTables()
     {
         $this->tables = array();
         $query = $this->dbms->query('SELECT TABLE_NAME, TABLE_COMMENT FROM information_schema.TABLES '
-                . 'WHERE TABLE_SCHEMA = "' . $this->escape($this->options['database']) . '"');
+                . 'WHERE TABLE_SCHEMA = "' . $this->escapeSQL($this->options['database']) . '"');
         while ($row = $query->fetch_row()) {
             $this->tables[$row[0]] = $row[1];
         }
@@ -345,7 +336,7 @@ class TableAdmin extends TableLister
         if (!is_array($name)) {
             $name = array('table' => $name, 'column' => $name);
         }
-        if ($module = $this->dbms->query($sql = 'SHOW FULL COLUMNS FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name['table']) . ' WHERE FIELD="' . $this->escape($name['column']) . '"')) {
+        if ($module = $this->dbms->query($sql = 'SHOW FULL COLUMNS FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name['table']) . ' WHERE FIELD="' . $this->escapeSQL($name['column']) . '"')) {
             $module = json_decode($module->fetch_assoc()['Comment'], true);
             $module = isset($module['module']) && $module['module'] ? $module['module'] : 10;
         } else {
@@ -430,8 +421,7 @@ class TableAdmin extends TableLister
      */
     public function authorized()
     {
-        return isset($_POST['database-table'], $_SESSION['csrf-' . $_POST['database-table']], $_POST['form-csrf'])
-            && $_SESSION['csrf-' . $_POST['database-table']] == $_POST['form-csrf'];
+        return isset($_POST['token'], $_SESSION['token']) && is_array($_SESSION['token']) && in_array($_POST['token'], $_SESSION['token']);
     }
 
     /**
@@ -472,7 +462,7 @@ class TableAdmin extends TableLister
                     if ($field['key'] == 'PRI' && Tools::among($value, '', null)) {
                         $command = 'INSERT INTO';
                     } else {
-                        $where .= ' AND ' . Tools::escapeDbIdentifier($key) . (is_null($original) ? ' IS NULL' : '="' . $this->escape($original) . '"');
+                        $where .= ' AND ' . (is_null($original) ? Tools::escapeDbIdentifier($key) . ' IS NULL' : ($original . '' === '' ? 'IFNULL(' . Tools::escapeDbIdentifier($key) . ', "")' : Tools::escapeDbIdentifier($key)) .' = "' . $this->escapeSQL($original) . '"');
                     }
                 } elseif (isset($_POST['original'][$key]) && $original === $value) {
                     continue;
@@ -487,13 +477,13 @@ class TableAdmin extends TableLister
                         break;
                     default:
                         $sql .= ',' . Tools::escapeDbIdentifier($key) . '='
-                                . (is_null($value) ? 'NULL' : '"' . $this->escape($value) . '"');
+                                . (is_null($value) ? 'NULL' : '"' . $this->escapeSQL($value) . '"');
                 }
             }
         } else {
             Tools::addMessage('info', 'Nothing to save.');
         }
-
+//echo'<pre>';die(var_dump($command . ' ' . Tools::escapeDbIdentifier($this->table) . ' SET ' . mb_substr($sql, 1) . Tools::wrap($command == 'UPDATE' ? mb_substr($where, 5) : '', ' WHERE ') . ($command == 'UPDATE' ? ' LIMIT 1' : ''), $_POST));
         if ($sql) {
             $sql = $command . ' ' . Tools::escapeDbIdentifier($this->table) . ' SET ' . mb_substr($sql, 1) . Tools::wrap($command == 'UPDATE' ? mb_substr($where, 5) : '', ' WHERE ') . ($command == 'UPDATE' ? ' LIMIT 1' : '');
             //@todo add message when UPDATE didn't change anything
@@ -524,7 +514,7 @@ class TableAdmin extends TableLister
         if ($this->authorized() && isset($_GET['where'], $_GET['table']) && $_GET['table']
             && is_array($_GET['where']) && count($_GET['where'])) {
             foreach ($_GET['where'] as $key => $value) {
-                $sql [] = Tools::escapeDbIdentifier($key) . '="' . $this->escape($value) . '"';
+                $sql [] = Tools::escapeDbIdentifier($key) . '="' . $this->escapeSQL($value) . '"';
             }
             $sql = 'DELETE FROM ' . Tools::escapeDbIdentifier($_GET['table']) . ' WHERE ' . implode(' AND ', $sql);
         }
@@ -538,39 +528,6 @@ class TableAdmin extends TableLister
     public function dashboard(array $options = array())
     {
         $this->contentByType($options);
-    }
-
-    /**
-     * 
-     * @param array $options OPTIONAL
-     * @return type
-     */
-    public function contentByType(array $options = array())
-    {
-        Tools::setifnull($options['table'], 'content');
-        Tools::setifnull($options['type'], 'type');
-        $query = $this->dbms->query('SELECT SQL_CALC_FOUND_ROWS ' . Tools::escapeDbIdentifier($options['type']) . ',COUNT(' . Tools::escapeDbIdentifier($options['type']) . ')'
-                . ' FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $options['table'])
-                . ' GROUP BY ' . Tools::escapeDbIdentifier($options['type']) . ' WITH ROLLUP LIMIT 100');
-        if (!$query) {
-            return;
-        }
-        $typeIndex = 0;
-        foreach (array_keys($this->fields) as $key => $value) {
-            if ($value == $options['type']) {
-                $typeIndex = $key + 1;
-                break;
-            }
-        }
-        $totalRows = $this->dbms->query('SELECT FOUND_ROWS()')->fetch_row()[0];
-        echo '<details><summary><big>' . $this->translate('By type') . '</big></summary>' . PHP_EOL
-        . '<table class="table table-striped">' . PHP_EOL
-        . '<tr><th>' . $this->translate('Type') . '</th><th class="text-right">' . $this->translate('Count') . '</th></tr>' . PHP_EOL;
-        while ($row = $query->fetch_row()) {
-            echo '<tr><td>' . ($row[0] ? Tools::h($row[0]) : ($row[0] === '' ? '<i class="insipid">(' . $this->translate('empty') . ')</i>' : '<big>&Sum;</big>'))
-            . '</td><td class="text-right"><a href="?table=' . Tools::h(TAB_PREFIX . $options['table']) . '&amp;col[0]=' . $typeIndex . '&amp;val[0]=' . Tools::h($row[0]) . '" title="' . $this->translate('Filter records') . '">' . (int) $row[1] . '</td></tr>' . PHP_EOL;
-        }
-        echo '</table></details>';
     }
 
 }

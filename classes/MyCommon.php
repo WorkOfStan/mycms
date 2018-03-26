@@ -17,7 +17,7 @@ class MyCommon
     /**
      * 
      * @param \GodsDev\MyCMS\MyCMS $MyCMS
-     * @param array $options overides default values of declared properties
+     * @param array $options overrides default values of declared properties
      */
     public function __construct(MyCMS $MyCMS, array $options = array())
     {

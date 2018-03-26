@@ -30,7 +30,7 @@ class AdminProcess extends MyCommon
     /**
      * 
      * @param \GodsDev\MyCMS\MyCMS $MyCMS
-     * @param array $options overides default values of properties
+     * @param array $options overrides default values of properties
      */
     public function __construct(MyCMS $MyCMS, array $options = array())
     {
