@@ -117,7 +117,8 @@ class MyAdmin extends MyCommon
         foreach ($TableAdmin->TRANSLATIONS as $key => $value) {
             $result .= '<a class="dropdown-item' . ($key == $_SESSION['language'] ? ' active' : '') . '" href="?' . Tools::urlChange(array('language' => $key)) . '"><i class="fa fa-flag" aria-hidden="true"></i> ' . Tools::h($value) . '</a>' . PHP_EOL;
         }
-        $result .=  '</div>
+        $result .=  (isset($_SESSION['user']) ? '<div class="dropdown-divider"></div><a class="dropdown-item" href="" id="toggle-nav" title="' . Tools::h($TableAdmin->translate('Toggle sidebar')) . '"><i class="fa fa-columns"></i> ' . $TableAdmin->translate('Sidebar') . '</a>' : '') . '
+                    </div>
                   </li>
                 </ul>
                   <!--<form class="form-inline mt-2 mt-md-0">
@@ -226,16 +227,16 @@ class MyAdmin extends MyCommon
         // delete user
         if (isset($_GET['delete-user'])) {
             $result .= '<h2><small>' . $TableAdmin->translate('Delete user') . '</small></h2>';
-            if ($users = $this->MyCMS->fetchAll('SELECT id,name,active FROM ' . TAB_PREFIX . 'admin')) {
+            if ($users = $this->MyCMS->fetchAll('SELECT id,admin,active FROM ' . TAB_PREFIX . 'admin')) {
                 $result .= '<ul class="list-group list-group-flush">';
                 foreach ($users as $user) {
                     $result .= '<li class="list-group-item">
                         <form action="" method="post" class="form-inline d-inline-block delete-user-form' . ($user['active'] == 1 ? '' : ' inactive-item') . '" onsubmit="return confirm(\'' . $TableAdmin->translate('Really delete?') . '\')">'
                             . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden')
-                            . '<button type="submit" name="delete-user" value="' . Tools::h($user['name']) . '"' . ($user['name'] == $_SESSION['user'] ? ' disabled' : '') . ' class="btn btn-primary" title="' . $TableAdmin->translate('Delete user') . '?">'
+                            . '<button type="submit" name="delete-user" value="' . Tools::h($user['admin']) . '"' . ($user['admin'] == $_SESSION['user'] ? ' disabled' : '') . ' class="btn btn-primary" title="' . $TableAdmin->translate('Delete user') . '?">'
                             . '<i class="fa fa-user-times" aria-hidden="true"></i></button> '
                             . Tools::htmlInput('', '', $user['id'], array('type' => 'checkbox', 'checked' => ($user['active'] ? 1 : null), 'class' => 'user-activate', 'title' => $TableAdmin->translate('Activate/deactivate'))) . ' '
-                            . '<tt>' . Tools::h($user['name']) . '</tt>
+                            . '<tt>' . Tools::h($user['admin']) . '</tt>
                         </form>
                         </li>' . PHP_EOL;
                 }
@@ -574,11 +575,7 @@ class MyAdmin extends MyCommon
         if (isset($_SESSION['user'])) {
             $output .= $this->outputAdminDashboard();
         }
-        $output .= '</main></div>
-            <footer class="sticky-footer">
-                ' . (isset($_SESSION['user']) ? '<a href="" id="toggle-nav" title="' . Tools::h($TableAdmin->translate('Toggle sidebar')) . '"><i class="fa fa-caret-left"></i></a>' : '') . '
-                &copy; GODS, s r.o. All rights reserved.
-            </footer>';
+        $output .= '</main></div>' . PHP_EOL . '<footer class="sticky-footer">&copy; GODS, s r.o. All rights reserved.</footer>';
         if (isset($_SESSION['user'])) {
             $output .= $this->outputImageSelector();
         }
