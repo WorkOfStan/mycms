@@ -352,7 +352,7 @@ class MyAdmin extends MyCommon
             . '<script type="text/javascript" src="scripts/admin.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
             . '<script type="text/javascript" src="scripts/admin-specific.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
             . '<script type="text/javascript">' . PHP_EOL;
-        $tmp = array_flip(explode('|', 'Descending|Really delete?|New record|Passwords don\'t match!|Please, fill necessary data.|Select at least one file and try again.|No files|Edit|variable|value|name|size|Select'));
+        $tmp = array_flip(explode('|', 'Descending|Really delete?|New record|Passwords don\'t match!|Please, fill necessary data.|Select at least one file and try again.|No files|Edit|variable|value|name|size|modified|Select'));
         foreach ($tmp as $key => $value) {
             $tmp[$key] = $TableAdmin->translate($key, false);
         }
@@ -419,16 +419,16 @@ class MyAdmin extends MyCommon
         if (isset($_GET['where']) && is_array($_GET['where'])) {
             // table edit
             $result .= '<h2 class="sub-header">' . $TableAdmin->translate('Edit') . ' <span class="AdminRecordName"></span></h2>';
-            $tmp = array(null);
-            foreach ($this->MyCMS->TRANSLATIONS as $key => $value) {
-                $tmp[$value] = "~^.+_$key$~i";
+            $tabs = array(null);
+            foreach (Tools::set($this->TableAdmin->tableContext['language-versions'], $this->MyCMS->TRANSLATIONS) as $key => $value) {
+                $tabs[$value] = "~^.+_$key$~i";
             }
             $result .= $this->outputAdminTableBeforeEdit()
                 . $TableAdmin->outputForm($_GET['where'], array(
                     'layout-row' => true,
                     'prefill' => isset($_GET['prefill']) && is_array($_GET['prefill']) ? $_GET['prefill'] : array(),
                     'original' => true,
-                    'tabs' => $tmp,
+                    'tabs' => $tabs,
                     'return-output' => 1
                 ))
                 . $this->outputAdminTableAfterEdit();
