@@ -71,10 +71,13 @@ class MyTableLister
     public $TRANSLATION = array(
     );
 
-    /** @var array Available languages */
+    /** @var array Available languages for MyCMS */
     public $TRANSLATIONS = array(
         'en' => 'English'
     ); 
+
+    /** @var array possible table settings, stored in its comment */
+    public $tableContext = null;
 
     /**
      * Constructor - stores passed parameters to object's attributes
@@ -184,6 +187,8 @@ class MyTableLister
                 $this->fields[$row['COLUMN_NAME']]['foreign_column'] = $row['REFERENCED_COLUMN_NAME'];
             }
         }
+        $tmp = $this->dbms->fetchSingle('SELECT TABLE_COMMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA="' . $this->escapeSQL($this->options['database']) . '" AND TABLE_NAME="' . $this->escapeSQL($this->table) . '"');
+        $this->tableContext = json_decode($tmp, true) or array();
     }
 
     /**

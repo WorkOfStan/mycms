@@ -140,7 +140,7 @@ class MyTableAdmin extends MyTableLister
             } elseif ($field['default']) {
                 $value = $field['default'];
             }
-        } elseif (Tools::among($field['type'], 'datetime', 'timestamp') && Tools::among($value, '0000-00-00', '0000-00-00 00:00:00')) {
+        } elseif (Tools::among($field['type'], 'datetime', 'timestamp') && Tools::among($value, '0000-00-00', '0000-00-00 00:00:00', '0000-00-00T00:00:00')) {
             $value = '';
         }
         $output = ($options['layout-row'] ? '' : '<tr><td>')
@@ -212,7 +212,7 @@ class MyTableAdmin extends MyTableLister
             $output .= $this->outputForeignId(
                 "fields[$key]",
                 'SELECT id,' . Tools::escapeDbIdentifier($comment['foreign-column']) . ' FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $comment['foreign-table']),
-                $value, array('class' => 'form-control', 'id' => $input['id']));
+                $value, array('class' => 'form-control', 'id' => $input['id'], 'exclude' => (TAB_PREFIX . $comment['foreign-table'] == $this->table ? array($value) : array())));
             $input = false;
             $field['type'] = null;
         }
@@ -368,7 +368,7 @@ class MyTableAdmin extends MyTableLister
         if ($lastGroup != $group) {
             $result .= ($lastGroup === false ? '' : '</optgroup>') . '<optgroup label="' . Tools::h($lastGroup = $group) . '" />';
         }
-        if ($value != $options['exclude']) {
+        if (!in_array($value, $options['exclude'])) {
             $result .= Tools::htmlOption($value, $text, $default);
         }
         return $result;
@@ -395,7 +395,7 @@ class MyTableAdmin extends MyTableLister
                 . '" class="' . Tools::h(isset($options['class']) ? $options['class'] : '')
                 . '" id="' . Tools::h(isset($options['id']) ? $options['id'] : '') . '">'
                 . '<option value=""></option>';
-        $options['exclude'] = isset($options['exclude']) ? $options['exclude'] : array();
+        $options['exclude'] = isset($options['exclude']) ? (is_array($options['exclude']) ? $options['exclude'] : array($options['exclude'])) : array();
         $group = $lastGroup = false;
         if (is_array($values)) { // array - just output them as <option>s
             foreach ($values as $key => $value) {
