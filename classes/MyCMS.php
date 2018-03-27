@@ -59,8 +59,11 @@ class MyCMS extends MyCMSMonoLingual
             $languageFile = './language-' . $resultLanguage . '.inc.php';
             if (file_exists($languageFile)) {
                 include_once $languageFile; //MUST contain $translation = array(...);
-                //@todo assert $translation is set and it is an array
-                $this->TRANSLATION = $translation;
+                if (isset($translation) && is_array($translation)) {
+                    $this->TRANSLATION = $translation;
+                } else {
+                    $this->logger->error("Missing expected translation {$languageFile}");
+                }
             } else {
                 $this->logger->error("Missing expected language file {$languageFile}");
             }

@@ -35,7 +35,8 @@ class MyTableAdmin extends MyTableLister
      *      [prefill] - assoc. array with initial field values (only when inserting new record)
      *      [original] - keep original values (to update only changed fields)
      *      [tabs] - divide fields into Bootstrap tabs, e.g. [null, 'English'=>'/^.+_en$/i', 'Chinese'=>'/^.+_cn$/i']
-     * @return void
+     *      [return-output] - non-zero: return output (instead of echo $output)
+     * @return void or string if $option[return-output] is non-zero
      */
     public function outputForm($where, array $options = array())
     {
@@ -113,6 +114,9 @@ class MyTableAdmin extends MyTableLister
             $output .= '</div>';
         }
         $output .= (isset($options['exclude-form']) && $options['exclude-form'] ? '' : '</fieldset></form>') . PHP_EOL;
+        if (isset($options['return-output']) && $options['return-output']) {
+            return $output;
+        }
         echo $output;
     }
 
@@ -136,21 +140,19 @@ class MyTableAdmin extends MyTableLister
             } elseif ($field['default']) {
                 $value = $field['default'];
             }
-        } elseif (Tools::among($field['type'], 'datetime', 'timestamp') && Tools::among($value, '0000-00-00', '0000-00-00 00:00:00')) {
+        } elseif (Tools::among($field['type'], 'datetime', 'timestamp') && Tools::among($value, '0000-00-00', '0000-00-00 00:00:00', '0000-00-00T00:00:00')) {
             $value = '';
         }
-        if (($custom = $this->translate("column:$key")) == "column:$key") {
-            $custom = $key;
-        }
         $output = ($options['layout-row'] ? '' : '<tr><td>')
-                . '<label for="' . Tools::h($key) . $this->rand . '">' . Tools::h($custom) . ':</label>'
+                . '<label for="' . Tools::h($key) . $this->rand . '">' . $this->translateColumn($key) . ':</label>'
                 . ($options['layout-row'] ? ' ' : '</td><td>')
                 . Tools::htmlInput(($field['type'] == 'enum' ? $key : "fields-null[$key]"), ($field['type'] == 'enum' && $field['null'] ? 'null' : ''), 1, array(
                     'type' => ($field['type'] == 'enum' ? 'radio' : 'checkbox'),
                     'title' => ($field['null'] ? $this->translate('Insert NULL') : null),
                     'disabled' => ($field['null'] ? null : 'disabled'),
                     'checked' => (Tools::among($value, null, false) ? 'checked' : null),
-                    'class' => 'input-null'
+                    'class' => 'input-null',
+                    'id' => 'null-' . urlencode($key) . $this->rand
                         )
                 ) . ($options['layout-row'] ? '<br />' : '</td><td>') . PHP_EOL;
         $input = array('id' => $key . $this->rand, 'class' => 'form-control');
@@ -163,7 +165,7 @@ class MyTableAdmin extends MyTableLister
         Tools::setifnull($comment['display']);
         if (!is_null($field['type']) && $comment['display'] == 'option') {
             $query = $this->dbms->query($sql = 'SELECT DISTINCT ' . Tools::escapeDbIdentifier($key)
-                    . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' ORDER BY ' . Tools::escapeDbIdentifier($key) . ' LIMIT 1000');
+                    . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' ORDER BY ' . Tools::escapeDbIdentifier($key) . ' LIMIT ' . $this->DEFAULTS['MAXSELECTSIZE']);
             $input = '<select name="fields[' . Tools::h($key) . ']" id="' . Tools::h($key . $this->rand) . '" class="form-control d-inline-block w-initial"'
                     . (isset($comment['display-own']) && $comment['display-own'] ? ' onchange="$(\'#' . Tools::h($key . $this->rand) . '_\').val(null)"' : '') . '>'
                     . '<option></option>';
@@ -210,7 +212,7 @@ class MyTableAdmin extends MyTableLister
             $output .= $this->outputForeignId(
                 "fields[$key]",
                 'SELECT id,' . Tools::escapeDbIdentifier($comment['foreign-column']) . ' FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $comment['foreign-table']),
-                $value, array('class' => 'form-control', 'id' => $input['id']));
+                $value, array('class' => 'form-control', 'id' => $input['id'], 'exclude' => (TAB_PREFIX . $comment['foreign-table'] == $this->table ? array($value) : array())));
             $input = false;
             $field['type'] = null;
         }
@@ -366,7 +368,7 @@ class MyTableAdmin extends MyTableLister
         if ($lastGroup != $group) {
             $result .= ($lastGroup === false ? '' : '</optgroup>') . '<optgroup label="' . Tools::h($lastGroup = $group) . '" />';
         }
-        if ($value != $options['exclude']) {
+        if (!in_array($value, $options['exclude'])) {
             $result .= Tools::htmlOption($value, $text, $default);
         }
         return $result;
@@ -393,7 +395,7 @@ class MyTableAdmin extends MyTableLister
                 . '" class="' . Tools::h(isset($options['class']) ? $options['class'] : '')
                 . '" id="' . Tools::h(isset($options['id']) ? $options['id'] : '') . '">'
                 . '<option value=""></option>';
-        $options['exclude'] = isset($options['exclude']) ? $options['exclude'] : array();
+        $options['exclude'] = isset($options['exclude']) ? (is_array($options['exclude']) ? $options['exclude'] : array($options['exclude'])) : array();
         $group = $lastGroup = false;
         if (is_array($values)) { // array - just output them as <option>s
             foreach ($values as $key => $value) {
@@ -460,7 +462,7 @@ class MyTableAdmin extends MyTableLister
                     if ($field['key'] == 'PRI' && Tools::among($value, '', null)) {
                         $command = 'INSERT INTO';
                     } else {
-                        $where .= ' AND ' . Tools::escapeDbIdentifier($key) . (is_null($original) ? ' IS NULL' : '="' . $this->escapeSQL($original) . '"');
+                        $where .= ' AND ' . (is_null($original) ? Tools::escapeDbIdentifier($key) . ' IS NULL' : ($original . '' === '' ? 'IFNULL(' . Tools::escapeDbIdentifier($key) . ', "")' : Tools::escapeDbIdentifier($key)) .' = "' . $this->escapeSQL($original) . '"');
                     }
                 } elseif (isset($_POST['original'][$key]) && $original === $value) {
                     continue;
@@ -481,7 +483,7 @@ class MyTableAdmin extends MyTableLister
         } else {
             Tools::addMessage('info', 'Nothing to save.');
         }
-
+//echo'<pre>';die(var_dump($command . ' ' . Tools::escapeDbIdentifier($this->table) . ' SET ' . mb_substr($sql, 1) . Tools::wrap($command == 'UPDATE' ? mb_substr($where, 5) : '', ' WHERE ') . ($command == 'UPDATE' ? ' LIMIT 1' : ''), $_POST));
         if ($sql) {
             $sql = $command . ' ' . Tools::escapeDbIdentifier($this->table) . ' SET ' . mb_substr($sql, 1) . Tools::wrap($command == 'UPDATE' ? mb_substr($where, 5) : '', ' WHERE ') . ($command == 'UPDATE' ? ' LIMIT 1' : '');
             //@todo add message when UPDATE didn't change anything
@@ -526,39 +528,6 @@ class MyTableAdmin extends MyTableLister
     public function dashboard(array $options = array())
     {
         $this->contentByType($options);
-    }
-
-    /**
-     * 
-     * @param array $options OPTIONAL
-     * @return type
-     */
-    public function contentByType(array $options = array())
-    {
-        Tools::setifnull($options['table'], 'content');
-        Tools::setifnull($options['type'], 'type');
-        $query = $this->dbms->query('SELECT SQL_CALC_FOUND_ROWS ' . Tools::escapeDbIdentifier($options['type']) . ',COUNT(' . Tools::escapeDbIdentifier($options['type']) . ')'
-                . ' FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $options['table'])
-                . ' GROUP BY ' . Tools::escapeDbIdentifier($options['type']) . ' WITH ROLLUP LIMIT 100');
-        if (!$query) {
-            return;
-        }
-        $typeIndex = 0;
-        foreach (array_keys($this->fields) as $key => $value) {
-            if ($value == $options['type']) {
-                $typeIndex = $key + 1;
-                break;
-            }
-        }
-        $totalRows = $this->dbms->query('SELECT FOUND_ROWS()')->fetch_row()[0];
-        echo '<details><summary><big>' . $this->translate('By type') . '</big></summary>' . PHP_EOL
-        . '<table class="table table-striped">' . PHP_EOL
-        . '<tr><th>' . $this->translate('Type') . '</th><th class="text-right">' . $this->translate('Count') . '</th></tr>' . PHP_EOL;
-        while ($row = $query->fetch_row()) {
-            echo '<tr><td>' . ($row[0] ? Tools::h($row[0]) : ($row[0] === '' ? '<i class="insipid">(' . $this->translate('empty') . ')</i>' : '<big>&Sum;</big>'))
-            . '</td><td class="text-right"><a href="?table=' . Tools::h(TAB_PREFIX . $options['table']) . '&amp;col[0]=' . $typeIndex . '&amp;val[0]=' . Tools::h($row[0]) . '" title="' . $this->translate('Filter records') . '">' . (int) $row[1] . '</td></tr>' . PHP_EOL;
-        }
-        echo '</table></details>';
     }
 
 }
