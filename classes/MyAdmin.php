@@ -14,6 +14,23 @@ class MyAdmin extends MyCommon
     /** @var MyTableAdmin */
     protected $TableAdmin;
                    
+    /** @var string to customize bootstrap.css path  */
+    protected $cssBootstrap = 'styles/bootstrap.css';
+    
+    /** @var string to customize font-awesome.css path */
+    protected $cssAwesome = 'styles/font-awesome.css';
+
+    /** @var array stylesheets added before end of head container */
+    protected $stylesheet = [];
+
+    /** @var array javascripts */
+    protected $javascripts = [
+        'scripts/jquery.js',
+        'scripts/popper.js',
+        'scripts/bootstrap.js',        
+    ];
+
+    
     /**
      * 
      * @param \GodsDev\MyCMS\MyCMS $MyCMS
@@ -65,20 +82,21 @@ class MyAdmin extends MyCommon
             <meta name="description" content="">
             <meta name="author" content="">
             <title>' . Tools::h(Tools::wrap($title, '', ' - CMS Admin', 'CMS Admin')) . '</title>
-            <link rel="stylesheet" href="styles/bootstrap.css" />
+            <link rel="stylesheet" href="' . $this->cssBootstrap . '" />
             <style type="text/css">'
             . $this->getAdminCss() //maybe link rel instead of inline css
             //<link rel="stylesheet" href="styles/admin.css" />//incl. /vendor/godsdev/mycms/styles/admin.css
             . '</style>
             <link rel="stylesheet" href="styles/ie10-viewport-bug-workaround.css" />
             <link rel="stylesheet" href="styles/bootstrap-datetimepicker.css" />
-            <link rel="stylesheet" href="styles/font-awesome.css" />
+            <link rel="stylesheet" href="' . $this->cssAwesome . '" />                
             <link rel="stylesheet" href="styles/summernote.css" />
             <!--[if lt IE 9]>
             <script type="text/javascript" src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
             <script type="text/javascript" src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-            <![endif]-->
-        </head>';
+            <![endif]-->'
+            . (empty($this->stylesheet) ? '' : ('<link rel="stylesheet" href="' . implode('"><link rel="stylesheet" href="', $this->stylesheet) . '">' ))
+            . '</head>';
     }
 
     /**
@@ -342,10 +360,8 @@ class MyAdmin extends MyCommon
     protected function outputAdminBodyEnd()
     {
         $TableAdmin = $this->TableAdmin;
-        $result = //<script type="text/javascript" src="https://code.jquery.com/jquery.js"></script>
-            '<script type="text/javascript" src="scripts/jquery.js"></script>'
-            . '<script type="text/javascript" src="scripts/popper.js"></script>'
-            . '<script type="text/javascript" src="scripts/bootstrap.js"></script>'
+        $result = 
+            (empty($this->javascripts) ? '' : ('<script type="text/javascript" src="' . implode('"></script><script type="text/javascript" src="', $this->javascripts) . '"></script>' ))
             //<script type="text/javascript" src="scripts/bootstrap-datetimepicker.js"></script>
             . '<script type="text/javascript" src="scripts/jquery.sha1.js"></script>'
             . '<script type="text/javascript" src="scripts/summernote.js"></script>'
