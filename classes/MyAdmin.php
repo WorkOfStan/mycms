@@ -14,22 +14,20 @@ class MyAdmin extends MyCommon
     /** @var MyTableAdmin */
     protected $TableAdmin;
                    
-    /** @var string to customize bootstrap.css path  */
-    protected $cssBootstrap = 'styles/bootstrap.css';
-    
-    /** @var string to customize font-awesome.css path */
-    protected $cssAwesome = 'styles/font-awesome.css';
-
-    /** @var array stylesheets added before end of head container */
-    protected $stylesheet = [];
-
-    /** @var array javascripts */
-    protected $javascripts = [
-        'scripts/jquery.js',
-        'scripts/popper.js',
-        'scripts/bootstrap.js',        
+    /** @var array client-side resources - css, js, fonts etc. */
+    protected $clientSideResources = [
+        'js' => [
+            'scripts/jquery.js',
+            'scripts/popper.js',
+            'scripts/bootstrap.js',
+        ],
+        'css' => [
+            'styles/font-awesome.css',
+            'styles/ie10-viewport-bug-workaround.css',
+            'styles/bootstrap-datetimepicker.css',
+            'styles/summernote.css',
+        ]
     ];
-
     
     /**
      * 
@@ -82,20 +80,15 @@ class MyAdmin extends MyCommon
             <meta name="description" content="">
             <meta name="author" content="">
             <title>' . Tools::h(Tools::wrap($title, '', ' - CMS Admin', 'CMS Admin')) . '</title>
-            <link rel="stylesheet" href="' . $this->cssBootstrap . '" />
             <style type="text/css">'
-            . $this->getAdminCss() //maybe link rel instead of inline css
-            //<link rel="stylesheet" href="styles/admin.css" />//incl. /vendor/godsdev/mycms/styles/admin.css
+            . $this->getAdminCss() //@todo maybe link rel instead of inline css
             . '</style>
-            <link rel="stylesheet" href="styles/ie10-viewport-bug-workaround.css" />
-            <link rel="stylesheet" href="styles/bootstrap-datetimepicker.css" />
-            <link rel="stylesheet" href="' . $this->cssAwesome . '" />                
-            <link rel="stylesheet" href="styles/summernote.css" />
+            ' . Tools::arrayListed(Tools::set($this->clientSideResources['css'], []), 0, '', '<link rel="stylesheet" href="', '" />') . '
             <!--[if lt IE 9]>
             <script type="text/javascript" src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
             <script type="text/javascript" src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
             <![endif]-->'
-            . (empty($this->stylesheet) ? '' : ('<link rel="stylesheet" href="' . implode('"><link rel="stylesheet" href="', $this->stylesheet) . '">' ))
+            . Tools::arrayListed(Tools::set($this->clientSideResources['js'], []), 0, '', '<script type="text/javascript" src="', '"></script>')
             . '</head>';
     }
 
