@@ -712,13 +712,13 @@ class MyTableLister
     }
 
     /**
-     * Custom deleting of a record
-     * 
-     * @return boolean - true = method was applied so don't proceed with the default, false = method wasn't applied
+     * Custom event after deleting of a record
+     *
+     * @return boolean success
      */
     public function customAfterDelete()
     {
-        return false;
+        return true;
     }
 
     /**
