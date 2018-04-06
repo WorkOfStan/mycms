@@ -179,7 +179,7 @@ class AdminProcess extends MyCommon
         }
         if (isset($_POST['create-user'], $_POST['user'], $_POST['password'], $_POST['retype-password']) && $_POST['user'] && $_POST['password'] && $_POST['retype-password']) {
             $salt = mt_rand(1e8, 1e9);
-            Tools::resolve($this->MyCMS->dbms->query('INSERT INTO ' . TAB_PREFIX . 'admin SET name="' . $this->MyCMS->escapeSQL($_POST['user']) . '", password_hashed="' . $this->MyCMS->escapeSQL(sha1($_POST['user'] . $salt)) . '", salt=' . $salt . ', rights=2'), $this->tableAdmin->translate('User added.'), $this->tableAdmin->translate($this->MyCMS->dbms->errno == 1062 ? 'User already exists.' : 'Error occured adding the user.'));
+            Tools::resolve($this->MyCMS->dbms->query('INSERT INTO ' . TAB_PREFIX . 'admin SET name="' . $this->MyCMS->escapeSQL($_POST['user']) . '", password_hashed="' . $this->MyCMS->escapeSQL(sha1($_POST['password'] . $salt)) . '", salt=' . $salt . ', rights=2'), $this->tableAdmin->translate('User added.'), $this->tableAdmin->translate($this->MyCMS->dbms->errno == 1062 ? 'User already exists.' : 'Error occured adding the user.'));
             Tools::redir();
         }
         if (isset($_POST['delete-user'])) {
