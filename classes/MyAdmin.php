@@ -27,6 +27,7 @@ class MyAdmin extends MyCommon
             'styles/ie10-viewport-bug-workaround.css',
             'styles/bootstrap-datetimepicker.css',
             'styles/summernote.css',
+//            'styles/admin.css',
         ]
     ];
     
@@ -81,15 +82,14 @@ class MyAdmin extends MyCommon
             <meta name="description" content="">
             <meta name="author" content="">
             <title>' . Tools::h(Tools::wrap($title, '', ' - CMS Admin', 'CMS Admin')) . '</title>'
-            . Tools::arrayListed(Tools::set($this->clientSideResources['css'], []), 0, '', '<link rel="stylesheet" href="', '" />') . PHP_EOL
             . ' <style type="text/css">' . PHP_EOL
-            . $this->getAdminCss() //@todo maybe link rel instead of inline css
+            . $this->getAdminCss() //@todo how to make a link rel instead of inline css?
             . '</style>'. PHP_EOL
+            . Tools::arrayListed(Tools::set($this->clientSideResources['css'], []), 0, '', '<link rel="stylesheet" href="', '" />') . PHP_EOL            
             . '<!--[if lt IE 9]>
             <script type="text/javascript" src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
             <script type="text/javascript" src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
             <![endif]-->'
-            . Tools::arrayListed(Tools::set($this->clientSideResources['js'], []), 0, '', '<script type="text/javascript" src="', '"></script>')
             . '</head>';
     }
 
@@ -355,11 +355,12 @@ class MyAdmin extends MyCommon
     {
         $TableAdmin = $this->TableAdmin;
         $result = 
-            (empty($this->javascripts) ? '' : ('<script type="text/javascript" src="' . implode('"></script><script type="text/javascript" src="', $this->javascripts) . '"></script>' ))
+            Tools::arrayListed(Tools::set($this->clientSideResources['js'], []), 0, '', '<script type="text/javascript" src="', '"></script>')
+//            . (empty($this->javascripts) ? '' : ('<script type="text/javascript" src="' . implode('"></script><script type="text/javascript" src="', $this->javascripts) . '"></script>' ))
             //<script type="text/javascript" src="scripts/bootstrap-datetimepicker.js"></script>
             . '<script type="text/javascript" src="scripts/jquery.sha1.js"></script>'
             . '<script type="text/javascript" src="scripts/summernote.js"></script>'
-            . '<script type="text/javascript" src="scripts/admin.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
+//            . '<script type="text/javascript" src="scripts/admin.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
             . '<script type="text/javascript" src="scripts/admin-specific.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
             . '<script type="text/javascript">' . PHP_EOL;
         $tmp = array_flip(explode('|', 'Descending|Really delete?|New record|Passwords don\'t match!|Please, fill necessary data.|Select at least one file and try again.|No files|Edit|variable|value|name|size|modified|Select'));
