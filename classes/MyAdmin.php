@@ -20,14 +20,17 @@ class MyAdmin extends MyCommon
             'scripts/jquery.js',
             'scripts/popper.js',
             'scripts/bootstrap.js',
+            'scripts/admin.js?v=' . PAGE_RESOURCE_VERSION,
         ],
+        'css-pre-admin' => [
+            'styles/bootstrap.css',            
+            ],
         'css' => [
-            'styles/bootstrap.css',
             'styles/font-awesome.css',
             'styles/ie10-viewport-bug-workaround.css',
             'styles/bootstrap-datetimepicker.css',
             'styles/summernote.css',
-//            'styles/admin.css',
+            'styles/admin.css?v=' . PAGE_RESOURCE_VERSION,
         ]
     ];
     
@@ -82,6 +85,7 @@ class MyAdmin extends MyCommon
             <meta name="description" content="">
             <meta name="author" content="">
             <title>' . Tools::h(Tools::wrap($title, '', ' - CMS Admin', 'CMS Admin')) . '</title>'
+            . Tools::arrayListed(Tools::set($this->clientSideResources['css-pre-admin'], []), 0, '', '<link rel="stylesheet" href="', '" />') . PHP_EOL                        
             . ' <style type="text/css">' . PHP_EOL
             . $this->getAdminCss() //@todo how to make a link rel instead of inline css?
             . '</style>'. PHP_EOL
