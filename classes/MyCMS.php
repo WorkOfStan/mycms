@@ -56,7 +56,7 @@ class MyCMS extends MyCMSMonoLingual
                 $getArray['language'] :
                 ((isset($sessionArray['language']) && isset($this->TRANSLATIONS[$sessionArray['language']])) ? $sessionArray['language'] : DEFAULT_LANGUAGE);
         if ($makeInclude) {
-            $languageFile = './language-' . $resultLanguage . '.inc.php';
+            $languageFile = DIR_TEMPLATE . '/../language-' . $resultLanguage . '.inc.php';
             if (file_exists($languageFile)) {
                 include_once $languageFile; //MUST contain $translation = array(...);
                 if (isset($translation) && is_array($translation)) {

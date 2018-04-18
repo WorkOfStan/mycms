@@ -20,12 +20,17 @@ class MyAdmin extends MyCommon
             'scripts/jquery.js',
             'scripts/popper.js',
             'scripts/bootstrap.js',
+            'scripts/admin.js?v=' . PAGE_RESOURCE_VERSION,
         ],
+        'css-pre-admin' => [
+            'styles/bootstrap.css',            
+            ],
         'css' => [
             'styles/font-awesome.css',
             'styles/ie10-viewport-bug-workaround.css',
             'styles/bootstrap-datetimepicker.css',
             'styles/summernote.css',
+            'styles/admin.css?v=' . PAGE_RESOURCE_VERSION,
         ]
     ];
     
@@ -79,16 +84,16 @@ class MyAdmin extends MyCommon
             <meta http-equiv="content-type" content="text/html; charset=utf-8">
             <meta name="description" content="">
             <meta name="author" content="">
-            <title>' . Tools::h(Tools::wrap($title, '', ' - CMS Admin', 'CMS Admin')) . '</title>
-            <style type="text/css">'
-            . $this->getAdminCss() //@todo maybe link rel instead of inline css
-            . '</style>
-            ' . Tools::arrayListed(Tools::set($this->clientSideResources['css'], []), 0, '', '<link rel="stylesheet" href="', '" />') . '
-            <!--[if lt IE 9]>
+            <title>' . Tools::h(Tools::wrap($title, '', ' - CMS Admin', 'CMS Admin')) . '</title>'
+            . Tools::arrayListed(Tools::set($this->clientSideResources['css-pre-admin'], []), 0, '', '<link rel="stylesheet" href="', '" />') . PHP_EOL                        
+            . ' <style type="text/css">' . PHP_EOL
+            . $this->getAdminCss() //@todo how to make a link rel instead of inline css?
+            . '</style>'. PHP_EOL
+            . Tools::arrayListed(Tools::set($this->clientSideResources['css'], []), 0, '', '<link rel="stylesheet" href="', '" />') . PHP_EOL            
+            . '<!--[if lt IE 9]>
             <script type="text/javascript" src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
             <script type="text/javascript" src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
             <![endif]-->'
-            . Tools::arrayListed(Tools::set($this->clientSideResources['js'], []), 0, '', '<script type="text/javascript" src="', '"></script>')
             . '</head>';
     }
 
@@ -354,11 +359,12 @@ class MyAdmin extends MyCommon
     {
         $TableAdmin = $this->TableAdmin;
         $result = 
-            (empty($this->javascripts) ? '' : ('<script type="text/javascript" src="' . implode('"></script><script type="text/javascript" src="', $this->javascripts) . '"></script>' ))
+            Tools::arrayListed(Tools::set($this->clientSideResources['js'], []), 0, '', '<script type="text/javascript" src="', '"></script>')
+//            . (empty($this->javascripts) ? '' : ('<script type="text/javascript" src="' . implode('"></script><script type="text/javascript" src="', $this->javascripts) . '"></script>' ))
             //<script type="text/javascript" src="scripts/bootstrap-datetimepicker.js"></script>
             . '<script type="text/javascript" src="scripts/jquery.sha1.js"></script>'
             . '<script type="text/javascript" src="scripts/summernote.js"></script>'
-            . '<script type="text/javascript" src="scripts/admin.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
+//            . '<script type="text/javascript" src="scripts/admin.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
             . '<script type="text/javascript" src="scripts/admin-specific.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
             . '<script type="text/javascript">' . PHP_EOL;
         $tmp = array_flip(explode('|', 'Descending|Really delete?|New record|Passwords don\'t match!|Please, fill necessary data.|Select at least one file and try again.|No files|Edit|variable|value|name|size|modified|Select'));
