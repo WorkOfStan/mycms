@@ -470,7 +470,7 @@ class MyTableLister
                 }
                 if ($primary) {
                     $output .= '<a href="?table=' . urlencode($this->table) . Tools::h($url) . '" title="' . $this->translate('Edit') . '">'
-                    . '<small class="glyphicon glyphicon-edit fa fa-pencil" aria-hidden="true"></small></a>';
+                    . '<small class="glyphicon glyphicon-edit fa fa-pencil fa-pencil-alt" aria-hidden="true"></small></a>';
                 }
                 $output .= '</td>';
                 foreach ($row as $key => $value) {

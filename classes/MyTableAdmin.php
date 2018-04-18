@@ -106,10 +106,10 @@ class MyTableAdmin extends MyTableLister
             $output .= '<hr /><div class="form-actions">' . PHP_EOL 
                 . $this->customRecordActions($record)
                 . '<button type="submit" name="record-save" value="1" class="btn btn-default btn-primary">'
-                . '<span class="glyphicon glyphicon-floppy-save fa fa-floppy-o" aria-hidden="true"></span> ' . $this->translate('Save') . '</button> ';
+                . '<span class="glyphicon glyphicon-floppy-save fa fa-floppy-o fa-save" aria-hidden="true"></span> ' . $this->translate('Save') . '</button> ';
             if ($record) {
                 $output .= '<button type="submit" name="record-delete" class="btn btn-default" value="1" onclick="return confirm(\'' . $this->translate('Really delete?') . '\');">'
-                        . '<span class="glyphicon glyphicon-floppy-remove fa fa-trash-o" aria-hidden="true"></span> ' . $this->translate('Delete') . '</button>';
+                        . '<span class="glyphicon glyphicon-floppy-remove fa fa-trash-o fa-trash" aria-hidden="true"></span> ' . $this->translate('Delete') . '</button>';
             }
             $output .= '</div>';
         }
@@ -241,7 +241,7 @@ class MyTableAdmin extends MyTableLister
                 }
                 $input += array('type' => 'datetime-local', 'step' => 1, 'class' => 'form-control input-datetime');
                 $input = '<div class="input-group">' . Tools::htmlInput("fields[$key]", false, $value, $input)
-                        . '<span class="input-group-btn"><button class="btn btn-secondary btn-fill-now" type="button" title="' . $this->translate('Now') . '"><i class="glyphicon glyphicon-time fa fa-clock-o" aria-hidden="true"></i></button></span></div>';
+                        . '<span class="input-group-btn"><button class="btn btn-secondary btn-fill-now" type="button" title="' . $this->translate('Now') . '"><i class="glyphicon glyphicon-time fa fa-clock-o fa-clock" aria-hidden="true"></i></button></span></div>';
                 break;
             case 'bit':
                 $input += array('type' => 'checkbox', 'step' => 1, 'checked' => ($value ? 'checked' : null));
