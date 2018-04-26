@@ -23,7 +23,7 @@ class MyAdmin extends MyCommon
             'scripts/admin.js?v=' . PAGE_RESOURCE_VERSION,
         ],
         'css-pre-admin' => [
-            'styles/bootstrap.css',            
+            'styles/bootstrap.css',
             ],
         'css' => [
             'styles/font-awesome.css',
@@ -381,7 +381,7 @@ class MyAdmin extends MyCommon
             . '$(document).ready(function(){' . PHP_EOL
             . $TableAdmin->script . PHP_EOL
             . 'if (typeof(AdminRecordName) != "undefined") {' . PHP_EOL
-            . '    $("h2 .AdminRecordName").text(AdminRecordName);' . PHP_EOL
+            . '    $("h2 .AdminRecordName").text(AdminRecordName.replaceAll(/<\/?[a-z][^>]*>/i, "").substr(0, 50));' . PHP_EOL
             . '}' . PHP_EOL
             . '});' . PHP_EOL
             .' </script>';
