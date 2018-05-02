@@ -301,7 +301,7 @@ class MyTableAdmin extends MyTableLister
                     array('id' => $key . $this->rand, 'data-maxlength' => $field['size'],
                         'class' => 'form-control type-' . Tools::webalize($field['type']) . ($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : '')
                     ))
-                    . '<i class="fa fa-stack-overflow input-limit" aria-hidden="true" data-fields="' . Tools::h($key) . '"></i></div>';
+                    . '<i class="fa fab fa-stack-overflow input-limit" aria-hidden="true" data-fields="' . Tools::h($key) . '"></i></div>';
         }
         if (is_array($input)) {
             $input = Tools::htmlInput("fields[$key]", false, $value, $input);

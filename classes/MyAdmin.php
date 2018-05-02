@@ -6,14 +6,14 @@ use Tracy\Debugger;
 
 /**
  * Parent for deployed Admin instance
- * 
+ *
  */
 class MyAdmin extends MyCommon
 {
 
     /** @var MyTableAdmin */
     protected $TableAdmin;
-                   
+
     /** @var array client-side resources - css, js, fonts etc. */
     protected $clientSideResources = [
         'js' => [
@@ -33,9 +33,9 @@ class MyAdmin extends MyCommon
             'styles/admin.css?v=' . PAGE_RESOURCE_VERSION,
         ]
     ];
-    
+
     /**
-     * 
+     *
      * @param \GodsDev\MyCMS\MyCMS $MyCMS
      * @param array $options that overrides default values within constructor
      */
@@ -57,17 +57,17 @@ class MyAdmin extends MyCommon
             Debugger::getBar()->addPanel(new \GodsDev\MyCMS\Tracy\BarPanelTemplate('SQL: ' . count($sqlStatementsArray), $sqlStatementsArray));
         }
     }
-    
+
     /**
      * As vendor folder has usually denied access from browser,
      * the content of the standard admin.css MUST be available through this method
-     * 
+     *
      * @return string
      */
     public function getAdminCss()
     {
         return file_get_contents(__DIR__ . '/../styles/admin.css') . PHP_EOL;
-    }    
+    }
 
     /**
      * Output (in HTML) the <head> section of admin
@@ -75,7 +75,7 @@ class MyAdmin extends MyCommon
      * @param string $title used in <title>
      * @result string
      */
-    protected function outputAdminHead($title)
+    protected function outputHead($title)
     {
         return '<head>
             <meta charset="utf-8">
@@ -85,11 +85,11 @@ class MyAdmin extends MyCommon
             <meta name="description" content="">
             <meta name="author" content="">
             <title>' . Tools::h(Tools::wrap($title, '', ' - CMS Admin', 'CMS Admin')) . '</title>'
-            . Tools::arrayListed(Tools::set($this->clientSideResources['css-pre-admin'], []), 0, '', '<link rel="stylesheet" href="', '" />') . PHP_EOL                        
+            . Tools::arrayListed(Tools::set($this->clientSideResources['css-pre-admin'], []), 0, '', '<link rel="stylesheet" href="', '" />') . PHP_EOL
             . ' <style type="text/css">' . PHP_EOL
             . $this->getAdminCss() //@todo how to make a link rel instead of inline css?
             . '</style>'. PHP_EOL
-            . Tools::arrayListed(Tools::set($this->clientSideResources['css'], []), 0, '', '<link rel="stylesheet" href="', '" />') . PHP_EOL            
+            . Tools::arrayListed(Tools::set($this->clientSideResources['css'], []), 0, '', '<link rel="stylesheet" href="', '" />') . PHP_EOL
             . '<!--[if lt IE 9]>
             <script type="text/javascript" src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
             <script type="text/javascript" src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -102,7 +102,7 @@ class MyAdmin extends MyCommon
      *
      * @result string
      */
-    protected function outputAdminNavigation()
+    protected function outputNavigation()
     {
         $TableAdmin = $this->TableAdmin;
         $result = '<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
@@ -113,15 +113,15 @@ class MyAdmin extends MyCommon
                 <div class="collapse navbar-collapse" id="navbarsExampleDefault">
                     <ul class="navbar-nav mr-auto">';
         if (Tools::nonempty($_SESSION['user'])) {
-            $result .= $this->outputAdminProjectSpecificLinks()
-                . '<li class="nav-item' . (isset($_GET['media']) ? ' active' : '') . '"><a href="?media" class="nav-link"><i class="fa fa-video-camera" aria-hidden="true"></i> ' . $TableAdmin->translate('Media') . '</a></li>
+            $result .= $this->outputSpecialMenuLinks()
+                . '<li class="nav-item' . (isset($_GET['media']) ? ' active' : '') . '"><a href="?media" class="nav-link"><i class="fa fa-video-camera fa-video" aria-hidden="true"></i> ' . $TableAdmin->translate('Media') . '</a></li>
                 <li class="nav-item dropdown' . (isset($_GET['user']) ? ' active' : '') . '">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="' . $TableAdmin->translate('User') . '"><i class="fa fa-user" aria-hidden="true"></i> ' . $TableAdmin->translate('User') . '</a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                   <a href="" class="dropdown-item disabled"><i class="fa fa-user" aria-hidden="true"></i> ' . Tools::h($_SESSION['user']) . '</a>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item' . (isset($_GET['logout']) ? ' active' : '') . '" href="?user&amp;logout"><i class="fa fa-sign-out" aria-hidden="true"></i> ' . $TableAdmin->translate('Logout') . '</a>
-                  <a class="dropdown-item' . (isset($_GET['change-password']) ? ' active' : '') . '" href="?user&amp;change-password"><i class="fa fa-id-card-o" aria-hidden="true"></i> ' . $TableAdmin->translate('Change password') . '</a>
+                  <a class="dropdown-item' . (isset($_GET['logout']) ? ' active' : '') . '" href="?user&amp;logout"><i class="fa fas fa-sign-out fa-sign-out-alt" aria-hidden="true"></i> ' . $TableAdmin->translate('Logout') . '</a>
+                  <a class="dropdown-item' . (isset($_GET['change-password']) ? ' active' : '') . '" href="?user&amp;change-password"><i class="fa fa-id-card fa-id-card-o" aria-hidden="true"></i> ' . $TableAdmin->translate('Change password') . '</a>
                   <a class="dropdown-item' . (isset($_GET['create-user']) ? ' active' : '') . '" href="?user&amp;create-user"><i class="fa fa-user-plus" aria-hidden="true"></i> ' . $TableAdmin->translate('Create user') . '</a>
                   <a class="dropdown-item' . (isset($_GET['delete-user']) ? ' active' : '') . '" href="?user&amp;delete-user"><i class="fa fa-user-times" aria-hidden="true"></i> ' . $TableAdmin->translate('Delete user') . '</a>
                 </div>
@@ -133,8 +133,11 @@ class MyAdmin extends MyCommon
         foreach ($TableAdmin->TRANSLATIONS as $key => $value) {
             $result .= '<a class="dropdown-item' . ($key == $_SESSION['language'] ? ' active' : '') . '" href="?' . Tools::urlChange(array('language' => $key)) . '"><i class="fa fa-flag" aria-hidden="true"></i> ' . Tools::h($value) . '</a>' . PHP_EOL;
         }
-        $result .=  (isset($_SESSION['user']) ? '<div class="dropdown-divider"></div><a class="dropdown-item" href="" id="toggle-nav" title="' . Tools::h($TableAdmin->translate('Toggle sidebar')) . '"><i class="fa fa-columns"></i> ' . $TableAdmin->translate('Sidebar') . '</a>' : '') . '
-                    </div>
+        if (isset($_SESSION['user'])) {
+            $result .= '<div class="dropdown-divider"></div><a class="dropdown-item" href="" id="toggle-nav" title="' . Tools::h($TableAdmin->translate('Toggle sidebar')) . '"><i class="fa fa-columns"></i> ' . $TableAdmin->translate('Sidebar') . '</a>'
+                . $this->outputSpecialSettingsLinks();
+        }
+        $result .= '</div>
                   </li>
                 </ul>
                   <!--<form class="form-inline mt-2 mt-md-0">
@@ -151,7 +154,17 @@ class MyAdmin extends MyCommon
      *
      * @result string
      */
-    protected function outputAdminSpecificLinks()
+    protected function outputSpecialMenuLinks()
+    {
+        return '';
+    }
+
+    /**
+     * Output (in HTML) the project-specific links in the settings section of admin
+     *
+     * @result string
+     */
+    protected function outputSpecialSettingsLinks()
     {
         return '';
     }
@@ -161,7 +174,7 @@ class MyAdmin extends MyCommon
      *
      * @result string
      */
-    protected function outputAdminMedia()
+    protected function outputMedia()
     {
         $TableAdmin = $this->TableAdmin;
         $result = '<h1 class="page-header">' . $TableAdmin->translate('Media') . '</h1>
@@ -187,9 +200,16 @@ class MyAdmin extends MyCommon
                     <button type="submit" name="upload-media" value="1" class="btn btb-lg btn-primary"><i class="fa fa-upload" aria-hidden="true"></i> ' . $TableAdmin->translate('Upload') . '</button>
                 </fieldset>
             </form><hr />
-            <details><summary>' . $TableAdmin->translate('Uploaded files') . '</summary>
+            <details class="uploaded-files"><summary>' . $TableAdmin->translate('Uploaded files') . '</summary>
             <div id="media-files"></div>
-            <button class="btn btn-primary btn-sm mt-3" title="' . $TableAdmin->translate('Delete') . '" id="delete-media-files"><i class="fa fa-check-square" aria-hidden="true"></i> <i class="fa fa-trash-o" aria-hidden="true"></i></button>
+            <button class="btn btn-secondary btn-sm mt-3" title="' . $TableAdmin->translate('Delete') . '" id="delete-media-files"><i class="fa fa-check-square" aria-hidden="true"></i> <i class="fa fa-trash" aria-hidden="true"></i></button>
+            <fieldset class="d-inline-block position-relative">
+                <div class="input-group input-group-sm" id="rename-fieldset">
+                    <div class="input-group-prepend"><button class="btn btn-secondary" type="submit" title="' . $TableAdmin->translate('Rename') . '" id="rename-translation"><i class="fa fa-dot-circle"></i> <i class="fa fa-i-cursor"></i></button></div>
+                    <span id="translation-rename-feedback" class="invalid-tooltip" style="display:none;"></span>' 
+                    . Tools::htmlInput('new_name', '', '', array('class' => 'form-control form-control-sm', 'id' => 'new_name')) . '
+                </div>
+            </fieldset>
             </details>';
         return $result;
     }
@@ -199,7 +219,7 @@ class MyAdmin extends MyCommon
      *
      * @result string
      */
-    protected function outputAdminUser()
+    protected function outputUser()
     {
         $TableAdmin = $this->TableAdmin;
         $result = '<h1>' . $TableAdmin->translate('User') . '</h1>';
@@ -207,7 +227,7 @@ class MyAdmin extends MyCommon
         if (isset($_GET['logout'])) {
             $result .= '<h2><small>' . $TableAdmin->translate('Logout') . '</small></h2>
                 <form action="" method="post" id="logout-form" class="panel d-inline-block"><fieldset class="card p-2">
-                <button type="submit" name="logout" class="form-control btn-primary text-left"><i class="fa fa-sign-out" aria-hidden="true"></i> ' . $TableAdmin->translate('Logout') . '</button>'
+                <button type="submit" name="logout" class="form-control btn-primary text-left"><i class="fa fas fa-sign-out fa-sign-out-alt" aria-hidden="true"></i> ' . $TableAdmin->translate('Logout') . '</button>'
                 . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden') . '
                 </fieldset></form>';
         }
@@ -269,7 +289,7 @@ class MyAdmin extends MyCommon
      *
      * @result string
      */
-    protected function outputAdminLogin()
+    protected function outputLogin()
     {
         $TableAdmin = $this->TableAdmin;
         $options = array(
@@ -284,7 +304,7 @@ class MyAdmin extends MyCommon
             . Tools::htmlInput('user', $TableAdmin->translate('User', false) . ':', Tools::setifnull($_SESSION['user']), $options)
             . Tools::htmlInput('password', $TableAdmin->translate('Password', false) . ':', '', array('type' => 'password', 'id' => 'login-password') + $options)
             . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden') . '</div>
-            <div class="col-sm-9 col-sm-offset-3 my-3"><button type="submit" name="login" class="btn btn-primary"><i class="fa fa-sign-in" aria-hidden="true"></i> ' . $TableAdmin->translate('Login') . '</button>
+            <div class="col-sm-9 col-sm-offset-3 my-3"><button type="submit" name="login" class="btn btn-primary"><i class="fa fas fa-sign-in fa-sign-in-alt" aria-hidden="true"></i> ' . $TableAdmin->translate('Login') . '</button>
             </div>
             </form>';
     }
@@ -294,7 +314,7 @@ class MyAdmin extends MyCommon
      *
      * @result string
      */
-    protected function outputAdminDashboard()
+    protected function outputDashboard()
     {
         $TableAdmin = $this->TableAdmin;
         $result = '<br class="m-3"/><br class="m-3"/><hr />
@@ -321,7 +341,7 @@ class MyAdmin extends MyCommon
      *
      * @result string
      */
-    protected function outputAdminAgendas()
+    protected function outputAgendas()
     {
         $TableAdmin = $this->TableAdmin;
         // show agendas in the sidebar
@@ -355,10 +375,10 @@ class MyAdmin extends MyCommon
      *
      * @result string
      */
-    protected function outputAdminBodyEnd()
+    protected function outputBodyEnd()
     {
         $TableAdmin = $this->TableAdmin;
-        $result = 
+        $result =
             Tools::arrayListed(Tools::set($this->clientSideResources['js'], []), 0, '', '<script type="text/javascript" src="', '"></script>')
 //            . (empty($this->javascripts) ? '' : ('<script type="text/javascript" src="' . implode('"></script><script type="text/javascript" src="', $this->javascripts) . '"></script>' ))
             //<script type="text/javascript" src="scripts/bootstrap-datetimepicker.js"></script>
@@ -424,7 +444,7 @@ class MyAdmin extends MyCommon
      *
      * @result string
      */
-    protected function outputAdminTable()
+    protected function outputTable()
     {
         $TableAdmin = $this->TableAdmin;
         $tablePrefixless = mb_substr($_GET['table'], mb_strlen(TAB_PREFIX));
@@ -438,7 +458,7 @@ class MyAdmin extends MyCommon
             foreach (Tools::set($this->TableAdmin->tableContext['language-versions'], $this->MyCMS->TRANSLATIONS) as $key => $value) {
                 $tabs[$value] = "~^.+_$key$~i";
             }
-            $result .= $this->outputAdminTableBeforeEdit()
+            $result .= $this->outputTableBeforeEdit()
                 . $TableAdmin->outputForm($_GET['where'], array(
                     'layout-row' => true,
                     'prefill' => isset($_GET['prefill']) && is_array($_GET['prefill']) ? $_GET['prefill'] : array(),
@@ -446,13 +466,13 @@ class MyAdmin extends MyCommon
                     'tabs' => $tabs,
                     'return-output' => 1
                 ))
-                . $this->outputAdminTableAfterEdit();
+                . $this->outputTableAfterEdit();
         } else {
             // table listing
             $result .= '<h2 class="sub-header">' . $TableAdmin->translate('Listing') . '</h2>'
-                . $this->outputAdminTableBeforeListing()
+                . $this->outputTableBeforeListing()
                 . $TableAdmin->view(array('return-output'=>1))
-                . $this->outputAdminTableAfterListing();
+                . $this->outputTableAfterListing();
         }
         return $result;
     }
@@ -467,7 +487,7 @@ class MyAdmin extends MyCommon
     }
 
     /**
-     * Output (in HTML) the project-specific sections 
+     * Output (in HTML) the project-specific sections
      *
      * @result string
      */
@@ -481,7 +501,7 @@ class MyAdmin extends MyCommon
      *
      * @result string
      */
-    protected function outputAdminTableBeforeListing()
+    protected function outputTableBeforeListing()
     {
         return '';
     }
@@ -491,7 +511,7 @@ class MyAdmin extends MyCommon
      *
      * @result string
      */
-    protected function outputAdminTableAfterListing()
+    protected function outputTableAfterListing()
     {
         return '';
     }
@@ -501,7 +521,7 @@ class MyAdmin extends MyCommon
      *
      * @result string
      */
-    protected function outputAdminTableBeforeEdit()
+    protected function outputTableBeforeEdit()
     {
         return '';
     }
@@ -511,7 +531,7 @@ class MyAdmin extends MyCommon
      *
      * @result string
      */
-    protected function outputAdminTableAfterEdit()
+    protected function outputTableAfterEdit()
     {
         return '';
     }
@@ -553,12 +573,12 @@ class MyAdmin extends MyCommon
         }
         $tmpTitle = $tablePrefixless ?: (isset($_GET['user']) ? $TableAdmin->translate('User') : (isset($_GET['media']) ? $TableAdmin->translate('Media') : (isset($_GET['products']) ? $TableAdmin->translate('Products') : (isset($_GET['pages']) ? $TableAdmin->translate('Pages') : ''))));
         $output = '<!DOCTYPE html><html lang="' . Tools::h($_SESSION['language']) . '">'
-            . $this->outputAdminHead($tmpTitle)
+            . $this->outputHead($tmpTitle)
             . '<body>' . PHP_EOL . '<header>'
-            . $this->outputAdminNavigation()
+            . $this->outputNavigation()
             . '</header>' . PHP_EOL . '<div class="container-fluid">' . PHP_EOL;
         if (isset($_SESSION['user']) && $_SESSION['user']) {
-            $output .= '<nav class="col-md-3 bg-light sidebar" id="admin-sidebar">' . $this->outputAdminAgendas() . '</nav>' . PHP_EOL;
+            $output .= '<nav class="col-md-3 bg-light sidebar" id="admin-sidebar">' . $this->outputAgendas() . '</nav>' . PHP_EOL;
         }
         $output .= '<main class="ml-sm-auto col-md-9 pt-3" role="main" id="admin-main">'
             . Tools::showMessages(false);
@@ -567,19 +587,19 @@ class MyAdmin extends MyCommon
         }
         // table listing/editing
         if ($_GET['table']) {
-            $output .= $this->outputAdminTable();
+            $output .= $this->outputTable();
         }
         // media upload etc.
         elseif (isset($_GET['media'])) {
-            $output .= $this->outputAdminMedia();
+            $output .= $this->outputMedia();
         }
         // user operations (logout, change password, create user, delete user)
         elseif (isset($_GET['user'])) {
-            $output .= $this->outputAdminUser();
+            $output .= $this->outputUser();
         }
         // user not logged in - show a login form
         elseif(!isset($_SESSION['user'])) {
-            $output .= $this->outputAdminLogin();
+            $output .= $this->outputLogin();
         }
         // project-specific admin sections
         elseif ($this->projectSpecificSectionsCondition()) {
@@ -588,13 +608,13 @@ class MyAdmin extends MyCommon
             // no agenda selected, showing "dashboard"
         }
         if (isset($_SESSION['user'])) {
-            $output .= $this->outputAdminDashboard();
+            $output .= $this->outputDashboard();
         }
         $output .= '</main></div>' . PHP_EOL . '<footer class="sticky-footer">&copy; GODS, s r.o. All rights reserved.</footer>';
         if (isset($_SESSION['user'])) {
             $output .= $this->outputImageSelector();
         }
-        $output .= $this->outputAdminBodyEnd()
+        $output .= $this->outputBodyEnd()
             . '</body>' . PHP_EOL .'</html>';
         return $output;
     }
