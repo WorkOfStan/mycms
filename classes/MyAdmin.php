@@ -205,9 +205,9 @@ class MyAdmin extends MyCommon
             <button class="btn btn-secondary btn-sm mt-3" title="' . $TableAdmin->translate('Delete') . '" id="delete-media-files"><i class="fa fa-check-square" aria-hidden="true"></i> <i class="fa fa-trash" aria-hidden="true"></i></button>
             <fieldset class="d-inline-block position-relative">
                 <div class="input-group input-group-sm" id="rename-fieldset">
-                    <div class="input-group-prepend"><button class="btn btn-secondary" type="submit" title="' . $TableAdmin->translate('Rename') . '" id="rename-translation"><i class="fa fa-dot-circle"></i> <i class="fa fa-i-cursor"></i></button></div>
-                    <span id="translation-rename-feedback" class="invalid-tooltip" style="display:none;"></span>' 
-                    . Tools::htmlInput('new_name', '', '', array('class' => 'form-control form-control-sm', 'id' => 'new_name')) . '
+                    <div class="input-group-prepend"><button class="btn btn-secondary" type="submit" title="' . $TableAdmin->translate('Rename') . '" id="rename-media-file"><i class="fa fa-dot-circle"></i> <i class="fa fa-i-cursor"></i></button></div>
+                    <span id="file-rename-feedback" class="invalid-tooltip" style="display:none;"></span>' 
+                    . Tools::htmlInput('new_name', '', '', array('class' => 'form-control form-control-sm', 'id' => 'media-file-name')) . '
                 </div>
             </fieldset>
             </details>';
@@ -387,7 +387,7 @@ class MyAdmin extends MyCommon
 //            . '<script type="text/javascript" src="scripts/admin.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
             . '<script type="text/javascript" src="scripts/admin-specific.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
             . '<script type="text/javascript">' . PHP_EOL;
-        $tmp = array_flip(explode('|', 'Descending|Really delete?|New record|Passwords don\'t match!|Please, fill necessary data.|Select at least one file and try again.|No files|Edit|variable|value|name|size|modified|Select'));
+        $tmp = array_flip(explode('|', 'Descending|Really delete?|New record|Passwords don\'t match!|Please, fill necessary data.|Select at least one file and try again.|No files|Edit|variable|value|name|size|modified|Select|Please, choose a new name.'));
         foreach ($tmp as $key => $value) {
             $tmp[$key] = $TableAdmin->translate($key, false);
         }
