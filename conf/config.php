@@ -23,6 +23,9 @@ $backyardConf = array(
 
 ini_set('display_errors', 0); //errors only in the log
 
-if (file_exists(__DIR__ . '/env_config_private.php')) {
+if (file_exists(__DIR__ . '/env_config_private.php')) {//backward compatible
     include_once __DIR__ . '/env_config_private.php';
+}
+if (file_exists(__DIR__ . '/config.local.php')) {
+    include_once __DIR__ . '/config.local.php';
 }
