@@ -331,7 +331,7 @@ class MyTableLister
                 . " LIMIT $offset, $limit";
         $query = $this->dbms->query($sql);
         $totalRows = $this->dbms->fetchSingle('SELECT FOUND_ROWS()');
-        $output = '';
+        $output = Tools::htmlInput('total-rows', '', $totalRows, 'hidden');
         if (!$options['read-only']) {
             $output .= '<a href="?table=' . urlencode($this->table) . '&amp;where[]="><span class="glyphicon glyphicon-plus fa fa-plus-circle" /></span> ' . $this->translate('New row') . '</a>' . PHP_EOL;
         }
@@ -377,19 +377,19 @@ class MyTableLister
         }
         if (!Tools::set($option['no-sort'])) {
             $output .= '<fieldset><legend><a href="javascript:;" onclick="$(\'#sort-div' . $this->rand . '\').toggle()">
-                <span class="glyphicon glyphicon-sort fa fa-sort"></span> ' . $this->translate('Sort') . '</a></legend>
+                <span class="glyphicon glyphicon-sort fa fa-sort mx-1"></span> ' . $this->translate('Sort') . '</a></legend>
                 <div class="sort-div" id="sort-div' . $this->rand . '"></div></fieldset>' . PHP_EOL;
         }
         $output .= '<fieldset><legend><span class="glyphicon glyphicon-list-alt fa fa-list-alt"></span> ' . $this->translate('View') . '</legend>
             <input type="hidden" name="table" value="' . Tools::h($this->table) . '" />
-            <label title="' . $this->translate('Text lengths') . '"><span class="glyphicon glyphicon-option-horizontal fa fa-ellipsis-h"></span>' 
+            <label title="' . $this->translate('Text lengths') . '"><span class="glyphicon glyphicon-option-horizontal fa fa-ellipsis-h mx-1"></span>' 
                 . Tools::htmlInput('textsize', '', Tools::setifnull($_GET['textsize'], $this->DEFAULTS['TEXTSIZE']), array('size' => 3, 'class' => 'text-right')) . '
             </label>
-            <label title="' . $this->translate('Rows per page') . '"><span class="glyphicon glyphicon-option-vertical fa fa-ellipsis-v"></span>' 
+            <label title="' . $this->translate('Rows per page') . '"><span class="glyphicon glyphicon-option-vertical fa fa-ellipsis-v mx-1"></span>' 
                 . Tools::htmlInput('limit', '', Tools::setifnull($_GET['limit'], $this->DEFAULTS['PAGESIZE']), array('size' => 3, 'class' => 'text-right')) . '
             </label>' 
                 . Tools::htmlInput('offset', '', Tools::setifnull($_GET['offset'], 0), 'hidden') . '
-            <button type="submit" class="btn btn-sm" title="' . $this->translate('View') . '"/>
+            <button type="submit" class="btn btn-sm ml-1" title="' . $this->translate('View') . '"/>
                 <span class="glyphicon glyphicon-list-alt fa fa-list-alt"></span>
             </button>
             </fieldset></form>
@@ -449,7 +449,9 @@ class MyTableLister
         $primary = array();
         foreach ($columns as $key => $value) {
             $output .= '<th' . (count($_GET['sort']) == 1 && $_GET['sort'][0] == $i ? ' class="active"' : '') . '>'
-                . '<a href="?' . Tools::urlChange(array('sort%5B0%5D' => null)) . '&amp;sort%5B0%5D=' . ($i * ($_GET['sort'] == $i ? -1 : 1)) . '" title="' . $this->translateColumn($key) . '">' . Tools::h($key) . '</a>'
+                . '<div class="column-menu"><a href="?' . Tools::urlChange(array('sort%5B0%5D' => null)) . '&amp;sort%5B0%5D=' . ($i * ($_GET['sort'] == $i ? -1 : 1)) . '" title="' . $this->translateColumn($key) . '">' . Tools::h($key) . '</a>'
+                . '<span class="op"><a href="?' . Tools::urlChange(array('sort%5B0%5D' => null)) . '&amp;sort%5B0%5D=' . ($i * ($_GET['sort'] == $i ? -1 : 1)) . '&amp;desc[0]=1" class="desc ml-1 px-1"><i class="fas fa-long-arrow-alt-down"></i></a>'
+                . '<a href="javascript:addSearchRow($(\'#search-div' . $this->rand . '\'), ' . $i . ', 0, \'\')" class="filter px-1">=</a></span></div>'
                 . '</th>' . PHP_EOL;
             if ($this->fields[$key]['key'] == 'PRI') {
                 $primary [] = $key;
@@ -500,7 +502,17 @@ class MyTableLister
                 $output .= '</tr>' . PHP_EOL;
             }
         }
-        $output .= '</tbody></table>' . PHP_EOL . '</form>';
+        $output .= '</tbody></table>' . PHP_EOL;
+        if (!isset($options['no-selected-rows-operations'])) {
+            $output .= '<div class="selected-rows mb-2">#<i class="fa fa-check-square"></i>=<span class="listed">0</span> '
+                . '<label class="btn btn-sm btn-light mx-1 mt-2" title="' . $this->translate('All records') . '">&forall; ' . Tools::htmlInput('total-rows', '', 1, array('type' => 'checkbox', 'class' => 'total-rows')) . '</label>'
+                . '<button name="table-export" value="1" class="btn btn-sm ml-1" title="' . $this->translate('Export') . '"><i class="fa fa-download"></i></button>' . PHP_EOL
+                . '<button name="edit-selected" value="1" class="btn btn-sm ml-1" title="' . $this->translate('Edit') . '"><i class="fa fa-edit"></i></button>' . PHP_EOL
+                . '</div>';
+        }
+        $output .= Tools::htmlInput('database-table', '', $this->table, 'hidden')
+            . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden')
+            . '</form>' . PHP_EOL;
         if (isset($options['return-output']) && $options['return-output']) {
             return $output;
         }
@@ -669,14 +681,42 @@ class MyTableLister
     // custom methods - meant to be rewritten in the class' children
     
     /**
-     * Customize particular field's HTML of current $table
+     * Custom HTML instead of standard field's input
      * 
      * @param string $field
      * @param mixed $value field's value
+     * @param array $record
      * @return boolean - true = method was applied so don't proceed with the default, false = method wasn't applied
      */
-    public function customInput($field, $value)
+    public function customInput($field, $value, array $record = array())
     {
+        return false;
+    }
+
+    /**
+     * Custom HTML showed before particular field (but after its label).
+     *
+     * @param string $field
+     * @param string $value
+     * @param array $record
+     * @return string HTML
+     */
+    public function customInputBefore($field, $value, array $record = array())
+    {
+        return '';
+    }
+
+    /**
+     * Custom HTML showed after particular field (but still in the table row, in case of table display).
+     *
+     * @param string $field
+     * @param string $value
+     * @param array $record
+     * @return string HTML
+     */
+    public function customInputAfter($field, $value, array $record = array())
+    {
+        return '';
     }
 
     /**
