@@ -154,9 +154,10 @@ class MyTableAdmin extends MyTableLister
                     'class' => 'input-null',
                     'id' => 'null-' . urlencode($key) . $this->rand
                         )
-                ) . ($options['layout-row'] ? '<br />' : '</td><td>') . PHP_EOL;
+                ) . ($options['layout-row'] ? '<br />' : '</td><td>') . PHP_EOL
+                . $this->customInputBefore($key, $value, $record) . PHP_EOL;
         $input = array('id' => $key . $this->rand, 'class' => 'form-control');
-        $custom = $this->customInput($key, $value);
+        $custom = $this->customInput($key, $value, $record);
         if ($custom !== false) {
             $input = $custom;
             $field['type'] = null;
@@ -264,7 +265,7 @@ class MyTableAdmin extends MyTableLister
                             'value' => 0
                         ))), $input
                     );
-                    $input = implode(', ', $input);
+                    $input = implode(', ', $input) . '<br>';
                 }
                 break;
             case 'set':
@@ -279,7 +280,7 @@ class MyTableAdmin extends MyTableLister
                                     'id' => "$key-$k-$this->rand"
                         ));
                     }
-                    $input = implode(', ', $temp);
+                    $input = implode(', ', $temp) . '<br>';
                 }
                 break;
             case 'tinyblob': case 'mediumblob': case 'blob': case 'longblob': case 'binary':
@@ -309,7 +310,7 @@ class MyTableAdmin extends MyTableLister
         if (isset($options['original']) && $options['original']) {
             $input .= Tools::htmlInput("original[$key]", false, isset($options['prefill'][$key]) && is_scalar($options['prefill'][$key]) ? '' : $value, 'hidden');
         }
-        $output .= $input . ($options['layout-row'] ? '' : '</td></tr>') . PHP_EOL;
+        $output .= $input . $this->customInputAfter($key, $value, $record) . ($options['layout-row'] ? '' : '</td></tr>') . PHP_EOL;
         return $output;
     }
 
