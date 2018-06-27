@@ -65,7 +65,7 @@ class ProjectCommon extends MyCommon
     {
         $replacePatterns = array_merge(array(
             '/ a /' => ' a ',
-            '/ i /' => ' a ',
+            '/ i /' => ' i ',
             '/ k /' => ' k ',
             '/ o /' => ' o ',
             '/ s /' => ' s ',
@@ -77,7 +77,7 @@ class ProjectCommon extends MyCommon
             '/ & /' => ' & ',
             '/ an /' => ' an ',
             '/Industry 4.0/' => 'Industry 4.0',
-            ), $addReplacePatterns);
+                ), $addReplacePatterns);
         return preg_replace(array_keys($replacePatterns), array_values($replacePatterns), $text);
     }
 
