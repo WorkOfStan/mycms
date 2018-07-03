@@ -12,7 +12,9 @@ class MyTableAdmin extends MyTableLister
 
     use \Nette\SmartObject;
 
-    /** Constructor
+    /**
+     * Constructor
+     *
      * @param \mysqli $dbms database management system (e.g. new mysqli())
      * @param string $table table name
      * @param array $options
@@ -22,7 +24,9 @@ class MyTableAdmin extends MyTableLister
         parent::__construct($dbms, $table, $options);
     }
 
-    /** Output HTML form to edit specific row in the table
+    /**
+     * Output HTML form to edit specific row in the table
+     *
      * @param mixed $where to identify which row to fetch and offer for edit
      *      e.g. array('id' => 5) translates as "WHERE id=5" in SQL
      *      scalar value translates as array('id' => value)
@@ -55,7 +59,7 @@ class MyTableAdmin extends MyTableLister
             foreach ($where as $key => $value) {
                 $sql [] = Tools::escapeDbIdentifier($key) . '="' . $this->escapeSQL($value) . '"';
             }
-            $sql = 'SELECT ' . Tools::arrayListed($options['include-fields'], 64, ',', '`', '`') . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' WHERE ' . implode(' AND ', $sql) . ' LIMIT 1';
+            $sql = 'SELECT ' . $this->dbms->listColumns($options['include-fields'], $this->fields) . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' WHERE ' . implode(' AND ', $sql) . ' LIMIT 1';
             $record = $this->dbms->query($sql);
             if (is_object($record)) {
                 $record = $record->fetch_assoc();
@@ -67,7 +71,7 @@ class MyTableAdmin extends MyTableLister
         $this->script .= 'AdminRecordName = ' . json_encode($tmp) . ';' . PHP_EOL;
         Tools::setifempty($options['layout-row'], true);
         $output = (isset($options['exclude-form']) && $options['exclude-form'] ? '' : '<form method="post" enctype="multipart/form-data"><fieldset>') . PHP_EOL
-                . Tools::htmlInput('database-table', '', $this->table, 'hidden') . PHP_EOL
+                . Tools::htmlInput('table', '', $this->table, 'hidden') . PHP_EOL
                 . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden') . PHP_EOL;
         $tabs = array($this->fields);
         if (isset($options['tabs']) && is_array($options['tabs'])) {
@@ -121,7 +125,8 @@ class MyTableAdmin extends MyTableLister
     }
 
     /**
-     * 
+     * Output appropriate HTML input item for given field.
+     *
      * @param array $field
      * @param string $key
      * @param array $record
@@ -143,7 +148,7 @@ class MyTableAdmin extends MyTableLister
         } elseif (Tools::among($field['type'], 'datetime', 'timestamp') && Tools::among($value, '0000-00-00', '0000-00-00 00:00:00', '0000-00-00T00:00:00')) {
             $value = '';
         }
-        $output = ($options['layout-row'] ? '' : '<tr><td>')
+        $output = (Tools::set($options['layout-row'], false) ? '' : '<tr><td>')
                 . '<label for="' . Tools::h($key) . $this->rand . '">' . $this->translateColumn($key) . ':</label>'
                 . ($options['layout-row'] ? ' ' : '</td><td>')
                 . Tools::htmlInput(($field['type'] == 'enum' ? $key : "fields-null[$key]"), ($field['type'] == 'enum' && $field['null'] ? 'null' : ''), 1, array(
@@ -154,9 +159,10 @@ class MyTableAdmin extends MyTableLister
                     'class' => 'input-null',
                     'id' => 'null-' . urlencode($key) . $this->rand
                         )
-                ) . ($options['layout-row'] ? '<br />' : '</td><td>') . PHP_EOL;
+                ) . ($options['layout-row'] ? ($field['type'] == 'enum' ? '' : '<br />') : '</td><td>') . PHP_EOL
+                . $this->customInputBefore($key, $value, $record) . PHP_EOL;
         $input = array('id' => $key . $this->rand, 'class' => 'form-control');
-        $custom = $this->customInput($key, $value);
+        $custom = $this->customInput($key, $value, $record);
         if ($custom !== false) {
             $input = $custom;
             $field['type'] = null;
@@ -226,10 +232,10 @@ class MyTableAdmin extends MyTableLister
                 }
                 break;
             case 'date':
-                $input += array(/* 'type' => 'date', */ 'class' => 'form-control input-date');
+                $input += array(/*'type' => 'date',*/ 'class' => 'form-control input-date');
                 break;
             case 'time':
-                $input += array(/* 'type' => 'time', 'step' => 1, */ 'class' => 'form-control input-time');
+                $input += array(/*'type' => 'time',*/ 'step' => 1, 'class' => 'form-control input-time');
                 break;
             case 'decimal': case 'float': case 'double':
                 $value = +$value;
@@ -247,40 +253,36 @@ class MyTableAdmin extends MyTableLister
                 $input += array('type' => 'checkbox', 'step' => 1, 'checked' => ($value ? 'checked' : null));
                 break;
             case 'enum':
-                eval('$choices = array(' . str_replace("''", "\\'", $field['size']) . ');'); //@todo safety
-                if (is_array($choices)) {
-                    $input = array();
-                    foreach ($choices as $k => $v) {
-                        $input[$k] = Tools::htmlInput("fields[$key]", $v === '0' ? '0 ' : "$v ", 1 << $k, array(
-                                    'type' => 'radio',
-                                    'id' => "fields[$key-" . (1 << $k) . "]",
-                                    'value' => (1 << $k),
-                                    'checked' => ($v == $value ? 'checked' : null)
-                        ));
-                    }
-                    $input = array_merge(array(Tools::htmlInput('fields[' . $key . ']', $this->translate('empty') . ' ', 0, array(
-                            'type' => 'radio',
-                            'id' => "fields[$key-0]",
-                            'value' => 0
-                        ))), $input
-                    );
-                    $input = implode(', ', $input);
+                $choices = $this->dbms->decodeChoiceOptions($field['size']);
+                $input = array();
+                foreach ($choices as $k => $v) {
+                    $input[$k] = Tools::htmlInput("fields[$key]", $v, $k + 1, array(
+                                'type' => 'radio',
+                                'id' => "fields[$key-" . (1 << $k) . "]",
+                                'checked' => ($value == $k + 1 ? 'checked' : null)
+                    ));
                 }
+                $input = array_merge(array(Tools::htmlInput('fields[' . $key . ']', $this->translate('empty') . ' ', 0, array(
+                        'type' => 'radio',
+                        'id' => "fields[$key-0]",
+                        'value' => 0
+                    ))), $input
+                );
+                $input = ($options['layout-row'] ? '<br>' : '') . implode(', ', $input) . '<br>';
                 break;
             case 'set':
-                eval('$choices = array(' . str_replace("''", "\\'", $field['size']) . ');'); //@todo safety
-                $checked = explode(',', $value);
-                if (is_array($choices)) {
-                    $temp = array();
-                    foreach ($choices as $k => $v) {
-                        $temp[$k] = Tools::htmlInput("$key-$k", $v, 1 >> ($k + 1), array(
-                                    'type' => 'checkbox',
-                                    'checked' => in_array($v, $checked) ? 'checked' : null,
-                                    'id' => "$key-$k-$this->rand"
-                        ));
-                    }
-                    $input = implode(', ', $temp);
+                $choices = $this->dbms->decodeSetOptions($field['size']);
+                $tmp = array();
+                $value = explode(',', $value);
+                foreach ($choices as $k => $v) {
+                    $tmp[$k] = Tools::htmlInput("fields[$key][$k]", $v === '' ? '<i>' . $this->translate('nothing') . '</i>' : $v, 1 << $k, array(
+                                'type' => 'checkbox',
+                                'checked' => ((1 << $k) & (int)(is_array($value) ? reset($value) : $value)) ? 'checked' : null,
+                                'id' => "$key-$k-$this->rand",
+                                'label-html' => $v === ''
+                    ));
                 }
+                $input = implode(', ', $tmp) . '<br>';
                 break;
             case 'tinyblob': case 'mediumblob': case 'blob': case 'longblob': case 'binary':
                 $input = '<a href="special.php?action=fetch'
@@ -301,7 +303,7 @@ class MyTableAdmin extends MyTableLister
                     array('id' => $key . $this->rand, 'data-maxlength' => $field['size'],
                         'class' => 'form-control type-' . Tools::webalize($field['type']) . ($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : '')
                     ))
-                    . '<i class="fa fab fa-stack-overflow input-limit" aria-hidden="true" data-fields="' . Tools::h($key) . '"></i></div>';
+                    . '<i class="fab fa-stack-overflow input-limit" aria-hidden="true" data-fields="' . Tools::h($key) . '"></i></div>';
         }
         if (is_array($input)) {
             $input = Tools::htmlInput("fields[$key]", false, $value, $input);
@@ -309,23 +311,13 @@ class MyTableAdmin extends MyTableLister
         if (isset($options['original']) && $options['original']) {
             $input .= Tools::htmlInput("original[$key]", false, isset($options['prefill'][$key]) && is_scalar($options['prefill'][$key]) ? '' : $value, 'hidden');
         }
-        $output .= $input . ($options['layout-row'] ? '' : '</td></tr>') . PHP_EOL;
+        $output .= $input . $this->customInputAfter($key, $value, $record) . ($options['layout-row'] ? '' : '</td></tr>') . PHP_EOL;
         return $output;
     }
 
-    /** Get all tables in the database (including comments) and store them to tables
-     */
-    public function getTables()
-    {
-        $this->tables = array();
-        $query = $this->dbms->query('SELECT TABLE_NAME, TABLE_COMMENT FROM information_schema.TABLES '
-                . 'WHERE TABLE_SCHEMA = "' . $this->escapeSQL($this->options['database']) . '"');
-        while ($row = $query->fetch_row()) {
-            $this->tables[$row[0]] = $row[1];
-        }
-    }
-
-    /** Output HTML select for picking a path (project-specific)
+    /**
+     * Output HTML select for picking a path (project-specific)
+     *
      * @param string $name of the table (without prefix) and main column
      * @param int $path_id reference to the path
      * @param array $options
@@ -374,7 +366,9 @@ class MyTableAdmin extends MyTableLister
         return $result;
     }
 
-    /** Output HTML <select name=$field> with $values as its items
+    /**
+     * Output HTML <select name=$field> with $values as its items
+     *
      * @param string $field name of the select element
      * @param mixed $values either array of values for the <select>
      *        or string with the SQL SELECT statement
@@ -416,7 +410,9 @@ class MyTableAdmin extends MyTableLister
         return $result;
     }
 
-    /** Is user authorized to proceed with data-changing operation?
+    /**
+     * Is user authorized to proceed with data-changing operation?
+     *
      * @return bool
      */
     public function authorized()
@@ -514,7 +510,7 @@ class MyTableAdmin extends MyTableLister
         if ($this->authorized() && isset($_GET['where'], $_GET['table']) && $_GET['table']
             && is_array($_GET['where']) && count($_GET['where'])) {
             foreach ($_GET['where'] as $key => $value) {
-                $sql [] = Tools::escapeDbIdentifier($key) . '="' . $this->escapeSQL($value) . '"';
+                $sql []= Tools::escapeDbIdentifier($key) . '="' . $this->escapeSQL($value) . '"';
             }
             $sql = 'DELETE FROM ' . Tools::escapeDbIdentifier($_GET['table']) . ' WHERE ' . implode(' AND ', $sql);
         }
@@ -522,7 +518,8 @@ class MyTableAdmin extends MyTableLister
     }
 
     /**
-     * 
+     * Output for the dashboard (home screen of the admin)
+     *
      * @param array $options OPTIONAL
      */
     public function dashboard(array $options = array())

@@ -34,6 +34,9 @@ class MyAdmin extends MyCommon
         ]
     ];
 
+    /** @var array tables and columns to search in admin */
+    protected $searchColumns = array();
+
     /**
      *
      * @param \GodsDev\MyCMS\MyCMS $MyCMS
@@ -107,10 +110,10 @@ class MyAdmin extends MyCommon
         $TableAdmin = $this->TableAdmin;
         $result = '<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
                 <a class="nav-item mr-2" href="' . Tools::h($_SERVER['SCRIPT_NAME']) . '">MyCMS</a>
-                <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+                <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" aria-expanded="false">
+                    <span class="navbar-toggler-icon mr-1"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+                <div class="collapse navbar-collapse">
                     <ul class="navbar-nav mr-auto">';
         if (Tools::nonempty($_SESSION['user'])) {
             $result .= $this->outputSpecialMenuLinks()
@@ -120,10 +123,10 @@ class MyAdmin extends MyCommon
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                   <a href="" class="dropdown-item disabled"><i class="fa fa-user" aria-hidden="true"></i> ' . Tools::h($_SESSION['user']) . '</a>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item' . (isset($_GET['logout']) ? ' active' : '') . '" href="?user&amp;logout"><i class="fa fas fa-sign-out fa-sign-out-alt" aria-hidden="true"></i> ' . $TableAdmin->translate('Logout') . '</a>
-                  <a class="dropdown-item' . (isset($_GET['change-password']) ? ' active' : '') . '" href="?user&amp;change-password"><i class="fa fa-id-card fa-id-card-o" aria-hidden="true"></i> ' . $TableAdmin->translate('Change password') . '</a>
-                  <a class="dropdown-item' . (isset($_GET['create-user']) ? ' active' : '') . '" href="?user&amp;create-user"><i class="fa fa-user-plus" aria-hidden="true"></i> ' . $TableAdmin->translate('Create user') . '</a>
-                  <a class="dropdown-item' . (isset($_GET['delete-user']) ? ' active' : '') . '" href="?user&amp;delete-user"><i class="fa fa-user-times" aria-hidden="true"></i> ' . $TableAdmin->translate('Delete user') . '</a>
+                  <a class="dropdown-item' . (isset($_GET['logout']) ? ' active' : '') . '" href="?user&amp;logout"><i class="fa fas fa-sign-out fa-sign-out-alt mr-1" aria-hidden="true"></i> ' . $TableAdmin->translate('Logout') . '</a>
+                  <a class="dropdown-item' . (isset($_GET['change-password']) ? ' active' : '') . '" href="?user&amp;change-password"><i class="fa fa-id-card fa-id-card-o mr-1" aria-hidden="true"></i> ' . $TableAdmin->translate('Change password') . '</a>
+                  <a class="dropdown-item' . (isset($_GET['create-user']) ? ' active' : '') . '" href="?user&amp;create-user"><i class="fa fa-user-plus mr-1" aria-hidden="true"></i> ' . $TableAdmin->translate('Create user') . '</a>
+                  <a class="dropdown-item' . (isset($_GET['delete-user']) ? ' active' : '') . '" href="?user&amp;delete-user"><i class="fa fa-user-times mr-1" aria-hidden="true"></i> ' . $TableAdmin->translate('Delete user') . '</a>
                 </div>
               </li>';
         }
@@ -131,20 +134,24 @@ class MyAdmin extends MyCommon
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="' . $TableAdmin->translate('Settings') . '"><i class="fa fa-cog" aria-hidden="true"></i> ' . $TableAdmin->translate('Settings') . '</a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">';
         foreach ($TableAdmin->TRANSLATIONS as $key => $value) {
-            $result .= '<a class="dropdown-item' . ($key == $_SESSION['language'] ? ' active' : '') . '" href="?' . Tools::urlChange(array('language' => $key)) . '"><i class="fa fa-flag" aria-hidden="true"></i> ' . Tools::h($value) . '</a>' . PHP_EOL;
+            $result .= '<a class="dropdown-item' . ($key == $_SESSION['language'] ? ' active' : '') . '" href="?' . Tools::urlChange(array('language' => $key)) . '"><i class="fa fa-flag mr-1" aria-hidden="true"></i> ' . Tools::h($value) . '</a>' . PHP_EOL;
         }
         if (isset($_SESSION['user'])) {
-            $result .= '<div class="dropdown-divider"></div><a class="dropdown-item" href="" id="toggle-nav" title="' . Tools::h($TableAdmin->translate('Toggle sidebar')) . '"><i class="fa fa-columns"></i> ' . $TableAdmin->translate('Sidebar') . '</a>'
+            $result .= '<div class="dropdown-divider"></div><a class="dropdown-item" href="" id="toggle-nav" title="' . Tools::h($TableAdmin->translate('Toggle sidebar')) . '"><i class="fa fa-columns mr-1"></i> ' . $TableAdmin->translate('Sidebar') . '</a>'
                 . $this->outputSpecialSettingsLinks();
         }
         $result .= '</div>
                   </li>
                 </ul>
-                  <!--<form class="form-inline mt-2 mt-md-0">
-                    <input class="form-control mr-sm-2" type="text" placeholder="' . $TableAdmin->translate('Search') . '" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
-                  </form>-->
-                </div>
+                <form class="form-inline mt-md-0">
+                  <div class="input-group">
+                    <input type="text" name="search" value="' . Tools::h(Tools::set($_GET['search'], '')) . '" class="form-control" placeholder="' . $TableAdmin->translate('Search') . '" size="14" required id="nav-search-input">
+                    <div class="input-group-append">
+                      <button class="btn btn-secondary" title="' . $TableAdmin->translate('Search') . '" type="submit"  id="nav-search-button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    </div>
+                  </div>
+                </form>
+              </div>
             </nav>';
         return $result;
     }
@@ -203,13 +210,14 @@ class MyAdmin extends MyCommon
             <details class="uploaded-files"><summary>' . $TableAdmin->translate('Uploaded files') . '</summary>
             <div id="media-files"></div>
             <button class="btn btn-secondary btn-sm mt-3" title="' . $TableAdmin->translate('Delete') . '" id="delete-media-files"><i class="fa fa-check-square" aria-hidden="true"></i> <i class="fa fa-trash" aria-hidden="true"></i></button>
-            <fieldset class="d-inline-block position-relative">
-                <div class="input-group input-group-sm" id="rename-fieldset">
+            <fieldset class="d-inline-block position-relative" id="rename-fieldset">
+                <div class="input-group input-group-sm">
                     <div class="input-group-prepend"><button class="btn btn-secondary" type="submit" title="' . $TableAdmin->translate('Rename') . '" id="rename-media-file"><i class="fa fa-dot-circle"></i> <i class="fa fa-i-cursor"></i></button></div>
                     <span id="file-rename-feedback" class="invalid-tooltip" style="display:none;"></span>' 
-                    . Tools::htmlInput('new_name', '', '', array('class' => 'form-control form-control-sm', 'id' => 'media-file-name')) . '
+                    . Tools::htmlInput('', '', '', array('class' => 'form-control form-control-sm', 'id' => 'media-file-name')) . '
                 </div>
             </fieldset>
+            <select id="file-rename-folder" name="file-rename-folder" class="form-control form-control-sm form-control-inline d-inline-block mt-2 w-initial"></select>
             </details>';
         return $result;
     }
@@ -246,7 +254,7 @@ class MyAdmin extends MyCommon
                 . Tools::htmlInput('new-password', $TableAdmin->translate('New password', false) . ':', '', $options + array('id' => 'new-password', 'autocomplete' => 'new-password'))
                 . Tools::htmlInput('retype-password', $TableAdmin->translate('Retype password', false) . ':', '', $options + array('id' => 'retype-password', 'autocomplete' => 'new-password'))
                 . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden')
-                . '<button type="submit" name="change-password" class="btn btn-primary my-3 ml-3"><i class="fa fa-id-card-o" aria-hidden="true"></i> ' . $TableAdmin->translate('Change password') . '</button>
+                . '<button type="submit" name="change-password" class="btn btn-primary my-3 ml-3"><i class="fas fa-id-card mr-1" aria-hidden="true"></i> ' . $TableAdmin->translate('Change password') . '</button>
                 </fieldset></form>';
         }
         // create user
@@ -387,7 +395,7 @@ class MyAdmin extends MyCommon
 //            . '<script type="text/javascript" src="scripts/admin.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
             . '<script type="text/javascript" src="scripts/admin-specific.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
             . '<script type="text/javascript">' . PHP_EOL;
-        $tmp = array_flip(explode('|', 'Descending|Really delete?|New record|Passwords don\'t match!|Please, fill necessary data.|Select at least one file and try again.|No files|Edit|variable|value|name|size|modified|Select|Please, choose a new name.'));
+        $tmp = array_flip(explode('|', 'Descending|Really delete?|New record|Passwords don\'t match!|Please, fill necessary data.|Select at least one file and try again.|Select at least one record and try again.|No files|Edit|variable|value|name|size|modified|Select|No records found.|Please, choose a new name.'));
         foreach ($tmp as $key => $value) {
             $tmp[$key] = $TableAdmin->translate($key, false);
         }
@@ -467,6 +475,8 @@ class MyAdmin extends MyCommon
                     'return-output' => 1
                 ))
                 . $this->outputTableAfterEdit();
+        } elseif (isset($_POST['edit-selected'])) {
+              $result .= $this->outputTableEditSelected();
         } else {
             // table listing
             $result .= '<h2 class="sub-header">' . $TableAdmin->translate('Listing') . '</h2>'
@@ -478,7 +488,18 @@ class MyAdmin extends MyCommon
     }
 
     /**
+     * Output (in HTML) the admin's layout footer
+     *
+     * @result string
+     */
+    protected function outputFooter()
+    {
+        return '<footer class="sticky-footer">&copy; GODS, s r.o. ' . $this->TableAdmin->translate('All rights reserved.') . '</footer>';
+    }
+
+    /**
      * Return if a project-specific sections should be displayed in admin.
+     *
      * @return bool
      */
     protected function projectSpecificSectionsCondition()
@@ -537,6 +558,159 @@ class MyAdmin extends MyCommon
     }
 
     /**
+     * Output (in HTML) code after editing a record from selected table
+     * Default behaviour is a standard LIKE%% search in tables and columns
+     * defined in $this->searchColumns.
+     *
+     * @param string $keyword
+     * @result string
+     */
+    protected function outputSearchResults($keyword)
+    {
+        $keyword2 = $this->TableAdmin->escapeSQL($keyword);
+        $result = '';
+        foreach ($this->searchColumns as $key => $value) {
+            $id = array_shift($value);
+            $sql = 'SELECT ' . $this->TableAdmin->escapeDbIdentifier($id) . ','
+                . $this->TableAdmin->escapeDbIdentifier(strtr(reset($value), ['_#' => '_' . $_SESSION['language']])) 
+                . ' FROM ' . $this->TableAdmin->escapeDbIdentifier(TAB_PREFIX . $key);
+            $where = '';
+            foreach ($value as $item) {
+                $where .= ' OR LCASE(' . $this->TableAdmin->escapeDbIdentifier(strtr($item, ['_#' => '_' . $_SESSION['language']]))
+                    . ') LIKE LCASE("%' . $keyword2 . '%")';
+            }
+            $sql .= ' WHERE ' . substr($where, 4) . ' LIMIT 100';
+            if ($rows = $this->MyCMS->fetchAll($sql)) {
+                $result .= '<h3><a href="?table=' . urlencode(TAB_PREFIX . $key) . '"><i class="fa fa-table"></i></a> <tt>' . Tools::h($key) . '</tt></h3>' . PHP_EOL . '<ul>';
+                foreach ($rows as $row) {
+                    $row = array_values($row);
+                    $result .= '<li><a href="?table=' . urlencode(TAB_PREFIX . $key) . '&amp;where[' . urlencode($id) . ']=' . urlencode($row[0]) . '">'
+                        . Tools::h($row[1]) . '</a>';
+                    $where = '';
+                    for ($i = 1; $i < count($row); $i++) {
+                        $row[$i] = strip_tags($row[$i]);
+                        if (($p = stripos($row[$i], $keyword)) !== false) {
+                            $row[$i] = 
+                            preg_replace('~(' . preg_quote($keyword) . ')~six', '<b>${1}</b>', $row[$i]);
+                            $where .= '<li>…' . mb_substr($row[$i], max($p - 50, 0), strlen($keyword) + 100) . '…</li>' . PHP_EOL;
+                        }
+                    }
+                    $result .= Tools::wrap($where, '<ul>', '</ul>') . '</li>' . PHP_EOL;
+                }
+                $result .= '</ul>';
+            }
+        }
+        return '<h2>' . $this->TableAdmin->translate('Search results') . '</h2>' . PHP_EOL
+            . '<div>' . $this->TableAdmin->translate('Search') . ': <tt>' . Tools::h($keyword) . '</tt></div>' . PHP_EOL
+            . $result ?: $this->TableAdmin->translate('No records found.');
+    }
+
+    /**
+     * Output (in HTML) a form to edit multiple selected rows of a table
+     *
+     * @result string
+     */
+    protected function outputTableEditSelected()
+    {
+        Tools::setifnull($_POST['check'], array());
+        $result = '<form action="" method="post" enctype="multipart/form-data">' . $this->TableAdmin->translate('Edit selected') . ' (' . (isset($_POST['total-rows']) ? $_POST['total-rows'] : count($_POST['check'])) . ')' 
+            . '<br />'.print_r($_POST,1)
+            . Tools::htmlInput('database-table', '' , $_POST['database-table'], 'hidden')
+            . Tools::htmlInput('token', '' , $_POST['token'], 'hidden')
+            . Tools::htmlInput('total-rows', '' , Tools::ifset($_POST['total-rows']), 'hidden')
+            . '<table class="table table-striped table-edit-selected">';
+        foreach ($this->TableAdmin->fields as $key => $value) {
+            $result .= '<tr><th>' . $this->TableAdmin->translateColumn($key) . '</th>' . PHP_EOL
+                . '<td class="w-initial">';
+            $op = array('original' => $this->TableAdmin->translate('original'), 
+                        'value' => $this->TableAdmin->translate('value')
+                ) + ($value['null'] ? array('null' => 'NULL') : array());
+            $opOptions = array(
+                'class' => 'form-control w-initial p-1', 
+                'data-type' => $value['type'], 
+                'data-for' => $key
+            );
+            switch ($value['basictype']) {
+                case 'integer': case 'rational':
+                    $result .= Tools::htmlSelect("op[$key]", 
+                        $op
+                        + array('+' => '+', '-' => '-') 
+                        + ($value['basictype'] == 'rational' ? array('*' => '*') : array())
+                        + array('random' => 'random'),
+                        '', $opOptions
+                    ) . '</td><td>' . Tools::htmlInput("fields[$key]", '', '', array('type' => 'number', 'class' => 'form-control edit-selected text-right w-initial', 'data-size' => $value['size'])) . '</td>';
+                    break;
+                case 'text': case 'binary':
+                    if (Tools::among($value['type'], 'date', 'datetime', 'time', 'timestamp')) {
+                        $result .= Tools::htmlSelect("op[$key]", 
+                            $op
+                            + array('now' => 'now')
+                            + (Tools::among($value['type'], 'date', 'datetime') ? array('+interval' => '+interval', '-interval' => '-interval') : array()) 
+                            + (Tools::among($value['type'], 'datetime', 'time', 'timestamp') ? array('addtime' => 'addtime', 'subtime' => 'subtime') : array()),
+                            '', $opOptions
+                        );
+                    } else {
+                        $result .= Tools::htmlSelect("op[$key]", 
+                            $op + array(
+                                'prepend' => $this->TableAdmin->translate('prepend'), 
+                                'append' => $this->TableAdmin->translate('append'), 
+                                'md5' => 'md5', 
+                                'sha1' => 'sha1', 
+                                'password' => 'password', 
+                                'uuid' => 'uuid'
+                            ), '', $opOptions
+                        );
+                    }
+                    $result .= '</td><td>';
+                    if (Tools::ends($value['type'], 'text') || Tools::ends($value['type'], 'blob')) {
+                        $result .= Tools::htmlTextarea("fields[$key]", '', null, 3, array('class' => 'form-control edit-selected', 'data-size' => $value['size'])) . '</td>';
+                    } else {
+                        $result .= Tools::htmlInput("fields[$key]", '', '', array('type' => 'text', 'class' => 'form-control edit-selected', 'data-size' => $value['size'])) . '</td>';
+                    }
+                    break;
+                case 'choice':
+                    $matches = $this->TableAdmin->decodeChoiceOptions($this->TableAdmin->fields[$key]['size']);
+                    if ($value['type'] == 'set') {
+                        $result .= Tools::htmlSelect("op[$key]", 
+                            $op + array(
+                                'add' => $this->TableAdmin->translate('add options'), 
+                                'remove' => $this->TableAdmin->translate('remove options'), 
+                            ), '', $opOptions
+                        );
+                        $result .= '</td><td>' . Tools::htmlInput("fields[$key]", '', 1, 'hidden');
+                        foreach ($matches as $matchKey => $match) {
+                            $result .= Tools::htmlInput("fields[$key][]", ($tmp = strtr($match, array("''" => "'", "\\\\" => "\\"))) === '' ? '<i>' . $this->TableAdmin->translate('nothing') . '</i>' : $tmp, 1 << $matchKey, 
+                                array('type' => 'checkbox', 'label-after' => true, 'class' => 'edit-selected', 'label-class' => 'ml-1 mr-2', 'random-id' => true, 'label-html' => $tmp === ''));
+                        }
+                    } else { //enum
+                        $result .= Tools::htmlSelect("op[$key]", $op, '', $opOptions) 
+                            . '</td><td>' 
+                            . '<i>' . Tools::htmlInput("fields[$key]", $this->TableAdmin->translate('empty'), 0, array('type' => 'radio', 'class' => 'edit-selected', 'label-after' => true, 'label-class' => 'mr-2', 'random-id' => true)) . '</i>';
+                        foreach ($matches as $matchKey => $match) {
+                            $result .= Tools::htmlInput("fields[$key]", ($tmp = strtr($match, array("''" => "'", "\\\\" => "\\"))) === '' ? '<i>' . $this->TableAdmin->translate('nothing') . '</i>' : $tmp, $matchKey + 1, 
+                                array('type' => 'radio', 'label-after' => true, 'class' => 'edit-selected', 'label-class' => 'ml-1 mr-2', 'random-id' => true, 'label-html' => $tmp === ''));
+                        }
+                    }
+                    $result .= '</td>' . PHP_EOL;
+                    break;
+            }
+            $result .= "\n</tr>\n";
+        }
+        $result .= '</table><div>
+            <button name="save-selected" class="btn btn-primary mr-1" value="1"><i class="fa fa-save mr-1"></i> ' . $this->TableAdmin->translate('Save') . '</button>
+            <button name="delete-selected" class="btn btn-secondary" value="1"><i class="fa fa-save mr-1"></i> ' . $this->TableAdmin->translate('Delete') . '</button>';
+        if (isset($_POST['check-all'])) {
+            $result .= Tools::htmlInput('check-all', '', 1, 'hidden') . PHP_EOL;
+        } elseif (Tools::setarray($_POST['check'])) {
+            foreach ($_POST['check'] as $value) {
+                $result .= Tools::htmlInput('check[]', '', $value, 'hidden') . PHP_EOL;
+            }
+        }
+        $result .= '</div></form>';
+        return $result;
+    }
+
+    /**
      * Return the HTML output of all administration page.
      *
      * Expected global variables:
@@ -585,6 +759,10 @@ class MyAdmin extends MyCommon
         foreach (glob(DIR_ASSETS . '*', GLOB_ONLYDIR) as $value) {
             $this->ASSETS_SUBFOLDERS []= substr($value, strlen(DIR_ASSETS));
         }
+        // search results
+        if (Tools::set($_GET['search'])) {
+            $output .= $this->outputSearchResults($_GET['search']);
+        }
         // table listing/editing
         if ($_GET['table']) {
             $output .= $this->outputTable();
@@ -610,7 +788,8 @@ class MyAdmin extends MyCommon
         if (isset($_SESSION['user'])) {
             $output .= $this->outputDashboard();
         }
-        $output .= '</main></div>' . PHP_EOL . '<footer class="sticky-footer">&copy; GODS, s r.o. All rights reserved.</footer>';
+        $output .= '</main></div>' . PHP_EOL
+            . $this->outputFooter();
         if (isset($_SESSION['user'])) {
             $output .= $this->outputImageSelector();
         }

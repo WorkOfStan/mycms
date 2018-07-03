@@ -17,6 +17,9 @@ class MyTableLister
     /** @var \mysqli database management system */
     protected $dbms;
 
+    /** @var string current database */
+    protected $database;
+
     /** @var string table to list */
     protected $table;
 
@@ -90,7 +93,7 @@ class MyTableLister
     {
         $this->dbms = $dbms;
         $this->options = $options;
-        $this->options['database'] = $this->dbms->fetchSingle('SELECT DATABASE()');
+        $this->database = $this->dbms->fetchSingle('SELECT DATABASE()');
         $this->getTables();
         $this->setTable($table);
         $this->rand = rand(1e5, 1e6 - 1);
@@ -105,7 +108,7 @@ class MyTableLister
     {
         $this->tables = array();
         $query = $this->dbms->query('SELECT TABLE_NAME, TABLE_COMMENT FROM information_schema.TABLES ' //@todo database-specific
-                . 'WHERE TABLE_SCHEMA = "' . $this->escapeSQL($this->options['database']) . '"');
+                . 'WHERE TABLE_SCHEMA = "' . $this->escapeSQL($this->database) . '"');
         while ($row = $query->fetch_row()) {
             $this->tables[$row[0]] = $row[1];
         }
@@ -170,6 +173,7 @@ class MyTableLister
                         $item['basictype'] = 'binary';
                         break;
                     default:
+                        // this includes date/time, geometry and other scarcely used types
                         $item['basictype'] = 'text';
                 }
                 $result[$row['Field']] = $item;
@@ -180,14 +184,14 @@ class MyTableLister
         }
         if ($query = $this->dbms->query('SELECT COLUMN_NAME,REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME 
             FROM information_schema.KEY_COLUMN_USAGE WHERE CONSTRAINT_NAME != "PRIMARY" AND CONSTRAINT_CATALOG = "def" 
-            AND TABLE_SCHEMA = "' . $this->escapeSQL($this->options['database']) . '" 
+            AND TABLE_SCHEMA = "' . $this->escapeSQL($this->database) . '" 
             AND TABLE_NAME = "' . $this->escapeSQL($this->table) . '"')) {
             while ($row = $query->fetch_assoc()) {
                 $this->fields[$row['COLUMN_NAME']]['foreign_table'] = $row['REFERENCED_TABLE_NAME'];
                 $this->fields[$row['COLUMN_NAME']]['foreign_column'] = $row['REFERENCED_COLUMN_NAME'];
             }
         }
-        $tmp = $this->dbms->fetchSingle('SELECT TABLE_COMMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA="' . $this->escapeSQL($this->options['database']) . '" AND TABLE_NAME="' . $this->escapeSQL($this->table) . '"');
+        $tmp = $this->dbms->fetchSingle('SELECT TABLE_COMMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA="' . $this->escapeSQL($this->database) . '" AND TABLE_NAME="' . $this->escapeSQL($this->table) . '"');
         $this->tableContext = json_decode($tmp, true) or array();
     }
 
@@ -200,7 +204,8 @@ class MyTableLister
      *   $options['no-sort']=non-zero - don't offer 'sorting' option  
      *   $options['no-search']=non-zero - don't offer 'search' option  
      *   $options['no-display-options']=non-zero - don't offer 'display' option  
-     *   $options['no-multi-options']=non-zero - allow to change values via so called quick column
+     *   $options['no-multi-options']=non-zero - disallow to change values via so called quick column
+     *   $options['no-selected-rows-operations'] - disallow to change selected rows in bulk
      *   $options['include']=array - columns to include 
      *   $options['exclude']=array - columns to exclude
      *   $options['columns']=array - special treatment of columns
@@ -217,7 +222,7 @@ class MyTableLister
         if ($offset < 0) {
             $offset = 0;
         }
-        foreach (array('read-only', 'no-search', 'no-sort', 'no-toggle', 'no-display-options', 'no-multi-options') as $i) {
+        foreach (array('read-only', 'no-search', 'no-sort', 'no-toggle', 'no-display-options', 'no-multi-options', 'no-selected-rows-operations') as $i) {
             Tools::setifempty($options[$i]);
         }
         // find out what columns to include/exclude
@@ -330,20 +335,20 @@ class MyTableLister
                 . Tools::wrap(substr($sort, 1), ' ORDER BY ')
                 . " LIMIT $offset, $limit";
         $query = $this->dbms->query($sql);
-        $totalRows = $this->dbms->fetchSingle('SELECT FOUND_ROWS()');
+        $options['total-rows'] = $this->dbms->fetchSingle('SELECT FOUND_ROWS()');
         $output = '';
         if (!$options['read-only']) {
             $output .= '<a href="?table=' . urlencode($this->table) . '&amp;where[]="><span class="glyphicon glyphicon-plus fa fa-plus-circle" /></span> ' . $this->translate('New row') . '</a>' . PHP_EOL;
         }
         $output .= $this->viewInputs($options);
-        if ($totalRows) {
-            $output .= $this->viewTable($query, $columns, $options);
-            $output .= $this->pagination($limit, $totalRows, null, $options);
+        if ($options['total-rows']) {
+            $output .= $this->viewTable($query, $columns, $options)
+                . $this->pagination($limit, $options['total-rows'], null, $options);
         }
-        if (!$totalRows && isset($_GET['col'])) {
+        if (!$options['total-rows'] && isset($_GET['col'])) {
             $output .=  '<p class="alert alert-danger"><small>' . $this->translate('No records found.') . '</small></p>';
         } else {
-            $output .=  '<p class="text-info"><small>' . $this->translate('Total rows: ') . $totalRows . '.</small></p>';
+            $output .=  '<p class="text-info"><small>' . $this->translate('Total rows: ') . $options['total-rows'] . '.</small></p>';
         }
         if (isset($options['return-output']) && $options['return-output']) {
             return $output;
@@ -377,19 +382,19 @@ class MyTableLister
         }
         if (!Tools::set($option['no-sort'])) {
             $output .= '<fieldset><legend><a href="javascript:;" onclick="$(\'#sort-div' . $this->rand . '\').toggle()">
-                <span class="glyphicon glyphicon-sort fa fa-sort"></span> ' . $this->translate('Sort') . '</a></legend>
+                <span class="glyphicon glyphicon-sort fa fa-sort mx-1"></span> ' . $this->translate('Sort') . '</a></legend>
                 <div class="sort-div" id="sort-div' . $this->rand . '"></div></fieldset>' . PHP_EOL;
         }
         $output .= '<fieldset><legend><span class="glyphicon glyphicon-list-alt fa fa-list-alt"></span> ' . $this->translate('View') . '</legend>
             <input type="hidden" name="table" value="' . Tools::h($this->table) . '" />
-            <label title="' . $this->translate('Text lengths') . '"><span class="glyphicon glyphicon-option-horizontal fa fa-ellipsis-h"></span>' 
+            <label title="' . $this->translate('Text lengths') . '"><span class="glyphicon glyphicon-option-horizontal fa fa-ellipsis-h mx-1"></span>' 
                 . Tools::htmlInput('textsize', '', Tools::setifnull($_GET['textsize'], $this->DEFAULTS['TEXTSIZE']), array('size' => 3, 'class' => 'text-right')) . '
             </label>
-            <label title="' . $this->translate('Rows per page') . '"><span class="glyphicon glyphicon-option-vertical fa fa-ellipsis-v"></span>' 
+            <label title="' . $this->translate('Rows per page') . '"><span class="glyphicon glyphicon-option-vertical fa fa-ellipsis-v mx-1"></span>' 
                 . Tools::htmlInput('limit', '', Tools::setifnull($_GET['limit'], $this->DEFAULTS['PAGESIZE']), array('size' => 3, 'class' => 'text-right')) . '
             </label>' 
                 . Tools::htmlInput('offset', '', Tools::setifnull($_GET['offset'], 0), 'hidden') . '
-            <button type="submit" class="btn btn-sm" title="' . $this->translate('View') . '"/>
+            <button type="submit" class="btn btn-sm ml-1" title="' . $this->translate('View') . '"/>
                 <span class="glyphicon glyphicon-list-alt fa fa-list-alt"></span>
             </button>
             </fieldset></form>
@@ -442,14 +447,16 @@ class MyTableLister
     protected function viewTable($query, array $columns, array $options)
     {
         Tools::setifnull($_GET['sort']);
-        $output = '<form action="" method="post">' . PHP_EOL
-            . '<table class="table table-bordered table-striped table-admin" data-order="0" id="table-admin' . $this->rand . '">'
-            . PHP_EOL . '<thead><tr>' . ($options['no-multi-options'] ? '' : '<th>' . Tools::htmlInput('', '', '', array('type' => 'checkbox', 'class' => 'check-all', 'title' => $this->translate('Check all'))) . '</th>');
+        $output = '<form action="" method="post" enctype="multipart/form-data">' . PHP_EOL
+            . '<table class="table table-bordered table-striped table-admin" data-order="0" id="table-admin' . $this->rand . '">' . PHP_EOL 
+            . '<thead><tr>' . ($options['no-multi-options'] ? '' : '<th>' . Tools::htmlInput('', '', '', array('type' => 'checkbox', 'class' => 'check-all', 'title' => $this->translate('Check all'))) . '</th>');
         $i = 1;
         $primary = array();
         foreach ($columns as $key => $value) {
             $output .= '<th' . (count($_GET['sort']) == 1 && $_GET['sort'][0] == $i ? ' class="active"' : '') . '>'
-                . '<a href="?' . Tools::urlChange(array('sort%5B0%5D' => null)) . '&amp;sort%5B0%5D=' . ($i * ($_GET['sort'] == $i ? -1 : 1)) . '" title="' . $this->translateColumn($key) . '">' . Tools::h($key) . '</a>'
+                . '<div class="column-menu"><a href="?' . Tools::urlChange(array('sort%5B0%5D' => null)) . '&amp;sort%5B0%5D=' . ($i * ($_GET['sort'] == $i ? -1 : 1)) . '" title="' . $this->translateColumn($key) . '">' . Tools::h($key) . '</a>'
+                . '<span class="op"><a href="?' . Tools::urlChange(array('sort%5B0%5D' => null)) . '&amp;sort%5B0%5D=' . ($i * ($_GET['sort'] == $i ? -1 : 1)) . '&amp;desc[0]=1" class="desc ml-1 px-1"><i class="fas fa-long-arrow-alt-down"></i></a>'
+                . '<a href="javascript:addSearchRow($(\'#search-div' . $this->rand . '\'), ' . $i . ', 0, \'\')" class="filter px-1">=</a></span></div>'
                 . '</th>' . PHP_EOL;
             if ($this->fields[$key]['key'] == 'PRI') {
                 $primary [] = $key;
@@ -500,7 +507,18 @@ class MyTableLister
                 $output .= '</tr>' . PHP_EOL;
             }
         }
-        $output .= '</tbody></table>' . PHP_EOL . '</form>';
+        $output .= '</tbody></table>' . PHP_EOL;
+        if (!isset($options['no-selected-rows-operations'])) {
+            $output .= '<div class="selected-rows mb-2" title="' . $this->translate('Selected records') . '"><i class="fa fa-check-square"></i>=<span class="listed">0</span> 
+                <label class="btn btn-sm btn-light mx-1 mt-2">' . Tools::htmlInput('total-rows', '', $options['total-rows'], array('type' => 'checkbox', 'class' => 'total-rows')) . ' ' . $this->translate('All records') . '</label>
+                <button name="table-export" value="1" class="btn btn-sm ml-1"><i class="fa fa-download"></i> ' . $this->translate('Export') . '</button>
+                <button name="edit-selected" value="1" class="btn btn-sm ml-1"><i class="fa fa-edit"></i> ' . $this->translate('Edit') . '</button>
+                <button name="table-clone" value="1" class="btn btn-sm ml-1"><i class="far fa-clone"></i> ' . $this->translate('Clone') . '</button>
+                </div>';
+        }
+        $output .= Tools::htmlInput('database-table', '', $this->table, 'hidden')
+            . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden')
+            . '</form>' . PHP_EOL;
         if (isset($options['return-output']) && $options['return-output']) {
             return $output;
         }
@@ -600,19 +618,46 @@ class MyTableLister
         return $result;
     }
 
+    public function getTable()
+    {
+        return $this->table;
+    }
+
+    public function getDatabase()
+    {
+        return $this->database;
+    }
+
+    /**
+     * Wrapper for $this->dbms->escapeSQL()
+     */
     public function escapeSQL($string)
     {
         return $this->dbms->escapeSQL($string);
     }
 
+    /**
+     * Wrapper for $this->dbms->escapeDbIdentifier()
+     */
     public function escapeDbIdentifier($string)
     {
         return $this->dbms->escapeDbIdentifier($string);
     }
 
+    /**
+     * Wrapper for $this->dbms->errorDuplicateEntry()
+     */
     public function errorDuplicateEntry()
     {
         return $this->dbms->errorDuplicateEntry();
+    }
+
+    /**
+     * Wrapper for $this->dbms->checkIntervalFormat()
+     */
+    public function checkIntervalFormat($interval)
+    {
+        return $this->dbms->checkIntervalFormat($interval);
     }
 
     /**
@@ -669,14 +714,42 @@ class MyTableLister
     // custom methods - meant to be rewritten in the class' children
     
     /**
-     * Customize particular field's HTML of current $table
+     * Custom HTML instead of standard field's input
      * 
      * @param string $field
      * @param mixed $value field's value
+     * @param array $record
      * @return boolean - true = method was applied so don't proceed with the default, false = method wasn't applied
      */
-    public function customInput($field, $value)
+    public function customInput($field, $value, array $record = array())
     {
+        return false;
+    }
+
+    /**
+     * Custom HTML showed before particular field (but after its label).
+     *
+     * @param string $field
+     * @param string $value
+     * @param array $record
+     * @return string HTML
+     */
+    public function customInputBefore($field, $value, array $record = array())
+    {
+        return '';
+    }
+
+    /**
+     * Custom HTML showed after particular field (but still in the table row, in case of table display).
+     *
+     * @param string $field
+     * @param string $value
+     * @param array $record
+     * @return string HTML
+     */
+    public function customInputAfter($field, $value, array $record = array())
+    {
+        return '';
     }
 
     /**
@@ -796,5 +869,10 @@ class MyTableLister
             return $output;
         }
         echo $output;
+    }
+
+    public function decodeChoiceOptions($list)
+    {
+        return $this->dbms->decodeChoiceOptions($list);
     }
 }
