@@ -87,12 +87,12 @@ class MyAdmin extends MyCommon
             <meta http-equiv="content-type" content="text/html; charset=utf-8">
             <meta name="description" content="">
             <meta name="author" content="">
-            <title>' . Tools::h(Tools::wrap($title, '', ' - CMS Admin', 'CMS Admin')) . '</title>'
-            . Tools::arrayListed(Tools::set($this->clientSideResources['css-pre-admin'], []), 0, '', '<link rel="stylesheet" href="', '" />') . PHP_EOL
+            <title>' . Tools::h(Tools::wrap($title, '', ' - CMS Admin', 'CMS Admin')) . '</title>' . PHP_EOL
+            . Tools::arrayListed(Tools::set($this->clientSideResources['css-pre-admin'], []), 0, '', '<link rel="stylesheet" href="', '" />' . PHP_EOL)
             . ' <style type="text/css">' . PHP_EOL
             . $this->getAdminCss() //@todo how to make a link rel instead of inline css?
             . '</style>'. PHP_EOL
-            . Tools::arrayListed(Tools::set($this->clientSideResources['css'], []), 0, '', '<link rel="stylesheet" href="', '" />') . PHP_EOL
+            . Tools::arrayListed(Tools::set($this->clientSideResources['css'], []), 0, '', '<link rel="stylesheet" href="', '" />' . PHP_EOL)
             . '<!--[if lt IE 9]>
             <script type="text/javascript" src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
             <script type="text/javascript" src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -110,10 +110,9 @@ class MyAdmin extends MyCommon
         $TableAdmin = $this->TableAdmin;
         $result = '<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
                 <a class="nav-item mr-2" href="' . Tools::h($_SERVER['SCRIPT_NAME']) . '">MyCMS</a>
-                <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" aria-expanded="false">
-                    <span class="navbar-toggler-icon mr-1"></span>
-                </button>
-                <div class="collapse navbar-collapse">
+                <button class="btn btn-secondary btn-sm" title="' . $TableAdmin->translate('Search') . '" type="submit" id="nav-search-button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" aria-expanded="false" data-target="#navbar-content" aria-controls="navbar-content"><span class="navbar-toggler-icon mr-1"></span></button>
+                <div class="collapse navbar-collapse" id="navbar-content">
                     <ul class="navbar-nav mr-auto">';
         if (Tools::nonempty($_SESSION['user'])) {
             $result .= $this->outputSpecialMenuLinks()
@@ -140,19 +139,14 @@ class MyAdmin extends MyCommon
             $result .= '<div class="dropdown-divider"></div><a class="dropdown-item" href="" id="toggle-nav" title="' . Tools::h($TableAdmin->translate('Toggle sidebar')) . '"><i class="fa fa-columns mr-1"></i> ' . $TableAdmin->translate('Sidebar') . '</a>'
                 . $this->outputSpecialSettingsLinks();
         }
-        $result .= '</div>
-                  </li>
-                </ul>
-                <form class="form-inline mt-md-0">
-                  <div class="input-group">
-                    <input type="text" name="search" value="' . Tools::h(Tools::set($_GET['search'], '')) . '" class="form-control" placeholder="' . $TableAdmin->translate('Search') . '" size="14" required id="nav-search-input">
-                    <div class="input-group-append">
-                      <button class="btn btn-secondary" title="' . $TableAdmin->translate('Search') . '" type="submit"  id="nav-search-button"><i class="fa fa-search" aria-hidden="true"></i></button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </nav>';
+        $result .= '</div></li></ul></div>';
+        if (isset($_SESSION['user'])) {
+            $result .= '<form class="collapse mt-md-0" id="nav-search-form">'
+                . Tools::htmlInput('search', '', Tools::set($_GET['search'], ''), array('class' => 'form-control', 'placeholder' => $TableAdmin->translate('Search'), 'required' => true, 'id' => 'nav-search-input'))
+                . '</form>';
+        }
+        $result .= '
+        </nav>';
         return $result;
     }
 
@@ -207,7 +201,7 @@ class MyAdmin extends MyCommon
                     <button type="submit" name="upload-media" value="1" class="btn btb-lg btn-primary"><i class="fa fa-upload" aria-hidden="true"></i> ' . $TableAdmin->translate('Upload') . '</button>
                 </fieldset>
             </form><hr />
-            <details class="uploaded-files"><summary>' . $TableAdmin->translate('Uploaded files') . '</summary>
+            <details class="uploaded-files"><summary>' . $TableAdmin->translate('Uploaded files') . ' <small class="badge badge-secondary"></small></summary>
             <div id="media-files"></div>
             <button class="btn btn-secondary btn-sm mt-3" title="' . $TableAdmin->translate('Delete') . '" id="delete-media-files"><i class="fa fa-check-square" aria-hidden="true"></i> <i class="fa fa-trash" aria-hidden="true"></i></button>
             <fieldset class="d-inline-block position-relative" id="rename-fieldset">
@@ -613,8 +607,8 @@ class MyAdmin extends MyCommon
     protected function outputTableEditSelected()
     {
         Tools::setifnull($_POST['check'], array());
-        $result = '<form action="" method="post" enctype="multipart/form-data">' . $this->TableAdmin->translate('Edit selected') . ' (' . (isset($_POST['total-rows']) ? $_POST['total-rows'] : count($_POST['check'])) . ')' 
-            . '<br />'.print_r($_POST,1)
+        $result = '<form action="" method="post" enctype="multipart/form-data" class="selected-records-form">'
+            . '<p class="lead">' . $this->TableAdmin->translate('Edit selected') . ' (' . (isset($_POST['total-rows']) ? $_POST['total-rows'] : count($_POST['check'])) . ')</p>' 
             . Tools::htmlInput('database-table', '' , $_POST['database-table'], 'hidden')
             . Tools::htmlInput('token', '' , $_POST['token'], 'hidden')
             . Tools::htmlInput('total-rows', '' , Tools::ifset($_POST['total-rows']), 'hidden')
@@ -623,7 +617,7 @@ class MyAdmin extends MyCommon
             $result .= '<tr><th>' . $this->TableAdmin->translateColumn($key) . '</th>' . PHP_EOL
                 . '<td class="w-initial">';
             $op = array('original' => $this->TableAdmin->translate('original'), 
-                        'value' => $this->TableAdmin->translate('value')
+                        'value' => '=' //$this->TableAdmin->translate('value')
                 ) + ($value['null'] ? array('null' => 'NULL') : array());
             $opOptions = array(
                 'class' => 'form-control w-initial p-1', 
@@ -698,7 +692,7 @@ class MyAdmin extends MyCommon
         }
         $result .= '</table><div>
             <button name="save-selected" class="btn btn-primary mr-1" value="1"><i class="fa fa-save mr-1"></i> ' . $this->TableAdmin->translate('Save') . '</button>
-            <button name="delete-selected" class="btn btn-secondary" value="1"><i class="fa fa-save mr-1"></i> ' . $this->TableAdmin->translate('Delete') . '</button>';
+            <button name="delete-selected" class="btn btn-secondary" value="1"><i class="fa fa-trash mr-1"></i> ' . $this->TableAdmin->translate('Delete') . '</button>';
         if (isset($_POST['check-all'])) {
             $result .= Tools::htmlInput('check-all', '', 1, 'hidden') . PHP_EOL;
         } elseif (Tools::setarray($_POST['check'])) {
@@ -750,9 +744,9 @@ class MyAdmin extends MyCommon
             . $this->outputHead($tmpTitle)
             . '<body>' . PHP_EOL . '<header>'
             . $this->outputNavigation()
-            . '</header>' . PHP_EOL . '<div class="container-fluid">' . PHP_EOL;
+            . '</header>' . PHP_EOL . '<div class="container-fluid row">' . PHP_EOL;
         if (isset($_SESSION['user']) && $_SESSION['user']) {
-            $output .= '<nav class="col-md-3 bg-light sidebar" id="admin-sidebar">' . $this->outputAgendas() . '</nav>' . PHP_EOL;
+            $output .= '<nav class="col-md-3 bg-light sidebar order-last" id="admin-sidebar">' . $this->outputAgendas() . '</nav>' . PHP_EOL;
         }
         $output .= '<main class="ml-sm-auto col-md-9 pt-3" role="main" id="admin-main">'
             . Tools::showMessages(false);
@@ -760,7 +754,7 @@ class MyAdmin extends MyCommon
             $this->ASSETS_SUBFOLDERS []= substr($value, strlen(DIR_ASSETS));
         }
         // search results
-        if (Tools::set($_GET['search'])) {
+        if (isset($_SESSION['user']) && Tools::set($_GET['search'])) {
             $output .= $this->outputSearchResults($_GET['search']);
         }
         // table listing/editing

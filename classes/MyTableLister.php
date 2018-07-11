@@ -251,13 +251,9 @@ class MyTableLister
         }
         // compose the SQL
         $join = '';
-        $primary = '';
         $where = '';
         $sort = '';
         foreach ($columns as $key => $value) {
-            if ($this->fields[$key]['key'] == 'PRI') {
-                $primary = $key;
-            }
             if (isset($this->fields[$key]['foreign_table']) && $this->fields[$key]['foreign_table']) {
                 $join .= ' LEFT JOIN ' . $this->fields[$key]['foreign_table']
                     . ' ON ' . $this->table . '.' . $key
@@ -451,34 +447,25 @@ class MyTableLister
             . '<table class="table table-bordered table-striped table-admin" data-order="0" id="table-admin' . $this->rand . '">' . PHP_EOL 
             . '<thead><tr>' . ($options['no-multi-options'] ? '' : '<th>' . Tools::htmlInput('', '', '', array('type' => 'checkbox', 'class' => 'check-all', 'title' => $this->translate('Check all'))) . '</th>');
         $i = 1;
-        $primary = array();
         foreach ($columns as $key => $value) {
             $output .= '<th' . (count($_GET['sort']) == 1 && $_GET['sort'][0] == $i ? ' class="active"' : '') . '>'
                 . '<div class="column-menu"><a href="?' . Tools::urlChange(array('sort%5B0%5D' => null)) . '&amp;sort%5B0%5D=' . ($i * ($_GET['sort'] == $i ? -1 : 1)) . '" title="' . $this->translateColumn($key) . '">' . Tools::h($key) . '</a>'
                 . '<span class="op"><a href="?' . Tools::urlChange(array('sort%5B0%5D' => null)) . '&amp;sort%5B0%5D=' . ($i * ($_GET['sort'] == $i ? -1 : 1)) . '&amp;desc[0]=1" class="desc ml-1 px-1"><i class="fas fa-long-arrow-alt-down"></i></a>'
                 . '<a href="javascript:addSearchRow($(\'#search-div' . $this->rand . '\'), ' . $i . ', 0, \'\')" class="filter px-1">=</a></span></div>'
                 . '</th>' . PHP_EOL;
-            if ($this->fields[$key]['key'] == 'PRI') {
-                $primary [] = $key;
-            }
             $i++;
         }
         $output .= '</tr></thead><tbody>';
         if (is_object($query)) {
             for ($i = 0; $row = $query->fetch_assoc(); $i++) {
                 $output .= '<tr><td' . ($options['no-multi-options'] ? '' : ' class="multi-options"') . '>';
-                $url = '';
-                foreach ($primary as $field) {
-                    $url .= '&where[' . urlencode($field) . ']=' . urlencode($row[$field]);
-                }
+                $url = $this->rowLink($row);
                 if (!$options['no-multi-options']) {
                     $value = '';
-                    $output .= Tools::htmlInput('check[]', '', mb_substr($url, 1), array('type' => 'checkbox', 'data-order' => $i));
+                    $output .= Tools::htmlInput('check[]', '', $url, array('type' => 'checkbox', 'data-order' => $i));
                 }
-                if ($primary) {
-                    $output .= '<a href="?table=' . urlencode($this->table) . Tools::h($url) . '" title="' . $this->translate('Edit') . '">'
-                    . '<small class="glyphicon glyphicon-edit fa fa-pencil fa-edit" aria-hidden="true"></small></a>';
-                }
+                $output .= '<a href="?table=' . urlencode($this->table) . '&amp;' . $url . '" title="' . $this->translate('Edit') . '">'
+                . '<small class="glyphicon glyphicon-edit fa fa-pencil fa-edit" aria-hidden="true"></small></a>';
                 $output .= '</td>';
                 foreach ($row as $key => $value) {
                     if (Tools::ends($key, $this->DEFAULTS['FOREIGNLINK'])) {
@@ -837,7 +824,7 @@ class MyTableLister
      * Display a break-down of records in given table (default "content") by given column (default "type")
      * 
      * @param array $options OPTIONAL
-     * @return type
+     * @return string
      */
     public function contentByType(array $options = array())
     {
@@ -874,5 +861,63 @@ class MyTableLister
     public function decodeChoiceOptions($list)
     {
         return $this->dbms->decodeChoiceOptions($list);
+    }
+
+    /**
+     * Return keys to current table of a specified type(s)
+     *
+     * @param array $types type(s) - possible items: PRI, UNI, MUL (database specific)
+     * @return array filtered keys, e.g. ['id'=>'PRI', 'division'=>'MUL', 'document_id'=>'UNI'] 
+     */
+    public function filterKeys($types)
+    {
+        if (!is_array($types) || func_num_args() > 1) {
+            $types = func_get_args();
+        }
+        $result = array();
+        foreach ($types as $type) {
+            foreach ($this->fields as $key => $field) {
+                if ($field['key'] == $type) {
+                    $result[$key] = $type;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Return a link (URL fragment) to a given row of the current table
+     *
+     * @param array $row
+     * @retun string URL fragment identifying current row, e.g. "where[id]=5"
+     */
+    public function rowLink($row)
+    {
+        $result = array();
+        if ($keys = $this->filterKeys('PRI')) {
+            $result []= 'where[' . urlencode(array_keys($keys)[0]) . ']=' . urlencode(Tools::set($row[array_keys($keys)[0]]));
+        } elseif ($keys = $this->filterKeys('UNI')) {
+            foreach ($keys as $key => $value) {
+                if (isset($row[$key]) && $row[$key] !== null) {
+                    $result []= 'where[' . urlencode($key) . ']=' . urlencode($value);
+                    break;
+                } else {
+                    $result []= 'null[' . urlencode($key) . ']=';
+                }
+            }
+        }
+        if (!$result) {
+            foreach ($this->fields as $key => $field) {
+                if (!isset($row[$key])) {
+                    continue;
+                }
+                if ($row[$key] === null) {
+                    $result []= 'null[' . urlencode($key) . ']=';
+                } else {
+                    $result []= 'where[' . urlencode($key) . ']=' . urlencode($row[$key]);
+                }
+            }
+        }
+        return implode('&amp;', $result);
     }
 }

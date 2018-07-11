@@ -70,7 +70,7 @@ class MyTableAdmin extends MyTableLister
         $tmp = is_null($tmp) && isset($record[substr($this->table, strlen(TAB_PREFIX)) . '_' . DEFAULT_LANGUAGE]) ? $record[substr($this->table, strlen(TAB_PREFIX)) . '_' . DEFAULT_LANGUAGE] : '';
         $this->script .= 'AdminRecordName = ' . json_encode($tmp) . ';' . PHP_EOL;
         Tools::setifempty($options['layout-row'], true);
-        $output = (isset($options['exclude-form']) && $options['exclude-form'] ? '' : '<form method="post" enctype="multipart/form-data"><fieldset>') . PHP_EOL
+        $output = (isset($options['exclude-form']) && $options['exclude-form'] ? '' : '<form method="post" enctype="multipart/form-data" class="record-form"><fieldset>') . PHP_EOL
                 . Tools::htmlInput('table', '', $this->table, 'hidden') . PHP_EOL
                 . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden') . PHP_EOL;
         $tabs = array($this->fields);
@@ -112,8 +112,9 @@ class MyTableAdmin extends MyTableLister
                 . '<button type="submit" name="record-save" value="1" class="btn btn-default btn-primary">'
                 . '<span class="glyphicon glyphicon-floppy-save fa fa-floppy-o fa-save" aria-hidden="true"></span> ' . $this->translate('Save') . '</button> ';
             if ($record) {
-                $output .= '<button type="submit" name="record-delete" class="btn btn-default" value="1" onclick="return confirm(\'' . $this->translate('Really delete?') . '\');">'
-                        . '<span class="glyphicon glyphicon-floppy-remove fa fa-trash-o fa-trash" aria-hidden="true"></span> ' . $this->translate('Delete') . '</button>';
+                $output .= '<button type="submit" name="record-delete" class="btn btn-default" value="1" onclick="return confirm(\'' . $this->translate('Really delete?') . '\');">' . PHP_EOL
+                        . '<span class="glyphicon glyphicon-floppy-remove fa fa-trash-o fa-trash" aria-hidden="true"></span> ' . $this->translate('Delete') . '</button>' . PHP_EOL
+                        . Tools::htmlInput('after', '', '', 'hidden') . PHP_EOL;
             }
             $output .= '</div>';
         }
@@ -259,13 +260,15 @@ class MyTableAdmin extends MyTableLister
                     $input[$k] = Tools::htmlInput("fields[$key]", $v, $k + 1, array(
                                 'type' => 'radio',
                                 'id' => "fields[$key-" . (1 << $k) . "]",
-                                'checked' => ($value == $k + 1 ? 'checked' : null)
+                                'checked' => ($value == $k + 1 ? 'checked' : null),
+                                'label-class' => 'font-weight-normal'
                     ));
                 }
                 $input = array_merge(array(Tools::htmlInput('fields[' . $key . ']', $this->translate('empty') . ' ', 0, array(
                         'type' => 'radio',
                         'id' => "fields[$key-0]",
-                        'value' => 0
+                        'value' => 0,
+                        'label-class' => 'font-weight-normal'
                     ))), $input
                 );
                 $input = ($options['layout-row'] ? '<br>' : '') . implode(', ', $input) . '<br>';
@@ -279,19 +282,19 @@ class MyTableAdmin extends MyTableLister
                                 'type' => 'checkbox',
                                 'checked' => ((1 << $k) & (int)(is_array($value) ? reset($value) : $value)) ? 'checked' : null,
                                 'id' => "$key-$k-$this->rand",
-                                'label-html' => $v === ''
+                                'label-html' => $v === '',
+                                'label-class' => 'font-weight-normal'
                     ));
                 }
                 $input = implode(', ', $tmp) . '<br>';
                 break;
             case 'tinyblob': case 'mediumblob': case 'blob': case 'longblob': case 'binary':
-                $input = '<a href="special.php?action=fetch'
-                        . '&amp;table=' . urlencode($this->table)
-                        . '&amp;column=' . urlencode($key);
-                foreach ($where as $k => $v) {
-                    $input .= '&amp;key[]=' . urlencode($k) . '&amp;value[]=' . urlencode($v);
+                if (preg_match('~(^\pC)*~i', $value)) {
+                    $input = '<tt>' . Tools::ifempty(Tools::shortify($value, 100), '<i class="insipid">' . $this->translate('empty') . '</i>') . '</tt><br />'; //@todo constant --> parameter
+                } else {
+                    $input = '<a href="#" class="download-blob d-block" data-table="' . urlencode($this->table) . '" data-column="' . urlencode($key) . '" '
+                        . 'target="_blank" >' . $this->translate('Download') . '</a>' . PHP_EOL;
                 }
-                $input .= '&amp;token=' . end($_SESSION['token']) . '" target="_blank" >' . $this->translate('Download') . '</a>' . PHP_EOL;
                 break;
             case null:
                 break;
