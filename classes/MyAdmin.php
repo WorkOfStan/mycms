@@ -735,13 +735,8 @@ class MyAdmin extends MyCommon
             $_GET['table'] = '';
         }
         $TableAdmin->setTable($_GET['table']);
-        $tablePrefixless = mb_substr($_GET['table'], mb_strlen(TAB_PREFIX));
-        if (!isset($_SESSION['user'])) {
-            $_GET['table'] = $_GET['media'] = $_GET['user'] = null;
-        }
-        $tmpTitle = $tablePrefixless ?: (isset($_GET['user']) ? $TableAdmin->translate('User') : (isset($_GET['media']) ? $TableAdmin->translate('Media') : (isset($_GET['products']) ? $TableAdmin->translate('Products') : (isset($_GET['pages']) ? $TableAdmin->translate('Pages') : ''))));
         $output = '<!DOCTYPE html><html lang="' . Tools::h($_SESSION['language']) . '">'
-            . $this->outputHead($tmpTitle)
+            . $this->outputHead($this->getPageTitle())
             . '<body>' . PHP_EOL . '<header>'
             . $this->outputNavigation()
             . '</header>' . PHP_EOL . '<div class="container-fluid row">' . PHP_EOL;
@@ -790,5 +785,21 @@ class MyAdmin extends MyCommon
         $output .= $this->outputBodyEnd()
             . '</body>' . PHP_EOL .'</html>';
         return $output;
+    }
+
+    public function getPageTitle()
+    {
+        $tablePrefixless = mb_substr(Tools::set($_GET['table']), mb_strlen(TAB_PREFIX));
+        if (!isset($_SESSION['user'])) {
+            $_GET['table'] = $_GET['media'] = $_GET['user'] = null;
+        }
+        return $tablePrefixless ?: 
+            (isset($_GET['user']) ? $this->TableAdmin->translate('User') : 
+                (isset($_GET['media']) ? $this->TableAdmin->translate('Media') : 
+                    (isset($_GET['products']) ? $this->TableAdmin->translate('Products') : 
+                        (isset($_GET['pages']) ? $this->TableAdmin->translate('Pages') : '')
+                    )
+                )
+            );
     }
 }
