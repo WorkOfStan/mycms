@@ -146,15 +146,16 @@ class LogMysqli extends BackyardMysqli
      */
     public function checkIntervalFormat($interval)
     {
-        $int = '\s*\-?\d+\s*';
+        $first = '\s*\-?\d+\s*';
+        $int = '\s*\d+\s*';
         return preg_match("~^\s*((?:\-?\s*(?:\d*\.?\d+|\d+\.?\d*)(?:e[\+\-]?\d+)?)\s+(MICROSECOND|SECOND|MINUTE|HOUR|DAY|WEEK|MONTH|QUARTER|YEAR)"
-            . "|\'$int.$int\'\s*(SECOND|MINUTE|HOUR|DAY)_MICROSECOND"
-            . "|\'$int:$int\'\s*(MINUTE_SECOND|HOUR_SECOND)"
-            . "|\'$int $int\'\s*DAY_HOUR"
+            . "|\'$first.$int\'\s*(SECOND|MINUTE|HOUR|DAY)_MICROSECOND"
+            . "|\'$first:$int\'\s*(MINUTE_SECOND|HOUR_SECOND)"
+            . "|\'$first $first\'\s*DAY_HOUR"
             . "|\'$int-$int\'\s*YEAR_MONTH"
             . "|\'$int:$int:$int\'\s*HOUR_SECOND"
-            . "|\'$int $int:$int\'\s*DAY_MINUTE"
-            . "|\'$int $int:$int:$int\'\s*DAY_SECOND"
+            . "|\'$first $int:$int\'\s*DAY_MINUTE"
+            . "|\'$first $int:$int:$int\'\s*DAY_SECOND"
             . ")\s*\$~i", $interval);
     }
 
@@ -201,12 +202,11 @@ class LogMysqli extends BackyardMysqli
     {
         if ($query = $this->query($sql)) {
             $row = $query->fetch_assoc();
-            if (count($row) > 1) {
-                return $row;
-            } elseif (is_array($row)) {
+            if (is_array($row)) {
+                if (!count($row)) {
+                    return null;
+                }
                 return reset($row);
-            } else {
-                return null;
             }
         }
         return false;

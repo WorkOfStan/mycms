@@ -735,6 +735,11 @@ class MyAdmin extends MyCommon
             $_GET['table'] = '';
         }
         $TableAdmin->setTable($_GET['table']);
+        $tablePrefixless = mb_substr($_GET['table'], mb_strlen(TAB_PREFIX));
+        if (!isset($_SESSION['user'])) {
+            $_GET['table'] = $_GET['media'] = $_GET['user'] = null;
+        }
+        $tmpTitle = $tablePrefixless ?: (isset($_GET['user']) ? $TableAdmin->translate('User') : (isset($_GET['media']) ? $TableAdmin->translate('Media') : (isset($_GET['products']) ? $TableAdmin->translate('Products') : (isset($_GET['pages']) ? $TableAdmin->translate('Pages') : ''))));
         $output = '<!DOCTYPE html><html lang="' . Tools::h($_SESSION['language']) . '">'
             . $this->outputHead($this->getPageTitle())
             . '<body>' . PHP_EOL . '<header>'
