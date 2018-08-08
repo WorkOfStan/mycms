@@ -679,6 +679,9 @@ class MyTableLister
 
     /**
      * Return text translated according to $this->TRANSLATION[]. Return original text, if translation is not found.
+     * If the text differs only by case of the first letter, return its translation and change the case of its first letter.
+     * @example: TRANSLATION['List'] is defined 'Seznam'. $this->translate('List') --> "Seznam", $this->translate('list') --> "seznam"
+     * note: non-multi-byte functions are used so the first letter's case changing applies only to A-Z, a-z.
      * 
      * @param string $text
      * @param bool $escape escape for HTML?
@@ -686,8 +689,12 @@ class MyTableLister
      */
     public function translate($text, $escape = true)
     {
+        $ucfirst = strtoupper($first = substr($text, 0, 1));
         if (isset($this->TRANSLATION[$text])) {
             $text = $this->TRANSLATION[$text];
+        } elseif ($ucfirst >= 'A' && $ucfirst <= 'Z' && isset($this->TRANSLATION[$altText = ($first == $ucfirst ? strtolower($first) : $ucfirst) . substr($text, 1)])) {
+            $text = $this->TRANSLATION[$altText];
+            $text = ($first == $ucfirst ? strtoupper(substr($text, 0, 1)) : strtolower(substr($text, 0, 1))) . substr($text, 1);
         }
         return $escape ? Tools::h($text) : $text;
     }
@@ -918,6 +925,6 @@ class MyTableLister
                 }
             }
         }
-        return implode('&amp;', $result);
+        return $result;
     }
 }
