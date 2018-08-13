@@ -54,4 +54,15 @@ class ProjectCommon extends MyCommon
         return date('D, j M Y', strtotime($stringOfTime));
     }
 
+    /**
+     * Replace spaces with \0160
+     * 
+     * @param string $text
+     * @param array $addReplacePatterns add or redefine patterns
+     * @return string
+     */
+    public function correctLineBreak($text, array $addReplacePatterns = [])
+    {
+        return strtr($text, $addReplacePatterns);
+    }
 }
