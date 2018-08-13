@@ -55,7 +55,8 @@ class ProjectCommon extends MyCommon
     }
 
     /**
-     * Replace spaces with \0160
+     * Replace spaces with \0160 after selected short words
+     * The list of selected words may be enlarged or redefined in the ProjectSpecific child
      * 
      * @param string $text
      * @param array $addReplacePatterns add or redefine patterns
@@ -63,6 +64,22 @@ class ProjectCommon extends MyCommon
      */
     public function correctLineBreak($text, array $addReplacePatterns = [])
     {
-        return strtr($text, $addReplacePatterns);
+        $replacePatterns = array_merge(array(
+            '/ a /' => ' a ',
+            '/ i /' => ' i ',
+            '/ k /' => ' k ',
+            '/ o /' => ' o ',
+            '/ s /' => ' s ',
+            '/ u /' => ' u ',
+            '/ v /' => ' v ',
+            '/ ve /' => ' ve ',
+            '/ z /' => ' z ',
+            '/ %/' => ' %',
+            '/ & /' => ' & ',
+            '/ an /' => ' an ',
+            '/Industry 4.0/' => 'Industry 4.0',
+                ), $addReplacePatterns);
+        return preg_replace(array_keys($replacePatterns), array_values($replacePatterns), $text);
     }
+
 }
