@@ -195,6 +195,9 @@ class LogMysqli extends BackyardMysqli
      * Execute an SQL and fetch the first row of a resultset.
      * If only one column is selected, return it, otherwise return whole row.
      *
+     * @example: fetchSingle('SELECT name, age FROM employees WHERE id = 5') --> [name => "John", age => 45]
+     * @example: fetchSingle('SELECT age FROM employees WHERE id = 5') --> 45
+     *
      * @param string $sql SQL to be executed
      * @return mixed first selected row (or its first column if only one column is selected), null on empty SELECT, or false on error
      */
@@ -206,7 +209,7 @@ class LogMysqli extends BackyardMysqli
                 if (!count($row)) {
                     return null;
                 }
-                return reset($row);
+                return count($row) == 1 ? reset($row) : $row;
             }
         }
         return false;
@@ -271,5 +274,4 @@ class LogMysqli extends BackyardMysqli
         }
         return $result;
     }
-
 }
