@@ -277,7 +277,7 @@ class LogMysqli extends BackyardMysqli
 
     /**
      * Extract data from an array and present it as values, field names, or pairs.
-     * @example: $data = ['id'=>5, 'name'=>'John', 'Doe'];
+     * @example: $data = ['id'=>5, 'name'=>'John', 'surname'=>'Doe'];
      * $sql = 'INSERT INTO employees (' . $this->values($data, 'fields') . ') VALUES (' . $this->values($data, 'values') . ')';
      * $sql = 'UPDATE employees SET ' . $this->values($data, 'pairs') . ' WHERE id=5';
      *
