@@ -274,4 +274,31 @@ class LogMysqli extends BackyardMysqli
         }
         return $result;
     }
+
+    /**
+     * Extract data from an array and present it as values, field names, or pairs.
+     * @example: $data = ['id'=>5, 'name'=>'John', 'Doe'];
+     * $sql = 'INSERT INTO employees (' . $this->values($data, 'fields') . ') VALUES (' . $this->values($data, 'values') . ')';
+     * $sql = 'UPDATE employees SET ' . $this->values($data, 'pairs') . ' WHERE id=5';
+     *
+     * @param array $data
+     * @param string format either "values" (default), "fields" or "pairs"
+     * @return string
+     */
+    public function values($data, $format)
+    {
+        $result = '';
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                if ($format == 'fields') {
+                    $result .= ', ' . $this->escapeDbIdentifier($key);
+                } elseif ($format == 'pairs') {
+                    $result .= ', ' . $this->escapeDbIdentifier($key) . '="' . $this->escapeSQL($value) . '"';
+                } else {
+                    $result .= ', "' . $this->escapeSQL($value) . '"';
+                }
+            }
+        }
+        return substr($result, 2 /* length of the initial ", " */);
+    }
 }
