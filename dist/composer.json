@@ -7,7 +7,7 @@
             "type": "vcs",
             "url": "https://github.com/GodsDev/mycms"
         }
-    ],    
+    ],
     "require": {
         "php": "^5.6 || ^7.0",
         "robmorgan/phinx": "^0.9.1",
@@ -32,7 +32,7 @@
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
-            "GodsDev\\MYCMSPROJECTNAMESPACE\\": ["classes/"]           
+            "GodsDev\\MYCMSPROJECTNAMESPACE\\": ["classes/"]
         }
-    }    
+    }
 }

@@ -13,6 +13,41 @@ class LogMysqli extends BackyardMysqli
 
     use \Nette\SmartObject;
 
+    protected $KEYWORDS = array(
+        'ACCESSIBLE', 'ADD', 'ALL', 'ALTER', 'ANALYZE', 'AND', 'AS', 'ASC', 'ASENSITIVE', 
+        'BEFORE', 'BETWEEN', 'BIGINT', 'BINARY', 'BLOB', 'BOTH', 'BY', 'CALL', 'CASCADE',
+        'CASE', 'CHANGE', 'CHAR', 'CHARACTER', 'CHECK', 'COLLATE', 'COLUMN', 'CONDITION', 
+        'CONSTRAINT', 'CONTINUE', 'CONVERT', 'CREATE', 'CROSS', 'CURRENT_DATE', 
+        'CURRENT_TIME', 'CURRENT_TIMESTAMP', 'CURRENT_USER', 'CURSOR', 'DATABASE', 
+        'DATABASES', 'DAY_HOUR', 'DAY_MICROSECOND', 'DAY_MINUTE', 'DAY_SECOND', 
+        'DEC', 'DECIMAL', 'DECLARE', 'DEFAULT', 'DELAYED', 'DELETE', 'DESC', 'DESCRIBE', 
+        'DETERMINISTIC', 'DISTINCT', 'DISTINCTROW', 'DIV', 'DOUBLE', 'DROP', 'DUAL',
+        'EACH', 'ELSE', 'ELSEIF', 'ENCLOSED', 'ESCAPED', 'EXISTS', 'EXIT', 'EXPLAIN', 
+        'FALSE', 'FETCH', 'FLOAT', 'FLOAT4', 'FLOAT8', 'FOR', 'FORCE', 'FOREIGN',
+        'FROM', 'FULLTEXT', 'GRANT', 'GROUP', 'HAVING', 'HIGH_PRIORITY', 'HOUR_MICROSECOND', 
+        'HOUR_MINUTE', 'HOUR_SECOND', 'IF', 'IGNORE', 'IN', 'INDEX', 'INFILE', 'INNER', 
+        'INOUT', 'INSENSITIVE', 'INSERT', 'INT', 'INT1', 'INT2', 'INT3', 'INT4', 
+        'INT8', 'INTEGER', 'INTERVAL', 'INTO', 'IS', 'ITERATE', 'JOIN', 'KEY', 'KEYS',
+        'KILL', 'LEADING', 'LEAVE', 'LEFT', 'LIKE', 'LIMIT', 'LINEAR', 'LINES', 
+        'LOAD', 'LOCALTIME', 'LOCALTIMESTAMP', 'LOCK', 'LONG', 'LONGBLOB', 'LONGTEXT',
+        'LOOP', 'LOW_PRIORITY', 'MASTER_SSL_VERIFY_SERVER_CERT', 'MATCH', 'MEDIUMBLOB', 
+        'MEDIUMINT', 'MEDIUMTEXT', 'MIDDLEINT', 'MINUTE_MICROSECOND', 'MINUTE_SECOND', 
+        'MOD', 'MODIFIES', 'NATURAL', 'NOT', 'NO_WRITE_TO_BINLOG', 'NULL', 'NUMERIC', 
+        'ON', 'OPTIMIZE', 'OPTION', 'OPTIONALLY', 'OR', 'ORDER', 'OUT', 'OUTER', 
+        'OUTFILE', 'PRECISION', 'PRIMARY', 'PROCEDURE', 'PURGE', 'RANGE', 'READ', 
+        'READS', 'READ_ONLY', 'READ_WRITE', 'REAL', 'REFERENCES', 'REGEXP', 'RELEASE',
+        'RENAME', 'REPEAT', 'REPLACE', 'REQUIRE', 'RESTRICT', 'RETURN', 'REVOKE', 
+        'RIGHT', 'RLIKE', 'SCHEMA', 'SCHEMAS', 'SECOND_MICROSECOND', 'SELECT', 'SENSITIVE', 
+        'SEPARATOR', 'SET', 'SHOW', 'SMALLINT', 'SPATIAL', 'SPECIFIC', 'SQL', 'SQLEXCEPTION', 
+        'SQLSTATE', 'SQLWARNING', 'SQL_BIG_RESULT', 'SQL_CALC_FOUND_ROWS', 'SQL_SMALL_RESULT',
+        'SSL', 'STARTING', 'STRAIGHT_JOIN', 'TABLE', 'TERMINATED', 'THEN', 'TINYBLOB', 
+        'TINYINT', 'TINYTEXT', 'TO', 'TRAILING', 'TRIGGER', 'TRUE', 'UNDO', 'UNION',
+        'UNIQUE', 'UNLOCK', 'UNSIGNED', 'UPDATE', 'USAGE', 'USE', 'USING', 'UTC_DATE', 
+        'UTC_TIME', 'UTC_TIMESTAMP', 'VALUES', 'VARBINARY', 'VARCHAR', 'VARCHARACTER', 
+        'VARYING', 'WHEN', 'WHERE', 'WHILE', 'WITH', 'WRITE', 'XOR', 'YEAR_MONTH', 
+        'ZEROFILL'
+    );
+
     /** @var array */
     protected $sqlStatementsArray = array();
 
@@ -54,15 +89,96 @@ class LogMysqli extends BackyardMysqli
      * Escape a database identifier (table/column name, etc.) - specific to MySQL/MariaDb
      *
      * @param string $string to escape
-     * @return string
+     * @return string escaped identifier
      */
     public function escapeDbIdentifier($string)
     {
-        $string = '`' . str_replace('`', '``', $string) . '`';
-        if (preg_match('/[^a-z0-9_]+/i', $string)) {
-            $string = substr($string, 1, -1);
+        $string = str_replace('`', '``', $string);
+        if (!preg_match('/[^a-z0-9_]+/i', $string) || in_array($string, $this->KEYWORDS)) {
+            $string = "`$string`";
         }
         return $string;
+    }
+
+    /**
+     * Decode options in 'set' and 'enum' columns - specific to MySQL/MariaDb
+     *
+     * @param string $list list of options (e.g. "enum('single','married','divorced')" or just "'single','married','divorced'")
+     * @return array 
+     */
+    public function decodeChoiceOptions($list)
+    { //e.g. value: '0','a''b','c"d','e\\f','','g`h' should be ['0', "a'b", 'c"d', 'e\f', '', 'g`h'
+        if (($result = substr($list, 0, 5) == 'enum(') || substr($list, 0, 4) == 'set(') {
+            $list = substr($list, $result ? 5 : 4, -1);
+        }
+        $list = substr($list, 0, 1) == "'" ? $list : '';
+        preg_match_all("~'((''|[^'])*',)*~i", "$list,", $result);
+        $result = isset($result[1]) ? $result[1] : array();
+        foreach ($result as &$value) {
+            $value = strtr(substr($value, 0, -2), array("''" => "'", "\\\\" => "\\"));
+        }
+        return $result;
+    }
+
+    /**
+     * Decode options in 'set' columns - specific to MySQL/MariaDb
+     *
+     * @param string $list list of options (e.g. ""
+     * @return array 
+     */
+    public function decodeSetOptions($list)
+    {
+        if (substr($list, 0, 4) == 'set(') {
+            $list = substr($list, 4, -1);
+        }
+        $result = explode(',', $list);
+        foreach ($result as &$value) {
+            $value = strtr(substr($value, 1, -1), array("''" => "'", "\\\\" => "\\"));
+        }
+        return $result;
+    }
+
+    /**
+     * Check wheter given interval matches the format for expression used after MySQL's keyword 'INTERVAL' - specific to MySQL/MariaDb
+     *
+     * @param string $interval
+     * @result int 1=yes, 0=no, false=error
+     */
+    public function checkIntervalFormat($interval)
+    {
+        $first = '\s*\-?\d+\s*';
+        $int = '\s*\d+\s*';
+        return preg_match("~^\s*((?:\-?\s*(?:\d*\.?\d+|\d+\.?\d*)(?:e[\+\-]?\d+)?)\s+(MICROSECOND|SECOND|MINUTE|HOUR|DAY|WEEK|MONTH|QUARTER|YEAR)"
+            . "|\'$first.$int\'\s*(SECOND|MINUTE|HOUR|DAY)_MICROSECOND"
+            . "|\'$first:$int\'\s*(MINUTE_SECOND|HOUR_SECOND)"
+            . "|\'$first $first\'\s*DAY_HOUR"
+            . "|\'$int-$int\'\s*YEAR_MONTH"
+            . "|\'$int:$int:$int\'\s*HOUR_SECOND"
+            . "|\'$first $int:$int\'\s*DAY_MINUTE"
+            . "|\'$first $int:$int:$int\'\s*DAY_SECOND"
+            . ")\s*\$~i", $interval);
+    }
+
+    /**
+     * Return list of columns for use in an SQL statement
+     *
+     * @param array $columns
+     * @param array $fields info about the columns like in MyTableLister->fields (optional)
+     * @return string
+     */
+    public function listColumns($columns, $fields = array())
+    {
+        $result = '';
+        foreach ($columns as $column) {
+            $result .= ',';
+            $name = $this->escapeDbIdentifier($column);
+            if (isset($fields[$column]['type']) && ($fields[$column]['type'] == 'set' || $fields[$column]['type'] == 'enum')) {
+                $result .= "CAST($name AS integer) AS $name"; //NULLs will persist
+            } else {
+                $result .= $name;
+            }
+        }
+        return substr($result, 1);
     }
 
     /**
@@ -86,12 +202,11 @@ class LogMysqli extends BackyardMysqli
     {
         if ($query = $this->query($sql)) {
             $row = $query->fetch_assoc();
-            if (count($row) > 1) {
-                return $row;
-            } elseif (is_array($row)) {
+            if (is_array($row)) {
+                if (!count($row)) {
+                    return null;
+                }
                 return reset($row);
-            } else {
-                return null;
             }
         }
         return false;
