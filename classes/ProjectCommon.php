@@ -54,4 +54,31 @@ class ProjectCommon extends MyCommon
         return date('D, j M Y', strtotime($stringOfTime));
     }
 
+    /**
+     * Replace spaces with \0160
+     * 
+     * @param string $text
+     * @param array $addReplacePatterns add or redefine patterns
+     * @return string
+     */
+    public function correctLineBreak($text, array $addReplacePatterns = [])
+    {
+        $replacePatterns = array_merge(array(
+            '/ a /' => ' a ',
+            '/ i /' => ' i ',
+            '/ k /' => ' k ',
+            '/ o /' => ' o ',
+            '/ s /' => ' s ',
+            '/ u /' => ' u ',
+            '/ v /' => ' v ',
+            '/ ve /' => ' ve ',
+            '/ z /' => ' z ',
+            '/ %/' => ' %',
+            '/ & /' => ' & ',
+            '/ an /' => ' an ',
+            '/Industry 4.0/' => 'Industry 4.0',
+                ), $addReplacePatterns);
+        return preg_replace(array_keys($replacePatterns), array_values($replacePatterns), $text);
+    }
+
 }

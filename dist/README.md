@@ -124,7 +124,7 @@ Convert SASS to CSS by
 sass styles/index.sass styles/index.css
 ```
 
-When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in `env_config.php` in order to force cache reload these resources.
+When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in `config.php` in order to force cache reload these resources.
 
 # TODO
 

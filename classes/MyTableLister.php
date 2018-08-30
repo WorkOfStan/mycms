@@ -331,8 +331,8 @@ class MyTableLister
                 . Tools::wrap(substr($sort, 1), ' ORDER BY ')
                 . " LIMIT $offset, $limit";
         $query = $this->dbms->query($sql);
-        $options['total-rows'] = $this->dbms->fetchSingle('SELECT FOUND_ROWS()');
-        $output = '';
+        $totalRows = $this->dbms->fetchSingle('SELECT FOUND_ROWS()');
+        $output = Tools::htmlInput('total-rows', '', $totalRows, 'hidden');
         if (!$options['read-only']) {
             $output .= '<a href="?table=' . urlencode($this->table) . '&amp;where[]="><span class="glyphicon glyphicon-plus fa fa-plus-circle" /></span> ' . $this->translate('New row') . '</a>' . PHP_EOL;
         }
