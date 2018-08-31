@@ -171,11 +171,11 @@ class LogMysqli extends BackyardMysqli
         $result = '';
         foreach ($columns as $column) {
             $result .= ',';
-            $name = $this->escapeDbIdentifier($column);
+            $escColumn = $this->escapeDbIdentifier($column);
             if (isset($fields[$column]['type']) && ($fields[$column]['type'] == 'set' || $fields[$column]['type'] == 'enum')) {
-                $result .= "CAST($name AS integer) AS $name"; //NULLs will persist
+                $result .= "$escColumn - 0 AS $escColumn"; //NULLs will persist
             } else {
-                $result .= $name;
+                $result .= $escColumn;
             }
         }
         return substr($result, 1);
