@@ -9,7 +9,7 @@
         "tracy/tracy": "^2.4.10",
         "nette/utils": "^2.4.8",
         "texy/texy": "^2.7.1",
-        "godsdev/tools": "^0.2.4",
+        "godsdev/tools": "^0.3.1",
         "godsdev/backyard": "^3.2.1"
     },
     "require-dev": {
@@ -29,7 +29,7 @@
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
-            "GodsDev\\MyCMS\\": ["classes/"]           
+            "GodsDev\\MyCMS\\": ["classes/"]
         }
-    }    
+    }
 }
