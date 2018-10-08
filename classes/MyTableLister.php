@@ -331,8 +331,8 @@ class MyTableLister
                 . Tools::wrap(substr($sort, 1), ' ORDER BY ')
                 . " LIMIT $offset, $limit";
         $query = $this->dbms->query($sql);
-        $totalRows = $this->dbms->fetchSingle('SELECT FOUND_ROWS()');
-        $output = Tools::htmlInput('total-rows', '', $totalRows, 'hidden');
+        $options['total-rows'] = $this->dbms->fetchSingle('SELECT FOUND_ROWS()');
+        $output = Tools::htmlInput('total-rows', '', $options['total-rows'], 'hidden');
         if (!$options['read-only']) {
             $output .= '<a href="?table=' . urlencode($this->table) . '&amp;where[]="><span class="glyphicon glyphicon-plus fa fa-plus-circle" /></span> ' . $this->translate('New row') . '</a>' . PHP_EOL;
         }
@@ -464,7 +464,7 @@ class MyTableLister
                     $value = '';
                     $output .= Tools::htmlInput('check[]', '', $url, array('type' => 'checkbox', 'data-order' => $i));
                 }
-                $output .= '<a href="?table=' . urlencode($this->table) . '&amp;' . $url . '" title="' . $this->translate('Edit') . '">'
+                $output .= '<a href="?table=' . urlencode($this->table) . '&amp;' . implode('&', $url) . '" title="' . $this->translate('Edit') . '">'
                 . '<small class="glyphicon glyphicon-edit fa fa-pencil fa-edit" aria-hidden="true"></small></a>';
                 $output .= '</td>';
                 foreach ($row as $key => $value) {
@@ -893,10 +893,11 @@ class MyTableLister
     }
 
     /**
-     * Return a link (URL fragment) to a given row of the current table
+     * Return a link (URL fragment) to a given row of the current table as an array.
+     * To make a string of it, use implode("&", ...).
      *
      * @param array $row
-     * @retun string URL fragment identifying current row, e.g. "where[id]=5"
+     * @retun array URL fragment identifying current row, e.g. "where[id]=5"
      */
     public function rowLink($row)
     {
