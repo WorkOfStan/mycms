@@ -211,6 +211,7 @@ class LogMysqli extends BackyardMysqli
                 }
                 return count($row) == 1 ? reset($row) : $row;
             }
+            return null;
         }
         return false;
     }
