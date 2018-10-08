@@ -146,15 +146,16 @@ class LogMysqli extends BackyardMysqli
      */
     public function checkIntervalFormat($interval)
     {
-        $int = '\s*\-?\d+\s*';
+        $first = '\s*\-?\d+\s*';
+        $int = '\s*\d+\s*';
         return preg_match("~^\s*((?:\-?\s*(?:\d*\.?\d+|\d+\.?\d*)(?:e[\+\-]?\d+)?)\s+(MICROSECOND|SECOND|MINUTE|HOUR|DAY|WEEK|MONTH|QUARTER|YEAR)"
-            . "|\'$int.$int\'\s*(SECOND|MINUTE|HOUR|DAY)_MICROSECOND"
-            . "|\'$int:$int\'\s*(MINUTE_SECOND|HOUR_SECOND)"
-            . "|\'$int $int\'\s*DAY_HOUR"
+            . "|\'$first.$int\'\s*(SECOND|MINUTE|HOUR|DAY)_MICROSECOND"
+            . "|\'$first:$int\'\s*(MINUTE_SECOND|HOUR_SECOND)"
+            . "|\'$first $first\'\s*DAY_HOUR"
             . "|\'$int-$int\'\s*YEAR_MONTH"
             . "|\'$int:$int:$int\'\s*HOUR_SECOND"
-            . "|\'$int $int:$int\'\s*DAY_MINUTE"
-            . "|\'$int $int:$int:$int\'\s*DAY_SECOND"
+            . "|\'$first $int:$int\'\s*DAY_MINUTE"
+            . "|\'$first $int:$int:$int\'\s*DAY_SECOND"
             . ")\s*\$~i", $interval);
     }
 
@@ -194,6 +195,9 @@ class LogMysqli extends BackyardMysqli
      * Execute an SQL and fetch the first row of a resultset.
      * If only one column is selected, return it, otherwise return whole row.
      *
+     * @example: fetchSingle('SELECT name, age FROM employees WHERE id = 5') --> [name => "John", age => 45]
+     * @example: fetchSingle('SELECT age FROM employees WHERE id = 5') --> 45
+     *
      * @param string $sql SQL to be executed
      * @return mixed first selected row (or its first column if only one column is selected), null on empty SELECT, or false on error
      */
@@ -201,13 +205,13 @@ class LogMysqli extends BackyardMysqli
     {
         if ($query = $this->query($sql)) {
             $row = $query->fetch_assoc();
-            if (count($row) > 1) {
-                return $row;
-            } elseif (is_array($row)) {
-                return reset($row);
-            } else {
-                return null;
+            if (is_array($row)) {
+                if (!count($row)) {
+                    return null;
+                }
+                return count($row) == 1 ? reset($row) : $row;
             }
+            return null;
         }
         return false;
     }
@@ -272,4 +276,30 @@ class LogMysqli extends BackyardMysqli
         return $result;
     }
 
+    /**
+     * Extract data from an array and present it as values, field names, or pairs.
+     * @example: $data = ['id'=>5, 'name'=>'John', 'surname'=>'Doe'];
+     * $sql = 'INSERT INTO employees (' . $this->values($data, 'fields') . ') VALUES (' . $this->values($data, 'values') . ')';
+     * $sql = 'UPDATE employees SET ' . $this->values($data, 'pairs') . ' WHERE id=5';
+     *
+     * @param array $data
+     * @param string format either "values" (default), "fields" or "pairs"
+     * @return string
+     */
+    public function values($data, $format)
+    {
+        $result = '';
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                if ($format == 'fields') {
+                    $result .= ', ' . $this->escapeDbIdentifier($key);
+                } elseif ($format == 'pairs') {
+                    $result .= ', ' . $this->escapeDbIdentifier($key) . '="' . $this->escapeSQL($value) . '"';
+                } else {
+                    $result .= ', "' . $this->escapeSQL($value) . '"';
+                }
+            }
+        }
+        return substr($result, 2 /* length of the initial ", " */);
+    }
 }

@@ -331,8 +331,8 @@ class MyTableLister
                 . Tools::wrap(substr($sort, 1), ' ORDER BY ')
                 . " LIMIT $offset, $limit";
         $query = $this->dbms->query($sql);
-        $totalRows = $this->dbms->fetchSingle('SELECT FOUND_ROWS()');
-        $output = Tools::htmlInput('total-rows', '', $totalRows, 'hidden');
+        $options['total-rows'] = $this->dbms->fetchSingle('SELECT FOUND_ROWS()');
+        $output = Tools::htmlInput('total-rows', '', $options['total-rows'], 'hidden');
         if (!$options['read-only']) {
             $output .= '<a href="?table=' . urlencode($this->table) . '&amp;where[]="><span class="glyphicon glyphicon-plus fa fa-plus-circle" /></span> ' . $this->translate('New row') . '</a>' . PHP_EOL;
         }
@@ -464,7 +464,7 @@ class MyTableLister
                     $value = '';
                     $output .= Tools::htmlInput('check[]', '', $url, array('type' => 'checkbox', 'data-order' => $i));
                 }
-                $output .= '<a href="?table=' . urlencode($this->table) . '&amp;' . $url . '" title="' . $this->translate('Edit') . '">'
+                $output .= '<a href="?table=' . urlencode($this->table) . '&amp;' . implode('&', $url) . '" title="' . $this->translate('Edit') . '">'
                 . '<small class="glyphicon glyphicon-edit fa fa-pencil fa-edit" aria-hidden="true"></small></a>';
                 $output .= '</td>';
                 foreach ($row as $key => $value) {
@@ -679,6 +679,9 @@ class MyTableLister
 
     /**
      * Return text translated according to $this->TRANSLATION[]. Return original text, if translation is not found.
+     * If the text differs only by case of the first letter, return its translation and change the case of its first letter.
+     * @example: TRANSLATION['List'] is defined 'Seznam'. $this->translate('List') --> "Seznam", $this->translate('list') --> "seznam"
+     * note: non-multi-byte functions are used so the first letter's case changing applies only to A-Z, a-z.
      * 
      * @param string $text
      * @param bool $escape escape for HTML?
@@ -686,8 +689,12 @@ class MyTableLister
      */
     public function translate($text, $escape = true)
     {
+        $ucfirst = strtoupper($first = substr($text, 0, 1));
         if (isset($this->TRANSLATION[$text])) {
             $text = $this->TRANSLATION[$text];
+        } elseif ($ucfirst >= 'A' && $ucfirst <= 'Z' && isset($this->TRANSLATION[$altText = ($first == $ucfirst ? strtolower($first) : $ucfirst) . substr($text, 1)])) {
+            $text = $this->TRANSLATION[$altText];
+            $text = ($first == $ucfirst ? strtoupper(substr($text, 0, 1)) : strtolower(substr($text, 0, 1))) . substr($text, 1);
         }
         return $escape ? Tools::h($text) : $text;
     }
@@ -886,10 +893,11 @@ class MyTableLister
     }
 
     /**
-     * Return a link (URL fragment) to a given row of the current table
+     * Return a link (URL fragment) to a given row of the current table as an array.
+     * To make a string of it, use implode("&", ...).
      *
      * @param array $row
-     * @retun string URL fragment identifying current row, e.g. "where[id]=5"
+     * @retun array URL fragment identifying current row, e.g. "where[id]=5"
      */
     public function rowLink($row)
     {
@@ -918,6 +926,6 @@ class MyTableLister
                 }
             }
         }
-        return implode('&amp;', $result);
+        return $result;
     }
 }

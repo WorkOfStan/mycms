@@ -741,14 +741,14 @@ class MyAdmin extends MyCommon
         }
         $tmpTitle = $tablePrefixless ?: (isset($_GET['user']) ? $TableAdmin->translate('User') : (isset($_GET['media']) ? $TableAdmin->translate('Media') : (isset($_GET['products']) ? $TableAdmin->translate('Products') : (isset($_GET['pages']) ? $TableAdmin->translate('Pages') : ''))));
         $output = '<!DOCTYPE html><html lang="' . Tools::h($_SESSION['language']) . '">'
-            . $this->outputHead($tmpTitle)
+            . $this->outputHead($this->getPageTitle())
             . '<body>' . PHP_EOL . '<header>'
             . $this->outputNavigation()
             . '</header>' . PHP_EOL . '<div class="container-fluid row">' . PHP_EOL;
         if (isset($_SESSION['user']) && $_SESSION['user']) {
             $output .= '<nav class="col-md-3 bg-light sidebar order-last" id="admin-sidebar">' . $this->outputAgendas() . '</nav>' . PHP_EOL;
         }
-        $output .= '<main class="ml-sm-auto col-md-9 pt-3" role="main" id="admin-main">'
+        $output .= '<main class="ml-3 ml-sm-auto col-md-9 pt-3" role="main" id="admin-main">'
             . Tools::showMessages(false);
         foreach (glob(DIR_ASSETS . '*', GLOB_ONLYDIR) as $value) {
             $this->ASSETS_SUBFOLDERS []= substr($value, strlen(DIR_ASSETS));
@@ -790,5 +790,23 @@ class MyAdmin extends MyCommon
         $output .= $this->outputBodyEnd()
             . '</body>' . PHP_EOL .'</html>';
         return $output;
+    }
+
+    public function getPageTitle()
+    {
+        $tablePrefixless = mb_substr(Tools::set($_GET['table']), mb_strlen(TAB_PREFIX));
+        if (!isset($_SESSION['user'])) {
+            $_GET['table'] = $_GET['media'] = $_GET['user'] = null;
+        }
+        return $tablePrefixless ?: 
+            (isset($_GET['user']) ? $this->TableAdmin->translate('User') : 
+                (isset($_GET['media']) ? $this->TableAdmin->translate('Media') : 
+                    (isset($_GET['products']) ? $this->TableAdmin->translate('Products') : 
+                        (isset($_GET['pages']) ? $this->TableAdmin->translate('Pages') : 
+                            (isset($_GET['search']) ? $this->TableAdmin->translate('Search') : '')
+                        )
+                    )
+                )
+            );
     }
 }

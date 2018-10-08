@@ -162,6 +162,7 @@ class MyTableAdmin extends MyTableLister
                         )
                 ) . ($options['layout-row'] ? ($field['type'] == 'enum' ? '' : '<br />') : '</td><td>') . PHP_EOL
                 . $this->customInputBefore($key, $value, $record) . PHP_EOL;
+        // $input is either an array of options for Tools::htmlInput() or already a result string
         $input = array('id' => $key . $this->rand, 'class' => 'form-control');
         $custom = $this->customInput($key, $value, $record);
         if ($custom !== false) {
@@ -190,7 +191,7 @@ class MyTableAdmin extends MyTableLister
             }
             $field['type'] = null;
         }
-        if (!is_null($field['type']) && isset($comment['edit']) && $comment['edit'] === 'json') {
+        if (!is_null($field['type']) && Tools::set($comment['edit'], false) == 'json') {
             $json = json_decode($value, true) ?: (Tools::among($value, '', '[]', '{}') ? array() : $value);
             $output .= '<div class="input-expanded">' . Tools::htmlInput($key . EXPAND_INFIX, '', 1, 'hidden');
             if (!is_array($json) && isset($comment['subfields']) && is_array($comment['subfields'])) {
@@ -299,7 +300,7 @@ class MyTableAdmin extends MyTableLister
             case null:
                 break;
             default:
-                if (Tools::among($field['type'], 'char', 'varchar') && $field['size'] < 256) {
+                if (Tools::among($field['type'], 'char', 'varchar') && ($field['size'] < 256 || Tools::set($comment['edit'], false) == 'input') && Tools::set($comment['edit'], false) != 'textarea') {
                     break;
                 }
                 $input = '<div class="TableAdminTextarea">' . Tools::htmlTextarea("fields[$key]", $value, false, false,
@@ -435,8 +436,7 @@ class MyTableAdmin extends MyTableLister
         if (!$this->authorized()) {
             return false;
         }
-        $sql = $where = '';
-        $command = 'UPDATE';
+        $sql = '';
         if (is_array($this->fields)) {
             foreach ($_POST as $key => $value) {
                 if (Tools::begins($key, EXPAND_INFIX) && !Tools::begins($key, EXPAND_INFIX . EXPAND_INFIX)) {
@@ -452,22 +452,23 @@ class MyTableAdmin extends MyTableLister
                 } elseif (isset($_POST['fields-own'][$key]) && $_POST['fields-own'][$key]) {
                     $_POST['fields'][$key] = $_POST['fields-own'][$key];
                 }
-                if (!isset($_POST['fields'][$key]) || !is_scalar($_POST['fields'][$key])) {
+                if (!isset($_POST['fields'][$key])) {
                     continue;
                 }
                 $value = $_POST['fields'][$key];
-                $original = isset($_POST['original'][$key]) ? $_POST['original'][$key] : null;
-                if (Tools::among($field['key'], 'PRI', 'UNI')) {
-                    if ($field['key'] == 'PRI' && Tools::among($value, '', null)) {
-                        $command = 'INSERT INTO';
-                    } else {
-                        $where .= ' AND ' . (is_null($original) ? Tools::escapeDbIdentifier($key) . ' IS NULL' : ($original . '' === '' ? 'IFNULL(' . Tools::escapeDbIdentifier($key) . ', "")' : Tools::escapeDbIdentifier($key)) .' = "' . $this->escapeSQL($original) . '"');
+                if (is_array($value) && $field['type'] == 'set') {
+                    $tmp = 0;
+                    foreach ($value as $i) {
+                        $tmp |= $i;
                     }
-                } elseif (isset($_POST['original'][$key]) && $original === $value) {
+                    $value = $tmp;
+                }
+                $original = isset($_POST['original'][$key]) ? $_POST['original'][$key] : false;
+                if ($original === $value) {
                     continue;
                 }
                 switch ($field['basictype']) {
-                    case 'integer': case 'rational':
+                    case 'integer': case 'rational': case 'choice':
                         if (Tools::among($field['key'], 'PRI', 'UNI') && $original === $value && $value === '') {
                             $value = null;
                         }
@@ -479,10 +480,18 @@ class MyTableAdmin extends MyTableLister
                                 . (is_null($value) ? 'NULL' : '"' . $this->escapeSQL($value) . '"');
                 }
             }
-        } else {
-            Tools::addMessage('info', 'Nothing to save.');
+            $command = 'UPDATE';
+            $unique = ($this->filterKeys('PRI') ?: $this->filterKeys('UNI')) ?: array_flip(array_keys($this->fields));
+            foreach (array_keys($unique) as $key) {
+                $field = $this->fields[$key];
+                $value = $_POST['fields'][$key];
+                if ($field['key'] == 'PRI' && Tools::among($value, '', null)) {
+                    $command = 'INSERT INTO';
+                } else {
+                    $where .= ' AND ' . (is_null($original) ? Tools::escapeDbIdentifier($key) . ' IS NULL' : ($original . '' === '' ? 'IFNULL(' . Tools::escapeDbIdentifier($key) . ', "")' : Tools::escapeDbIdentifier($key)) .' = "' . $this->escapeSQL($_POST['original'][$key]) . '"');
+                }
+            }
         }
-//echo'<pre>';die(var_dump($command . ' ' . Tools::escapeDbIdentifier($this->table) . ' SET ' . mb_substr($sql, 1) . Tools::wrap($command == 'UPDATE' ? mb_substr($where, 5) : '', ' WHERE ') . ($command == 'UPDATE' ? ' LIMIT 1' : ''), $_POST));
         if ($sql) {
             $sql = $command . ' ' . Tools::escapeDbIdentifier($this->table) . ' SET ' . mb_substr($sql, 1) . Tools::wrap($command == 'UPDATE' ? mb_substr($where, 5) : '', ' WHERE ') . ($command == 'UPDATE' ? ' LIMIT 1' : '');
             //@todo add message when UPDATE didn't change anything
@@ -493,7 +502,8 @@ class MyTableAdmin extends MyTableLister
                 return false;
             }
         } else {
-            // no changes
+            Tools::addMessage('info', 'Nothing to save.');
+            return 0;
         }
     }
 

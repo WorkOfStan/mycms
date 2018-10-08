@@ -55,7 +55,8 @@ class ProjectCommon extends MyCommon
     }
 
     /**
-     * Replace spaces with \0160
+     * Replace spaces with \0160 after selected short words
+     * The list of selected words may be enlarged or redefined in the ProjectSpecific child
      * 
      * @param string $text
      * @param array $addReplacePatterns add or redefine patterns
