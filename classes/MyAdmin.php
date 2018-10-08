@@ -748,7 +748,7 @@ class MyAdmin extends MyCommon
         if (isset($_SESSION['user']) && $_SESSION['user']) {
             $output .= '<nav class="col-md-3 bg-light sidebar order-last" id="admin-sidebar">' . $this->outputAgendas() . '</nav>' . PHP_EOL;
         }
-        $output .= '<main class="ml-sm-auto col-md-9 pt-3" role="main" id="admin-main">'
+        $output .= '<main class="ml-3 ml-sm-auto col-md-9 pt-3" role="main" id="admin-main">'
             . Tools::showMessages(false);
         foreach (glob(DIR_ASSETS . '*', GLOB_ONLYDIR) as $value) {
             $this->ASSETS_SUBFOLDERS []= substr($value, strlen(DIR_ASSETS));
@@ -802,7 +802,9 @@ class MyAdmin extends MyCommon
             (isset($_GET['user']) ? $this->TableAdmin->translate('User') : 
                 (isset($_GET['media']) ? $this->TableAdmin->translate('Media') : 
                     (isset($_GET['products']) ? $this->TableAdmin->translate('Products') : 
-                        (isset($_GET['pages']) ? $this->TableAdmin->translate('Pages') : '')
+                        (isset($_GET['pages']) ? $this->TableAdmin->translate('Pages') : 
+                            (isset($_GET['search']) ? $this->TableAdmin->translate('Search') : '')
+                        )
                     )
                 )
             );
