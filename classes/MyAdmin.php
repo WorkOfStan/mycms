@@ -339,7 +339,7 @@ class MyAdmin extends MyCommon
                 . '<a href="?table=' . urlencode($table) . '" class="d-inline' . ($_GET['table'] == $table ? ' active' : '') . '">'
                 . '<i class="fa fa-table"></i> '
                 . Tools::h(substr($table, strlen(TAB_PREFIX)))
-                . ($table == $_GET['table'] ? ' <span class="sr-only">(current)</span>' : '')
+                . ($table == $_GET['table'] ? ' <span class="sr-only">(' . $TableAdmin->translate('current') . ')</span>' : '')
                 . '</a> &nbsp; ' . PHP_EOL;
         }
         $result .= '</div>';
@@ -431,14 +431,14 @@ class MyAdmin extends MyCommon
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Image selector</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h5 class="modal-title">' . $TableAdmin->translate('Reload') . '</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="' . $TableAdmin->translate('close') . '"><span aria-hidden="true">&times;</span></button>
                     </div>
                     <div class="modal-body">
                         <select name="subfolder" id="modalImageFolder" class="form-control form-control-sm" onchange="updateImageSelector($(this), $(this).parent().find(\'.ImageFiles\'))">
                         </select>
                         <div id="modalImageFiles" class="ImageFiles"></div>
-                        <label class="note-form-label">Image URL:</label><br />
+                        <label class="note-form-label">' . $TableAdmin->translate('Image URL') . ':</label><br />
                         <input class="note-image-url form-control form-control-sm" type="text" id="modalImagePath" />
                     </div>
                     <div class="modal-footer">
