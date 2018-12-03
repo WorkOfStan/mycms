@@ -367,7 +367,9 @@ class MyTableLister
                 <div class="toggle-div" id="toggle-div' . $this->rand . '" data-rand="' . $this->rand . '">
                 <div class="btn-group-toggle btn-group-sm" data-toggle="buttons">';
             foreach (array_keys($this->fields) as $key => $value) {
-                $output .= '<label class="btn btn-light column-toggle active" title="' . $this->translateColumn($value) . '"><input type="checkbox" checked autocomplete="off" data-column="' . ($key + 1) . '">' . Tools::h($value) . '</label>' . PHP_EOL;
+                $output .= '<label class="btn btn-light column-toggle active" title="' . $this->translateColumn($value) . '">' 
+                    . Tools::htmlInput('', '', '', array('type' => 'checkbox', 'checked' => true, 'autocomplete' => 'off', 'data-column' => $key + 1)) 
+                    . Tools::h($value) . '</label>' . PHP_EOL;
             }
             $output .= '</div></div></fieldset>' . PHP_EOL;
         }
@@ -382,7 +384,7 @@ class MyTableLister
                 <div class="sort-div" id="sort-div' . $this->rand . '"></div></fieldset>' . PHP_EOL;
         }
         $output .= '<fieldset><legend><span class="glyphicon glyphicon-list-alt fa fa-list-alt"></span> ' . $this->translate('View') . '</legend>
-            <input type="hidden" name="table" value="' . Tools::h($this->table) . '" />
+            ' . Tools::htmlInput('table', '', $this->table, 'hidden') . '
             <label title="' . $this->translate('Text lengths') . '"><span class="glyphicon glyphicon-option-horizontal fa fa-ellipsis-h mx-1"></span>' 
                 . Tools::htmlInput('textsize', '', Tools::setifnull($_GET['textsize'], $this->DEFAULTS['TEXTSIZE']), array('size' => 3, 'class' => 'text-right')) . '
             </label>
