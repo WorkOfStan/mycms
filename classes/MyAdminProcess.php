@@ -88,6 +88,8 @@ class MyAdminProcess extends MyCommon
 
     /**
      * Process the "files unpack" action. Currently, only the zip files without password are supported.
+     * extractTo() method of the ZipArchive object is used. Subfolders will be created, preexisting files overwritten.
+     * Security issues: 1) white list of file extentions 2) file size limitation
      *
      * @param array &$post $_POST
      * @return void
@@ -102,7 +104,7 @@ class MyAdminProcess extends MyCommon
             if ($ZipArchive->open($path . $post['file_unpack']) === true) {
                 // extract it to the path we determined above
                 $result['success'] = $ZipArchive->extractTo(DIR_ASSETS . $post['new_folder'] . '/');
-                $result['data'] = $result['success'] ? $this->tableAdmin->translate('Archive unpacked.') . ' ' . $this->tableAdmin->translate('Affected files: ') . $ZipArchive->numFiles . '.' 
+                $result['data'] = $result['success'] ? $this->tableAdmin->translate('Archive unpacked.') . ' ' . $this->tableAdmin->translate('Affected files: ') . $ZipArchive->numFiles . '.'
                     : $this->tableAdmin->translate('Error occured unpacking the archive.');
                 Tools::addMessage($result['success'], $result['data']);
                 $ZipArchive->close();

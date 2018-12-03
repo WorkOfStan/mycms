@@ -110,30 +110,30 @@ class MyAdmin extends MyCommon
         $TableAdmin = $this->TableAdmin;
         $result = '<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
                 <a class="nav-item mr-2" href="' . Tools::h($_SERVER['SCRIPT_NAME']) . '">MyCMS</a>
-                <button class="btn btn-secondary btn-sm" title="' . $TableAdmin->translate('Search') . '" type="submit" id="nav-search-button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                <button class="btn btn-secondary btn-sm" title="' . $TableAdmin->translate('Search') . '" type="submit" id="nav-search-button"><i class="fa fa-search"></i></button>
                 <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" aria-expanded="false" data-target="#navbar-content" aria-controls="navbar-content"><span class="navbar-toggler-icon mr-1"></span></button>
                 <div class="collapse navbar-collapse" id="navbar-content">
                     <ul class="navbar-nav mr-auto">';
         if (Tools::nonempty($_SESSION['user'])) {
             $result .= $this->outputSpecialMenuLinks()
-                . '<li class="nav-item' . (isset($_GET['media']) ? ' active' : '') . '"><a href="?media" class="nav-link"><i class="fa fa-video-camera fa-video" aria-hidden="true"></i> ' . $TableAdmin->translate('Media') . '</a></li>
+                . '<li class="nav-item' . (isset($_GET['media']) ? ' active' : '') . '"><a href="?media" class="nav-link"><i class="fa fa-video"></i> ' . $TableAdmin->translate('Media') . '</a></li>
                 <li class="nav-item dropdown' . (isset($_GET['user']) ? ' active' : '') . '">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="' . $TableAdmin->translate('User') . '"><i class="fa fa-user" aria-hidden="true"></i> ' . $TableAdmin->translate('User') . '</a>
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="' . $TableAdmin->translate('User') . '"><i class="fa fa-user"></i> ' . $TableAdmin->translate('User') . '</a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <a href="" class="dropdown-item disabled"><i class="fa fa-user" aria-hidden="true"></i> ' . Tools::h($_SESSION['user']) . '</a>
+                  <a href="" class="dropdown-item disabled"><i class="fa fa-user"></i> ' . Tools::h($_SESSION['user']) . '</a>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item' . (isset($_GET['logout']) ? ' active' : '') . '" href="?user&amp;logout"><i class="fa fas fa-sign-out fa-sign-out-alt mr-1" aria-hidden="true"></i> ' . $TableAdmin->translate('Logout') . '</a>
-                  <a class="dropdown-item' . (isset($_GET['change-password']) ? ' active' : '') . '" href="?user&amp;change-password"><i class="fa fa-id-card fa-id-card-o mr-1" aria-hidden="true"></i> ' . $TableAdmin->translate('Change password') . '</a>
-                  <a class="dropdown-item' . (isset($_GET['create-user']) ? ' active' : '') . '" href="?user&amp;create-user"><i class="fa fa-user-plus mr-1" aria-hidden="true"></i> ' . $TableAdmin->translate('Create user') . '</a>
-                  <a class="dropdown-item' . (isset($_GET['delete-user']) ? ' active' : '') . '" href="?user&amp;delete-user"><i class="fa fa-user-times mr-1" aria-hidden="true"></i> ' . $TableAdmin->translate('Delete user') . '</a>
+                  <a class="dropdown-item' . (isset($_GET['logout']) ? ' active' : '') . '" href="?user&amp;logout"><i class="fa fa-sign-out-alt mr-1"></i> ' . $TableAdmin->translate('Logout') . '</a>
+                  <a class="dropdown-item' . (isset($_GET['change-password']) ? ' active' : '') . '" href="?user&amp;change-password"><i class="fa fa-id-card mr-1"></i> ' . $TableAdmin->translate('Change password') . '</a>
+                  <a class="dropdown-item' . (isset($_GET['create-user']) ? ' active' : '') . '" href="?user&amp;create-user"><i class="fa fa-user-plus mr-1"></i> ' . $TableAdmin->translate('Create user') . '</a>
+                  <a class="dropdown-item' . (isset($_GET['delete-user']) ? ' active' : '') . '" href="?user&amp;delete-user"><i class="fa fa-user-times mr-1"></i> ' . $TableAdmin->translate('Delete user') . '</a>
                 </div>
               </li>';
         }
         $result .= '<li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="' . $TableAdmin->translate('Settings') . '"><i class="fa fa-cog" aria-hidden="true"></i> ' . $TableAdmin->translate('Settings') . '</a>
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="' . $TableAdmin->translate('Settings') . '"><i class="fa fa-cog"></i> ' . $TableAdmin->translate('Settings') . '</a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">';
         foreach ($TableAdmin->TRANSLATIONS as $key => $value) {
-            $result .= '<a class="dropdown-item' . ($key == $_SESSION['language'] ? ' active' : '') . '" href="?' . Tools::urlChange(array('language' => $key)) . '"><i class="fa fa-flag mr-1" aria-hidden="true"></i> ' . Tools::h($value) . '</a>' . PHP_EOL;
+            $result .= '<a class="dropdown-item' . ($key == $_SESSION['language'] ? ' active' : '') . '" href="?' . Tools::urlChange(array('language' => $key)) . '"><i class="fa fa-language mr-1"></i> ' . Tools::h($value) . '</a>' . PHP_EOL;
         }
         if (isset($_SESSION['user'])) {
             $result .= '<div class="dropdown-divider"></div><a class="dropdown-item" href="" id="toggle-nav" title="' . Tools::h($TableAdmin->translate('Toggle sidebar')) . '"><i class="fa fa-columns mr-1"></i> ' . $TableAdmin->translate('Sidebar') . '</a>'
@@ -198,20 +198,29 @@ class MyAdmin extends MyCommon
                         <input type="file" name="files[]" class="form-control" onchange="if($(this).val()){$(\'#files-div\').append($(this).prop(\'outerHTML\'));}" />
                     </div>
                     ' . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden') . '
-                    <button type="submit" name="upload-media" value="1" class="btn btb-lg btn-primary"><i class="fa fa-upload" aria-hidden="true"></i> ' . $TableAdmin->translate('Upload') . '</button>
+                    <button type="submit" name="upload-media" value="1" class="btn btb-lg btn-primary"><i class="fa fa-upload"></i> ' . $TableAdmin->translate('Upload') . '</button>
                 </fieldset>
             </form><hr />
-            <details class="uploaded-files"><summary>' . $TableAdmin->translate('Uploaded files') . ' <small class="badge badge-secondary"></small></summary>
+            <details class="uploaded-files" open><summary>' . $TableAdmin->translate('Uploaded files') . ' <small class="badge badge-secondary"></small></summary>
             <div id="media-files"></div>
-            <button class="btn btn-secondary btn-sm mt-3" title="' . $TableAdmin->translate('Delete') . '" id="delete-media-files"><i class="fa fa-check-square" aria-hidden="true"></i> <i class="fa fa-trash" aria-hidden="true"></i></button>
-            <fieldset class="d-inline-block position-relative" id="rename-fieldset">
-                <div class="input-group input-group-sm">
-                    <div class="input-group-prepend"><button class="btn btn-secondary" type="submit" title="' . $TableAdmin->translate('Rename') . '" id="rename-media-file"><i class="fa fa-dot-circle"></i> <i class="fa fa-i-cursor"></i></button></div>
-                    <span id="file-rename-feedback" class="invalid-tooltip" style="display:none;"></span>' 
-                    . Tools::htmlInput('', '', '', array('class' => 'form-control form-control-sm', 'id' => 'media-file-name')) . '
-                </div>
-            </fieldset>
-            <select id="file-rename-folder" name="file-rename-folder" class="form-control form-control-sm form-control-inline d-inline-block mt-2 w-initial"></select>
+            <div id="media-ops mt-3">
+                <button class="btn btn-secondary" title="' . $TableAdmin->translate('Delete') . '" id="delete-media-files"><i class="fa fa-check-square"></i> <i class="fa fa-trash"></i></button>
+                <fieldset class="d-inline-block position-relative" id="rename-fieldset">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend"><button class="btn btn-secondary disabled" type="button" title="' . $TableAdmin->translate('filename') . '" disabled><i class="fa fa-dot-circle"></i></button></div>
+                        <span id="media-file-feedback" class="invalid-tooltip" style="display:none;"></span>' 
+                        . Tools::htmlInput('', '', '', array('class' => 'form-control form-control-sm', 'id' => 'media-file-name')) . '
+                    </div>
+                </fieldset>
+                <fieldset class="d-inline-block position-relative">
+                    <div class="input-group input-group-sm form-control-inline">
+                        <div class="input-group-prepend"><button class="btn btn-secondary disabled" type="button" title="' . $TableAdmin->translate('folder') . '" disabled><i class="fa fa-folder"></i></button></div>
+                        <select id="file-rename-folder" name="file-rename-folder" class="form-control d-inline-block"></select>
+                    </div>
+                </fieldset>
+                <button class="btn btn-secondary" type="submit" title="' . $TableAdmin->translate('Rename') . '" id="rename-media-file"><i class="fa fa-dot-circle"></i> <i class="fa fa-i-cursor"></i></button>
+                <button class="btn btn-secondary" type="submit" title="' . $TableAdmin->translate('Unpack') . '" id="unpack-media-file"><i class="fa fa-dot-circle"></i> <i class="fa fa-file-archive"></i></button>
+            </div>
             </details>';
         return $result;
     }
@@ -229,7 +238,7 @@ class MyAdmin extends MyCommon
         if (isset($_GET['logout'])) {
             $result .= '<h2><small>' . $TableAdmin->translate('Logout') . '</small></h2>
                 <form action="" method="post" id="logout-form" class="panel d-inline-block"><fieldset class="card p-2">
-                <button type="submit" name="logout" class="form-control btn-primary text-left"><i class="fa fas fa-sign-out fa-sign-out-alt" aria-hidden="true"></i> ' . $TableAdmin->translate('Logout') . '</button>'
+                <button type="submit" name="logout" class="form-control btn-primary text-left"><i class="fa fa-sign-out-alt"></i> ' . $TableAdmin->translate('Logout') . '</button>'
                 . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden') . '
                 </fieldset></form>';
         }
@@ -248,7 +257,7 @@ class MyAdmin extends MyCommon
                 . Tools::htmlInput('new-password', $TableAdmin->translate('New password', false) . ':', '', $options + array('id' => 'new-password', 'autocomplete' => 'new-password'))
                 . Tools::htmlInput('retype-password', $TableAdmin->translate('Retype password', false) . ':', '', $options + array('id' => 'retype-password', 'autocomplete' => 'new-password'))
                 . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden')
-                . '<button type="submit" name="change-password" class="btn btn-primary my-3 ml-3"><i class="fas fa-id-card mr-1" aria-hidden="true"></i> ' . $TableAdmin->translate('Change password') . '</button>
+                . '<button type="submit" name="change-password" class="btn btn-primary my-3 ml-3"><i class="fa fa-id-card mr-1"></i> ' . $TableAdmin->translate('Change password') . '</button>
                 </fieldset></form>';
         }
         // create user
@@ -259,7 +268,7 @@ class MyAdmin extends MyCommon
                 . Tools::htmlInput('password', $TableAdmin->translate('Password', false) . ':', '', array('type' => 'password', 'class' => 'form-control', 'id' => 'create-password'))
                 . Tools::htmlInput('retype-password', $TableAdmin->translate('Retype password', false) . ':', '', array('type' => 'password', 'class' => 'form-control', 'id' => 'create-retype-password'))
                 . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden') . '
-                  <button type="submit" name="create-user" class="btn btn-primary my-2"><i class="fa fa-user-plus" aria-hidden="true"></i> ' . $TableAdmin->translate('Create user') . '</button>
+                  <button type="submit" name="create-user" class="btn btn-primary my-2"><i class="fa fa-user-plus"></i> ' . $TableAdmin->translate('Create user') . '</button>
                 </fieldset></form>';
         }
         // delete user
@@ -272,7 +281,7 @@ class MyAdmin extends MyCommon
                         <form action="" method="post" class="form-inline d-inline-block delete-user-form' . ($user['active'] == 1 ? '' : ' inactive-item') . '" onsubmit="return confirm(\'' . $TableAdmin->translate('Really delete?') . '\')">'
                             . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden')
                             . '<button type="submit" name="delete-user" value="' . Tools::h($user['admin']) . '"' . ($user['admin'] == $_SESSION['user'] ? ' disabled' : '') . ' class="btn btn-primary" title="' . $TableAdmin->translate('Delete user') . '?">'
-                            . '<i class="fa fa-user-times" aria-hidden="true"></i></button> '
+                            . '<i class="fa fa-user-times"></i></button> '
                             . Tools::htmlInput('', '', $user['id'], array('type' => 'checkbox', 'checked' => ($user['active'] ? 1 : null), 'class' => 'user-activate', 'title' => $TableAdmin->translate('Activate/deactivate'))) . ' '
                             . '<tt>' . Tools::h($user['admin']) . '</tt>
                         </form>
@@ -306,7 +315,7 @@ class MyAdmin extends MyCommon
             . Tools::htmlInput('user', $TableAdmin->translate('User', false) . ':', Tools::setifnull($_SESSION['user']), $options)
             . Tools::htmlInput('password', $TableAdmin->translate('Password', false) . ':', '', array('type' => 'password', 'id' => 'login-password') + $options)
             . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden') . '</div>
-            <div class="col-sm-9 col-sm-offset-3 my-3"><button type="submit" name="login" class="btn btn-primary"><i class="fa fas fa-sign-in fa-sign-in-alt" aria-hidden="true"></i> ' . $TableAdmin->translate('Login') . '</button>
+            <div class="col-sm-9 col-sm-offset-3 my-3"><button type="submit" name="login" class="btn btn-primary"><i class="fa fa-sign-in fa-sign-in-alt"></i> ' . $TableAdmin->translate('Login') . '</button>
             </div>
             </form>';
     }
@@ -326,11 +335,11 @@ class MyAdmin extends MyCommon
             if (substr($table, 0, strlen(TAB_PREFIX)) != TAB_PREFIX) {
                 continue;
             }
-            $result .= '<a href="?table=' . urlencode($table) . '&amp;where[id]="><i class="fa fa-plus-square-o" aria-hidden="true" title="' . $TableAdmin->translate('New record') . '"></i></a> '
+            $result .= '<a href="?table=' . urlencode($table) . '&amp;where[id]="><i class="fa fa-plus-square" title="' . $TableAdmin->translate('New record') . '"></i></a> '
                 . '<a href="?table=' . urlencode($table) . '" class="d-inline' . ($_GET['table'] == $table ? ' active' : '') . '">'
-                . '<i class="fa fa-table" aria-hidden="true"></i> '
+                . '<i class="fa fa-table"></i> '
                 . Tools::h(substr($table, strlen(TAB_PREFIX)))
-                . ($table == $_GET['table'] ? ' <span class="sr-only">(current)</span>' : '')
+                . ($table == $_GET['table'] ? ' <span class="sr-only">(' . $TableAdmin->translate('current') . ')</span>' : '')
                 . '</a> &nbsp; ' . PHP_EOL;
         }
         $result .= '</div>';
@@ -352,7 +361,7 @@ class MyAdmin extends MyCommon
         foreach ($this->agendas as $agenda => $option) {
             Tools::setifempty($option['table'], $agenda);
             $result .= '<details class="my-1" id="details-' . $agenda . '">
-                <summary><i class="fa fa-table" aria-hidden="true"></i> ' . Tools::h(Tools::setifempty($option['display'], $agenda)) . '</summary>
+                <summary><i class="fa fa-table"></i> ' . Tools::h(Tools::setifempty($option['display'], $agenda)) . '</summary>
                 <div class="card" id="agenda-' . $agenda . '"></div>
                 </details>' . PHP_EOL;
             if (isset($option['prefill'])) {
@@ -422,19 +431,19 @@ class MyAdmin extends MyCommon
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Image selector</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h5 class="modal-title">' . $TableAdmin->translate('Reload') . '</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="' . $TableAdmin->translate('close') . '"><span aria-hidden="true">&times;</span></button>
                     </div>
                     <div class="modal-body">
                         <select name="subfolder" id="modalImageFolder" class="form-control form-control-sm" onchange="updateImageSelector($(this), $(this).parent().find(\'.ImageFiles\'))">
                         </select>
                         <div id="modalImageFiles" class="ImageFiles"></div>
-                        <label class="note-form-label">Image URL:</label><br />
+                        <label class="note-form-label">' . $TableAdmin->translate('Image URL') . ':</label><br />
                         <input class="note-image-url form-control form-control-sm" type="text" id="modalImagePath" />
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary note-image-url pull-left" id="modalReloadImages"><i class="fa fa-refresh" aria-hidden="true"></i> ' . $TableAdmin->translate('Reload') . '</button>
-                        <button type="button" class="btn btn-primary note-image-url" id="modalInsertImage"><i class="fa fa-picture-o" aria-hidden="true"></i> ' . $TableAdmin->translate('Insert') . '</button>
+                        <button type="button" class="btn btn-secondary note-image-url pull-left" id="modalReloadImages"><i class="fa fa-refresh"></i> ' . $TableAdmin->translate('Reload') . '</button>
+                        <button type="button" class="btn btn-primary note-image-url" id="modalInsertImage"><i class="fa fa-image"></i> ' . $TableAdmin->translate('Insert') . '</button>
                     </div>
                 </div>
             </div>
@@ -451,7 +460,7 @@ class MyAdmin extends MyCommon
         $TableAdmin = $this->TableAdmin;
         $tablePrefixless = mb_substr($_GET['table'], mb_strlen(TAB_PREFIX));
         $result = '<h1 class="page-header">'
-            . '<a href="?table=' . Tools::h($_GET['table']) . '" title="' . $TableAdmin->translate('Back to listing') . '"><i class="fa fa-list-alt" aria-hidden="true"></i></a> '
+            . '<a href="?table=' . Tools::h($_GET['table']) . '" title="' . $TableAdmin->translate('Back to listing') . '"><i class="fa fa-list-alt"></i></a> '
             . '<tt>' . Tools::h($tablePrefixless) . '</tt></h1>' . PHP_EOL;
         if (isset($_GET['where']) && is_array($_GET['where'])) {
             // table edit
