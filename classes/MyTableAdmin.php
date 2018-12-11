@@ -313,7 +313,11 @@ class MyTableAdmin extends MyTableLister
             $input = Tools::htmlInput("fields[$key]", false, $value, $input);
         }
         if (isset($options['original']) && $options['original']) {
-            $input .= Tools::htmlInput("original[$key]", false, isset($options['prefill'][$key]) && is_scalar($options['prefill'][$key]) ? '' : $value, 'hidden');
+            if (is_null($value)) {
+                $input .= Tools::htmlInput("original-null[$key]", false, 1, 'hidden');
+            } else {
+                $input .= Tools::htmlInput("original[$key]", false, isset($options['prefill'][$key]) && is_scalar($options['prefill'][$key]) ? '' : $value, 'hidden');
+            }
         }
         $output .= $input . $this->customInputAfter($key, $value, $record) . ($options['layout-row'] ? '' : '</td></tr>') . PHP_EOL;
         return $output;
@@ -447,13 +451,13 @@ class MyTableAdmin extends MyTableLister
                 }
             }
             foreach ($this->fields as $key => $field) {
+                if (!isset($_POST['fields'][$key])) {
+                    continue;
+                }
                 if (isset($_POST['fields-null'][$key]) || isset($field['foreign_table']) && $value === '') {
                     $_POST['fields'][$key] = null;
                 } elseif (isset($_POST['fields-own'][$key]) && $_POST['fields-own'][$key]) {
                     $_POST['fields'][$key] = $_POST['fields-own'][$key];
-                }
-                if (!isset($_POST['fields'][$key])) {
-                    continue;
                 }
                 $value = $_POST['fields'][$key];
                 if (is_array($value) && $field['type'] == 'set') {
@@ -463,7 +467,9 @@ class MyTableAdmin extends MyTableLister
                     }
                     $value = $tmp;
                 }
-                $original = isset($_POST['original'][$key]) ? $_POST['original'][$key] : false;
+                $value = isset($_POST['fields-null'][$key]) ? null : $value;
+                //$original = isset($_POST['original'][$key]) ? $_POST['original'][$key] : (isset($_POST['original-null'][$key]) ? null : false);
+                $original = isset($_POST['original-null'][$key]) ? null : (isset($_POST['original'][$key]) ? $_POST['original'][$key] : false);
                 if ($original === $value) {
                     continue;
                 }
@@ -502,7 +508,7 @@ class MyTableAdmin extends MyTableLister
                 return false;
             }
         } else {
-            Tools::addMessage('info', 'Nothing to save.');
+            Tools::addMessage('info', $this->translate('Nothing to save.'));
             return 0;
         }
     }
