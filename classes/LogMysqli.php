@@ -293,10 +293,13 @@ class LogMysqli extends BackyardMysqli
             foreach ($data as $key => $value) {
                 if ($format == 'fields') {
                     $result .= ', ' . $this->escapeDbIdentifier($key);
-                } elseif ($format == 'pairs') {
-                    $result .= ', ' . $this->escapeDbIdentifier($key) . '="' . $this->escapeSQL($value) . '"';
-                } else {
-                    $result .= ', "' . $this->escapeSQL($value) . '"';
+                } else{
+                    $value = is_null($value) ? 'NULL' : (is_numeric($value) ? $value : '"' . $this->escapeSQL($value) . '"');
+                    if ($format == 'pairs') {
+                        $result .= ', ' . $this->escapeDbIdentifier($key) . " = $value";
+                    } else {
+                        $result .= ", $value";
+                    }
                 }
             }
         }
