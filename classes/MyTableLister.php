@@ -325,6 +325,7 @@ class MyTableLister
                 $sort .= ',' . array_values($columns)[(int) $value - 1] . (isset($_GET['desc'][$key]) && $_GET['desc'][$key] ? ' DESC' : '');
             }
         }
+        //@todo put building the SQL into another class' method
         $sql = 'SELECT SQL_CALC_FOUND_ROWS ' . implode(',', $columns) . ' FROM '
                 . $this->escapeDbIdentifier($this->table) . $join
                 . Tools::wrap(substr($where, 4), ' WHERE ')
@@ -462,7 +463,7 @@ class MyTableLister
                 $url = $this->rowLink($row);
                 if (!$options['no-multi-options']) {
                     $value = '';
-                    $output .= Tools::htmlInput('check[]', '', $url, array('type' => 'checkbox', 'data-order' => $i));
+                    $output .= Tools::htmlInput('check[]', '', implode('&', $url), array('type' => 'checkbox', 'data-order' => $i));
                 }
                 $output .= '<a href="?table=' . urlencode($this->table) . '&amp;' . implode('&', $url) . '" title="' . $this->translate('Edit') . '">'
                 . '<small class="glyphicon glyphicon-edit fa fa-pencil fa-edit" aria-hidden="true"></small></a>';
@@ -496,8 +497,8 @@ class MyTableLister
         }
         $output .= '</tbody></table>' . PHP_EOL;
         if (!isset($options['no-selected-rows-operations'])) {
-            $output .= '<div class="selected-rows mb-2" title="' . $this->translate('Selected records') . '"><i class="fa fa-check-square"></i>=<span class="listed">0</span> 
-                <label class="btn btn-sm btn-light mx-1 mt-2">' . Tools::htmlInput('total-rows', '', $options['total-rows'], array('type' => 'checkbox', 'class' => 'total-rows')) . ' ' . $this->translate('All records') . '</label>
+            $output .= '<div class="selected-rows mb-2"><i class="fa fa-check-square"></i>=<span class="listed">0</span> 
+                <label class="btn btn-sm btn-light mx-1 mt-2">' . Tools::htmlInput('total-rows', '', $options['total-rows'], array('type' => 'checkbox', 'class' => 'total-rows')) . ' ' . $this->translate('Whole resultset') . '</label>
                 <button name="table-export" value="1" class="btn btn-sm ml-1"><i class="fa fa-download"></i> ' . $this->translate('Export') . '</button>
                 <button name="edit-selected" value="1" class="btn btn-sm ml-1"><i class="fa fa-edit"></i> ' . $this->translate('Edit') . '</button>
                 <button name="table-clone" value="1" class="btn btn-sm ml-1"><i class="far fa-clone"></i> ' . $this->translate('Clone') . '</button>
