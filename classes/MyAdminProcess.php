@@ -22,9 +22,119 @@ class MyAdminProcess extends MyCommon
     protected $tableAdmin;
 
     /**
+     * Ends Admin rendering with TracyPanels
+     *
+     * @return void
+     */
+    public function endAdmin()
+    {
+        if (isset($_SESSION['user'])) {
+            Debugger::getBar()->addPanel(new \GodsDev\MyCMS\Tracy\BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION));
+        }
+        $sqlStatementsArray = $this->MyCMS->dbms->getStatementsArray();
+        if (!empty($sqlStatementsArray)) {
+            Debugger::getBar()->addPanel(new \GodsDev\MyCMS\Tracy\BarPanelTemplate('SQL: ' . count($sqlStatementsArray), $sqlStatementsArray));
+        }
+//        Debugger::barDump(debug_backtrace(), 'debug_backtrace');
+    }
+
+    /**
+     * Tracy wrapper of AJAX calls, i.e. exit(json_encode($result))
+     *
+     * @param mixed $result Can be any type except a resource.
+     * @return void
+     */
+    protected function exitJson($result)
+    {
+        header('Content-type: application/json');
+        $this->endAdmin();
+        exit(json_encode($result));
+    }
+
+    /**
+     * Process the "export" action
+     *
+     * @param array &$post $_POST
+     * @param array &$get
+     * @return void
+     */
+    public function processExport(&$post, &$get)
+    {
+        if (isset($post['table-export'], $post['database-table'])) {
+            if ((isset($post['check']) && count($post['check'])) || Tools::set($post['total-rows'])) {
+                $sql = '';
+                if (Tools::set($post['total-rows'])) { //export whole resultset (regard possible $get limits)
+                    Tools::dump($get);exit;
+                } else { //export only checked rows
+                    $where = '';
+                    $errors = array();
+                    foreach ($post['check'] as $check) {
+                        $partialWhere = '';
+                        foreach (explode('&', $check) as $condition) {
+                            $condition = explode('=', $condition);
+                            if (count($condition) == 2 && Tools::begins($condition[0], 'where[') && Tools::ends($condition[0], ']')) { //@todo doesn't work for nulls
+                                $condition[1] = is_null($condition[1]) ? ' IS NULL' : (is_numeric($condition[1]) ? ' = ' . $condition[1] : ' = "' . $this->tableAdmin->escapeSQL($condition[1]) . '"');
+                                $partialWhere .= ' AND ' . $this->tableAdmin->escapeDbIdentifier(substr($condition[0], 5, -1)) . $condition[1];
+                            } else {
+                                $errors []= $condition[0];
+                                $partialWhere = '';
+                                break; 
+                            }
+                        }
+                        if ($partialWhere) {
+                            $where .= ' OR (' . substr($partialWhere, 6) . ')';
+                        }
+                    }
+                    if ($errors) {
+                        Tools::addMessage('warning', $this->tableAdmin->translate('Wrong input parameter') . ': ' . implode(', ', $errors));
+                    }
+                    if ($where) {                              
+                        $sql='SELECT * FROM ' . $post['database-table'] //@todo columns hidden in view don't get affected
+                            . ' WHERE ' . substr($where, 4);
+                    } else {
+                        Tools::addMessage('info', $this->tableAdmin->translate('No records found.'));
+                    }
+                }
+                if ($sql) {
+                    $post['database-table'] = $this->tableAdmin->escapeDbIdentifier($post['database-table']);
+                    $output = $this->MyCMS->fetchSingle('SHOW CREATE TABLE ' . $post['database-table']);
+                    $output = "-- " . date('Y-m-d H:i:s') . "\n\n"
+                        . "SET NAMES utf8;\n"
+                        . "SET time_zone = '+00:00';\n"
+                        . "SET foreign_key_checks = 0;\n"
+                        . "SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';\n\n"
+                        . "DROP TABLE {$post['database-table']} IF EXISTS;\n{$output['Create Table']};\n\n"; //@todo specific to MySQL/MariaDb
+                    $query = $this->MyCMS->dbms->query();
+                    $duplicateKey = '';
+                    for ($i = 0; $row = $query->fetch_assoc(); $i++) {
+                        if ($i % 5 == 0) {
+                            $output = ($i ? substr($output, 0, -2) . ($duplicateKey = "\nON DUPLICATE KEY UPDATE " . $this->MyCMS->dbms->values($row, '%column% = VALUES(%column%)')) . ";\n" : $output) 
+                                . "INSERT INTO " . $post['database-table'] . '(' . $this->MyCMS->dbms->values($row, 'fields') . ") VALUES\n";
+                        }
+                        $output .= '(' . $this->MyCMS->dbms->values($row, 'values') . "),\n";
+
+                    }
+                    $output = substr($output, 0, -2) . ($i ? $duplicateKey : '') . ";\n";
+                    // we got output
+                    if (Tools::set($post['download'])) {
+                        header('Content-Disposition: attachment; filename=' . $post['database-table'] . '.sql;');
+                        header('Content-Transfer-Encoding: binary');
+                        header('Content-type: text/plain; charset=utf-8');
+                    }
+                    exit($output);
+                } else {
+                    Tools::addMessage('info', $this->tableAdmin->translate('No records selected.'));
+                }
+            } else {
+                Tools::addMessage('info', $this->tableAdmin->translate('Wrong input parameters.'));
+            }
+        }
+    }
+
+    /**
      * Process the "file delete" action
      *
-     * @param &$post $_POST
+     * @param array &$post $_POST
      * @return void
      */
     public function processFileDelete(&$post)
@@ -312,38 +422,10 @@ class MyAdminProcess extends MyCommon
     }
 
     /**
-     * Ends Admin rendering with TracyPanels
-     *
-     * @return void
-     */
-    public function endAdmin()
-    {
-        if (isset($_SESSION['user'])) {
-            Debugger::getBar()->addPanel(new \GodsDev\MyCMS\Tracy\BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION));
-        }
-        $sqlStatementsArray = $this->MyCMS->dbms->getStatementsArray();
-        if (!empty($sqlStatementsArray)) {
-            Debugger::getBar()->addPanel(new \GodsDev\MyCMS\Tracy\BarPanelTemplate('SQL: ' . count($sqlStatementsArray), $sqlStatementsArray));
-        }
-//        Debugger::barDump(debug_backtrace(), 'debug_backtrace');
-    }
-
-    /**
-     * Tracy wrapper of AJAX calls, i.e. exit(json_encode($result))
-     *
-     * @param mixed $result Can be any type except a resource.
-     */
-    protected function exitJson($result)
-    {
-        header('Content-type: application/json');
-        $this->endAdmin();
-        exit(json_encode($result));
-    }
-
-    /**
      * Tracy wrapper of Tools::redir
      *
      * @param string $url OPTIONAL
+     * @return void
      */
     protected function redir($url = '')
     {
