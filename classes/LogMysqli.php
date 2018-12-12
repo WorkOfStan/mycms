@@ -284,21 +284,26 @@ class LogMysqli extends BackyardMysqli
      *
      * @param array $data
      * @param string format either "values" (default), "fields" or "pairs"
+     *      or anything containing %value% for value and %column% for column name that gets replaced
      * @return string
      */
     public function values($data, $format)
     {
         $result = '';
+        $replace = (strpos($format, '%value%') !== false) || (strpos($format, '%column%') !== false); 
         if (is_array($data)) {
             foreach ($data as $key => $value) {
+                $value = is_null($value) ? 'NULL' : (is_numeric($value) ? $value : '"' . $this->escapeSQL($value) . '"');
+                $key = $this->escapeDbIdentifier($key);
                 if ($format == 'fields') {
-                    $result .= ', ' . $this->escapeDbIdentifier($key);
+                    $result .= ", $key";
                 } else{
-                    $value = is_null($value) ? 'NULL' : (is_numeric($value) ? $value : '"' . $this->escapeSQL($value) . '"');
                     if ($format == 'pairs') {
-                        $result .= ', ' . $this->escapeDbIdentifier($key) . " = $value";
+                        $result .= ", $key = $value";
+                    } elseif ($replace) {
+                        $result .= ", " . strtr($format, array('%value%' => $value, '%column%' => $key));
                     } else {
-                        $result .= ", $value";
+                        $result .= ",\t$value";
                     }
                 }
             }
