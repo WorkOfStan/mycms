@@ -459,9 +459,9 @@ class MyTableAdmin extends MyTableLister
                 } elseif (isset($_POST['fields-own'][$key]) && $_POST['fields-own'][$key]) {
                     $_POST['fields'][$key] = $_POST['fields-own'][$key];
                 }
-                if (!isset($_POST['fields'][$key]) && !isset($_POST['fields-null'][$key])) {
-                    continue;
-                }
+//                if (!isset($_POST['fields'][$key]) && !isset($_POST['fields-null'][$key])) {
+//                    continue;
+//                }
                 $value = $_POST['fields'][$key];
                 if (is_array($value) && $field['type'] == 'set') {
                     $tmp = 0;

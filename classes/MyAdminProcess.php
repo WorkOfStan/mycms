@@ -55,18 +55,17 @@ class MyAdminProcess extends MyCommon
      * Process the "export" action
      *
      * @param array &$post $_POST
-     * @param array &$get
+     * @param array $get
      * @return void
      */
-    public function processExport(&$post, &$get)
+    public function processExport(&$post, $get)
     {
         if (isset($post['table-export'], $post['database-table'])) {
             if ((isset($post['check']) && count($post['check'])) || Tools::set($post['total-rows'])) {
-                $sql = '';
+                $sql = $where = '';
                 if (Tools::set($post['total-rows'])) { //export whole resultset (regard possible $get limits)
-                    Tools::dump($get);exit;
+                    Tools::dump($get);exit; //@todo
                 } else { //export only checked rows
-                    $where = '';
                     $errors = array();
                     foreach ($post['check'] as $check) {
                         $partialWhere = '';
@@ -141,11 +140,37 @@ class MyAdminProcess extends MyCommon
     {
         if (isset($post['subfolder'], $post['delete-files'])) {
             $result = array(
-                'deleted-files' => 0,
+                'processed-files' => 0,
                 'success' => false
             );
             if (is_dir(DIR_ASSETS . $post['subfolder']) && is_array($post['delete-files'])) {
                 foreach ($post['delete-files'] as $value) {
+                    if (unlink(DIR_ASSETS . $post['subfolder'] . "/$value")) {
+                        $result['processed-files'] ++;
+                    }
+                }
+                Tools::addMessage('info', $this->tableAdmin->translate('Total of deleted files: ') . $result['deleted-files'] . '.');
+                $result['success'] = $result['processed-files'] > 0;
+            }
+            $this->exitJson($result);
+        }
+    }
+
+    /**
+     * Process the "file pack" action
+     *
+     * @param array &$post $_POST
+     * @return void
+     */
+    public function processFilePack(&$post)
+    {
+        if (isset($post['subfolder'], $post['pack-files'])) {
+            $result = array(
+                'processed-files' => 0,
+                'success' => false
+            );
+            if (is_dir(DIR_ASSETS . $post['subfolder']) && is_array($post['delete-files'])) {
+                foreach ($post['pack-files'] as $value) {
                     if (unlink(DIR_ASSETS . $post['subfolder'] . "/$value")) {
                         $result['deleted-files'] ++;
                     }
@@ -189,7 +214,7 @@ class MyAdminProcess extends MyCommon
                 $result = array('data' => $post['file_rename'], 'success' => true);
             }
             if (!$result['success']) {
-                $this->MyCMS->logger->warning($this->tableAdmin->translate('Error occured renaming the file.') . ' ' . $path . $post['old_name'] . ' --> ' . $newpath . $post['file_rename']);
+                $this->MyCMS->logger->warning('Error occured renaming the file. ' . $path . $post['old_name'] . ' --> ' . $newpath . $post['file_rename']);
             }
             header('Content-type: application/json');
             exit(json_encode($result));
@@ -198,7 +223,7 @@ class MyAdminProcess extends MyCommon
 
     /**
      * Process the "files unpack" action. Currently, only the zip files without password are supported.
-     * extractTo() method of the ZipArchive object is used. Subfolders will be created, preexisting files overwritten.
+     * The ZipArchive->extractTo() method is used. Subfolders will be created, preexisting files overwritten.
      * Security issues: 1) white list of file extentions 2) file size limitation
      *
      * @param array &$post $_POST
@@ -278,13 +303,13 @@ class MyAdminProcess extends MyCommon
                 if ($row['active'] == '1' && $row['password_hashed'] == sha1($post['password'] . $row['salt'])) {
                     $_SESSION['user'] = $post['user'];
                     $_SESSION['rights'] = $row['rights'];
-                    $this->MyCMS->logger->info("Admin {$_SESSION['user']} přihlášen.");
+                    $this->MyCMS->logger->info("Admin {$_SESSION['user']} logged in.");
                     Tools::addMessage('success', $this->tableAdmin->translate('You are logged in.'));
                     $this->redir();
                 }
-                $this->MyCMS->logger->warning('Admin nepřihlášen - špatné heslo.');
+                $this->MyCMS->logger->warning('Admin not logged in - wrong password.');
             } else {
-                $this->MyCMS->logger->warning('Admin nepřihlášen - špatné jméno.');
+                $this->MyCMS->logger->warning('Admin not logged in - wrong name.');
             }
             Tools::addMessage('error', $this->tableAdmin->translate('Error occured logging You in.'));
             $this->redir();
