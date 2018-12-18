@@ -133,7 +133,7 @@ class MyAdmin extends MyCommon
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="' . $TableAdmin->translate('Settings') . '"><i class="fa fa-cog"></i> ' . $TableAdmin->translate('Settings') . '</a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">';
         foreach ($TableAdmin->TRANSLATIONS as $key => $value) {
-            $result .= '<a class="dropdown-item' . ($key == $_SESSION['language'] ? ' active' : '') . '" href="?' . Tools::urlChange(array('language' => $key)) . '"><i class="fa fa-language mr-1"></i> ' . Tools::h($value) . '</a>' . PHP_EOL;
+            $result .= '<a class="dropdown-item' . ($key == $_SESSION['language'] ? ' active' : '') . '" href="?' . Tools::urlChange(array('language' => $key)) . '"><i class="fa fa-flag mr-1"></i> ' . Tools::h($value) . '</a>' . PHP_EOL;
         }
         if (isset($_SESSION['user'])) {
             $result .= '<div class="dropdown-divider"></div><a class="dropdown-item" href="" id="toggle-nav" title="' . Tools::h($TableAdmin->translate('Toggle sidebar')) . '"><i class="fa fa-columns mr-1"></i> ' . $TableAdmin->translate('Sidebar') . '</a>'
@@ -203,23 +203,28 @@ class MyAdmin extends MyCommon
             </form><hr />
             <details class="uploaded-files" open><summary>' . $TableAdmin->translate('Uploaded files') . ' <small class="badge badge-secondary"></small></summary>
             <div id="media-files"></div>
-            <div id="media-ops mt-3">
-                <button class="btn btn-secondary" title="' . $TableAdmin->translate('Delete') . '" id="delete-media-files"><i class="fa fa-check-square"></i> <i class="fa fa-trash"></i></button>
-                <fieldset class="d-inline-block position-relative" id="rename-fieldset">
+            <div id="file-ops">
+                <button class="btn btn-secondary mr-2" title="' . $TableAdmin->translate('Delete') . '" id="delete-media-files"><i class="fa fa-check-square"></i> <i class="fa fa-trash"></i></button>
+                <fieldset class="d-inline-block position-relative" id="filename-fieldset">
                     <div class="input-group input-group-sm">
-                        <div class="input-group-prepend"><button class="btn btn-secondary disabled" type="button" title="' . $TableAdmin->translate('filename') . '" disabled><i class="fa fa-dot-circle"></i></button></div>
-                        <span id="media-file-feedback" class="invalid-tooltip" style="display:none;"></span>' 
+                        <div class="input-group-prepend">
+                            <button class="btn btn-secondary" type="button" readonly title="' . $TableAdmin->translate('File') . '"><i class="fa fa-file"></i></button>
+                        </div>
+                        <span id="file-rename-feedback" class="invalid-tooltip" style="display:none;"></span>' 
                         . Tools::htmlInput('', '', '', array('class' => 'form-control form-control-sm', 'id' => 'media-file-name')) . '
                     </div>
                 </fieldset>
-                <fieldset class="d-inline-block position-relative">
-                    <div class="input-group input-group-sm form-control-inline">
-                        <div class="input-group-prepend"><button class="btn btn-secondary disabled" type="button" title="' . $TableAdmin->translate('folder') . '" disabled><i class="fa fa-folder"></i></button></div>
-                        <select id="file-rename-folder" name="file-rename-folder" class="form-control d-inline-block"></select>
+                <fieldset class="d-inline-block position-relative mr-2" id="filename-fieldset">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-secondary" type="button" title="' . $TableAdmin->translate('Folder') . '"><i class="fa fa-folder"></i></button>
+                        </div>
+                        <select id="file-rename-folder" name="file-rename-folder" class="form-control form-control-sm form-control-inline d-inline-block w-initial"></select>
                     </div>
                 </fieldset>
                 <button class="btn btn-secondary" type="submit" title="' . $TableAdmin->translate('Rename') . '" id="rename-media-file"><i class="fa fa-dot-circle"></i> <i class="fa fa-i-cursor"></i></button>
-                <button class="btn btn-secondary" type="submit" title="' . $TableAdmin->translate('Unpack') . '" id="unpack-media-file"><i class="fa fa-dot-circle"></i> <i class="fa fa-file-archive"></i></button>
+                <button class="btn btn-secondary" type="submit" title="' . $TableAdmin->translate('Pack') . '" id="pack-media-files"><i class="fa fa-check-square"></i> <i class="fa fa-caret-right"></i> <i class="fa fa-file-archive"></i></button>
+                <button class="btn btn-secondary d-inline" type="submit" title="' . $TableAdmin->translate('Unpack') . '" id="unpack-media-file"><i class="fa fa-dot-circle"></i> <i class="far fa-file-archive"></i> <i class="fa fa-caret-right"></i></button>
             </div>
             </details>';
         return $result;
@@ -238,7 +243,7 @@ class MyAdmin extends MyCommon
         if (isset($_GET['logout'])) {
             $result .= '<h2><small>' . $TableAdmin->translate('Logout') . '</small></h2>
                 <form action="" method="post" id="logout-form" class="panel d-inline-block"><fieldset class="card p-2">
-                <button type="submit" name="logout" class="form-control btn-primary text-left"><i class="fa fa-sign-out-alt"></i> ' . $TableAdmin->translate('Logout') . '</button>'
+                <button type="submit" name="logout" class="form-control btn-primary text-left"><i class="fa fas fa-sign-out fa-sign-out-alt"></i> ' . $TableAdmin->translate('Logout') . '</button>'
                 . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden') . '
                 </fieldset></form>';
         }
@@ -257,7 +262,7 @@ class MyAdmin extends MyCommon
                 . Tools::htmlInput('new-password', $TableAdmin->translate('New password', false) . ':', '', $options + array('id' => 'new-password', 'autocomplete' => 'new-password'))
                 . Tools::htmlInput('retype-password', $TableAdmin->translate('Retype password', false) . ':', '', $options + array('id' => 'retype-password', 'autocomplete' => 'new-password'))
                 . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden')
-                . '<button type="submit" name="change-password" class="btn btn-primary my-3 ml-3"><i class="fa fa-id-card mr-1"></i> ' . $TableAdmin->translate('Change password') . '</button>
+                . '<button type="submit" name="change-password" class="btn btn-primary my-3 ml-3"><i class="fas fa-id-card mr-1"></i> ' . $TableAdmin->translate('Change password') . '</button>
                 </fieldset></form>';
         }
         // create user
@@ -315,7 +320,7 @@ class MyAdmin extends MyCommon
             . Tools::htmlInput('user', $TableAdmin->translate('User', false) . ':', Tools::setifnull($_SESSION['user']), $options)
             . Tools::htmlInput('password', $TableAdmin->translate('Password', false) . ':', '', array('type' => 'password', 'id' => 'login-password') + $options)
             . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden') . '</div>
-            <div class="col-sm-9 col-sm-offset-3 my-3"><button type="submit" name="login" class="btn btn-primary"><i class="fa fa-sign-in fa-sign-in-alt"></i> ' . $TableAdmin->translate('Login') . '</button>
+            <div class="col-sm-9 col-sm-offset-3 my-3"><button type="submit" name="login" class="btn btn-primary"><i class="fa fas fa-sign-in fa-sign-in-alt"></i> ' . $TableAdmin->translate('Login') . '</button>
             </div>
             </form>';
     }
@@ -335,7 +340,7 @@ class MyAdmin extends MyCommon
             if (substr($table, 0, strlen(TAB_PREFIX)) != TAB_PREFIX) {
                 continue;
             }
-            $result .= '<a href="?table=' . urlencode($table) . '&amp;where[id]="><i class="fa fa-plus-square" title="' . $TableAdmin->translate('New record') . '"></i></a> '
+            $result .= '<a href="?table=' . urlencode($table) . '&amp;where[id]="><i class="far fa-plus-square" title="' . $TableAdmin->translate('New record') . '"></i></a> '
                 . '<a href="?table=' . urlencode($table) . '" class="d-inline' . ($_GET['table'] == $table ? ' active' : '') . '">'
                 . '<i class="fa fa-table"></i> '
                 . Tools::h(substr($table, strlen(TAB_PREFIX)))
@@ -398,7 +403,7 @@ class MyAdmin extends MyCommon
 //            . '<script type="text/javascript" src="scripts/admin.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
             . '<script type="text/javascript" src="scripts/admin-specific.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
             . '<script type="text/javascript">' . PHP_EOL;
-        $tmp = array_flip(explode('|', 'Descending|Really delete?|New record|Passwords don\'t match!|Please, fill necessary data.|Select at least one file and try again.|Select at least one record and try again.|No files|Edit|variable|value|name|size|modified|Select|No records found.|Please, choose a new name.'));
+        $tmp = array_flip(explode('|', 'Descending|Really delete?|Really?|New record|Passwords don\'t match!|Please, fill necessary data.|Select at least one file and try again.|Select at least one record and try again.|No files|Edit|variable|value|name|size|modified|Select|No records found.|Please, choose a new name.'));
         foreach ($tmp as $key => $value) {
             $tmp[$key] = $TableAdmin->translate($key, false);
         }
