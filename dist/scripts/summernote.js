@@ -4456,8 +4456,7 @@
                 linkUrl = options.onCreateLink(linkUrl);
             } else {
                 // if url doesn't match an URL schema, set http:// as default
-                linkUrl = /^[A-Za-z][A-Za-z0-9+-.]*\:[\/\/]?/.test(linkUrl) ?
-                    linkUrl : 'http://' + linkUrl;
+                //linkUrl = /^[A-Za-z][A-Za-z0-9+-.]*\:[\/\/]?/.test(linkUrl) ? linkUrl : 'http://' + linkUrl;
             }
             var anchors = [];
             if (isTextChanged) {

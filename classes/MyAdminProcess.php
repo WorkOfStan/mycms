@@ -149,7 +149,7 @@ class MyAdminProcess extends MyCommon
                         $result['processed-files'] ++;
                     }
                 }
-                Tools::addMessage('info', $this->tableAdmin->translate('Total of deleted files: ') . $result['deleted-files'] . '.');
+                Tools::addMessage('info', $this->tableAdmin->translate('Total of deleted files: ') . $result['processed-files'] . '.');
                 $result['success'] = $result['processed-files'] > 0;
             }
             $this->exitJson($result);
@@ -158,25 +158,38 @@ class MyAdminProcess extends MyCommon
 
     /**
      * Process the "file pack" action
+     * The ZipArchive->addFile() method is used.
      *
      * @param array &$post $_POST
      * @return void
      */
     public function processFilePack(&$post)
     {
-        if (isset($post['subfolder'], $post['pack-files'])) {
+        if (isset($post['subfolder'], $post['pack-files'], $post['archive'])) {
             $result = array(
                 'processed-files' => 0,
-                'success' => false
+                'success' => false,
+                'errors' => ''
             );
-            if (is_dir(DIR_ASSETS . $post['subfolder']) && is_array($post['delete-files'])) {
-                foreach ($post['pack-files'] as $value) {
-                    if (unlink(DIR_ASSETS . $post['subfolder'] . "/$value")) {
-                        $result['deleted-files'] ++;
+            if (!$post['archive'] || !preg_match('~[a-z0-9-]\.zip~six', $post['archive'])) {
+                $result['errors'] = $this->tableAdmin->translate('Please, fill up a valid file name.');
+            } elseif (is_dir(DIR_ASSETS . $post['subfolder']) && is_array($post['pack-files']) && count($post['pack-files'])) {
+                $ZipArchive = new \ZipArchive;
+                if ($tmp = $ZipArchive->open(DIR_ASSETS . $post['subfolder'] . '/' . $post['archive'], \ZipArchive::CREATE) === true) {
+                    foreach ($post['pack-files'] as $file) {
+                        if (file_exists(DIR_ASSETS . $post['subfolder'] . '/' . $file)) {
+                            $ZipArchive->addFile(DIR_ASSETS . $post['subfolder'] . '/' . $file);
+                            $result['processed-files'] ++;
+                        }
                     }
+                    $result['success'] = $ZipArchive->close() && ($result['processed-files'] > 0);
+                    Tools::resolve($result['success'], $this->tableAdmin->translate('Archive created.') . ' <tt><a href="' . ($file = DIR_ASSETS . $post['archive']) . '">' . $file . '</a></tt>', $this->tableAdmin->translate('Error occured opening the archive.'));
+                    Tools::addMessage('info', $this->tableAdmin->translate('Total of processed files: ') . $result['processed-files'] . '.');
+                } else {
+                    $result['errors'] = $this->tableAdmin->translate('Error occured opening the archive.').'`'.print_r($tmp,1).'`';
                 }
-                Tools::addMessage('info', $this->tableAdmin->translate('Total of deleted files: ') . $result['deleted-files'] . '.');
-                $result['success'] = $result['deleted-files'] > 0;
+            } else {
+                $result['errors'] = $this->tableAdmin->translate('Wrong input parameter');
             }
             $this->exitJson($result);
         }
@@ -204,11 +217,11 @@ class MyAdminProcess extends MyCommon
                 || !preg_match('/^([-\.\w]+)$/', $post['file_rename']) // apply some basic regex pattern
                 || pathinfo($post['old_name'], PATHINFO_EXTENSION) != pathinfo($post['file_rename'], PATHINFO_EXTENSION) // old and new extension must be the same
                 ) {
-                $result['error'] = $this->tableAdmin->translate('Error occured renaming the file.');
+                $result['errors'] = $this->tableAdmin->translate('Error occured renaming the file.');
             } elseif (file_exists($newpath . $post['file_rename'])) {
-                $result['error'] = $this->tableAdmin->translate('File already exists.');
+                $result['errors'] = $this->tableAdmin->translate('File already exists.');
             } elseif (!rename($path . $post['old_name'], $newpath . $post['file_rename'])) {
-                $result['error'] = $this->tableAdmin->translate('Error occured renaming the file.');
+                $result['errors'] = $this->tableAdmin->translate('Error occured renaming the file.');
             } else {
                 Tools::addMessage('success', $this->tableAdmin->translate('File renamed.') . ' (<a href="' . $newpath . $post['file_rename'] . '" target="_blank"><tt>' . Tools::h($newpath . $post['file_rename']) . '</tt></a>)');
                 $result = array('data' => $post['file_rename'], 'success' => true);
