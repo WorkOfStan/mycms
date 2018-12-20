@@ -158,7 +158,8 @@ class MyAdminProcess extends MyCommon
 
     /**
      * Process the "file pack" action
-     * The ZipArchive->addFile() method is used.
+     * Files are added into the archive from the current directory and stored without directory.
+     * The ZipArchive->addFile() method is used. Standard file/error handling is used.
      *
      * @param array &$post $_POST
      * @return void
@@ -174,19 +175,19 @@ class MyAdminProcess extends MyCommon
             if (!$post['archive'] || !preg_match('~[a-z0-9-]\.zip~six', $post['archive'])) {
                 $result['errors'] = $this->tableAdmin->translate('Please, fill up a valid file name.');
             } elseif (is_dir(DIR_ASSETS . $post['subfolder']) && is_array($post['pack-files']) && count($post['pack-files'])) {
+                $path = DIR_ASSETS . $post['subfolder'] . '/';
                 $ZipArchive = new \ZipArchive;
-                if ($tmp = $ZipArchive->open(DIR_ASSETS . $post['subfolder'] . '/' . $post['archive'], \ZipArchive::CREATE) === true) {
+                if ($open = $ZipArchive->open($path . $post['archive'], \ZipArchive::CREATE) === true) {
                     foreach ($post['pack-files'] as $file) {
-                        if (file_exists(DIR_ASSETS . $post['subfolder'] . '/' . $file)) {
-                            $ZipArchive->addFile(DIR_ASSETS . $post['subfolder'] . '/' . $file);
-                            $result['processed-files'] ++;
+                        if (file_exists($path . $file)) {
+                            $result['processed-files'] += $ZipArchive->addFile($path . $file, $file) ? 1 : 0;
                         }
                     }
                     $result['success'] = $ZipArchive->close() && ($result['processed-files'] > 0);
-                    Tools::resolve($result['success'], $this->tableAdmin->translate('Archive created.') . ' <tt><a href="' . ($file = DIR_ASSETS . $post['archive']) . '">' . $file . '</a></tt>', $this->tableAdmin->translate('Error occured opening the archive.'));
+                    Tools::resolve($result['success'], $this->tableAdmin->translate('Archive created.') . ' <tt><a href="' . ($file = $path . $post['archive']) . '">' . $file . '</a></tt>', $this->tableAdmin->translate('Error occured opening the archive.'));
                     Tools::addMessage('info', $this->tableAdmin->translate('Total of processed files: ') . $result['processed-files'] . '.');
                 } else {
-                    $result['errors'] = $this->tableAdmin->translate('Error occured opening the archive.').'`'.print_r($tmp,1).'`';
+                    $result['errors'] = $this->tableAdmin->translate('Error occured opening the archive.');
                 }
             } else {
                 $result['errors'] = $this->tableAdmin->translate('Wrong input parameter');
@@ -352,7 +353,9 @@ class MyAdminProcess extends MyCommon
      */
     public function processSubfolder(&$post)
     {
-        if (isset($post['subfolder'], $post['media-files'])) {
+        static $IMAGE_EXTENSIONS = array('jpg', 'gif', 'png', 'jpeg', 'bmp', 'wbmp', 'webp', 'xbm', 'xpm');
+        static $IMAGE_TYPE = array('unknown', 'GIF', 'JPEG', 'PNG', 'SWF', 'PSD', 'BMP', 'TIFF_II', 'TIFF_MM', 'JPC', 'JP2', 'JPX', 'JB2', 'SWC', 'IFF', 'WBMP', 'XBM', 'ICO', 'COUNT');
+        if (isset($post['media-files'], $post['subfolder'])) {
             $result = array(
                 'subfolder' => DIR_ASSETS . $post['subfolder'],
                 'data' => array(),
@@ -360,6 +363,10 @@ class MyAdminProcess extends MyCommon
             );
             if (is_dir(DIR_ASSETS . $post['subfolder'])) {
                 $_SESSION['assetsSubfolder'] = $post['subfolder'];
+                Tools::setifnotset($post['info'], null);
+                if ($post['info']) {
+                    $ZipArchive = new \ZipArchive();
+                }
                 foreach (glob(DIR_ASSETS . $post['subfolder'] . '/' . (isset($post['wildcard']) ? $post['wildcard'] : '*.*'), isset($post['wildcard']) ? GLOB_BRACE : 0) as $file) {
                     if (is_file($file)) {
                         $pathinfo = pathinfo($file);
@@ -370,6 +377,15 @@ class MyAdminProcess extends MyCommon
                             'modified' => date("Y-m-d H:i:s", filemtime($file)),
                             'info' => ''
                         );
+                        if ($post['info']) {
+                            if (in_array($pathinfo['extension'], $IMAGE_EXTENSIONS)) {
+                                $size = getimagesize($file);
+                                $entry['info'] .= $size ? Tools::wrap(Tools::set($IMAGE_TYPE[$size[2]], ''), '', ' ') . $size[0] . '×' . $size[1] : '';
+                            } elseif (substr($file, -4) == '.zip') {
+                                $ZipArchive->open($file);
+                                $entry['info'] .= '';
+                            }
+                        }
                         $result['data'] [] = $entry;
                     }
                 }

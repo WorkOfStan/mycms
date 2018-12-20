@@ -210,7 +210,7 @@ class MyAdmin extends MyCommon
                     <div class="input-group input-group-sm">
                         <div class="input-group-prepend">
                             <button class="btn btn-secondary" type="button" readonly title="' . $TableAdmin->translate('File') . '"><i class="fa fa-file"></i></button>
-                        </div>'
+                        </div>' 
                         . Tools::htmlInput('', '', '', array('class' => 'form-control form-control-sm', 'id' => 'media-file-name')) . '
                     </div>
                 </fieldset>
