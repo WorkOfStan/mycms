@@ -204,13 +204,13 @@ class MyAdmin extends MyCommon
             <details class="uploaded-files" open><summary>' . $TableAdmin->translate('Uploaded files') . ' <small class="badge badge-secondary"></small></summary>
             <div id="media-files"></div>
             <div id="file-ops">
-                <button class="btn btn-secondary mr-2" title="' . $TableAdmin->translate('Delete') . '" id="delete-media-files"><i class="fa fa-check-square"></i> <i class="fa fa-trash"></i></button>
+                <div id="media-feedback" class="alert alert-warning alert-dismissible" style="display:none;"></div>
+                <button class="btn btn-secondary mr-2 disabled" title="' . $TableAdmin->translate('Delete') . '" id="delete-media-files"><i class="fa fa-check-square"></i> <i class="fa fa-trash"></i></button>
                 <fieldset class="d-inline-block position-relative" id="filename-fieldset">
                     <div class="input-group input-group-sm">
                         <div class="input-group-prepend">
                             <button class="btn btn-secondary" type="button" readonly title="' . $TableAdmin->translate('File') . '"><i class="fa fa-file"></i></button>
-                        </div>
-                        <span id="file-rename-feedback" class="invalid-tooltip" style="display:none;"></span>' 
+                        </div>' 
                         . Tools::htmlInput('', '', '', array('class' => 'form-control form-control-sm', 'id' => 'media-file-name')) . '
                     </div>
                 </fieldset>
@@ -222,9 +222,9 @@ class MyAdmin extends MyCommon
                         <select id="file-rename-folder" name="file-rename-folder" class="form-control form-control-sm form-control-inline d-inline-block w-initial"></select>
                     </div>
                 </fieldset>
-                <button class="btn btn-secondary" type="submit" title="' . $TableAdmin->translate('Rename') . '" id="rename-media-file"><i class="fa fa-dot-circle"></i> <i class="fa fa-i-cursor"></i></button>
-                <button class="btn btn-secondary" type="submit" title="' . $TableAdmin->translate('Pack') . '" id="pack-media-files"><i class="fa fa-check-square"></i> <i class="fa fa-caret-right"></i> <i class="fa fa-file-archive"></i></button>
-                <button class="btn btn-secondary d-inline" type="submit" title="' . $TableAdmin->translate('Unpack') . '" id="unpack-media-file"><i class="fa fa-dot-circle"></i> <i class="far fa-file-archive"></i> <i class="fa fa-caret-right"></i></button>
+                <button class="btn btn-secondary disabled" type="submit" title="' . $TableAdmin->translate('Rename') . '" id="rename-media-file"><i class="fa fa-dot-circle"></i> <i class="fa fa-i-cursor"></i></button>
+                <button class="btn btn-secondary disabled" type="submit" title="' . $TableAdmin->translate('Pack') . '" id="pack-media-files"><i class="fa fa-check-square"></i> <i class="fa fa-caret-right"></i> <i class="fa fa-file-archive"></i></button>
+                <button class="btn btn-secondary disabled" type="submit" title="' . $TableAdmin->translate('Unpack') . '" id="unpack-media-file"><i class="fa fa-dot-circle"></i> <i class="far fa-file-archive"></i> <i class="fa fa-caret-right"></i></button>
             </div>
             </details>';
         return $result;
@@ -403,7 +403,9 @@ class MyAdmin extends MyCommon
 //            . '<script type="text/javascript" src="scripts/admin.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
             . '<script type="text/javascript" src="scripts/admin-specific.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
             . '<script type="text/javascript">' . PHP_EOL;
-        $tmp = array_flip(explode('|', 'Descending|Really delete?|Really?|New record|Passwords don\'t match!|Please, fill necessary data.|Select at least one file and try again.|Select at least one record and try again.|No files|Edit|variable|value|name|size|modified|Select|No records found.|Please, choose a new name.'));
+        $tmp = array_flip(explode('|', 'Descending|Really delete?|Really?|New record|Passwords don\'t match!|Please, fill necessary data.|close|'
+            . 'Select at least one file and try again.|Select at least one record and try again.|No files|Edit|variable|value|name|size|modified|'
+            . 'Select|No records found.|Please, choose a new name.|Please, fill up a valid file name.'));
         foreach ($tmp as $key => $value) {
             $tmp[$key] = $TableAdmin->translate($key, false);
         }
@@ -598,8 +600,7 @@ class MyAdmin extends MyCommon
                     for ($i = 1; $i < count($row); $i++) {
                         $row[$i] = strip_tags($row[$i]);
                         if (($p = stripos($row[$i], $keyword)) !== false) {
-                            $row[$i] = 
-                            preg_replace('~(' . preg_quote($keyword) . ')~six', '<b>${1}</b>', $row[$i]);
+                            $row[$i] = preg_replace('~(' . preg_quote($keyword) . ')~six', '<b>${1}</b>', $row[$i]);
                             $where .= '<li>…' . mb_substr($row[$i], max($p - 50, 0), strlen($keyword) + 100) . '…</li>' . PHP_EOL;
                         }
                     }
