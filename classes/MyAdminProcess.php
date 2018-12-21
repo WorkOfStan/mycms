@@ -52,7 +52,7 @@ class MyAdminProcess extends MyCommon
     }
 
     /**
-     * Process the "export" action
+     * Process the "export" action. If $post[download] is non-zero prompt the output as a download attachment.
      *
      * @param array &$post $_POST
      * @param array $get
@@ -63,8 +63,8 @@ class MyAdminProcess extends MyCommon
         if (isset($post['table-export'], $post['database-table'])) {
             if ((isset($post['check']) && count($post['check'])) || Tools::set($post['total-rows'])) {
                 $sql = $where = '';
-                if (Tools::set($post['total-rows'])) { //export whole resultset (regard possible $get limits)
-                    Tools::dump($get);exit; //@todo
+                if (Tools::set($post['total-rows'])) { //export whole resultset (regard possible $get limitations)
+                    Tools::dump($get, $this->tableAdmin->fields);exit; //@todo TableLister->generateWhereClause($get)
                 } else { //export only checked rows
                     $errors = array();
                     foreach ($post['check'] as $check) {
@@ -88,8 +88,7 @@ class MyAdminProcess extends MyCommon
                         Tools::addMessage('warning', $this->tableAdmin->translate('Wrong input parameter') . ': ' . implode(', ', $errors));
                     }
                     if ($where) {                              
-                        $sql='SELECT * FROM ' . $post['database-table'] //@todo columns hidden in view don't get affected
-                            . ' WHERE ' . substr($where, 4);
+                        $sql='SELECT * FROM ' . $post['database-table'] . ' WHERE ' . substr($where, 4); //@todo columns hidden in view don't get affected
                     } else {
                         Tools::addMessage('info', $this->tableAdmin->translate('No records found.'));
                     }
@@ -103,7 +102,7 @@ class MyAdminProcess extends MyCommon
                         . "SET foreign_key_checks = 0;\n"
                         . "SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';\n\n"
                         . "DROP TABLE {$post['database-table']} IF EXISTS;\n{$output['Create Table']};\n\n"; //@todo specific to MySQL/MariaDb
-                    $query = $this->MyCMS->dbms->query();
+                    $query = $this->MyCMS->dbms->query($sql);
                     $duplicateKey = '';
                     for ($i = 0; $row = $query->fetch_assoc(); $i++) {
                         if ($i % 5 == 0) {
@@ -134,14 +133,15 @@ class MyAdminProcess extends MyCommon
      * Process the "file delete" action
      *
      * @param array &$post $_POST
-     * @return void
+     * @return void and output array JSON array containing indexes: "success" (bool), "messages" (string), "processed-files" (int)
      */
     public function processFileDelete(&$post)
     {
         if (isset($post['subfolder'], $post['delete-files'])) {
             $result = array(
                 'processed-files' => 0,
-                'success' => false
+                'success' => false,
+                'messages' => ''
             );
             if (is_dir(DIR_ASSETS . $post['subfolder']) && is_array($post['delete-files'])) {
                 foreach ($post['delete-files'] as $value) {
@@ -149,7 +149,7 @@ class MyAdminProcess extends MyCommon
                         $result['processed-files'] ++;
                     }
                 }
-                Tools::addMessage('info', $this->tableAdmin->translate('Total of deleted files: ') . $result['processed-files'] . '.');
+                Tools::addMessage('info', $result['message'] = $this->tableAdmin->translate('Total of deleted files: ') . $result['processed-files'] . '.');
                 $result['success'] = $result['processed-files'] > 0;
             }
             $this->exitJson($result);
@@ -162,7 +162,7 @@ class MyAdminProcess extends MyCommon
      * The ZipArchive->addFile() method is used. Standard file/error handling is used.
      *
      * @param array &$post $_POST
-     * @return void
+     * @return void and output array JSON array containing indexes: "success" (bool), "messages" (string), "processed-files" (int)
      */
     public function processFilePack(&$post)
     {
@@ -170,7 +170,7 @@ class MyAdminProcess extends MyCommon
             $result = array(
                 'processed-files' => 0,
                 'success' => false,
-                'errors' => ''
+                'messages' => ''
             );
             if (!$post['archive'] || !preg_match('~[a-z0-9-]\.zip~six', $post['archive'])) {
                 $result['errors'] = $this->tableAdmin->translate('Please, fill up a valid file name.');
@@ -184,13 +184,16 @@ class MyAdminProcess extends MyCommon
                         }
                     }
                     $result['success'] = $ZipArchive->close() && ($result['processed-files'] > 0);
-                    Tools::resolve($result['success'], $this->tableAdmin->translate('Archive created.') . ' <tt><a href="' . ($file = $path . $post['archive']) . '">' . $file . '</a></tt>', $this->tableAdmin->translate('Error occured opening the archive.'));
-                    Tools::addMessage('info', $this->tableAdmin->translate('Total of processed files: ') . $result['processed-files'] . '.');
+                    $result['messages'] = $result['success'] ? $this->tableAdmin->translate('Archive created.') . ' <tt><a href="' . ($file = $path . $post['archive']) . '">' . $file . '</a></tt>' : $this->tableAdmin->translate('Error occured opening the archive.');
+                    Tools::resolve($result['success'], $result['messages'], $result['messages']);
+                    $tmp = $this->tableAdmin->translate('Total of processed files: ') . $result['processed-files'] . '.';
+                    Tools::addMessage('info', $tmp);
+                    $result['messages'] .= "<br />$tmp";
                 } else {
-                    $result['errors'] = $this->tableAdmin->translate('Error occured opening the archive.');
+                    $result['messages'] = $this->tableAdmin->translate('Error occured opening the archive.') . ' – ' . $this->tableAdmin->translate('ZipArchive::' . $open);
                 }
             } else {
-                $result['errors'] = $this->tableAdmin->translate('Wrong input parameter');
+                $result['messages'] = $this->tableAdmin->translate('Wrong input parameter');
             }
             $this->exitJson($result);
         }
@@ -200,14 +203,15 @@ class MyAdminProcess extends MyCommon
      * Process the "file rename" action
      *
      * @param array &$post
-     * @return array JSON array containing indexes: "success" (bool) and "data" (string of renamed file, if successful)
+     * @return void and output array JSON array containing indexes: "success" (bool), "messages" (string) and "data" (string) of renamed file, if successful
      */
     public function processFileRename(&$post)
     {
         if (isset($post['file_rename'], $post['old_name'], $post['subfolder'], $post['new_folder'])) {
             $result = array(
                 'data' => $post['old_name'],
-                'success' => false
+                'success' => false,
+                'messages' => ''
             );
             $post['file_rename'] = pathinfo($post['file_rename'], PATHINFO_BASENAME);
             $path = DIR_ASSETS . $post['subfolder'] . '/';
@@ -218,14 +222,16 @@ class MyAdminProcess extends MyCommon
                 || !preg_match('/^([-\.\w]+)$/', $post['file_rename']) // apply some basic regex pattern
                 || pathinfo($post['old_name'], PATHINFO_EXTENSION) != pathinfo($post['file_rename'], PATHINFO_EXTENSION) // old and new extension must be the same
                 ) {
-                $result['errors'] = $this->tableAdmin->translate('Error occured renaming the file.');
+                $result['messages'] = $this->tableAdmin->translate('Error occured renaming the file.');
             } elseif (file_exists($newpath . $post['file_rename'])) {
-                $result['errors'] = $this->tableAdmin->translate('File already exists.');
+                $result['messages'] = $this->tableAdmin->translate('File already exists.');
             } elseif (!rename($path . $post['old_name'], $newpath . $post['file_rename'])) {
-                $result['errors'] = $this->tableAdmin->translate('Error occured renaming the file.');
+                $result['messages'] = $this->tableAdmin->translate('Error occured renaming the file.');
             } else {
-                Tools::addMessage('success', $this->tableAdmin->translate('File renamed.') . ' (<a href="' . $newpath . $post['file_rename'] . '" target="_blank"><tt>' . Tools::h($newpath . $post['file_rename']) . '</tt></a>)');
-                $result = array('data' => $post['file_rename'], 'success' => true);
+                Tools::addMessage('success', $tmp = $this->tableAdmin->translate('File renamed.') . ' (<a href="' . $newpath . $post['file_rename'] . '" target="_blank"><tt>' . Tools::h($newpath . $post['file_rename']) . '</tt></a>)');
+                $result['data'] = $post['file_rename'];
+                $result['messages'] = $tmp;
+                $result['success'] = true;
             }
             if (!$result['success']) {
                 $this->MyCMS->logger->warning('Error occured renaming the file. ' . $path . $post['old_name'] . ' --> ' . $newpath . $post['file_rename']);
@@ -238,27 +244,34 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "files unpack" action. Currently, only the zip files without password are supported.
      * The ZipArchive->extractTo() method is used. Subfolders will be created, preexisting files overwritten.
-     * Security issues: 1) white list of file extentions 2) file size limitation
+     * Security issues:
+     * 1) white list of file extentions
+     * 2) file size limitation
      *
      * @param array &$post $_POST
-     * @return void
+     * @return void and output array JSON array containing indexes: "success" (bool), "messages" (string), "processed-files" (int)
      */
     public function processFileUnpack(&$post)
     {
         if (isset($post['file_unpack'], $post['subfolder'], $post['new_folder'])) {
-            $result = array('success' => false, 'data' => '');
+            $result = array(
+                'success' => false,
+                'messages' => '',
+                'processed-files' => 0
+            );
             $post['file_unpack'] = pathinfo($post['file_unpack'], PATHINFO_BASENAME);
             $path = DIR_ASSETS . $post['subfolder'] . '/';
             $ZipArchive = new \ZipArchive;
             if ($ZipArchive->open($path . $post['file_unpack']) === true) {
                 // extract it to the path we determined above
                 $result['success'] = $ZipArchive->extractTo(DIR_ASSETS . $post['new_folder'] . '/');
-                $result['data'] = $result['success'] ? $this->tableAdmin->translate('Archive unpacked.') . ' ' . $this->tableAdmin->translate('Affected files: ') . $ZipArchive->numFiles . '.'
+                $result['processed-files'] = $ZipArchive->numFiles;
+                $result['messages'] = $result['success'] ? $this->tableAdmin->translate('Archive unpacked.') . ' ' . $this->tableAdmin->translate('Affected files: ') . $ZipArchive->numFiles . '.'
                     : $this->tableAdmin->translate('Error occured unpacking the archive.');
-                Tools::addMessage($result['success'], $result['data']);
+                Tools::addMessage($result['success'], $result['message']);
                 $ZipArchive->close();
             } else {
-                $result['data'] = $this->tableAdmin->translate('Error occured unpacking the archive.');
+                $result['messages'] = $this->tableAdmin->translate('Error occured unpacking the archive.');
             }
             header('Content-type: application/json');
             exit(json_encode($result));
@@ -269,7 +282,8 @@ class MyAdminProcess extends MyCommon
      * Process the "files upload" action
      *
      * @param array &$post $_POST
-     * @return void
+     * @return void and on success reload the page
+     * @todo change to return bool success. Or add $post[redir] as an option
      */
     public function processFileUpload(&$post)
     {
@@ -346,14 +360,14 @@ class MyAdminProcess extends MyCommon
     }
 
     /**
-     * Return files in /assets (sub)folder
+     * Return files in /assets or its subfolder
      *
      * @param array &$post $_POST
      * @return void
-     */
+1     */
     public function processSubfolder(&$post)
     {
-        static $IMAGE_EXTENSIONS = array('jpg', 'gif', 'png', 'jpeg', 'bmp', 'wbmp', 'webp', 'xbm', 'xpm');
+        static $IMAGE_EXTENSIONS = array('jpg', 'gif', 'png', 'jpeg', 'bmp', 'wbmp', 'webp', 'xbm', 'xpm', 'swf', 'tif', 'tiff', 'jpc', 'jp2', 'jpx', 'jb2', 'swc', 'iff', 'ico'); //file extensions the getimagesize() or exif_read_data() can read
         static $IMAGE_TYPE = array('unknown', 'GIF', 'JPEG', 'PNG', 'SWF', 'PSD', 'BMP', 'TIFF_II', 'TIFF_MM', 'JPC', 'JP2', 'JPX', 'JB2', 'SWC', 'IFF', 'WBMP', 'XBM', 'ICO', 'COUNT');
         if (isset($post['media-files'], $post['subfolder'])) {
             $result = array(
@@ -379,11 +393,18 @@ class MyAdminProcess extends MyCommon
                         );
                         if ($post['info']) {
                             if (in_array($pathinfo['extension'], $IMAGE_EXTENSIONS)) {
-                                $size = getimagesize($file);
-                                $entry['info'] .= $size ? Tools::wrap(Tools::set($IMAGE_TYPE[$size[2]], ''), '', ' ') . $size[0] . '×' . $size[1] : '';
+                                if ($size = getimagesize($file)) {
+                                    $entry['info'] .= $size ? Tools::wrap(Tools::set($IMAGE_TYPE[$size[2]], ''), '', ' ') . $size[0] . '×' . $size[1] : '';
+                                } elseif ($exif = exif_read_data($file)) {
+                                    $entry['info'] .= Tools::wrap(Tools::set($IMAGE_TYPE[$exif['FILE']['FileType']]), ' ') . Tools::set($exif['COMPUTED']['Width']) . '×' . Tools::set($exif['COMPUTED']['Height']);
+                                }
                             } elseif (substr($file, -4) == '.zip') {
-                                $ZipArchive->open($file);
-                                $entry['info'] .= '';
+                                if ($ZipArchive->open($file)) {
+                                    for ($i = 0; $i < min($ZipArchive->numFiles, 10); $i++) {
+                                        $entry['info'] .= $ZipArchive->getNameIndex($i) . "\n";
+                                    }
+                                    $entry['info'] .= ($ZipArchive->numFiles > 10 ? "…\n" : "") . $this->tableAdmin->translate('total') . ': ' . $ZipArchive->numFiles;
+                                }
                             }
                         }
                         $result['data'] [] = $entry;

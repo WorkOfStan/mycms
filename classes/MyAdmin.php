@@ -205,7 +205,7 @@ class MyAdmin extends MyCommon
             <div id="media-files"></div>
             <div id="file-ops">
                 <div id="media-feedback" class="alert alert-warning alert-dismissible" style="display:none;"></div>
-                <button class="btn btn-secondary mr-2" title="' . $TableAdmin->translate('Delete') . '" id="delete-media-files"><i class="fa fa-check-square"></i> <i class="fa fa-trash"></i></button>
+                <button class="btn btn-secondary mr-2 disabled" title="' . $TableAdmin->translate('Delete') . '" id="delete-media-files"><i class="fa fa-check-square"></i> <i class="fa fa-trash"></i></button>
                 <fieldset class="d-inline-block position-relative" id="filename-fieldset">
                     <div class="input-group input-group-sm">
                         <div class="input-group-prepend">
@@ -222,9 +222,9 @@ class MyAdmin extends MyCommon
                         <select id="file-rename-folder" name="file-rename-folder" class="form-control form-control-sm form-control-inline d-inline-block w-initial"></select>
                     </div>
                 </fieldset>
-                <button class="btn btn-secondary" type="submit" title="' . $TableAdmin->translate('Rename') . '" id="rename-media-file"><i class="fa fa-dot-circle"></i> <i class="fa fa-i-cursor"></i></button>
-                <button class="btn btn-secondary" type="submit" title="' . $TableAdmin->translate('Pack') . '" id="pack-media-files"><i class="fa fa-check-square"></i> <i class="fa fa-caret-right"></i> <i class="fa fa-file-archive"></i></button>
-                <button class="btn btn-secondary d-inline" type="submit" title="' . $TableAdmin->translate('Unpack') . '" id="unpack-media-file"><i class="fa fa-dot-circle"></i> <i class="far fa-file-archive"></i> <i class="fa fa-caret-right"></i></button>
+                <button class="btn btn-secondary disabled" type="submit" title="' . $TableAdmin->translate('Rename') . '" id="rename-media-file"><i class="fa fa-dot-circle"></i> <i class="fa fa-i-cursor"></i></button>
+                <button class="btn btn-secondary disabled" type="submit" title="' . $TableAdmin->translate('Pack') . '" id="pack-media-files"><i class="fa fa-check-square"></i> <i class="fa fa-caret-right"></i> <i class="fa fa-file-archive"></i></button>
+                <button class="btn btn-secondary disabled" type="submit" title="' . $TableAdmin->translate('Unpack') . '" id="unpack-media-file"><i class="fa fa-dot-circle"></i> <i class="far fa-file-archive"></i> <i class="fa fa-caret-right"></i></button>
             </div>
             </details>';
         return $result;
