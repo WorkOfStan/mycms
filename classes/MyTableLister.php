@@ -196,36 +196,107 @@ class MyTableLister
     }
 
     /**
-     * Output a customizable table to browse, search, page and pick its items for editing
+     * Compose a SQL statement
      *
-     * @param options configuration array
-     *   $options['form-action']=send.php - instead of <form action="">
-     *   $options['read-only']=non-zero - no links to admin 
-     *   $options['no-sort']=non-zero - don't offer 'sorting' option  
-     *   $options['no-search']=non-zero - don't offer 'search' option  
-     *   $options['no-display-options']=non-zero - don't offer 'display' option  
-     *   $options['no-multi-options']=non-zero - disallow to change values via so called quick column
-     *   $options['no-selected-rows-operations'] - disallow to change selected rows in bulk
-     *   $options['include']=array - columns to include 
-     *   $options['exclude']=array - columns to exclude
-     *   $options['columns']=array - special treatment of columns
-     *   $options['return-output']=non-zero - return output (instead of echo)
-     * @return void or string (for $options['return-output'])
+     * @param array &$get $_GET
+     * @return array with these indexes: [join], [where], [sort], [sql]
      */
-    public function view(array $options = array())
+    public function composeSQL($columns, &$get)
     {
-        $limit = isset($_GET['limit']) && $_GET['limit'] ? (int) $_GET['limit'] : $this->DEFAULTS['PAGESIZE'];
-        if ($limit < 1 || $limit > $this->DEFAULTS['MAXPAGESIZE']) {
-            $limit = $this->DEFAULTS['PAGESIZE'];
+        $result = array('join' => '', 'where' => '', 'order by' => '', 'sql' => '');
+        $result['limit'] = isset($get['limit']) && $get['limit'] ? (int) $get['limit'] : $this->DEFAULTS['PAGESIZE'];
+        if ($result['limit'] < 1 || $result['limit'] > $this->DEFAULTS['MAXPAGESIZE']) {
+            $result['limit'] = $this->DEFAULTS['PAGESIZE'];
         }
-        $offset = isset($_GET['offset']) ? (int) $_GET['offset'] : 0;
-        if ($offset < 0) {
-            $offset = 0;
+        $result['offset'] = max(isset($get['offset']) ? (int) $get['offset'] : 0, 0);
+        foreach ($columns as $key => $value) {
+            if (isset($this->fields[$key]['foreign_table']) && $this->fields[$key]['foreign_table']) {
+                $result['join'] .= ' LEFT JOIN ' . $this->fields[$key]['foreign_table']
+                    . ' ON ' . $this->table . '.' . $key
+                    . '=' . $this->fields[$key]['foreign_table'] . '.' . $this->fields[$key]['foreign_column'];
+                // try if column of the same name as the table exists (as a replacement for foreign table); use the first field in the table if it doesn't exist 
+                $tmp = $this->dbms->query('SHOW FIELDS FROM ' . $this->escapeDbIdentifier($this->fields[$key]['foreign_table']))->fetch_all();
+                foreach ($tmp as $k => $v) {
+                    $tmp[$v[0]] = $v[0];
+                    unset($tmp[$k]);
+                }
+                $foreign_link = mb_substr($this->fields[$key]['foreign_table'], mb_strlen(TAB_PREFIX));
+                $foreign_link = isset($tmp[$foreign_link]) && $foreign_link ? $foreign_link : reset($tmp);
+                $columns[$key] = $this->escapeDbIdentifier($this->table) . '.' . $value . ','
+                        . $this->escapeDbIdentifier($this->fields[$key]['foreign_table']) . '.'
+                        . $this->escapeDbIdentifier($foreign_link) . ' AS ' . $this->escapeDbIdentifier($key . $this->DEFAULTS['FOREIGNLINK']);
+            }
         }
-        foreach (array('read-only', 'no-search', 'no-sort', 'no-toggle', 'no-display-options', 'no-multi-options', 'no-selected-rows-operations') as $i) {
-            Tools::setifempty($options[$i]);
+        if ($result['join']) {
+            foreach ($columns as $key => $value) {
+                if ($value == $this->escapeDbIdentifier($key)) {
+                    $columns[$key] = $this->escapeDbIdentifier($this->table) . '.' . $value;
+                }
+            }
         }
-        // find out what columns to include/exclude
+        if (isset($get['col']) && is_array($get['col'])) {
+            $filterColumn = array('');
+            foreach ($columns as $key => $value) {
+                $filterColumn [] = $key;
+            }
+            unset($filterColumn[0]);
+            foreach ($get['col'] as $key => $value) {
+                if (isset($filterColumn[$value], $get['val'][$key])) {
+                    $id = $this->escapeDbIdentifier($this->table) . '.' . $this->escapeDbIdentifier($filterColumn[$value]);
+                    $val = $get['val'][$key];
+                    $op = $this->WHERE_OPS[$get['op'][$key]];
+                    $result['where'] .= ' AND ';
+                    if (substr($op, 0, 4) == 'NOT ') {
+                        $result['where'] .= 'NOT ';
+                        $op = substr($op, 4);
+                    }
+                    switch ($op) {
+                        case 'LIKE %%':
+                            $result['where'] .= $id . ' LIKE "%' . $this->escapeSQL($val) . '%"';
+                            break;
+                        case 'IN':
+                            $result['where'] .= $id . ' IN (' . Tools::escapeIn($val) . ')';
+                            break;
+                        case 'IS NULL':
+                            $result['where'] .= $id . ' IS NULL';
+                            break;
+                        case 'IS NOT NULL':
+                            $result['where'] .= $id . ' IS NOT NULL';
+                            break;
+                        case 'BIT':
+                            $result['where'] .= $id . ' & ' . intval($val) . ' != 0';
+                            break;
+                        case 'IN SET':
+                            $result['where'] .= 'FIND_IN_SET("' . $this->escapeSQL($val) . '", ' . $id . ')';
+                            break;
+                        default:
+                            $result['where'] .= $id . $op . '"' . $this->escapeSQL($val) . '"';
+                    }
+                    unset($id, $val, $op);
+                }
+            }
+        }
+        foreach (Tools::setifempty($get['order by'], array()) as $key => $value) {
+            if (isset(array_keys($columns)[(int) $value - 1])) {
+                $result['order by'] .= ',' . array_values($columns)[(int) $value - 1] . (isset($get['desc'][$key]) && $get['desc'][$key] ? ' DESC' : '');
+            }
+        }
+        $result['select'] = 'SELECT SQL_CALC_FOUND_ROWS ' . implode(',', $columns) . ' FROM '
+            . $this->escapeDbIdentifier($this->table) . $result['join']
+            . Tools::wrap(substr($result['where'], 4), ' WHERE ')
+            . Tools::wrap(substr($result['order by'], 1), ' ORDER BY ');
+        $result['sql'] = $result['select'] . ' LIMIT ' . $result['offset'] . ', ' . $result['limit'];
+        return $result;
+    }
+
+    /**
+     * Create array of columns for preparing the SQL statement
+     *
+     * @param array $options
+     * @return array
+     */
+    public function getColumns($options)
+    {
         $columns = array();
         if (isset($options['include']) && is_array($options['include'])) {
             foreach ($options['include'] as $column) {
@@ -246,92 +317,37 @@ class MyTableLister
                 }
             }
         }
-        if (!$columns) {
+        return $columns;
+    }
+
+    /**
+     * Output a customizable table to browse, search, page and pick its items for editing
+     *
+     * @param options configuration array
+     *   $options['form-action']=send.php - instead of <form action="">
+     *   $options['read-only']=non-zero - no links to admin 
+     *   $options['no-sort']=non-zero - don't offer 'sorting' option  
+     *   $options['no-search']=non-zero - don't offer 'search' option  
+     *   $options['no-display-options']=non-zero - don't offer 'display' option  
+     *   $options['no-multi-options']=non-zero - disallow to change values via so called quick column
+     *   $options['no-selected-rows-operations'] - disallow to change selected rows in bulk
+     *   $options['include']=array - columns to include 
+     *   $options['exclude']=array - columns to exclude
+     *   $options['columns']=array - special treatment of columns
+     *   $options['return-output']=non-zero - return output (instead of echo)
+     * @return void or string (for $options['return-output'])
+     */
+    public function view(array $options = array())
+    {
+        foreach (array('read-only', 'no-search', 'no-sort', 'no-toggle', 'no-display-options', 'no-multi-options', 'no-selected-rows-operations') as $i) {
+            Tools::setifempty($options[$i]);
+        }
+        // find out what columns to include/exclude
+        if (!($columns = $this->getColumns($options))) {
             return;
         }
-        // compose the SQL
-        $join = '';
-        $where = '';
-        $sort = '';
-        foreach ($columns as $key => $value) {
-            if (isset($this->fields[$key]['foreign_table']) && $this->fields[$key]['foreign_table']) {
-                $join .= ' LEFT JOIN ' . $this->fields[$key]['foreign_table']
-                    . ' ON ' . $this->table . '.' . $key
-                    . '=' . $this->fields[$key]['foreign_table'] . '.' . $this->fields[$key]['foreign_column'];
-                // try if column of the same name as the table exists (as a replacement for foreign table); use the first field in the table if it doesn't exist 
-                $tmp = $this->dbms->query('SHOW FIELDS FROM ' . $this->escapeDbIdentifier($this->fields[$key]['foreign_table']))->fetch_all();
-                foreach ($tmp as $k => $v) {
-                    $tmp[$v[0]] = $v[0];
-                    unset($tmp[$k]);
-                }
-                $foreign_link = mb_substr($this->fields[$key]['foreign_table'], mb_strlen(TAB_PREFIX));
-                $foreign_link = isset($tmp[$foreign_link]) && $foreign_link ? $foreign_link : reset($tmp);
-                $columns[$key] = $this->escapeDbIdentifier($this->table) . '.' . $value . ','
-                        . $this->escapeDbIdentifier($this->fields[$key]['foreign_table']) . '.'
-                        . $this->escapeDbIdentifier($foreign_link) . ' AS ' . $this->escapeDbIdentifier($key . $this->DEFAULTS['FOREIGNLINK']);
-            }
-        }
-        if ($join) {
-            foreach ($columns as $key => $value) {
-                if ($value == $this->escapeDbIdentifier($key)) {
-                    $columns[$key] = $this->escapeDbIdentifier($this->table) . '.' . $value;
-                }
-            }
-        }
-        if (isset($_GET['col']) && is_array($_GET['col'])) {
-            $filterColumn = array('');
-            foreach ($columns as $key => $value) {
-                $filterColumn [] = $key;
-            }
-            unset($filterColumn[0]);
-            foreach ($_GET['col'] as $key => $value) {
-                if (isset($filterColumn[$value], $_GET['val'][$key])) {
-                    $id = $this->escapeDbIdentifier($this->table) . '.' . $this->escapeDbIdentifier($filterColumn[$value]);
-                    $val = $_GET['val'][$key];
-                    $op = $this->WHERE_OPS[$_GET['op'][$key]];
-                    $where .= ' AND ';
-                    if (substr($op, 0, 4) == 'NOT ') {
-                        $where .= 'NOT ';
-                        $op = substr($op, 4);
-                    }
-                    switch ($op) {
-                        case 'LIKE %%':
-                            $where .= $id . ' LIKE "%' . $this->escapeSQL($val) . '%"';
-                            break;
-                        case 'IN':
-                            $where .= $id . ' IN (' . Tools::escapeIn($val) . ')';
-                            break;
-                        case 'IS NULL':
-                            $where .= $id . ' IS NULL';
-                            break;
-                        case 'IS NOT NULL':
-                            $where .= $id . ' IS NOT NULL';
-                            break;
-                        case 'BIT':
-                            $where .= $id . ' & ' . intval($val) . ' != 0';
-                            break;
-                        case 'IN SET':
-                            $where .= 'FIND_IN_SET("' . $this->escapeSQL($val) . '", ' . $id . ')';
-                            break;
-                        default:
-                            $where .= $id . $op . '"' . $this->escapeSQL($val) . '"';
-                    }
-                    unset($id, $val, $op);
-                }
-            }
-        }
-        foreach (Tools::setifempty($_GET['sort'], array()) as $key => $value) {
-            if (isset(array_keys($columns)[(int) $value - 1])) {
-                $sort .= ',' . array_values($columns)[(int) $value - 1] . (isset($_GET['desc'][$key]) && $_GET['desc'][$key] ? ' DESC' : '');
-            }
-        }
-        //@todo put building the SQL into another class' method
-        $sql = 'SELECT SQL_CALC_FOUND_ROWS ' . implode(',', $columns) . ' FROM '
-                . $this->escapeDbIdentifier($this->table) . $join
-                . Tools::wrap(substr($where, 4), ' WHERE ')
-                . Tools::wrap(substr($sort, 1), ' ORDER BY ')
-                . " LIMIT $offset, $limit";
-        $query = $this->dbms->query($sql);
+        $sql = $this->composeSQL($columns, $_GET);
+        $query = $this->dbms->query($sql['sql']);
         $options['total-rows'] = $this->dbms->fetchSingle('SELECT FOUND_ROWS()');
         $output = Tools::htmlInput('total-rows', '', $options['total-rows'], 'hidden');
         if (!$options['read-only']) {
@@ -340,7 +356,7 @@ class MyTableLister
         $output .= $this->viewInputs($options);
         if ($options['total-rows']) {
             $output .= $this->viewTable($query, $columns, $options)
-                . $this->pagination($limit, $options['total-rows'], null, $options);
+                . $this->pagination($sql['limit'], $options['total-rows'], null, $options);
         }
         if (!$options['total-rows'] && isset($_GET['col'])) {
             $output .=  '<p class="alert alert-danger"><small>' . $this->translate('No records found.') . '</small></p>';

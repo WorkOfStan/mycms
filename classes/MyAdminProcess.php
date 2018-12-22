@@ -64,7 +64,9 @@ class MyAdminProcess extends MyCommon
             if ((isset($post['check']) && count($post['check'])) || Tools::set($post['total-rows'])) {
                 $sql = $where = '';
                 if (Tools::set($post['total-rows'])) { //export whole resultset (regard possible $get limitations)
-                    Tools::dump($get, $this->tableAdmin->fields);exit; //@todo TableLister->generateWhereClause($get)
+                    $columns = $this->tableAdmin->getColumns([]);
+                    $sql = $this->tableAdmin->composeSQL($columns, $_GET);
+                    $sql = $sql['select'];
                 } else { //export only checked rows
                     $errors = array();
                     foreach ($post['check'] as $check) {
@@ -364,7 +366,7 @@ class MyAdminProcess extends MyCommon
      *
      * @param array &$post $_POST
      * @return void
-1     */
+     */
     public function processSubfolder(&$post)
     {
         static $IMAGE_EXTENSIONS = array('jpg', 'gif', 'png', 'jpeg', 'bmp', 'wbmp', 'webp', 'xbm', 'xpm', 'swf', 'tif', 'tiff', 'jpc', 'jp2', 'jpx', 'jb2', 'swc', 'iff', 'ico'); //file extensions the getimagesize() or exif_read_data() can read
@@ -422,7 +424,7 @@ class MyAdminProcess extends MyCommon
      * Process the "user change activation" action
      *
      * @param array &$post $_POST
-     * @return void
+     * @return void and output array JSON array containing indexes: "success" (bool), "data" (string) admin name
      */
     public function processUserActivation(&$post)
     {
