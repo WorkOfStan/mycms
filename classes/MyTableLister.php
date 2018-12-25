@@ -312,9 +312,7 @@ class MyTableLister
         }
         if (isset($options['exclude']) && is_array($options['exclude'])) {
             foreach ($options['exclude'] as $column) {
-                if (isset($columns[$column])) {
-                    unset($columns[$column]);
-                }
+                unset($columns[$column]);
             }
         }
         return $columns;
