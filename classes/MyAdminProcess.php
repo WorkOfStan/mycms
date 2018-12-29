@@ -68,7 +68,7 @@ class MyAdminProcess extends MyCommon
                     $sql = $this->tableAdmin->composeSQL($columns, $_GET);
                     $sql = $sql['select'];
                 } else { //export only checked rows
-                    $errors = array();
+                    $errors = [];
                     foreach ($post['check'] as $check) {
                         $partialWhere = '';
                         foreach (explode('&', $check) as $condition) {
@@ -140,11 +140,11 @@ class MyAdminProcess extends MyCommon
     public function processFileDelete(&$post)
     {
         if (isset($post['subfolder'], $post['delete-files'])) {
-            $result = array(
+            $result = [
                 'processed-files' => 0,
                 'success' => false,
                 'messages' => ''
-            );
+            ];
             if (is_dir(DIR_ASSETS . $post['subfolder']) && is_array($post['delete-files'])) {
                 foreach ($post['delete-files'] as $value) {
                     if (unlink(DIR_ASSETS . $post['subfolder'] . "/$value")) {
@@ -169,11 +169,11 @@ class MyAdminProcess extends MyCommon
     public function processFilePack(&$post)
     {
         if (isset($post['subfolder'], $post['pack-files'], $post['archive'])) {
-            $result = array(
+            $result = [
                 'processed-files' => 0,
                 'success' => false,
                 'messages' => ''
-            );
+            ];
             if (!$post['archive'] || !preg_match('~[a-z0-9-]\.zip~six', $post['archive'])) {
                 $result['errors'] = $this->tableAdmin->translate('Please, fill up a valid file name.');
             } elseif (is_dir(DIR_ASSETS . $post['subfolder']) && is_array($post['pack-files']) && count($post['pack-files'])) {
@@ -210,11 +210,11 @@ class MyAdminProcess extends MyCommon
     public function processFileRename(&$post)
     {
         if (isset($post['file_rename'], $post['old_name'], $post['subfolder'], $post['new_folder'])) {
-            $result = array(
+            $result = [
                 'data' => $post['old_name'],
                 'success' => false,
                 'messages' => ''
-            );
+            ];
             $post['file_rename'] = pathinfo($post['file_rename'], PATHINFO_BASENAME);
             $path = DIR_ASSETS . $post['subfolder'] . '/';
             $newpath = DIR_ASSETS . $post['new_folder'] . '/';
@@ -256,11 +256,11 @@ class MyAdminProcess extends MyCommon
     public function processFileUnpack(&$post)
     {
         if (isset($post['file_unpack'], $post['subfolder'], $post['new_folder'])) {
-            $result = array(
+            $result = [
                 'success' => false,
                 'messages' => '',
                 'processed-files' => 0
-            );
+            ];
             $post['file_unpack'] = pathinfo($post['file_unpack'], PATHINFO_BASENAME);
             $path = DIR_ASSETS . $post['subfolder'] . '/';
             $ZipArchive = new \ZipArchive;
@@ -335,6 +335,7 @@ class MyAdminProcess extends MyCommon
                     $_SESSION['rights'] = $row['rights'];
                     $this->MyCMS->logger->info("Admin {$_SESSION['user']} logged in.");
                     Tools::addMessage('success', $this->tableAdmin->translate('You are logged in.'));
+                    session_regenerate_id();
                     $this->redir();
                 }
                 $this->MyCMS->logger->warning('Admin not logged in - wrong password.');
@@ -357,6 +358,7 @@ class MyAdminProcess extends MyCommon
         if (isset($post['logout'])) {
             unset($_SESSION['user'], $_SESSION['rights'], $_SESSION['token']);
             Tools::addMessage('info', $this->tableAdmin->translate('You are logged out.'));
+            $this->tableAdmin->script .= "localStorage.clear();\n";
             $this->redir();
         }
     }
@@ -369,14 +371,14 @@ class MyAdminProcess extends MyCommon
      */
     public function processSubfolder(&$post)
     {
-        static $IMAGE_EXTENSIONS = array('jpg', 'gif', 'png', 'jpeg', 'bmp', 'wbmp', 'webp', 'xbm', 'xpm', 'swf', 'tif', 'tiff', 'jpc', 'jp2', 'jpx', 'jb2', 'swc', 'iff', 'ico'); //file extensions the getimagesize() or exif_read_data() can read
-        static $IMAGE_TYPE = array('unknown', 'GIF', 'JPEG', 'PNG', 'SWF', 'PSD', 'BMP', 'TIFF_II', 'TIFF_MM', 'JPC', 'JP2', 'JPX', 'JB2', 'SWC', 'IFF', 'WBMP', 'XBM', 'ICO', 'COUNT');
+        static $IMAGE_EXTENSIONS = ['jpg', 'gif', 'png', 'jpeg', 'bmp', 'wbmp', 'webp', 'xbm', 'xpm', 'swf', 'tif', 'tiff', 'jpc', 'jp2', 'jpx', 'jb2', 'swc', 'iff', 'ico']; //file extensions the getimagesize() or exif_read_data() can read
+        static $IMAGE_TYPE = ['unknown', 'GIF', 'JPEG', 'PNG', 'SWF', 'PSD', 'BMP', 'TIFF_II', 'TIFF_MM', 'JPC', 'JP2', 'JPX', 'JB2', 'SWC', 'IFF', 'WBMP', 'XBM', 'ICO', 'COUNT'];
         if (isset($post['media-files'], $post['subfolder'])) {
-            $result = array(
+            $result = [
                 'subfolder' => DIR_ASSETS . $post['subfolder'],
-                'data' => array(),
+                'data' => [],
                 'success' => true
-            );
+            ];
             if (is_dir(DIR_ASSETS . $post['subfolder'])) {
                 $_SESSION['assetsSubfolder'] = $post['subfolder'];
                 Tools::setifnotset($post['info'], null);
@@ -386,13 +388,13 @@ class MyAdminProcess extends MyCommon
                 foreach (glob(DIR_ASSETS . $post['subfolder'] . '/' . (isset($post['wildcard']) ? $post['wildcard'] : '*.*'), isset($post['wildcard']) ? GLOB_BRACE : 0) as $file) {
                     if (is_file($file)) {
                         $pathinfo = pathinfo($file);
-                        $entry = array(
+                        $entry = [
                             'name' => $pathinfo['filename'],
                             'extension' => isset($pathinfo['extension']) ? '.' . $pathinfo['extension'] : '',
                             'size' => filesize($file),
                             'modified' => date("Y-m-d H:i:s", filemtime($file)),
                             'info' => ''
-                        );
+                        ];
                         if ($post['info']) {
                             if (in_array($pathinfo['extension'], $IMAGE_EXTENSIONS)) {
                                 if ($size = getimagesize($file)) {
@@ -429,10 +431,12 @@ class MyAdminProcess extends MyCommon
     public function processUserActivation(&$post)
     {
         if (isset($post['activate-user'], $post['active']) && is_numeric($post['activate-user'])) {
-            $result = array(
-                'data' => array('id' => $post['activate-user']),
-                'success' => $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'admin SET active="' . ($post['active'] ? 1 : 0) . '" WHERE id=' . +$post['activate-user']) && $this->MyCMS->dbms->affected_rows
-            );
+            $result = [
+                'data' => ['id' => $post['activate-user']],
+                'success' => $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'admin SET active="' . ($post['active'] ? 1 : 0) . '" WHERE id=' . +$post['activate-user'] . ' AND admin<>"' . $this->MyCMS->escapeSQL($_SESSION['user']) . '"') && $this->MyCMS->dbms->affected_rows,
+            ];
+            $result['messages'] = $result['success'] ? ($post['active'] ? 'User activated.' : 'User deactivated.') : ($post['active'] ? 'Error activating the user.' : 'Error deactivating the user.');
+            $result['messages'] = $this->tableAdmin->translate($result['messages']);
             $this->exitJson($result);
         }
     }
