@@ -13,7 +13,7 @@ class LogMysqli extends BackyardMysqli
 
     use \Nette\SmartObject;
 
-    protected $KEYWORDS = array(
+    protected $KEYWORDS = [
         'ACCESSIBLE', 'ADD', 'ALL', 'ALTER', 'ANALYZE', 'AND', 'AS', 'ASC', 'ASENSITIVE', 
         'BEFORE', 'BETWEEN', 'BIGINT', 'BINARY', 'BLOB', 'BOTH', 'BY', 'CALL', 'CASCADE',
         'CASE', 'CHANGE', 'CHAR', 'CHARACTER', 'CHECK', 'COLLATE', 'COLUMN', 'CONDITION', 
@@ -46,10 +46,10 @@ class LogMysqli extends BackyardMysqli
         'UTC_TIME', 'UTC_TIMESTAMP', 'VALUES', 'VARBINARY', 'VARCHAR', 'VARCHARACTER', 
         'VARYING', 'WHEN', 'WHERE', 'WHILE', 'WITH', 'WRITE', 'XOR', 'YEAR_MONTH', 
         'ZEROFILL'
-    );
+    ];
 
     /** @var array */
-    protected $sqlStatementsArray = array();
+    protected $sqlStatementsArray = [];
 
     /**
      * Logs SQL statement not starting with SELECT or SET
@@ -113,9 +113,9 @@ class LogMysqli extends BackyardMysqli
         }
         $list = substr($list, 0, 1) == "'" ? $list : '';
         preg_match_all("~'((''|[^'])*',)*~i", "$list,", $result);
-        $result = isset($result[1]) ? $result[1] : array();
+        $result = isset($result[1]) ? $result[1] : [];
         foreach ($result as &$value) {
-            $value = strtr(substr($value, 0, -2), array("''" => "'", "\\\\" => "\\"));
+            $value = strtr(substr($value, 0, -2), ["''" => "'", "\\\\" => "\\"]);
         }
         return $result;
     }
@@ -133,7 +133,7 @@ class LogMysqli extends BackyardMysqli
         }
         $result = explode(',', $list);
         foreach ($result as &$value) {
-            $value = strtr(substr($value, 1, -1), array("''" => "'", "\\\\" => "\\"));
+            $value = strtr(substr($value, 1, -1), ["''" => "'", "\\\\" => "\\"]);
         }
         return $result;
     }
@@ -166,7 +166,7 @@ class LogMysqli extends BackyardMysqli
      * @param array $fields info about the columns like in MyTableLister->fields (optional)
      * @return string
      */
-    public function listColumns($columns, $fields = array())
+    public function listColumns($columns, $fields = [])
     {
         $result = '';
         foreach ($columns as $column) {
@@ -224,7 +224,7 @@ class LogMysqli extends BackyardMysqli
      */
     public function fetchAll($sql)
     {
-        $result = array();
+        $result = [];
         $query = $this->query($sql);
         if (is_object($query) && is_a($query, '\mysqli_result')) {
             while ($row = $query->fetch_assoc()) {
@@ -253,7 +253,7 @@ class LogMysqli extends BackyardMysqli
         if (!$query) {
             return false;
         }
-        $result = array();
+        $result = [];
         while ($row = $query->fetch_assoc()) {
             $key = reset($row);
             $value = count($row) == 2 ? next($row) : $row;
@@ -263,7 +263,7 @@ class LogMysqli extends BackyardMysqli
             if (isset($result[$key])) {
                 if (is_array($value)) {
                     if (!is_array(reset($result[$key]))) {
-                        $result[$key] = array($result[$key]);
+                        $result[$key] = [$result[$key]];
                     }
                     $result[$key] [] = $value;
                 } else {
@@ -301,7 +301,7 @@ class LogMysqli extends BackyardMysqli
                     if ($format == 'pairs') {
                         $result .= ", $key = $value";
                     } elseif ($replace) {
-                        $result .= ", " . strtr($format, array('%value%' => $value, '%column%' => $key));
+                        $result .= ", " . strtr($format, ['%value%' => $value, '%column%' => $key]);
                     } else {
                         $result .= ",\t$value";
                     }

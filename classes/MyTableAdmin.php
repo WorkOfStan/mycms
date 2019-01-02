@@ -182,10 +182,11 @@ class MyTableAdmin extends MyTableLister
             }
             $input .= '</select>';
             if (Tools::nonzero($comment['display-own'])) {
-                $input .= ' ' . Tools::htmlInput("fields-own[$key]", ' ' . $this->translate('Own value:') . ' ', '', [
+                $input .= ' ' . Tools::htmlInput("fields-own[$key]", $this->translate('Own value:'), '', [ 
                             'id' => $key . $this->rand . '_',
                             'class' => 'form-control d-inline-block w-initial',
-                            'onchange' => "$('#$key{$this->rand}').val(null);"
+                            'label-class' => 'mx-3 font-weight-normal',
+                            'onchange' => "$('#$key{$this->rand}').val(null);",
                                 ]
                         ) . '<br />';
             }
@@ -454,7 +455,7 @@ class MyTableAdmin extends MyTableLister
             foreach ($this->fields as $key => $field) {
                 if (Tools::set($_POST['fields-null'][$key]) || (Tools::set($field['foreign_table']) && $value === '')) {
                     $_POST['fields'][$key] = null;
-                } elseif (Tools::set($_POST['fields-own'][$key])) { //@todo can't set "own value" to "" or 0
+                } elseif (Tools::set($_POST['fields-own'][$key])) {
                     $_POST['fields'][$key] = $_POST['fields-own'][$key];
                 }
                 if (!isset($_POST['fields'][$key])) {

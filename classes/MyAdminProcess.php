@@ -15,14 +15,14 @@ use Tracy\Debugger;
 
 class MyAdminProcess extends MyCommon
 {
-    /** @const int general limit of selected rows */
+    /** @const int general limit of selected rows and repeated fields in export */
     const PROCESS_LIMIT = 100;
 
     /** @var \GodsDev\MyCMS\TableAdmin */
     protected $tableAdmin;
 
     /**
-     * Ends Admin rendering with TracyPanels
+     * Ends Admin rendering with TracyPanels.
      *
      * @return void
      */
@@ -52,6 +52,69 @@ class MyAdminProcess extends MyCommon
     }
 
     /**
+     * Convert variables confining records of a table into a SQL statement.
+     *
+     * @param array &$filter
+     * @param string &$sql
+     * @param array &$errors
+     * @return void
+     */
+    protected function filterToSQL(&$filter, &$sql, &$errors)
+    {
+        $errors = [];
+        $sql = $where = '';
+        foreach ($filter['check'] as $check) {
+            $partialWhere = '';
+            foreach (explode('&', $check) as $condition) {
+                $condition = explode('=', $condition);
+                if (count($condition) == 2 && Tools::begins($condition[0], 'where[') && Tools::ends($condition[0], ']')) { //@todo doesn't work for nulls
+                    $condition[1] = is_null($condition[1]) ? ' IS NULL' : (is_numeric($condition[1]) ? ' = ' . $condition[1] : ' = "' . $this->tableAdmin->escapeSQL($condition[1]) . '"');
+                    $partialWhere .= ' AND ' . $this->tableAdmin->escapeDbIdentifier(substr($condition[0], 5, -1)) . $condition[1];
+                } else {
+                    $errors []= $condition[0];
+                    $partialWhere = '';
+                    break; 
+                }
+            }
+            if ($partialWhere) {
+                $where .= ' OR (' . substr($partialWhere, 6) . ')';
+            }
+        }
+        if ($where) {                              
+            $sql = 'SELECT * FROM ' . $filter['database-table'] . ' WHERE ' . substr($where, 4); //@todo columns hidden in view don't get affected
+        }
+    }
+
+    /**
+     * Process the "clone" action.
+     *
+     * @param array &$post $_POST
+     * @return void
+     */
+    public function processClone(&$post)
+    {
+        if (isset($post['table-clone'], $post['database-table'])) {
+            if ((isset($post['check']) && count($post['check'])) || Tools::set($post['total-rows'])) {
+                if (isset($post['total-rows'])) {
+                    $columns = $this->tableAdmin->getColumns([]);
+                    $sql = $this->tableAdmin->composeSQL($columns, $_GET);
+                    Tools::dump($sql,$post);exit; //@todo
+                } else {
+                    $this->filterToSQL($post, $sql, $errors);
+                    Tools::dump($post, $sql);exit; //@todo
+                }
+                if ($sql) {
+                    $this->MyCMS->dbms->query('SELECT ');
+                } else {
+                    Tools::addMessage('info', $this->tableAdmin->translate('No records selected.'));
+                }
+            } else {
+                Tools::addMessage('info', 'Wrong input parameters.');
+            }
+        }
+    }
+
+    /**
      * Process the "export" action. If $post[download] is non-zero prompt the output as a download attachment.
      *
      * @param array &$post $_POST
@@ -62,37 +125,14 @@ class MyAdminProcess extends MyCommon
     {
         if (isset($post['table-export'], $post['database-table'])) {
             if ((isset($post['check']) && count($post['check'])) || Tools::set($post['total-rows'])) {
-                $sql = $where = '';
                 if (Tools::set($post['total-rows'])) { //export whole resultset (regard possible $get limitations)
                     $columns = $this->tableAdmin->getColumns([]);
                     $sql = $this->tableAdmin->composeSQL($columns, $_GET);
                     $sql = $sql['select'];
                 } else { //export only checked rows
-                    $errors = [];
-                    foreach ($post['check'] as $check) {
-                        $partialWhere = '';
-                        foreach (explode('&', $check) as $condition) {
-                            $condition = explode('=', $condition);
-                            if (count($condition) == 2 && Tools::begins($condition[0], 'where[') && Tools::ends($condition[0], ']')) { //@todo doesn't work for nulls
-                                $condition[1] = is_null($condition[1]) ? ' IS NULL' : (is_numeric($condition[1]) ? ' = ' . $condition[1] : ' = "' . $this->tableAdmin->escapeSQL($condition[1]) . '"');
-                                $partialWhere .= ' AND ' . $this->tableAdmin->escapeDbIdentifier(substr($condition[0], 5, -1)) . $condition[1];
-                            } else {
-                                $errors []= $condition[0];
-                                $partialWhere = '';
-                                break; 
-                            }
-                        }
-                        if ($partialWhere) {
-                            $where .= ' OR (' . substr($partialWhere, 6) . ')';
-                        }
-                    }
+                    $this->filterToSQL($get, $sql, $errors);
                     if ($errors) {
                         Tools::addMessage('warning', $this->tableAdmin->translate('Wrong input parameter') . ': ' . implode(', ', $errors));
-                    }
-                    if ($where) {                              
-                        $sql='SELECT * FROM ' . $post['database-table'] . ' WHERE ' . substr($where, 4); //@todo columns hidden in view don't get affected
-                    } else {
-                        Tools::addMessage('info', $this->tableAdmin->translate('No records found.'));
                     }
                 }
                 if ($sql) {
@@ -107,7 +147,7 @@ class MyAdminProcess extends MyCommon
                     $query = $this->MyCMS->dbms->query($sql);
                     $duplicateKey = '';
                     for ($i = 0; $row = $query->fetch_assoc(); $i++) {
-                        if ($i % 5 == 0) {
+                        if ($i % self::PROCESS_LIMIT == 0) {
                             $output = ($i ? substr($output, 0, -2) . ($duplicateKey = "\nON DUPLICATE KEY UPDATE " . $this->MyCMS->dbms->values($row, '%column% = VALUES(%column%)')) . ";\n" : $output) 
                                 . "INSERT INTO " . $post['database-table'] . '(' . $this->MyCMS->dbms->values($row, 'fields') . ") VALUES\n";
                         }
@@ -121,18 +161,19 @@ class MyAdminProcess extends MyCommon
                         header('Content-Transfer-Encoding: binary');
                         header('Content-type: text/plain; charset=utf-8');
                     }
+                    header('Content-type: text/plain; charset=utf-8');
                     exit($output);
                 } else {
                     Tools::addMessage('info', $this->tableAdmin->translate('No records selected.'));
                 }
             } else {
-                Tools::addMessage('info', $this->tableAdmin->translate('Wrong input parameters.'));
+                Tools::addMessage('info', 'Wrong input parameters.');
             }
         }
     }
 
     /**
-     * Process the "file delete" action
+     * Process the "file delete" action.
      *
      * @param array &$post $_POST
      * @return void and output array JSON array containing indexes: "success" (bool), "messages" (string), "processed-files" (int)
@@ -159,7 +200,7 @@ class MyAdminProcess extends MyCommon
     }
 
     /**
-     * Process the "file pack" action
+     * Process the "file pack" action.
      * Files are added into the archive from the current directory and stored without directory.
      * The ZipArchive->addFile() method is used. Standard file/error handling is used.
      *
@@ -202,7 +243,11 @@ class MyAdminProcess extends MyCommon
     }
 
     /**
-     * Process the "file rename" action
+     * Process the "file rename" action.
+     * $post indexes [old_name], [file_rename], [subfolder] and [new_folder] are required.
+     * If [new_folder] <> [subfolder] then file will be moved, otherwise just renamed.
+     * If the new file exists then the operation is aborted.
+     * New file name must keep the same extension and consist only of letters, digits or ( ) . _ 
      *
      * @param array &$post
      * @return void and output array JSON array containing indexes: "success" (bool), "messages" (string) and "data" (string) of renamed file, if successful
@@ -216,23 +261,24 @@ class MyAdminProcess extends MyCommon
                 'messages' => ''
             ];
             $post['file_rename'] = pathinfo($post['file_rename'], PATHINFO_BASENAME);
-            $path = DIR_ASSETS . $post['subfolder'] . '/';
-            $newpath = DIR_ASSETS . $post['new_folder'] . '/';
-            if (!is_file($path . $post['old_name']) // @todo safety
-                || !is_dir($path)
-                || !is_dir($newpath)
-                || !preg_match('/^([-\.\w]+)$/', $post['file_rename']) // apply some basic regex pattern
-                || pathinfo($post['old_name'], PATHINFO_EXTENSION) != pathinfo($post['file_rename'], PATHINFO_EXTENSION) // old and new extension must be the same
-                ) {
-                $result['messages'] = $this->tableAdmin->translate('Error occured renaming the file.');
+            $path = DIR_ASSETS . strtr($post['subfolder'], '../', '') . '/'; // @todo safety
+            $newpath = DIR_ASSETS . strtr($post['new_folder'], '../', '') . '/';
+            if (!is_file($path . $post['old_name'])) {
+                $result['messages'] = $this->tableAdmin->translate('File does not exist.');
+            } elseif (pathinfo($post['old_name'], PATHINFO_EXTENSION) != pathinfo($post['file_rename'], PATHINFO_EXTENSION)) {
+                $result['messages'] = $this->tableAdmin->translate('File extensions must be the same.');
+            } elseif (!is_dir($path) || !is_dir($newpath)) {
+                $result['messages'] = $this->tableAdmin->translate("The subfolder doesn't exist.");
             } elseif (file_exists($newpath . $post['file_rename'])) {
                 $result['messages'] = $this->tableAdmin->translate('File already exists.');
+            } elseif (!preg_match('/^([-\.\w\(\)]+)$/', $post['file_rename'])) { // apply some basic regex pattern
+                $result['messages'] = $this->tableAdmin->translate('Wrong file name.');
             } elseif (!rename($path . $post['old_name'], $newpath . $post['file_rename'])) {
                 $result['messages'] = $this->tableAdmin->translate('Error occured renaming the file.');
             } else {
-                Tools::addMessage('success', $tmp = $this->tableAdmin->translate('File renamed.') . ' (<a href="' . $newpath . $post['file_rename'] . '" target="_blank"><tt>' . Tools::h($newpath . $post['file_rename']) . '</tt></a>)');
+                $result['messages'] = $this->tableAdmin->translate('File renamed.') . ' (<a href="' . $newpath . $post['file_rename'] . '" target="_blank"><tt>' . Tools::h($newpath . $post['file_rename']) . '</tt></a>)';
+                Tools::addMessage('success', $result['messages']);
                 $result['data'] = $post['file_rename'];
-                $result['messages'] = $tmp;
                 $result['success'] = true;
             }
             if (!$result['success']) {
@@ -281,7 +327,7 @@ class MyAdminProcess extends MyCommon
     }
 
     /**
-     * Process the "files upload" action
+     * Process the "files upload" action.
      *
      * @param array &$post $_POST
      * @return void and on success reload the page
@@ -319,7 +365,7 @@ class MyAdminProcess extends MyCommon
     }
 
     /**
-     * Process the "login" action
+     * Process the "login" action.
      *
      * @param array &$post $_POST
      * @return void
@@ -328,27 +374,32 @@ class MyAdminProcess extends MyCommon
     {
         if (isset($post['user'], $post['password'], $post['login'])) {
             if (!isset($post['token']) || !$this->MyCMS->csrfCheck($post['token'])) {
-                // let it fall into 'Error occured logging You in.'
+                // let it fall to 'Error occured logging You in.'
             } elseif ($row = $this->MyCMS->fetchSingle('SELECT * FROM ' . TAB_PREFIX . 'admin WHERE admin="' . $this->MyCMS->escapeSQL($post['user']) . '"')) {
                 if ($row['active'] == '1' && $row['password_hashed'] == sha1($post['password'] . $row['salt'])) {
                     $_SESSION['user'] = $post['user'];
                     $_SESSION['rights'] = $row['rights'];
                     $this->MyCMS->logger->info("Admin {$_SESSION['user']} logged in.");
-                    Tools::addMessage('success', $this->tableAdmin->translate('You are logged in.'));
                     session_regenerate_id();
-                    $this->redir();
+                    setcookie('mycms_login', $post['user'] . "\0" . Tools::xorCipher($post['password'], MYCMS_SECRET), time() + 86400 * 30, '', '', true);
+                    if (!isset($post['autologin'])) {
+                        Tools::addMessage('success', $this->tableAdmin->translate('You are logged in.'));
+                        $this->redir();
+                    }
                 }
                 $this->MyCMS->logger->warning('Admin not logged in - wrong password.');
             } else {
                 $this->MyCMS->logger->warning('Admin not logged in - wrong name.');
             }
             Tools::addMessage('error', $this->tableAdmin->translate('Error occured logging You in.'));
-            $this->redir();
+            if (!isset($post['no-redir'])) {
+                $this->redir();
+            }
         }
     }
 
     /**
-     * Process the "logout" action
+     * Process the "logout" action.
      *
      * @param array &$post $_POST
      * @return void
@@ -358,6 +409,7 @@ class MyAdminProcess extends MyCommon
         if (isset($post['logout'])) {
             unset($_SESSION['user'], $_SESSION['rights'], $_SESSION['token']);
             Tools::addMessage('info', $this->tableAdmin->translate('You are logged out.'));
+            setcookie('mycms_login', '', 0);
             $this->tableAdmin->script .= "localStorage.clear();\n";
             $this->redir();
         }
@@ -423,7 +475,7 @@ class MyAdminProcess extends MyCommon
     }
 
     /**
-     * Process the "user change activation" action
+     * Process the "user change activation" action.
      *
      * @param array &$post $_POST
      * @return void and output array JSON array containing indexes: "success" (bool), "data" (string) admin name
@@ -442,7 +494,7 @@ class MyAdminProcess extends MyCommon
     }
 
     /**
-     * Process the "user change password" action
+     * Process the "user change password" action.
      *
      * @param array &$post $_POST
      * @return void
@@ -469,7 +521,7 @@ class MyAdminProcess extends MyCommon
     }
 
     /**
-     * Process the "user create" action
+     * Process the "user create" action.
      *
      * @param array &$post $_POST
      * @return void
@@ -488,7 +540,7 @@ class MyAdminProcess extends MyCommon
     }
 
     /**
-     * Process the "user delete" action
+     * Process the "user delete" action.
      *
      * @param array &$post $_POST
      * @return void
@@ -505,7 +557,7 @@ class MyAdminProcess extends MyCommon
     }
 
     /**
-     * Tracy wrapper of Tools::redir
+     * Tracy wrapper of Tools::redir.
      *
      * @param string $url OPTIONAL
      * @return void

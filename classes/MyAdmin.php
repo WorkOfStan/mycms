@@ -211,8 +211,7 @@ class MyAdmin extends MyCommon
                 <button class="btn btn-secondary" title="' . $TableAdmin->translate('Delete') . '" id="delete-media-files"><i class="fa fa-check-square"></i> <i class="fa fa-trash"></i></button>
                 <fieldset class="d-inline-block position-relative" id="rename-fieldset">
                     <div class="input-group input-group-sm">
-                        <div class="input-group-prepend"><button class="btn btn-secondary disabled" type="button" title="' . $TableAdmin->translate('filename') . '" disabled><i class="fa fa-dot-circle"></i></button></div>
-                        <span id="media-file-feedback" class="invalid-tooltip" style="display:none;"></span>' 
+                        <div class="input-group-prepend"><button class="btn btn-secondary disabled" type="button" title="' . $TableAdmin->translate('filename') . '" disabled><i class="fa fa-dot-circle"></i></button></div>' 
                         . Tools::htmlInput('', '', '', ['class' => 'form-control form-control-sm', 'id' => 'media-file-name']) . '
                     </div>
                 </fieldset>
@@ -224,6 +223,7 @@ class MyAdmin extends MyCommon
                 </fieldset>
                 <button class="btn btn-secondary" type="submit" title="' . $TableAdmin->translate('Rename') . '" id="rename-media-file"><i class="fa fa-dot-circle"></i> <i class="fa fa-i-cursor"></i></button>
                 <button class="btn btn-secondary" type="submit" title="' . $TableAdmin->translate('Unpack') . '" id="unpack-media-file"><i class="fa fa-dot-circle"></i> <i class="fa fa-file-archive"></i></button>
+                <div id="media-file-feedback" class="alert alert-warning mt-1" style="display:none;"><i class="mr-2 fa fa-info-circle"></i> <span></span> <button type="button" class="close" onclick="$(this).parent().hide();"><span aria-hidden="true">×</span></button></div>
             </div>
             </details>';
         return $result;
@@ -249,32 +249,33 @@ class MyAdmin extends MyCommon
         // change password
         if (isset($_GET['change-password'])) {
             $result .= '<h2><small>' . $TableAdmin->translate('Change password') . '</small></h2>
-                <form action="" method="post" id="change-password-form" onsubmit="return changePasswordSubmit()"><fieldset class="card p-2">';
+                <form action="" method="post" id="change-password-form" onsubmit="return changePasswordSubmit()"><fieldset class="card p-3">';
             $options = [
                 'type' => 'password',
-                'before' => '<div class="col-sm-3">',
-                'between' => '</div><div class="col-sm-9">',
+                'before' => '<div class="col-sm-3 p-0">',
+                'between' => '</div><div class="col-sm-9 p-0">',
                 'after' => '</div>',
-                'class' => 'form-control'
+                'class' => 'form-control mycms-password',
+                'label-class' => 'mt-1',
             ];
             $result .= Tools::htmlInput('old-password', $TableAdmin->translate('Old password', false) . ':', '', $options + ['id' => 'old-password', 'autocomplete' => 'off'])
                 . Tools::htmlInput('new-password', $TableAdmin->translate('New password', false) . ':', '', $options + ['id' => 'new-password', 'autocomplete' => 'new-password'])
                 . Tools::htmlInput('retype-password', $TableAdmin->translate('Retype password', false) . ':', '', $options + ['id' => 'retype-password', 'autocomplete' => 'new-password'])
                 . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden')
                 . '<div class="alert alert-warning mt-3" style="display:none;"><i class="fas fa-exclamation-triangle"></i> <span id="change-password-message"></span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>
-                <button type="submit" name="change-password" class="btn btn-primary my-3 ml-3"><i class="fa fa-id-card mr-1"></i> ' . $TableAdmin->translate('Change password') . '</button>
+                <button type="submit" name="change-password" class="btn btn-primary mt-3"><i class="fa fa-id-card mr-1"></i> ' . $TableAdmin->translate('Change password') . '</button>
                 </fieldset></form>';
         }
         // create user
         if (isset($_GET['create-user'])) {
             $result .= '<h2><small>' . $TableAdmin->translate('Create user') . '</small></h2>
-                <form action="" method="post" class="panel create-user-form" onsubmit="return createUserSubmit()"><fieldset class="card p-2">'
+                <form action="" method="post" class="panel create-user-form" onsubmit="return createUserSubmit()"><fieldset class="card p-3">'
                 . Tools::htmlInput('user', $TableAdmin->translate('User', false) . ':', '', ['class' => 'form-control', 'id' => 'create-user'])
-                . Tools::htmlInput('password', $TableAdmin->translate('Password', false) . ':', '', ['type' => 'password', 'class' => 'form-control', 'id' => 'create-password'])
-                . Tools::htmlInput('retype-password', $TableAdmin->translate('Retype password', false) . ':', '', ['type' => 'password', 'class' => 'form-control', 'id' => 'create-retype-password'])
+                . Tools::htmlInput('password', $TableAdmin->translate('Password', false) . ':', '', ['type' => 'password', 'class' => 'form-control mycms-password', 'id' => 'create-password'])
+                . Tools::htmlInput('retype-password', $TableAdmin->translate('Retype password', false) . ':', '', ['type' => 'password', 'class' => 'form-control mycms-password', 'id' => 'create-retype-password'])
                 . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden')
                 . '<div class="alert alert-warning mt-3" style="display:none;"><i class="fas fa-exclamation-triangle"></i> <span id="create-user-message"></span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>
-                  <button type="submit" name="create-user" class="btn btn-primary my-2"><i class="fa fa-user-plus"></i> ' . $TableAdmin->translate('Create user') . '</button>
+                  <button type="submit" name="create-user" class="btn btn-primary my-3"><i class="fa fa-user-plus"></i> ' . $TableAdmin->translate('Create user') . '</button>
                 </fieldset></form>';
         }
         // delete user
@@ -311,16 +312,17 @@ class MyAdmin extends MyCommon
     {
         $TableAdmin = $this->TableAdmin;
         $options = [
-            'before' => '<div class="col-sm-3">',
+            'before' => '<div class="col-sm-3 mt-3">',
             'between' => '</div><div class="col-sm-9">',
             'after' => '</div>',
-            'class' => 'form-control'
+            'class' => 'form-control',
+            'label-html' => 1,
         ];
         return '<h1>' . $TableAdmin->translate('Login') . '</h1>
             <form action="" method="post" class="form" id="login-form">
             <div>'
-            . Tools::htmlInput('user', $TableAdmin->translate('User', false) . ':', Tools::setifnull($_SESSION['user']), $options)
-            . Tools::htmlInput('password', $TableAdmin->translate('Password', false) . ':', '', ['type' => 'password', 'id' => 'login-password'] + $options)
+            . Tools::htmlInput('user', '<i class="fa fa-user"></i> ' . $TableAdmin->translate('User', false) . ':', Tools::setifnull($_SESSION['user']), $options)
+            . Tools::htmlInput('password', '<i class="fa fa-key"></i> ' . $TableAdmin->translate('Password', false) . ':', '', ['type' => 'password', 'class' => 'form-control mycms-password', 'id' => 'login-password'] + $options)
             . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden') . '</div>
             <div class="col-sm-9 col-sm-offset-3 my-3"><button type="submit" name="login" class="btn btn-primary"><i class="fa fa-sign-in fa-sign-in-alt"></i> ' . $TableAdmin->translate('Login') . '</button>
             </div>
@@ -488,7 +490,10 @@ class MyAdmin extends MyCommon
                 ])
                 . $this->outputTableAfterEdit();
         } elseif (isset($_POST['edit-selected'])) {
-              $result .= $this->outputTableEditSelected();
+            $result .= $this->outputTableEditSelected();
+        } elseif (isset($_POST['table-clone'])) {
+            die('x');
+            $result .= $this->outputTableEditSelected();
         } else {
             // table listing
             $result .= '<h2 class="sub-header">' . $TableAdmin->translate('Listing') . '</h2>'
@@ -748,16 +753,21 @@ class MyAdmin extends MyCommon
         Debugger::barDump($this->agendas, 'Agendas');
         Debugger::barDump($_SESSION, 'Session');
 
-        //$TableAdmin = new \GodsDev\AltronNet\TableAdmin($MyCMS->dbms, Tools::set($_GET['table']), ['SETTINGS' => $MyCMS->SETTINGS]);
         if (!in_array(Tools::set($_GET['table']), array_keys($TableAdmin->tables))) {
             $_GET['table'] = '';
         }
         $TableAdmin->setTable($_GET['table']);
-        $tablePrefixless = mb_substr($_GET['table'], mb_strlen(TAB_PREFIX));
         if (!isset($_SESSION['user'])) {
+            if (isset($_COOKIE['mycms_login'])) {
+                list($_POST['user'], $_POST['password']) = explode("\0", $_COOKIE['mycms_login'], 2);
+                $_POST['password'] = Tools::xorDecipher($_POST['password'], MYCMS_SECRET);
+                $_POST['login'] = $_POST['autologin'] = 1;
+                $_POST['token'] = end($_SESSION['token']);
+                $MyAdminProcess = new MyAdminProcess($this->MyCMS, ['tableAdmin' => $TableAdmin]);
+                $MyAdminProcess->processLogin($_POST);
+            }
             $_GET['table'] = $_GET['media'] = $_GET['user'] = null;
         }
-        $tmpTitle = $tablePrefixless ?: (isset($_GET['user']) ? $TableAdmin->translate('User') : (isset($_GET['media']) ? $TableAdmin->translate('Media') : (isset($_GET['products']) ? $TableAdmin->translate('Products') : (isset($_GET['pages']) ? $TableAdmin->translate('Pages') : ''))));
         $output = '<!DOCTYPE html><html lang="' . Tools::h($_SESSION['language']) . '">'
             . $this->outputHead($this->getPageTitle())
             . '<body>' . PHP_EOL . '<header>'
@@ -772,6 +782,10 @@ class MyAdmin extends MyCommon
         foreach (glob(DIR_ASSETS . '*', GLOB_ONLYDIR) as $value) {
             $this->ASSETS_SUBFOLDERS []= substr($value, strlen(DIR_ASSETS));
         }
+        // user not logged in - show a login form
+        if(!isset($_SESSION['user'])) {
+            $output .= $this->outputLogin();
+        } else
         // search results
         if (isset($_SESSION['user']) && Tools::set($_GET['search'])) {
             $output .= $this->outputSearchResults($_GET['search']);
@@ -787,10 +801,6 @@ class MyAdmin extends MyCommon
         // user operations (logout, change password, create user, delete user)
         elseif (isset($_GET['user'])) {
             $output .= $this->outputUser();
-        }
-        // user not logged in - show a login form
-        elseif(!isset($_SESSION['user'])) {
-            $output .= $this->outputLogin();
         }
         // project-specific admin sections
         elseif ($this->projectSpecificSectionsCondition()) {

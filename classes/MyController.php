@@ -28,10 +28,10 @@ class MyController extends MyCommon
      * @param \GodsDev\MyCMS\MyCMS $MyCMS
      * @param array $options that overrides default values within constructor
      */
-    public function __construct(MyCMS $MyCMS, array $options = array())
+    public function __construct(MyCMS $MyCMS, array $options = [])
     {
         parent::__construct($MyCMS, $options);
-        $this->result = array("template" => "home", "context" => ($this->MyCMS->context ? $this->MyCMS->context : array()));
+        $this->result = ["template" => "home", "context" => ($this->MyCMS->context ? $this->MyCMS->context : [])];
     }
 
     /**
@@ -51,11 +51,11 @@ class MyController extends MyCommon
      */
     public function getVars()
     {
-        return array(
+        return [
             "get" => $this->get,
             "session" => $this->session
                 //,"section_styles" => $this->sectionStyles
-        );
+        ];
     }
 
 }

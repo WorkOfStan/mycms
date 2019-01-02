@@ -36,7 +36,7 @@ class MyCMS extends MyCMSMonoLingual
      *
      * @param array $myCmsConf
      */
-    public function __construct(array $myCmsConf = array())
+    public function __construct(array $myCmsConf = [])
     {
         parent::__construct($myCmsConf);
     }
@@ -58,7 +58,7 @@ class MyCMS extends MyCMSMonoLingual
         if ($makeInclude) {
             $languageFile = DIR_TEMPLATE . '/../language-' . $resultLanguage . '.inc.php';
             if (file_exists($languageFile)) {
-                include_once $languageFile; //MUST contain $translation = array(...);
+                include_once $languageFile; //MUST contain $translation = [...];
                 if (isset($translation) && is_array($translation)) {
                     $this->TRANSLATION = $translation;
                 } else {
