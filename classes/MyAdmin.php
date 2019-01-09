@@ -491,9 +491,8 @@ class MyAdmin extends MyCommon
                 . $this->outputTableAfterEdit();
         } elseif (isset($_POST['edit-selected'])) {
             $result .= $this->outputTableEditSelected();
-        } elseif (isset($_POST['table-clone'])) {
-            die('x');
-            $result .= $this->outputTableEditSelected();
+        } elseif (isset($_POST['clone-selected'])) {
+            $result .= $this->outputTableEditSelected(true);
         } else {
             // table listing
             $result .= '<h2 class="sub-header">' . $TableAdmin->translate('Listing') . '</h2>'
@@ -625,13 +624,14 @@ class MyAdmin extends MyCommon
     /**
      * Output (in HTML) a form to edit multiple selected rows of a table
      *
+     * @param bool $clone
      * @result string
      */
-    protected function outputTableEditSelected()
+    protected function outputTableEditSelected($clone = false)
     {
         Tools::setifnull($_POST['check'], []);
         $result = '<form action="" method="post" enctype="multipart/form-data" class="selected-records-form">'
-            . '<p class="lead">' . $this->TableAdmin->translate('Edit selected') . ' (' . (isset($_POST['total-rows']) ? $_POST['total-rows'] : count($_POST['check'])) . ')</p>' 
+            . '<p class="lead">' . $this->TableAdmin->translate($clone ? 'Clone' : 'Edit selected') . ' (' . (isset($_POST['total-rows']) ? $_POST['total-rows'] : count($_POST['check'])) . ')</p>' 
             . Tools::htmlInput('database-table', '' , $_POST['database-table'], 'hidden')
             . Tools::htmlInput('token', '' , $_POST['token'], 'hidden')
             . Tools::htmlInput('total-rows', '' , Tools::ifset($_POST['total-rows']), 'hidden')
@@ -650,10 +650,7 @@ class MyAdmin extends MyCommon
             switch ($value['basictype']) {
                 case 'integer': case 'rational':
                     $result .= Tools::htmlSelect("op[$key]", 
-                        $op
-                        + ['+' => '+', '-' => '-'] 
-                        + ($value['basictype'] == 'rational' ? ['*' => '*'] : [])
-                        + ['random' => 'random'],
+                        $op + ['+' => '+', '-' => '-', '*' => '*', 'random' => 'random', 'uuid_short' => 'uuid_short'],
                         '', $opOptions
                     ) . '</td><td>' . Tools::htmlInput("fields[$key]", '', '', ['type' => 'number', 'class' => 'form-control edit-selected text-right w-initial', 'data-size' => $value['size']]) . '</td>';
                     break;
@@ -674,7 +671,8 @@ class MyAdmin extends MyCommon
                                 'md5' => 'md5', 
                                 'sha1' => 'sha1', 
                                 'password' => 'password', 
-                                'uuid' => 'uuid'
+                                'uuid' => 'uuid',
+                                'uuid_short' => 'uuid_short'
                             ], '', $opOptions
                         );
                     }
@@ -713,9 +711,13 @@ class MyAdmin extends MyCommon
             }
             $result .= "\n</tr>\n";
         }
-        $result .= '</table><div>
-            <button name="save-selected" class="btn btn-primary mr-1" value="1"><i class="fa fa-save mr-1"></i> ' . $this->TableAdmin->translate('Save') . '</button>
+        $result .= '</table><div>';
+        if ($clone) {
+            $result .= '<button name="clone" class="btn btn-primary mr-1" value="1"><i class="fa fa-save mr-1"></i> ' . $this->TableAdmin->translate('Clone') . '</button>';
+        } else {
+            $result .= '<button name="save-selected" class="btn btn-primary mr-1" value="1"><i class="fa fa-save mr-1"></i> ' . $this->TableAdmin->translate('Save') . '</button>
             <button name="delete-selected" class="btn btn-secondary" value="1"><i class="fa fa-trash mr-1"></i> ' . $this->TableAdmin->translate('Delete') . '</button>';
+        }
         if (isset($_POST['check-all'])) {
             $result .= Tools::htmlInput('check-all', '', 1, 'hidden') . PHP_EOL;
         } elseif (Tools::setarray($_POST['check'])) {

@@ -52,37 +52,34 @@ class MyAdminProcess extends MyCommon
     }
 
     /**
-     * Convert variables confining records of a table into a SQL statement.
+     * Convert variables confining records of a table into a WHERE clause of a SQL statement.
      *
-     * @param array &$filter
-     * @param string &$sql
-     * @param array &$errors
-     * @return void
+     * @param array $checks array of conditions, e.g. ["where[id]=4", "where[id]=5"]
+     * @param array &$errors this variable is filled with
+     * @return string SQL WHERE clause
      */
-    protected function filterToSQL(&$filter, &$sql, &$errors)
+    protected function filterChecks($checks, &$errors)
     {
         $errors = [];
-        $sql = $where = '';
-        foreach ($filter['check'] as $check) {
-            $partialWhere = '';
+        $result = '';
+        foreach ($checks as $check) {
+            $partial = '';
             foreach (explode('&', $check) as $condition) {
-                $condition = explode('=', $condition);
-                if (count($condition) == 2 && Tools::begins($condition[0], 'where[') && Tools::ends($condition[0], ']')) { //@todo doesn't work for nulls
+                $condition = explode('=', $condition, 2);
+                if (Tools::begins($condition[0], 'where[') && Tools::ends($condition[0], ']')) { //@todo doesn't work for nulls
                     $condition[1] = is_null($condition[1]) ? ' IS NULL' : (is_numeric($condition[1]) ? ' = ' . $condition[1] : ' = "' . $this->tableAdmin->escapeSQL($condition[1]) . '"');
-                    $partialWhere .= ' AND ' . $this->tableAdmin->escapeDbIdentifier(substr($condition[0], 5, -1)) . $condition[1];
+                    $partial .= ' AND ' . $this->tableAdmin->escapeDbIdentifier(substr($condition[0], 5, -1)) . $condition[1];
                 } else {
                     $errors []= $condition[0];
-                    $partialWhere = '';
+                    $partial = '';
                     break; 
                 }
             }
-            if ($partialWhere) {
-                $where .= ' OR (' . substr($partialWhere, 6) . ')';
+            if ($partial) {
+                $result .= ' OR (' . substr($partial, 6) . ')';
             }
         }
-        if ($where) {                              
-            $sql = 'SELECT * FROM ' . $filter['database-table'] . ' WHERE ' . substr($where, 4); //@todo columns hidden in view don't get affected
-        }
+        return substr($result, 4);
     }
 
     /**
@@ -93,14 +90,14 @@ class MyAdminProcess extends MyCommon
      */
     public function processClone(&$post)
     {
-        if (isset($post['table-clone'], $post['database-table'])) {
+        if (isset($post['clone'], $post['database-table'])) {
             if ((isset($post['check']) && count($post['check'])) || Tools::set($post['total-rows'])) {
-                if (isset($post['total-rows'])) {
+                if (Tools::set($post['total-rows'])) {
                     $columns = $this->tableAdmin->getColumns([]);
-                    $sql = $this->tableAdmin->composeSQL($columns, $_GET);
+                    $sql = $this->tableAdmin->selectSQL($columns, $_GET);
                     Tools::dump($sql,$post);exit; //@todo
                 } else {
-                    $this->filterToSQL($post, $sql, $errors);
+                    $sql = $this->filterChecks($post['check'], $errors);
                     Tools::dump($post, $sql);exit; //@todo
                 }
                 if ($sql) {
@@ -127,7 +124,7 @@ class MyAdminProcess extends MyCommon
             if ((isset($post['check']) && count($post['check'])) || Tools::set($post['total-rows'])) {
                 if (Tools::set($post['total-rows'])) { //export whole resultset (regard possible $get limitations)
                     $columns = $this->tableAdmin->getColumns([]);
-                    $sql = $this->tableAdmin->composeSQL($columns, $_GET);
+                    $sql = $this->tableAdmin->selectSQL($columns, $_GET);
                     $sql = $sql['select'];
                 } else { //export only checked rows
                     $this->filterToSQL($get, $sql, $errors);
@@ -138,7 +135,8 @@ class MyAdminProcess extends MyCommon
                 if ($sql) {
                     $post['database-table'] = $this->tableAdmin->escapeDbIdentifier($post['database-table']);
                     $output = $this->MyCMS->fetchSingle('SHOW CREATE TABLE ' . $post['database-table']);
-                    $output = "-- " . date('Y-m-d H:i:s') . "\n\n"
+                    $output = "-- " . date('Y-m-d H:i:s') . "\n"
+                        . "-- " . $this->MyCMS->fetchSingle('SELECT VERSION()') . "\n\n"
                         . "SET NAMES utf8;\n"
                         . "SET time_zone = '+00:00';\n"
                         . "SET foreign_key_checks = 0;\n"

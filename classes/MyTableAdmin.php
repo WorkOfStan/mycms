@@ -114,9 +114,10 @@ class MyTableAdmin extends MyTableLister
             if ($record) {
                 $output .= '<button type="submit" name="record-delete" class="btn btn-default" value="1" onclick="return confirm(\'' . $this->translate('Really delete?') . '\');">' . PHP_EOL
                         . '<span class="glyphicon glyphicon-floppy-remove fa fa-trash-o fa-trash" aria-hidden="true"></span> ' . $this->translate('Delete') . '</button>' . PHP_EOL
-                        . Tools::htmlInput('after', '', '', 'hidden') . PHP_EOL;
+                        . Tools::htmlInput('after', '', '', 'hidden') . PHP_EOL
+                        . Tools::htmlInput('referer', '', Tools::set($_SERVER['HTTP_REFERER'], '?table=' . TAB_PREFIX . $_GET['table']), 'hidden') . PHP_EOL;
             }
-            $output .= '</div>';
+            $output .= '<label><i class="fa fa-location-arrow"></i> ' . Tools::htmlSelect('after', [$this->translate('stay here'), $this->translate('go back')], false, ['class' => 'form-control form-control-sm w-initial d-inline-block']) . '</label></div>';
         }
         $output .= (isset($options['exclude-form']) && $options['exclude-form'] ? '' : '</fieldset></form>') . PHP_EOL;
         if (isset($options['return-output']) && $options['return-output']) {
