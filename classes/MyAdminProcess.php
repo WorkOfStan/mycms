@@ -18,6 +18,9 @@ class MyAdminProcess extends MyCommon
     /** @const int general limit of selected rows and repeated fields in export */
     const PROCESS_LIMIT = 100;
 
+    /** @var int how many seconds may pass before admin's record-editing tab is considered closed */
+    protected $ACTIVITY_TIME_LIMIT = 180;
+
     /** @var \GodsDev\MyCMS\TableAdmin */
     protected $tableAdmin;
 
@@ -72,7 +75,7 @@ class MyAdminProcess extends MyCommon
                 } else {
                     $errors []= $condition[0];
                     $partial = '';
-                    break; 
+                    break;
                 }
             }
             if ($partial) {
@@ -80,6 +83,52 @@ class MyAdminProcess extends MyCommon
             }
         }
         return substr($result, 4);
+    }
+
+    /**
+     * Process the "activity" action - update activity column of all admins, delete old tabs.
+     *
+     * @param array &$post $_POST
+     * @return void and output JSON
+     */
+    public function processActivity(&$post)
+    {
+        if (isset($post['activity'], $post['table'], $post['id'])) {
+            $admins = $this->MyCMS->fetchAll('SELECT id,activity,admin FROM ' . TAB_PREFIX . 'admin');
+            $coeditors = []; // possible other admin(s) editing this record
+            $online = []; // other admins online
+            $time = time();
+            foreach ($admins as $admin) {
+                $tabs = json_decode($admin['activity'], true);
+                $tabs = is_array($tabs) ? $tab : [];
+                $new = true;
+                foreach ($tabs as $tabIndex => $tab) {
+                    if (isset($tab['table'], $tab['id'], $tab['token'], $tab['time'])) {
+                        if ($tab['table'] == $post['table'] && $tab['id'] == $post['id']) { //same record
+                            if ($admin['admin'] != $_SESSION['user']) { // edited by different admin
+                                $coeditors []= $admin['admin'];
+                            } elseif ($tab['token'] == $post['token']) { // same tab - update access time
+                                $new = false;
+                                $tabs[$tabIndex]['time'] = time();
+                            }
+                        }
+                        if ($tab['time'] + $this->ACTIVITY_TIME_LIMIT < $time) { // delete tabs with "old" access times
+                            unset($tabs[$tabIndex]);
+                        }
+                    }
+                }
+                $tabs = array_values($tabs);
+                if ($admin['admin'] == $_SESSION['user']) {
+                    if ($new) {
+                        $tabs []= ['table' => $post['table'], 'id' => (int)$post['id'], 'token' => $post['token'], 'time' => time()];
+                    }
+                } elseif ($tabs) {
+                    $online += $admin['admin'];
+                }
+                $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'admin SET activity = "' . $this->MyCMS->escapeSQL(json_encode($tabs ?: [])) . '" WHERE id = ' . (int)$admin['id']);
+            }
+            $this->exitJson(['success' => true, 'coeditors' => $coeditors, 'online' => $online]);
+        }
     }
 
     /**

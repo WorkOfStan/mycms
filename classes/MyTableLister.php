@@ -281,7 +281,7 @@ class MyTableLister
                 }
             }
         }
-        foreach (Tools::setifempty($vars['order by'], []) as $key => $value) {
+        foreach (Tools::setifempty($vars['sort'], []) as $key => $value) {
             if (isset(array_keys($columns)[(int) $value - 1])) {
                 $result['order by'] .= ',' . array_values($columns)[(int) $value - 1] . (isset($vars['desc'][$key]) && $vars['desc'][$key] ? ' DESC' : '');
             }
@@ -358,7 +358,9 @@ class MyTableLister
         }
         if (isset($options['exclude']) && is_array($options['exclude'])) {
             foreach ($options['exclude'] as $column) {
-                unset($columns[$column]);
+                if (isset($columns[$column])) {
+                    unset($columns[$column]);
+                }
             }
         }
         return $columns;

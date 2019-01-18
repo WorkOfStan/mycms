@@ -31,7 +31,7 @@ class MyAdmin extends MyCommon
             'styles/admin.css?v=' . PAGE_RESOURCE_VERSION,
             ],
     ];
-
+    
     public $HTMLHeaders = [
         'viewport' => 'width=device-width, initial-scale=1',
         'X-XSS-Protection' => '0',
@@ -123,7 +123,7 @@ class MyAdmin extends MyCommon
                 . '<li class="nav-item' . (isset($_GET['media']) ? ' active' : '') . '"><a href="?media" class="nav-link"><i class="fa fa-video"></i> ' . $TableAdmin->translate('Media') . '</a></li>
                 <li class="nav-item dropdown' . (isset($_GET['user']) ? ' active' : '') . '">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="' . $TableAdmin->translate('User') . '"><i class="fa fa-user"></i> ' . $TableAdmin->translate('User') . '</a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown" id="user-dropdown-menu">
                   <a href="" class="dropdown-item disabled"><i class="fa fa-user"></i> ' . Tools::h($_SESSION['user']) . '</a>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item' . (isset($_GET['logout']) ? ' active' : '') . '" href="?user&amp;logout"><i class="fa fa-sign-out-alt mr-1"></i> ' . $TableAdmin->translate('Logout') . '</a>
@@ -407,7 +407,7 @@ class MyAdmin extends MyCommon
 //            . '<script type="text/javascript" src="scripts/admin.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
             . '<script type="text/javascript" src="scripts/admin-specific.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
             . '<script type="text/javascript">' . PHP_EOL;
-        $tmp = array_flip(explode('|', 'Descending|Really delete?|New record|Passwords don\'t match!|Please, fill necessary data.|'
+        $tmp = array_flip(explode('|', 'descending|Really delete?|New record|Passwords don\'t match!|Please, fill necessary data.|'
             . 'Select at least one file and try again.|Select at least one record and try again.|No files|Edit|'
             . 'variable|value|name|size|modified|Select|No records found.|Please, choose a new name.|Wrong input'));
         foreach ($tmp as $key => $value) {
@@ -765,6 +765,7 @@ class MyAdmin extends MyCommon
                 $_POST['password'] = Tools::xorDecipher($_POST['password'], MYCMS_SECRET);
                 $_POST['login'] = $_POST['autologin'] = 1;
                 $_POST['token'] = end($_SESSION['token']);
+                $_POST['autologin'] = 1;
                 $MyAdminProcess = new MyAdminProcess($this->MyCMS, ['tableAdmin' => $TableAdmin]);
                 $MyAdminProcess->processLogin($_POST);
             }
@@ -834,7 +835,7 @@ class MyAdmin extends MyCommon
         return mb_substr(Tools::set($_GET['table']), mb_strlen(TAB_PREFIX)) ?: 
             (isset($_GET['user']) ? $this->TableAdmin->translate('User') : 
                 (isset($_GET['media']) ? $this->TableAdmin->translate('Media') : 
-                    (isset($_GET['search']) ? $this->TableAdmin->translate('Products') : '')
+                    (isset($_GET['search']) ? $this->TableAdmin->translate('Search') : '')
                 )
             );
     }
