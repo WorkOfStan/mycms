@@ -36,7 +36,7 @@ class MyCMSMonoLingual
      * variables for template rendering
      * @var array
      */
-    public $context = array();
+    public $context = [];
 
     /**
      * Logger SHOULD by available to the application using mycms
@@ -49,7 +49,7 @@ class MyCMSMonoLingual
      *
      * @param array $myCmsConf
      */
-    public function __construct(array $myCmsConf = array())
+    public function __construct(array $myCmsConf = [])
     {
         foreach ($myCmsConf as $myCmsVariable => $myCmsContent) {
             if (property_exists($this, $myCmsVariable)) {
@@ -99,7 +99,7 @@ class MyCMSMonoLingual
     public function csrfStart($checkOnly = false)
     {
         if (!isset($_SESSION['token']) || !is_array($_SESSION['token'])) {
-            $_SESSION['token'] = array();
+            $_SESSION['token'] = [];
         }
         if (!$checkOnly || !count($_SESSION['token'])) {
             $_SESSION['token'] []= rand(1e8, 1e9);
