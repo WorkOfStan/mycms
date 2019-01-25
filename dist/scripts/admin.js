@@ -56,7 +56,7 @@ function addSearchRow(target, field, op, value)
     for (i in WHERE_OPS) {
         html += '<option value="' + i + '"' + (op == i ? ' selected="selected"' : '') + '>' + WHERE_OPS[i] + '</option>\n';
     }
-    html += '</select>\n<input type="search" name="val[' + searchIndex + ']" value="' + value + '" size="8" /></div>';
+    html += '</select>\n<input type="search" name="val[' + searchIndex + ']" value="' + value + '" size="8" class="form-control form-control-sm d-inline" /></div>';
     $(target).append(html);
     searchIndex++;
     return true;
@@ -166,6 +166,7 @@ function updateImageSelector(ImageFolder, ImageFiles) {
         data: {
             'subfolder': $(ImageFolder).val(),
             'media-files': 1,
+            'info': 1,
             'token': TOKEN,
             'wildcard': '*.{jpg,gif,png}'
         },
@@ -287,13 +288,30 @@ function standardDocumentReady() {
         }
         $(this).closest('table').data('order', $(this).data('order'));
     });
+    //@todo go to page
     $('#go-to-page').on('click', function () {
         page = prompt('Stránka:');
         if (!isNaN(page) && page > 0 && page < $(this).data('pages')) {
             console.log('@todo go to page: ' + page);//...
         }
     });
+    //date/time picker
     prepareDatetimepicker(false, true);
+    //add 'column=...' condition to search fieldset
+    $('.table-admin thead tr th a.filter').on('click', function(event){
+        event.preventDefault();
+        var rand = $(this).parentsUntil(null, 'form').data('rand');
+        var search = $('#search-div' + rand);
+        search.show();
+        addSearchRow(search, 0, 0, '');
+        for (i = 0; i < search.find('div').length; i++) {
+            if (search.find('.select-search:nth(' + i + ')').val() == '') {
+                search.find('.select-search:nth(' + i + ')').val($(this).data('column'));
+                search.find('div:nth(' + i + ') input[type=search]').focus();
+                break;
+            }
+        }
+    });
     //summernote
     $('textarea.richtext').summernote({
         height: 300,
@@ -331,6 +349,7 @@ function standardDocumentReady() {
                     data: {
                         'subfolder': $(this).val(),
                         'media-files': 1,
+                        'info': 1,
                         'token': TOKEN
                     },
                     type: 'POST',
@@ -343,7 +362,7 @@ function standardDocumentReady() {
                                 filename = data.data[i]['name'] + data.data[i]['extension'];
                                 src = data.subfolder + '/' + filename;
                                 html += '<tr><td class="multi-options"><input type="radio" name="file" value="' + filename + '"> <input type="checkbox" name="files[]" value="' + filename + '" id="file-' + i + '"></td>'
-                                    + '<td><a href="' + path + filename + '" target="_blank"><i class="fas fa-external-link-alt"></i></a></td>'
+                                    + '<td><a href="' + path + filename + '" target="_blank" title="' + data.data[i]['info'] + '"><i class="fas fa-external-link-alt"></i></a></td>'
                                     + '<td><tt><label for="file-' + i + '">' + data.data[i]['name'] + '</label></tt></td>'
                                     + '<td><tt><label for="file-' + i + '">' + data.data[i]['extension'] + '</label></tt></td>'
                                     + '<td class="text-right pl-2"><tt><label for="file-' + i + '">' + data.data[i]['size'] + '</label></tt></td>'
@@ -357,10 +376,28 @@ function standardDocumentReady() {
                                 + html + '</table>'
                                 : '<i>' + TRANSLATE['No files'] + '</i>'
                             );
-                            $('#delete-media-files,#filename-fieldset,#file-rename-folder,#unpack-media-file').toggle(data.data.length > 0);
+                            $('#delete-media-files,#filename-fieldset,#file-rename-folder,#unpack-media-file').addClass('disabled');
                             $('#media-files .subfolder-files .multi-options input[type=radio][name=file]').on('change', function (event) {
                                 $('#media-file-name').val($(this).val()).attr('title', $(this).val());
-                                $('#unpack-media-file').css('display', $(this).val().substr(-4) == '.zip' ? 'inline' : 'none');
+                                if ($(this).val()) {
+                                    $('#rename-media-file').removeClass('disabled');
+                                } else {
+                                    $('#rename-media-file').addClass('disabled');
+                                }
+                                if ($(this).val().substr(-4) == '.zip') {
+                                    $('#unpack-media-file').removeClass('disabled');
+                                } else {
+                                    $('#unpack-media-file').addClass('disabled');
+                                }
+                            });
+                            $('#media-files .subfolder-files .multi-options input[type=checkbox]').on('change', function (event) {
+                                if ($('#media-files .subfolder-files tr td input[type=checkbox]:checked').length) {
+                                    $('#delete-media-files').removeClass('disabled');
+                                    $('#pack-media-files').removeClass('disabled');
+                                } else {
+                                    $('#delete-media-files').addClass('disabled');
+                                    $('#pack-media-files').addClass('disabled');
+                                }
                             });
                         }
                         $('#media-files').parent().find('summary small.badge').text($('#media-files table.subfolder-files tr').length - 1);
@@ -393,7 +430,7 @@ function standardDocumentReady() {
                 if (data.success) {
                     location.reload();
                 } else {
-                    addMediaMessage(data.errors);
+                    addMediaMessage(data.messages);
                 }
             }
         });
@@ -424,7 +461,7 @@ function standardDocumentReady() {
                 if (data.success) {
                     location.reload();
                 } else {
-                    addMediaMessage(data.errors);
+                    addMediaMessage(data.messages);
                 }
             }
         });
@@ -461,7 +498,7 @@ function standardDocumentReady() {
                 if (data.success) {
                     location.reload();
                 } else {
-                    addMediaMessage(data.errors);
+                    addMediaMessage(data.messages);
                 }
             }
         });
@@ -488,7 +525,7 @@ function standardDocumentReady() {
                 if (data.success) {
                     location.reload();
                 } else {
-                    addMediaMessage(data.errors);
+                    addMediaMessage(data.messages);
                 }
             }
         });

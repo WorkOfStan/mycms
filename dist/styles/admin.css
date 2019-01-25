@@ -1,0 +1,210 @@
+/*
+ * Base structure
+ */
+
+
+/*
+ * Global add-ons
+ */
+
+
+/*
+ * Top navigation
+ * Hide default border to remove 1px line.
+ */
+body > .container-fluid {
+    padding-right: 0;
+}
+body > .container-fluid > .col-md-3 {
+    position: fixed;
+}
+.btn-xs, .btn-group-xs > .btn {
+    padding: 1px 5px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+} 
+.navbar-expand-md .nav-item.mr-2, .navbar-expand-md .nav-item.mr-2:hover {
+    color: white;
+    text-decoration: none;
+}
+#nav-search-form {
+    position: absolute;
+    left: 0;
+    top: 51px;
+    padding: 0 15px 10px 15px;
+    width: 100%;
+    background-color: #343a40!important;
+}
+#nav-search-button {
+    background-color: transparent;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+}
+.search-div input.form-control[type=search] {
+    width:7em;
+}
+
+/*
+ * Sidebar
+ */
+
+div.database > label {
+    font-weight: bold;
+}
+.database label {
+    margin-right: 0.5ex;
+}
+
+.database input.input-null[disabled] {
+    opacity: 0.1;
+}
+
+.database textarea {
+    min-height: 5em;
+}
+.database textarea[name="fields[context]"], 
+.database textarea[name="fields[code]"], #subfolder, .input-image{
+    font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+}
+.database i.fa.input-limit {
+    position: absolute;
+    margin-top: -10px;
+    zoom: 0.8;
+    opacity: 0.5;
+}
+
+form.table-controls > fieldset label > .fa {
+    text-align: center;
+    min-width: 1em;
+}
+
+.subfolder-files td tt label{
+    margin-bottom: initial;
+}
+
+
+/*
+ * Main content
+ */
+#admin-main {
+    margin-bottom: 50px;
+    padding-right: 0;
+}
+
+/*
+ * Placeholder dashboard ideas
+ */
+
+details summary h2 {
+    display:initial;
+}
+details.ml-4 summary, #category-hierarchy details summary {
+    display: inline-block;
+}
+#category-hierarchy details summary a {
+    padding-left: 0.3ex;
+    padding-right: 0.7ex;
+}
+.table-admin tr .column-menu {
+    display: inline-block;
+}
+.table-admin .column-menu .op, .table-admin .column-menu .op{
+    background: beige;
+    display: none;
+}
+.table-admin .column-menu:hover .op, .table-admin .column-menu:hover .op {
+    display: inline-block;
+    position: absolute;
+}
+.ImageFiles {
+    height: 252px;
+    overflow-y: scroll;
+    padding: 10px;
+    background: #f4f4f4;
+    margin-top: 4px;
+}
+.ImageFiles > a {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+    position: relative;
+    margin: 2px;
+    border: 1px dotted;
+}
+.ImageFiles > a > img {
+    position: absolute;
+    left: -1000%;
+    right: -1000%;
+    top: -1000%;
+    bottom: -1000%;
+    margin: auto;
+    min-height: 100%;
+    min-width: 100%;
+    width: 100%;
+}
+.ImageFiles > a > span {
+    position: absolute;
+    font-size: xx-small;
+    color: silver;
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+    text-overflow: clip;
+}
+fieldset.input-expanded {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0.25rem;
+}
+details.product-linked-content footer{
+    margin-top: 0.5em;
+}
+details.product-linked-content footer a{
+    margin-right: 1em;
+}
+#agenda-products footer, #agenda-pages footer{
+    margin-top: 1em;
+}
+.AdminRecordName {
+    font-weight: normal;
+    margin-left: 1em;
+    color: red;
+    display: inline-block;
+    height: 1.2em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#agenda-translations table td, #agenda-translations table th{
+    padding: .25rem;
+}
+#agenda-translations table td label {
+    margin-bottom: 0;
+}
+.media-ops {
+    margin-top: 1em;
+}
+.w-initial {
+    width: initial;
+}
+.lh-1 {
+    line-height: 1;
+}
+/* Media queries */
+@media (max-width: 767px) {
+    #nav-search-button {
+        right: 90px;
+    }
+    body > div.container-fluid {
+        padding-left: 0;
+        padding-right: 0;
+        margin-left: 0;
+        margin-right: 0;
+    }
+    #admin-sidebar {
+        position: initial;
+    }
+    #admin-main {
+        margin-right: 15px;
+    }
+}
