@@ -443,7 +443,7 @@ class MyTableAdmin extends MyTableLister
         if (!$this->authorized()) {
             return false;
         }
-        $sql = '';
+        $sql = $where = '';
         if (is_array($this->fields)) {
             foreach ($_POST as $key => $value) {
                 if (Tools::begins($key, EXPAND_INFIX) && !Tools::begins($key, EXPAND_INFIX . EXPAND_INFIX)) {

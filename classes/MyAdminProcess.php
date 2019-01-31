@@ -264,6 +264,8 @@ class MyAdminProcess extends MyCommon
             ];
             if (!$post['archive'] || !preg_match('~[a-z0-9-]\.zip~six', $post['archive'])) {
                 $result['errors'] = $this->tableAdmin->translate('Please, fill up a valid file name.');
+            } elseif (!class_exists('\ZipArchive')) {
+                $result['messages'] = $this->tableAdmin->translate('This function is not supported.');
             } elseif (is_dir(DIR_ASSETS . $post['subfolder']) && is_array($post['pack-files']) && count($post['pack-files'])) {
                 $path = DIR_ASSETS . $post['subfolder'] . '/';
                 $ZipArchive = new \ZipArchive;
@@ -354,19 +356,23 @@ class MyAdminProcess extends MyCommon
                 'messages' => '',
                 'processed-files' => 0
             ];
-            $post['file_unpack'] = pathinfo($post['file_unpack'], PATHINFO_BASENAME);
-            $path = DIR_ASSETS . $post['subfolder'] . '/';
-            $ZipArchive = new \ZipArchive;
-            if ($ZipArchive->open($path . $post['file_unpack']) === true) {
-                // extract it to the path we determined above
-                $result['success'] = $ZipArchive->extractTo(DIR_ASSETS . $post['new_folder'] . '/');
-                $result['processed-files'] = $ZipArchive->numFiles;
-                $result['messages'] = $result['success'] ? $this->tableAdmin->translate('Archive unpacked.') . ' ' . $this->tableAdmin->translate('Affected files: ') . $ZipArchive->numFiles . '.'
-                    : $this->tableAdmin->translate('Error occured unpacking the archive.');
-                Tools::addMessage($result['success'], $result['message']);
-                $ZipArchive->close();
+            if (class_exists('\ZipArchive')) {
+                $post['file_unpack'] = pathinfo($post['file_unpack'], PATHINFO_BASENAME);
+                $path = DIR_ASSETS . $post['subfolder'] . '/';
+                $ZipArchive = new \ZipArchive;
+                if ($ZipArchive->open($path . $post['file_unpack']) === true) {
+                    // extract it to the path we determined above
+                    $result['success'] = $ZipArchive->extractTo(DIR_ASSETS . $post['new_folder'] . '/');
+                    $result['processed-files'] = $ZipArchive->numFiles;
+                    $result['messages'] = $result['success'] ? $this->tableAdmin->translate('Archive unpacked.') . ' ' . $this->tableAdmin->translate('Affected files: ') . $ZipArchive->numFiles . '.'
+                        : $this->tableAdmin->translate('Error occured unpacking the archive.');
+                    Tools::addMessage($result['success'], $result['message']);
+                    $ZipArchive->close();
+                } else {
+                    $result['messages'] = $this->tableAdmin->translate('Error occured unpacking the archive.');
+                }
             } else {
-                $result['messages'] = $this->tableAdmin->translate('Error occured unpacking the archive.');
+                $result['messages'] = $this->tableAdmin->translate('This function is not supported.');
             }
             header('Content-type: application/json');
             exit(json_encode($result));
@@ -438,7 +444,7 @@ class MyAdminProcess extends MyCommon
             } else {
                 $this->MyCMS->logger->warning('Admin not logged in - wrong name.');
             }
-            Tools::addMessage('error', $this->tableAdmin->translate('Error occured logging You in.'));
+            Tools::addMessage('error', isset($post['autologin']) ? $this->tableAdmin->translate('Error occured automatically logging You in.') : $this->tableAdmin->translate('Error occured logging You in.'));
             if (!isset($post['no-redir'])) {
                 $this->redir();
             }
@@ -481,7 +487,7 @@ class MyAdminProcess extends MyCommon
             if (is_dir(DIR_ASSETS . $post['subfolder'])) {
                 $_SESSION['assetsSubfolder'] = $post['subfolder'];
                 Tools::setifnotset($post['info'], null);
-                if ($post['info']) {
+                if ($post['info'] && class_exists('\ZipArchive')) {
                     $ZipArchive = new \ZipArchive();
                 }
                 foreach (glob(DIR_ASSETS . $post['subfolder'] . '/' . (isset($post['wildcard']) ? $post['wildcard'] : '*.*'), isset($post['wildcard']) ? GLOB_BRACE : 0) as $file) {
@@ -501,7 +507,7 @@ class MyAdminProcess extends MyCommon
                                 } elseif ($exif = exif_read_data($file)) {
                                     $entry['info'] .= Tools::wrap(Tools::set($IMAGE_TYPE[$exif['FILE']['FileType']]), ' ') . Tools::set($exif['COMPUTED']['Width']) . '×' . Tools::set($exif['COMPUTED']['Height']);
                                 }
-                            } elseif (substr($file, -4) == '.zip') {
+                            } elseif (substr($file, -4) == '.zip' && class_exists('\ZipArchive')) {
                                 if ($ZipArchive->open($file)) {
                                     for ($i = 0; $i < min($ZipArchive->numFiles, 10); $i++) {
                                         $entry['info'] .= $ZipArchive->getNameIndex($i) . "\n";
