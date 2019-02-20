@@ -222,7 +222,7 @@ class MyAdmin extends MyCommon
                     </div>
                 </fieldset>
                 <button class="btn btn-secondary" type="submit" title="' . $TableAdmin->translate('Rename') . '" id="rename-media-file"><i class="fa fa-dot-circle"></i> <i class="fa fa-i-cursor"></i></button>
-                <button class="btn btn-secondary" type="submit" title="' . $TableAdmin->translate('Unpack') . '" id="unpack-media-file"><i class="fa fa-dot-circle"></i> <i class="fa fa-file-archive"></i></button>
+                ' . (class_exists('\ZipArchive') ? '<button class="btn btn-secondary" type="submit" title="' . $TableAdmin->translate('Unpack') . '" id="unpack-media-file"><i class="fa fa-dot-circle"></i> <i class="fa fa-file-archive"></i></button>' : '') . '
                 <div id="media-file-feedback" class="alert alert-warning mt-1" style="display:none;"><i class="mr-2 fa fa-info-circle"></i> <span></span> <button type="button" class="close" onclick="$(this).parent().hide();"><span aria-hidden="true">×</span></button></div>
             </div>
             </details>';
