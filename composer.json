@@ -2,7 +2,6 @@
     "name": "godsdev/mycms",
     "description": "MyCMS",
     "type": "library",
-
     "require": {
         "php": "^5.6 || ^7.0",
         "latte/latte": "^2.4.6",
@@ -10,10 +9,18 @@
         "nette/utils": "^2.4.8",
         "texy/texy": "^2.7.1",
         "godsdev/tools": "^0.3.3",
-        "godsdev/backyard": "^3.2.1"
+        "godsdev/backyard": "^3.2.1",
+        "ext-session": "*",
+        "ext-mbstring": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^4|^5"
+    },
+    "suggest": {
+        "ext-iconv": "for Tools::webalize()",
+        "ext-zip": "for Admin's media section",
+        "ext-zlib": "for Admin's media section",
+        "ext-dom": "for Tools" 
     },
     "license": "proprietary",
     "authors": [
