@@ -190,7 +190,7 @@ class MyAdminProcess extends MyCommon
                         . "SET time_zone = '+00:00';\n"
                         . "SET foreign_key_checks = 0;\n"
                         . "SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';\n\n"
-                        . "DROP TABLE {$post['database-table']} IF EXISTS;\n{$output['Create Table']};\n\n"; //@todo specific to MySQL/MariaDb
+                        . "DROP TABLE IF EXISTS {$post['database-table']};\n{$output['Create Table']};\n\n"; //@todo specific to MySQL/MariaDb
                     $query = $this->MyCMS->dbms->query($sql);
                     $duplicateKey = '';
                     for ($i = 0; $row = $query->fetch_assoc(); $i++) {
