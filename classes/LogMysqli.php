@@ -293,7 +293,7 @@ class LogMysqli extends BackyardMysqli
         $replace = (strpos($format, '%value%') !== false) || (strpos($format, '%column%') !== false); 
         if (is_array($data)) {
             foreach ($data as $key => $value) {
-                $value = is_null($value) ? 'NULL' : (is_numeric($value) ? $value : '"' . $this->escapeSQL($value) . '"');
+                $value = is_null($value) ? 'NULL' : (is_int($value) ? $value : '"' . $this->escapeSQL($value) . '"');
                 $key = $this->escapeDbIdentifier($key);
                 if ($format == 'fields') {
                     $result .= ", $key";
