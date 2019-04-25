@@ -434,7 +434,7 @@ class MyAdminProcess extends MyCommon
                     $_SESSION['rights'] = $row['rights'];
                     $this->MyCMS->logger->info("Admin {$_SESSION['user']} logged in.");
                     session_regenerate_id();
-                    setcookie('mycms_login', $post['user'] . "\0" . Tools::xorCipher($post['password'], MYCMS_SECRET), time() + 86400 * 30, '', '', true);
+                    setcookie('mycms_login', $mycms_login = $post['user'] . "\0" . Tools::xorCipher($post['password'], MYCMS_SECRET), time() + 86400 * 30, '', '', true);
                     if (!isset($post['autologin'])) {
                         Tools::addMessage('success', $this->tableAdmin->translate('You are logged in.'));
                         $this->redir();
@@ -444,7 +444,9 @@ class MyAdminProcess extends MyCommon
             } else {
                 $this->MyCMS->logger->warning('Admin not logged in - wrong name.');
             }
-            Tools::addMessage('error', isset($post['autologin']) ? $this->tableAdmin->translate('Error occured automatically logging You in.') : $this->tableAdmin->translate('Error occured logging You in.'));
+            if (!isset($post['autologin'])) {
+                //Tools::addMessage('error',  $this->tableAdmin->translate('Error occured logging You in.'));
+            }
             if (!isset($post['no-redir'])) {
                 $this->redir();
             }
@@ -464,6 +466,7 @@ class MyAdminProcess extends MyCommon
             Tools::addMessage('info', $this->tableAdmin->translate('You are logged out.'));
             setcookie('mycms_login', '', 0);
             $this->tableAdmin->script .= "localStorage.clear();\n";
+            echo '<script>Cookies.set("mycms_login", "");</script>';
             $this->redir();
         }
     }
@@ -615,10 +618,10 @@ class MyAdminProcess extends MyCommon
      * @param string $url OPTIONAL
      * @return void
      */
-    protected function redir($url = '')
+    protected function redir($url = '', $HTTPCode = 303)
     {
         $this->endAdmin();
-        Tools::redir($url);
+        Tools::redir($url, $HTTPCode);
     }
 
 }

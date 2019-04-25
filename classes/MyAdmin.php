@@ -20,6 +20,7 @@ class MyAdmin extends MyCommon
             'scripts/jquery.js',
             'scripts/popper.js',
             'scripts/bootstrap.js',
+            'scripts/Cookies.js',
             'scripts/admin.js?v=' . PAGE_RESOURCE_VERSION,
         ],
         'css' => [
@@ -760,7 +761,7 @@ class MyAdmin extends MyCommon
         }
         $TableAdmin->setTable($_GET['table']);
         if (!isset($_SESSION['user'])) {
-            if (isset($_COOKIE['mycms_login'])) {
+            if (Tools::set($_COOKIE['mycms_login'])) {
                 list($_POST['user'], $_POST['password']) = explode("\0", $_COOKIE['mycms_login'], 2);
                 $_POST['password'] = Tools::xorDecipher($_POST['password'], MYCMS_SECRET);
                 $_POST['login'] = $_POST['autologin'] = 1;
