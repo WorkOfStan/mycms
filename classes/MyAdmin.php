@@ -20,7 +20,6 @@ class MyAdmin extends MyCommon
             'scripts/jquery.js',
             'scripts/popper.js',
             'scripts/bootstrap.js',
-            'scripts/Cookies.js',
             'scripts/admin.js?v=' . PAGE_RESOURCE_VERSION,
         ],
         'css' => [
@@ -223,7 +222,7 @@ class MyAdmin extends MyCommon
                     </div>
                 </fieldset>
                 <button class="btn btn-secondary" type="submit" title="' . $TableAdmin->translate('Rename') . '" id="rename-media-file"><i class="fa fa-dot-circle"></i> <i class="fa fa-i-cursor"></i></button>
-                ' . (class_exists('\ZipArchive') ? '<button class="btn btn-secondary" type="submit" title="' . $TableAdmin->translate('Unpack') . '" id="unpack-media-file"><i class="fa fa-dot-circle"></i> <i class="fa fa-file-archive"></i></button>' : '') . '
+                <button class="btn btn-secondary" type="submit" title="' . $TableAdmin->translate('Unpack') . '" id="unpack-media-file"><i class="fa fa-dot-circle"></i> <i class="fa fa-file-archive"></i></button>
                 <div id="media-file-feedback" class="alert alert-warning mt-1" style="display:none;"><i class="mr-2 fa fa-info-circle"></i> <span></span> <button type="button" class="close" onclick="$(this).parent().hide();"><span aria-hidden="true">×</span></button></div>
             </div>
             </details>';
@@ -271,9 +270,9 @@ class MyAdmin extends MyCommon
         if (isset($_GET['create-user'])) {
             $result .= '<h2><small>' . $TableAdmin->translate('Create user') . '</small></h2>
                 <form action="" method="post" class="panel create-user-form" onsubmit="return createUserSubmit()"><fieldset class="card p-3">'
-                . Tools::htmlInput('user', $TableAdmin->translate('User', false) . ':', '', ['class' => 'form-control', 'id' => 'create-user', 'autocomplete' => 'user'])
-                . Tools::htmlInput('password', $TableAdmin->translate('Password', false) . ':', '', ['type' => 'password', 'class' => 'form-control mycms-password', 'id' => 'create-password', 'autocomplete' => 'current-password'])
-                . Tools::htmlInput('retype-password', $TableAdmin->translate('Retype password', false) . ':', '', ['type' => 'password', 'class' => 'form-control mycms-password', 'id' => 'create-retype-password', 'autocomplete' => 'off'])
+                . Tools::htmlInput('user', $TableAdmin->translate('User', false) . ':', '', ['class' => 'form-control', 'id' => 'create-user'])
+                . Tools::htmlInput('password', $TableAdmin->translate('Password', false) . ':', '', ['type' => 'password', 'class' => 'form-control mycms-password', 'id' => 'create-password'])
+                . Tools::htmlInput('retype-password', $TableAdmin->translate('Retype password', false) . ':', '', ['type' => 'password', 'class' => 'form-control mycms-password', 'id' => 'create-retype-password'])
                 . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden')
                 . '<div class="alert alert-warning mt-3" style="display:none;"><i class="fas fa-exclamation-triangle"></i> <span id="create-user-message"></span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>
                   <button type="submit" name="create-user" class="btn btn-primary my-3"><i class="fa fa-user-plus"></i> ' . $TableAdmin->translate('Create user') . '</button>
@@ -322,8 +321,8 @@ class MyAdmin extends MyCommon
         return '<h1>' . $TableAdmin->translate('Login') . '</h1>
             <form action="" method="post" class="form" id="login-form">
             <div>'
-            . Tools::htmlInput('user', '<i class="fa fa-user"></i> ' . $TableAdmin->translate('User', false) . ':', Tools::setifnull($_SESSION['user']), ['autocomplete' => 'username'] + $options)
-            . Tools::htmlInput('password', '<i class="fa fa-key"></i> ' . $TableAdmin->translate('Password', false) . ':', '', ['type' => 'password', 'class' => 'form-control mycms-password', 'id' => 'login-password', 'autocomplete' => 'current-password'] + $options)
+            . Tools::htmlInput('user', '<i class="fa fa-user"></i> ' . $TableAdmin->translate('User', false) . ':', Tools::setifnull($_SESSION['user']), $options)
+            . Tools::htmlInput('password', '<i class="fa fa-key"></i> ' . $TableAdmin->translate('Password', false) . ':', '', ['type' => 'password', 'class' => 'form-control mycms-password', 'id' => 'login-password'] + $options)
             . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden') . '</div>
             <div class="col-sm-9 col-sm-offset-3 my-3"><button type="submit" name="login" class="btn btn-primary"><i class="fa fa-sign-in fa-sign-in-alt"></i> ' . $TableAdmin->translate('Login') . '</button>
             </div>
@@ -443,7 +442,7 @@ class MyAdmin extends MyCommon
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">' . $TableAdmin->translate('Image') . '</h5>
+                        <h5 class="modal-title">' . $TableAdmin->translate('Reload') . '</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="' . $TableAdmin->translate('close') . '"><span aria-hidden="true">&times;</span></button>
                     </div>
                     <div class="modal-body">
@@ -761,8 +760,10 @@ class MyAdmin extends MyCommon
         }
         $TableAdmin->setTable($_GET['table']);
         if (!isset($_SESSION['user'])) {
-            if (Tools::set($_COOKIE['mycms_login'])) {
-                list($_POST['user'], $_POST['password']) = explode("\0", $_COOKIE['mycms_login'], 2);
+            if (isset($_COOKIE['mycms_login'])) {
+                $_POST['user'] = explode("\0", $_COOKIE['mycms_login'], 2);
+                $_POST['password'] = isset($_POST['user'][0]) ? $_POST['user'][0] : '';
+                $_POST['user'] = isset($_POST['user'][1]) ? $_POST['user'][1] : '';
                 $_POST['password'] = Tools::xorDecipher($_POST['password'], MYCMS_SECRET);
                 $_POST['login'] = $_POST['autologin'] = 1;
                 $_POST['token'] = end($_SESSION['token']);

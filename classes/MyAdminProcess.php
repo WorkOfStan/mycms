@@ -190,7 +190,7 @@ class MyAdminProcess extends MyCommon
                         . "SET time_zone = '+00:00';\n"
                         . "SET foreign_key_checks = 0;\n"
                         . "SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';\n\n"
-                        . "DROP TABLE IF EXISTS {$post['database-table']};\n{$output['Create Table']};\n\n"; //@todo specific to MySQL/MariaDb
+                        . "DROP TABLE {$post['database-table']} IF EXISTS;\n{$output['Create Table']};\n\n"; //@todo specific to MySQL/MariaDb
                     $query = $this->MyCMS->dbms->query($sql);
                     $duplicateKey = '';
                     for ($i = 0; $row = $query->fetch_assoc(); $i++) {
@@ -366,7 +366,7 @@ class MyAdminProcess extends MyCommon
                     $result['processed-files'] = $ZipArchive->numFiles;
                     $result['messages'] = $result['success'] ? $this->tableAdmin->translate('Archive unpacked.') . ' ' . $this->tableAdmin->translate('Affected files: ') . $ZipArchive->numFiles . '.'
                         : $this->tableAdmin->translate('Error occured unpacking the archive.');
-                    Tools::addMessage($result['success'], $result['messages']);
+                    Tools::addMessage($result['success'], $result['message']);
                     $ZipArchive->close();
                 } else {
                     $result['messages'] = $this->tableAdmin->translate('Error occured unpacking the archive.');
@@ -434,7 +434,7 @@ class MyAdminProcess extends MyCommon
                     $_SESSION['rights'] = $row['rights'];
                     $this->MyCMS->logger->info("Admin {$_SESSION['user']} logged in.");
                     session_regenerate_id();
-                    setcookie('mycms_login', $mycms_login = $post['user'] . "\0" . Tools::xorCipher($post['password'], MYCMS_SECRET), time() + 86400 * 30, '', '', true);
+                    setcookie('mycms_login', $post['user'] . "\0" . Tools::xorCipher($post['password'], MYCMS_SECRET), time() + 86400 * 30, '', '', true);
                     if (!isset($post['autologin'])) {
                         Tools::addMessage('success', $this->tableAdmin->translate('You are logged in.'));
                         $this->redir();
@@ -444,10 +444,8 @@ class MyAdminProcess extends MyCommon
             } else {
                 $this->MyCMS->logger->warning('Admin not logged in - wrong name.');
             }
-            if (!isset($post['autologin'])) {
-                //Tools::addMessage('error',  $this->tableAdmin->translate('Error occured logging You in.'));
-            }
-            if (!isset($post['no-redir'])) {
+            Tools::addMessage('error', isset($post['autologin']) ? $this->tableAdmin->translate('Error occured automatically logging You in.') : $this->tableAdmin->translate('Error occured logging You in.'));
+            if (!isset($post['no-redir']) && !isset($post['autologin'])) {
                 $this->redir();
             }
         }
@@ -466,7 +464,6 @@ class MyAdminProcess extends MyCommon
             Tools::addMessage('info', $this->tableAdmin->translate('You are logged out.'));
             setcookie('mycms_login', '', 0);
             $this->tableAdmin->script .= "localStorage.clear();\n";
-            echo '<script>Cookies.set("mycms_login", "");</script>';
             $this->redir();
         }
     }
@@ -618,10 +615,10 @@ class MyAdminProcess extends MyCommon
      * @param string $url OPTIONAL
      * @return void
      */
-    protected function redir($url = '', $HTTPCode = 303)
+    protected function redir($url = '')
     {
         $this->endAdmin();
-        Tools::redir($url, $HTTPCode);
+        Tools::redir($url);
     }
 
 }
