@@ -13,7 +13,7 @@ require_once './prepare.php';
 if (isset($_POST) && is_array($_POST) && !empty($_POST)) {
     require_once './process.php';
 }
-$MyCMS->csrf();
+$MyCMS->csrfStart();
 
 use Tracy\Debugger;
 
@@ -46,6 +46,8 @@ $MyCMS->renderLatte(DIR_TEMPLATE_CACHE, array($customFilters, 'common'), array_m
         'search' => Tools::setifnull($_GET['search'], ''),
         'messages' => Tools::setifnull($_SESSION['messages'], array()),
         'translations' => $MyCMS->TRANSLATIONS,
-        'development' => $developmentEnvironment
+        'development' => $developmentEnvironment,
+        'pageResourceVersion' => PAGE_RESOURCE_VERSION,
+        'useCaptcha' => USE_CAPTCHA,
     ), $MyCMS->context
 ));

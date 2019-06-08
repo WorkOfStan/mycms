@@ -7,7 +7,7 @@
 
         <span class="hamburger"><i class="fa fa-bars"></i></span>
         <ul class="menu">
-        {foreach $categories as $key => $value}
+        {foreach $categories as $key => $value} {* TODO: expect TAB_PREFIX_category table to be populated *}
             <li {if $key == $line || ($ref == 'product' && isset($product['category_id']) && $product['category_id'] == $key)} class="active"{/if}><a href="?line={$key}">{$value}</a></li>
         {/foreach}
         </ul>

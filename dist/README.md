@@ -1,5 +1,6 @@
 # MYCMSPROJECTSPECIFIC
 XYZ web
+(Folder *dist* is an instant seed of new project.)
 
 # Stack
 
@@ -128,6 +129,10 @@ When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in
 
 # TODO
 
+## TODO dist deployment
+Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder.
+Replace the string `MYCMSPROJECTNAMESPACE` with your project namespace.
+Replace the string `MYCMSPROJECTSPECIFIC` with other website specific information (Brand, Twitter address, phone number...).
 
 ## TODO lokalizace
 

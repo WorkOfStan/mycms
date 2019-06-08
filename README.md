@@ -46,7 +46,7 @@ Note: `$MyCMS` name is expected by `ProjectSpecific extends ProjectCommon` class
 ## `/dist`
 Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder.
 Replace the string `MYCMSPROJECTNAMESPACE` with your project namespace.
-Replace the string `MYCMSPROJECTSPECIFIC` with other website specific.
+Replace the string `MYCMSPROJECTSPECIFIC` with other website specific information (Brand, Twitter address, phone number...).
 
 ## Languages
 Following settings are expected from the Application that uses MyCMS
