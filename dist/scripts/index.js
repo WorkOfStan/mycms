@@ -1,6 +1,23 @@
+// scroll effects
+AOS.init();
+
 $(document).ready(function(){
+    // carousel
+    $('.owl-carousel').owlCarousel({
+        items: 1,
+        loop: true,
+        nav: false,
+        autoplay: true,
+        autoplayTimeout: 5000
+    });
+
+    // menu
+    $('.hamburger').click(function(e) {
+        $('.header').toggleClass('header--opened');
+    });
+
     // language menu
-    $('#language-menu > a').on('click', function(event) {
+    $('#language-menu > a').on('click', function(event){
         event.preventDefault();
         if ($(this).hasClass('disabled')) {
             return false;
@@ -13,21 +30,29 @@ $(document).ready(function(){
                 'token': TOKEN
             },
             type: 'POST',
-            success: function(data) {
+            success: function (data) {
                 if (data.success) {
                     location.reload();
                 }
             }
         });
     });
-    // searchbar
-    $('.toggleSearch').click(function(e) {
-        e.preventDefault();
-        $('.searchbar').toggleClass('visible');
+    
+    // header background
+    $(window).scroll(() => {
+        if ($(window).scrollTop() > 50) {
+            $('.header').addClass('header--background');
+        } else {
+            $('.header').removeClass('header--background');
+        }
+    });
 
+    // searchbar
+    $('.toggleSearch').click(() => {
+        $('.searchbar').toggleClass('searchbar--visible');
+        $('.searchbar input').focus(); //TODO: focus only if made visible
+        // TODO: test trigger Google Analytics event on search open
+        ga('send', 'event', 'search', 'toggle');
     });
-    // hide menu when search field is focused
-    $('.searchbar input').focus(function(e) {
-        $('.menu').hide();
-    });
+    
 });

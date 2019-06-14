@@ -4,6 +4,7 @@ namespace GodsDev\MYCMSPROJECTNAMESPACE;
 
 use GodsDev\MyCMS\ProjectCommon;
 use GodsDev\Tools\Tools;
+use Assert\Assertion;
 
 /**
  * functions specific to the project
@@ -112,6 +113,7 @@ class ProjectSpecific extends ProjectCommon
      */
     public function processProductDescription($description, array $options)
     {
+        Assertion::string($description, "processProductDescription description not string");
         $result = '';
         $sections = explode('<hr>', $description); //<hr> vložená v CMS znamená, že se odrotuje další section s tím, že class photo se doplňuje class-ou produktu, aby se mohla měnit fotka dle produktu a pořadí
         $sectionCount = 0;

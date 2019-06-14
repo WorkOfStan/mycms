@@ -11,9 +11,11 @@ if (UNDER_CONSTRUCTION && !(in_array($_SERVER['REMOTE_ADDR'], $debugIpArray))) {
 require_once './prepare.php';
 
 if (isset($_POST) && is_array($_POST) && !empty($_POST)) {
+    //set up translation for some multi-lingual messages
+    $MyCMS->getSessionLanguage($_GET, $_SESSION, true);    
     require_once './process.php';
 }
-$MyCMS->csrf();
+$MyCMS->csrfStart();
 
 use Tracy\Debugger;
 
@@ -42,10 +44,13 @@ $MyCMS->renderLatte(DIR_TEMPLATE_CACHE, array($customFilters, 'common'), array_m
         'SETTINGS' => $MyCMS->SETTINGS,
         'ref' => $MyCMS->template,
         'gauid' => GA_UID,
-        'token' => $_SESSION['token'],
+        'token' => end($_SESSION['token']),
         'search' => Tools::setifnull($_GET['search'], ''),
-        'messages' => Tools::setifnull($_SESSION['messages'], array()),
+        'messages' => Tools::setifnull($_SESSION['messages'], []),
+        'language' => $_SESSION['language'],        
         'translations' => $MyCMS->TRANSLATIONS,
-        'development' => $developmentEnvironment
+        'development' => $developmentEnvironment,
+        'pageResourceVersion' => PAGE_RESOURCE_VERSION,
+        'useCaptcha' => USE_CAPTCHA,
     ), $MyCMS->context
 ));

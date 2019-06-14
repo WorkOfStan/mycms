@@ -1,0 +1,85 @@
+// selectors
+=child
+    & > *
+        @content
+
+
+// responsivity sugar
+=for-max($size)
+    @media (max-width: $size)
+        @content
+
+=for-min($size)
+    @media (min-width: ($size + 1px))
+        @content
+
+
+// turn list-appearance off and on
+=not-list
+    padding-left: 0
+    //margin-left: 0
+    list-style-type: none
+
+=list
+    padding-left: 40px
+    list-style-type: circle
+
+
+// close parent element with floating children safely
+=clearfix
+    &:after
+        content: " "
+        display: table
+        clear: both
+
+
+// add horizontal spaces between items on the same level 
+=separator($size)
+    margin-right: $size
+    &:last-child
+        margin-right: 0
+
+// add horizontal spaces between children items
+=separate($size)
+    & > *
+        +separator($size)
+
+
+// symetrical spaces
+=padding-x($size)
+    padding-left: $size
+    padding-right: $size
+
+=padding-y($size)
+    padding-top: $size
+    padding-bottom: $size
+
+=margin-x($size)
+    margin-left: $size
+    margin-right: $size
+
+=margin-y($size)
+    margin-top: $size
+    margin-bottom: $size
+    
+
+// math
+@function avg($val1, $val2)
+    @return ($val1 + $val2) / 2
+
+
+// colors
+@function light($color, $amount)
+    @return mix(white, $color, $amount)
+
+@function dark($color, $amount)
+    @return mix(black, $color, $amount)
+
+
+// use flexbox instead float on Owl carousel (because of full-height slides, because of gradient)
+=owl-flexboxify
+    .owl-stage
+        display: flex
+    .owl-item
+        float: none
+        overflow: hidden

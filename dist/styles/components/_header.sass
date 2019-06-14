@@ -1,0 +1,238 @@
+$height-header: 80px
+
+body
+  padding-top: $height-header + $gap // so that content starts below header
+
+=activeMenuItem
+  &::before
+    +for-min(991px)
+      content: " "
+      display: block
+      position: absolute
+      top: 0px
+      background: $color-positive
+      width: 6px
+      height: 6px
+      left: calc(50% - 3px)
+
+.header
+    $width-logo: 200px
+
+    border-bottom: 1px solid $color-white
+    font-size: $font-s
+    z-index: $z-header 
+    position: relative 
+    position: fixed
+    top: 0
+    left: 0
+    width: 100%
+    color: $color-white
+
+
+    // background dim
+    &::before
+        content: " "
+        display: block
+        width: 100%
+        height: 100%
+        position: absolute
+        top: 0
+        left: 0
+        background: $color-darkest
+        z-index: $z-header-dim
+        opacity: 0.15
+        transition: opacity 3s
+
+
+    .container
+        display: flex
+        align-items: stretch
+        z-index: $z-header-content
+        position: relative
+
+    h1
+        display: flex
+        align-items: stretch
+        a
+            background: url("#{$img}logo.png") center center no-repeat scroll
+            background-size: contain
+            display: block
+            width: $width-logo
+            +rollover
+            color: transparent
+
+        span
+            display: none
+
+    a
+        color: $color-white
+
+    &--background::before
+        opacity: 1.0
+
+    .languageSelector
+        z-index: $z-language
+        .dropdown-item
+            color: black
+        .btn-secondary
+            background-color: transparent //TODO: schovat pozadí a border i při výběru
+            border-color: transparent
+            font-size: $font-menu
+            font-weight: $weight-menu
+
+    .menu
+        +not-list
+        flex-grow: 1
+        justify-content: center
+        display: flex
+        text-align: center
+        li
+            position: relative
+            height: $height-header
+            &:hover
+                +activeMenuItem
+        a
+            display: table-cell
+            vertical-align: middle
+            height: $height-header
+            line-height: 1.15
+            padding-left: $space-horizontal
+            padding-right: $space-horizontal
+        li.active
+            a
+                text-decoration: none
+                background-color: $color-positive
+                padding-left: $gap
+                +activeMenuItem 
+    .right-bar
+        +not-list
+        display: flex
+        align-items: center
+    .right-bar > li > a
+        padding-left: $space-horizontal
+        padding-right: $space-horizontal 
+
+
+// desktop rollover menu
+.rollover
+    position: fixed
+    top: ($height-header + $space-s)
+    z-index: $z-rollover
+    display: none
+    width: 100%
+    text-align: center
+    margin-bottom: $space-s
+
+    .container
+        background: white
+        padding: $space-m
+        text-align: left
+        //border-radius: 20px
+        box-shadow: 0px 1px 20px 0px rgba(0,0,0,0.5)
+
+    &--visible
+        display: inline-block
+    
+    h2
+        font-size: $font-l
+        margin-bottom: $space-s
+    h3
+        margin-bottom: $space-s
+    p
+        margin-bottom: $space-m
+
+    .rollover__tiles
+        +not-list
+        display: flex
+        flex-wrap: wrap
+        margin: -$space-s
+        li
+            margin: $space-s
+            display: flex
+            flex: 1
+            max-width: 170px
+            a
+                +rollover
+                display: block
+                background: $color-lightGrey
+                flex: 1
+                padding: $space-m
+                text-align: center
+                color: black
+                display: flex
+                align-items: center
+                justify-content: center
+
+    .iconGroup h3
+        min-height: 2.8em
+        color: black
+
+    .rollover__groups
+        display: flex
+        +not-list
+        +separate($space-l)
+        +for-max($breakpoint-mobile)
+            +separate($space-s) 
+        ul
+            +not-list
+            li
+                margin-bottom: $space-s
+                a
+                    font-weight: normal
+                    color: $color-black
+                    //text-decoration: underline //ostraněno dle klientského požadavku z 24.5.2018
+                &.active
+                    a
+                        color: $color-excited
+                        font-weight: bold
+        h3
+            margin-bottom: $space-m
+            font-size: $font-m
+            min-height: 2em
+            a
+                color: black
+
+    .rollover__contact
+        display: flex
+        border-top: 1px solid $color-lightGrey
+        margin-top: $space-m
+        padding-top: $space-m
+        div
+            flex: 1
+            font-size: $font-l
+            &:nth-child(2)
+                text-align: right
+            i
+                margin-right: $space-s
+                color: $color-calm
+            a
+                +rollover
+                &:hover
+                    text-decoration: none
+
+.searchbar
+    display: none
+    border-top: 1px solid white
+    +padding-y($space-s)
+    position: relative
+    z-index: $z-searchbar
+    background: $color-grey-darker
+    .container
+        form
+            display: block
+            width: 100%
+            display: flex
+            input
+                flex: 1
+                margin-right: $space-s
+    &--visible
+        display: block
+    +for-max(335px)
+        button
+            +padding-x($space-s)
+
+.searchbar--visible
+    display: block
+    display: flex
+    form
+        margin: 0 auto

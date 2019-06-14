@@ -1,0 +1,130 @@
+// .display-narrow and .display-wide can be used to toggle elements between desktop and mobile display
+$width-narrow-for-max: 990px
+
+.hamburger, .display-narrow
+  display: none
+
++for-max($width-narrow-for-max)
+  h1
+    font-size: 220% // 30.8px
+  h2, h3
+    font-size: 160% // 22.4px
+  .display-narrow
+    display: block
+  .display-wide
+    display: none
+  body
+    padding-top: $height-header + $gap
+  .hamburger
+    display: block
+    position: absolute
+    top: 0px
+    right: 15px
+    color: white
+    line-height: 50px
+    .fa-times
+      display: none
+  .header
+    overflow: hidden
+    height: $height-header
+    transition: height .5s
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,1)
+    & > .container
+      flex-direction: column
+      position: relative
+    .menu
+      display: none
+    .searchbar
+      display: none
+    .right-bar
+      display: none
+  .header--opened
+    .menu
+      display: flex
+      flex-direction: column
+      a
+        padding-left: 0
+        height: 35px
+        line-height: 35px
+    &::before
+      opacity: 1 !important
+    height: 100%
+    max-height: 100%
+    overflow: scroll
+    display: flex
+    flex-direction: column
+    .container
+      flex-grow: 1
+      flex-shrink: 0
+      .menu
+        flex-shrink: 0
+    .hamburger
+      .fa-bars
+        display: none
+      .fa-times
+        display: inline-block
+    .searchbar
+      margin-top: 15px
+      display: block
+    .toggleSearch
+      display: none
+    .right-bar
+      display: flex
+      position: absolute
+      top: 10px
+      right: 70px
+      .dropdown
+        display: flex
+
++for-max(768px)
+  .tile
+    padding: 15px 20px
+  .footer
+    .footer__newsletter
+      flex-wrap: wrap
+      background: none
+      h3
+        flex-basis: 100%
+        margin-bottom: 15px
+      input
+        margin-left: 0
+        padding: 7px
+
++for-max(540px)
+  .social
+    display: block
+    min-width: 100%
+    margin-top: 15px
+  .logos
+    justify-content: center
+
+
++for-max($width-narrow-for-max) //550px if without corporate trio, 990 with corporate trio
+  .footer
+    .footer__bar
+      .container
+        .footer__menu
+          display: block
+          text-align: right
+          a
+            padding-left: 0
+            padding-right: 0
+  .operationalPrograms
+    flex-wrap: wrap
+
++for-max(350px)
+  .footer
+    .footer__newsletter
+      input
+        flex-basis: 100%
+        margin-bottom: 10px
+      button
+        margin-left: auto
+        margin-right: 0
+
++for-max(550px)
+  .multiColumn
+    flex-wrap: wrap
+    .tile
+      flex-basis: 100%
+      margin-right: 0 !important

@@ -86,7 +86,12 @@ array(
     'NOTIFY_FROM_ADDRESS' => 'notifier-MYCMSPROJECTSPECIFIC@godsapps.eu', //@todo založit příslušnou schránku
     'NOTIFY_FROM_NAME' => 'Notifikátor',
     'EMAIL_ADMIN' => 'rejthar@gods.cz', //email used by Tracy\Debugger
-    'PAGE_RESOURCE_VERSION' => 1,    
+    'PAGE_RESOURCE_VERSION' => 1,
+    'USE_CAPTCHA' => false,
+//    'FRIENDLY_URL' => true,
+//    'HOME_TOKEN' => '', //když web běží v rootu domény, tak je defaultní token `PATHINFO_FILENAME` prázdný řetězec; pokud běží jinde, tak je tím jméno rodičovského adresáře k nastavení v config.local.php
+//    'FORCE_301' => true, //if FRIENDLY_URL but called as parametric, force 301 redirect, it is good for SEO
+//    'REDIRECTOR_ENABLED' => false, //table redirector with columns old_url, new_url, active exists
 ) as $constant => $value) {
     if (!defined($constant)) {
         define($constant, $value);

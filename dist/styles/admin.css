@@ -45,6 +45,17 @@ body > .container-fluid > .col-md-3 {
 .search-div input.form-control[type=search] {
     width:7em;
 }
+#v-divider {
+    background: #ccc;
+    width: 3px;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 25%;
+    z-index: 1029; /*z-index of nav.fixed-top is 1030*/
+    cursor: col-resize;
+    opacity: 0.5;
+}
 
 /*
  * Sidebar
@@ -168,10 +179,8 @@ details.product-linked-content footer a{
 }
 .AdminRecordName {
     font-weight: normal;
-    margin-left: 1em;
     color: red;
-    display: inline-block;
-    height: 1.2em;
+    display: contents;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -189,6 +198,12 @@ details.product-linked-content footer a{
 }
 .lh-1 {
     line-height: 1;
+}
+.ml-6 {
+    margin-left: 4.5em !important;
+}
+.font-weight-normal {
+    font-weight: normal !important;
 }
 /* Media queries */
 @media (max-width: 767px) {
