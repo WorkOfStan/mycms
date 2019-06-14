@@ -11,8 +11,14 @@ class MyCMSProject extends \GodsDev\MyCMS\MyCMS
 {
 
     // attributes we need for this project
+    
+    /** @var array */
     public $PAGES_SPECIAL;
+    
+    /** @var array */    
     public $SETTINGS;
+    
+    /** @var array */
     public $WEBSITE;
 
     /**
@@ -20,7 +26,7 @@ class MyCMSProject extends \GodsDev\MyCMS\MyCMS
      *
      * @param array $myCmsConf
      */
-    public function __construct(array $myCmsConf = array())
+    public function __construct(array $myCmsConf = [])
     {
         parent::__construct($myCmsConf);
     }

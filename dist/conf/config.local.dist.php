@@ -6,7 +6,7 @@
 //ini_set('display_errors', 1); //allow ONLY in your own development environment
 define('DB_USERNAME', 'username');
 define('DB_PASSWORD', 'password');
-define('DB_DATABASE', 'dbname');
+define('DB_DATABASE', 'MYCMSPROJECTSPECIFIC');
 define('RECAPTCHA_SECRET', '...');
 //define('UNDER_CONSTRUCTION', true);
 //$backyardConf['logging_level'] = 5;//debug

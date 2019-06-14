@@ -1,0 +1,57 @@
+// FUNDAMENTAL DECLARATIONS
+// this version is designed for use over twitter bootstrap v4
+
+*
+  background:
+    position: center top
+    repeat: no-repeat
+    attachment: scroll
+
+html
+  height: 100%
+
+body
+  font-family: $font
+  margin: 0
+  height: 100%
+  min-width: 320px
+  +for-max(319px)
+    overflow-x: scroll
+
+img
+  display: block
+  max-width: 100%
+  object-fit: cover
+
+table th
+  text-align: left
+
+h1, h2, h3, h4, h5, h6
+  font-size: inherit
+  font-weight: bold
+  line-height: 1
+
+h1, h2, h3, h4, h5, h6, p, hr
+  margin: 0
+
+p
+  line-height: normal
+
+ul, ol
+  margin-top: 0
+  margin-bottom: 0
+  margin-right: 0
+
+td, th
+  vertical-align: top
+
+label, button, input[type="button"], input[type="submit"], input[type="reset"]
+  cursor: pointer
+
+hr
+  height: 1px
+  background-color: #7C8081
+  border: none
+
+.hidden
+  display: none

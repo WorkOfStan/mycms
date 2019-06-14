@@ -1,0 +1,21 @@
+{layout '@layout.latte'}
+{block content}
+<div class="container">
+    <img src="assets/search-results.jpg" alt="" class="w-100">
+</div>
+<div class="container content">
+    <h2 class="heading-main">{="Výsledky hledání"|translate}</h2>
+    {if $_GET['search']}<p class="motto">{="Hledáte"|translate}: {$_GET['search']}</p>{/if}
+
+    <div class="search-results">
+    {foreach $results as $result}
+        <div class="search-result">
+            <h3><a href="{$result['link']}">{$result['title']}</a></h3>
+            <div><a href="{$result['link']}">{$result['description']}... {* TODO: fix aby nezkracovalo čím dál tím více |shortify:200 *}</a></div> {* TODO: celoslovné shortify *}
+            {sep}<hr />{/sep}
+        </div>
+    {/foreach}
+    </div>
+</div>
+
+{/block}

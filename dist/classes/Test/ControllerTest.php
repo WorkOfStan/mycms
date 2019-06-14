@@ -41,12 +41,12 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
                 'cn' => '中文'
             ),
             'logger' => $backyard->BackyardError,
-            'dbms' => new \GodsDev\Backyard\BackyardMysqli(DB_HOST . ":" . DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE, $backyard->BackyardError), //@todo - use test db instead. Or use other TAB_PREFIX !
+            'dbms' => new \GodsDev\MyCMS\LogMysqli(DB_HOST . ":" . DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE, $backyard->BackyardError), //@todo - use test db instead. Or use other TAB_PREFIX !
         );
         $this->myCms = new MyCMSProject($mycmsOptions);
 
-//        $_SESSION = array(); //because $_SESSION is not defined in the PHPUnit mode
-        $this->language = $this->myCms->getSessionLanguage(array(), array(), false);
+        $_SESSION = []; //because $_SESSION is not defined in the PHPUnit mode
+        $this->language = $this->myCms->getSessionLanguage([], $_SESSION, false);
 
         //according to what you test, change $this->myCms->context before invoking $this->object = new Controller; within Test methods
     }
@@ -57,7 +57,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        
+
     }
 
     /**
@@ -65,9 +65,9 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function testControllerNoContext()
     {
-        $this->object = new Controller($this->myCms, array($this->language));
+        $this->object = new Controller($this->myCms, ['language' => $this->language]);
         $controller = $this->object->controller();
-        $this->assertArraySubset(array("template" => "home", "context" => array()), $controller);
+        $this->assertArraySubset(["template" => "home", "context" => []], $controller);
     }
 
     /**
@@ -80,128 +80,6 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         $this->assertArraySubset(array("template" => "home", "context" => $this->myCms->context), $this->object->controller());
     }
 
-    /**
-     * @covers GodsDev\MYCMSPROJECTNAMESPACE\Controller::controller
-     */
-    public function testControllerProduct()
-    {
-        $this->myCms->context = array("1" => "2", "3" => "4", "c");
-        $this->object = new Controller($this->myCms, array(
-            "get" => array(
-                "product" => 5,
-            ),
-//            "session" => $_SESSION,
-            "sectionStyles" => array("red"),
-        ));
-        $controller = $this->object->controller();
-        $this->assertArrayHasKey("template", $controller);
-        $this->assertInternalType('string', $controller['template']);
-        $this->assertEquals('product', $controller['template']);
-        $this->assertArrayHasKey("context", $controller);
-        $this->assertInternalType('array', $controller['context']);
-    }
-
-    /**
-     * @covers GodsDev\MYCMSPROJECTNAMESPACE\Controller::controller
-     */
-    public function testControllerLine()
-    {
-        $this->myCms->SETTINGS['PATH_HOME'] = '0000000001';
-        $this->myCms->SETTINGS['PATH_CATEGORY'] = '0000000002';
-        //or use the more generic statement below instead?
-//        $this->myCMS->loadSettings(
-//                'SELECT context FROM ' . TAB_PREFIX . 'content WHERE code="SETTINGS"', 'SELECT description_' . $_SESSION['language'] . ' FROM ' . TAB_PREFIX . 'content WHERE code="WEBSITE"'
-//        );        
-        $lineId = 1;
-        $this->object = new Controller($this->myCms, array(
-            "get" => array(
-                "line" => $lineId,
-            ),
-//            "session" => $_SESSION,
-            "sectionStyles" => array("red"),
-        ));
-        $controller = $this->object->controller();
-        $this->assertArrayHasKey("template", $controller);
-        $this->assertInternalType('string', $controller['template']);
-        $this->assertEquals('home', $controller['template']);
-        $this->assertArrayHasKey("context", $controller);
-        $this->assertInternalType('array', $controller['context']);
-        $this->assertInternalType('string', $controller['context']['pageTitle']);
-        $this->assertNotEquals(0, strlen($controller['context']['pageTitle']), 'Empty line page title');
-        $this->assertEquals($lineId, $controller['context']['line']);
-    }
-
-    /**
-     * @covers GodsDev\MYCMSPROJECTNAMESPACE\Controller::controller
-     */
-    public function testControllerSearch()
-    {
-        $this->object = new Controller($this->myCms, array(
-            "get" => array(
-                "search" => 'server',
-            ),
-//            "session" => $_SESSION,
-            "sectionStyles" => array("red"),
-        ));
-        $controller = $this->object->controller();
-        $this->assertArrayHasKey("template", $controller);
-        $this->assertInternalType('string', $controller['template']);
-        $this->assertEquals('search-results', $controller['template']);
-        $this->assertArrayHasKey("context", $controller);
-        $this->assertInternalType('array', $controller['context']);
-        $this->assertInternalType('string', $controller['context']['pageTitle']);
-        $this->assertNotEquals(0, strlen($controller['context']['pageTitle']), 'Empty page title');
-        $this->assertNull($controller['context']['line']);
-        $this->assertEquals(0, $controller['context']['offset']);
-    }
-
-    /**
-     * @covers GodsDev\MYCMSPROJECTNAMESPACE\Controller::controller
-     */
-    public function testControllerArticle()
-    {
-        $articleId = 179;
-        $this->object = new Controller($this->myCms, array(
-            "get" => array(
-                "article" => '',
-                "id" => $articleId,
-            ),
-//            "session" => $_SESSION,
-            "sectionStyles" => array("red"),
-        ));
-        $controller = $this->object->controller();
-        $this->assertArrayHasKey("template", $controller);
-        $this->assertInternalType('string', $controller['template']);
-        $this->assertEquals('article', $controller['template']);
-        $this->assertArrayHasKey("context", $controller);
-        $this->assertInternalType('array', $controller['context']);
-        $this->assertInternalType('array', $controller['context']['article']);
-        $this->assertEquals($articleId, $controller['context']['article']['id']);
-    }
-
-    /**
-     * @covers GodsDev\MYCMSPROJECTNAMESPACE\Controller::controller
-     */
-    public function testControllerCategory()
-    {
-        $categoryId = 12;
-        $this->object = new Controller($this->myCms, array(
-            "get" => array(
-                "category" => '',
-                "id" => $categoryId,
-            ),
-//            "session" => $_SESSION,
-            "sectionStyles" => array("red"),
-        ));
-        $controller = $this->object->controller();
-        $this->assertArrayHasKey("template", $controller);
-        $this->assertInternalType('string', $controller['template']);
-        $this->assertEquals('article', $controller['template']);
-        $this->assertArrayHasKey("context", $controller);
-        $this->assertInternalType('array', $controller['context']);
-        $this->assertInternalType('array', $controller['context']['article']);
-        $this->assertEquals($categoryId, $controller['context']['article']['category_id']);
-    }
 
     /**
      * @covers GodsDev\MYCMSPROJECTNAMESPACE\Controller::controller
@@ -221,8 +99,8 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('home', $controller['template']);
         $this->assertArrayHasKey("context", $controller);
         $this->assertInternalType('array', $controller['context']);
-        $this->assertInternalType('array', $controller['context']['items']);
-        $this->assertEquals(6, count($controller['context']['items']));
+//        $this->assertInternalType('array', $controller['context']['items']);
+//        $this->assertEquals(6, count($controller['context']['items']));
     }
 
     /**

@@ -2,51 +2,34 @@
 <header class="header">
     <div class="container">
         <h1>
-            <a href="{dirname($_SERVER['SCRIPT_NAME'])}" title="{="Na úvodní stranu"|translate}">MYCMSPROJECTSPECIFIC</a>
+            <a href="{dirname($_SERVER['SCRIPT_NAME'])}" title="{="Na úvodní stranu"|translate}">MYCMSPROJECTSPECIFIC homepage link</a>
         </h1>
 
-        <span class="hamburger"><i class="fa fa-bars"></i></span>
+        <span class="hamburger"><i class="fa fa-bars"></i><i class="fa fa-times"></i></span>
         <ul class="menu">
-        {foreach $categories as $key => $value} {* TODO: expect TAB_PREFIX_category table to be populated *}
+        {* TODO: expect TAB_PREFIX_category table to be populated *}
+        {*foreach $categories as $key => $value}
             <li {if $key == $line || ($ref == 'product' && isset($product['category_id']) && $product['category_id'] == $key)} class="active"{/if}><a href="?line={$key}">{$value}</a></li>
-        {/foreach}
+        {/foreach*}
+            <li class="active"><a href="?id=1">Item 1</a></li>
+            <li><a href="?id=2">Item 2</a></li>
+            <li><a href="?id=3">Item 3</a></li>
+            <li><a href="?id=4">Item 4</a></li>
         </ul>
 
         <ul class="right-bar">
-            <li class="dropdown"><a href="?category&code=contacts" title="{="Kontakt"|translate}">{="Kontakt"|translate}</a></li>
-            <li class="dropdown">
-                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    {$_SESSION['language'] == 'cs' ? 'CZ' : 'EN'}
-                </a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink" id="language-menu">
-                    <a class="dropdown-item{$_SESSION['language'] == 'cs' ? ' disabled' : ''}" href="#" data-value="cs" title="{="language:cs"|translate}">CZ</a>
-                    <a class="dropdown-item{$_SESSION['language'] == 'en' ? ' disabled' : ''}" href="#" data-value="en" title="{="language:en"|translate}">EN</a>
-                </div>
-            </li>
-            <li><a href="#" class="toggleSearch" title="{="Hledat"|translate}"><i class="fa fa-search"></i></a></li>
+            <li class="dropdown"><a href="?category&code=contacts" title="{="Kontakty"|translate}">{="Kontakty"|translate}</a></li>
+            {include 'language-selector.latte', selectorId => 'header'}
+            <li><a href="#" class="toggleSearch" title="{="hledat"|translate|firstUpper}"><i class="fa fa-search"></i></a></li>
         </ul>
     </div>
 
     <div class="searchbar">
         <form method="GET" action="{$_SERVER['REQUEST_URI']}">
             <div class="container">
-                <input type="text" name="search" required />
-                <button type="submit">{="hledat"|translate|firstUpper}</button>
+                <input type="text" name="search" required>
+                <button type="submit" class="btn btn-secondary">{="hledat"|translate|firstUpper}</button>
             </div>
         </form>
     </div>
 </header>
-{if ($line && isset($categories[$line]) && !isset($product)) || ($ref == 'product' && isset($product['category_id']))}
-    <div class="productbar">
-        <div class="container">
-            {*<strong>{$categories[$line]}</strong>*}
-            {foreach $items as $value}
-            {if $value['category_id'] == ($ref == 'product' ? $product['category_id'] : $line)}
-                <span class="productbar__item{if isset($_GET['product']) && $_GET['product'] == $value['id']} active{/if}">
-                    <a href="?product={$value['id']}">{$value['title']}</a>
-                </span>
-            {/if}
-            {/foreach}
-        </div>
-    </div>
-{/if}

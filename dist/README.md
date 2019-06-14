@@ -39,11 +39,10 @@ to-be-done - as GA events
 
 Create database with `Collation=utf8_general_ci`
 
-Create `conf/config.local.php` based on `config.local.dist.php`
+Create `conf/config.local.php` based on `config.local.dist.php` including the name of the database created above
 
 `composer update`
 
-Create database with `Collation=utf8_general_ci`
 
 Note: All changes in database (structure) SHOULD be made by phinx migrations. Create your local `phinx.yml` as a copy of `phinx.dist.yml` to make it work, where you set your database connection into *development* section. 
 ```bash
@@ -59,6 +58,13 @@ to `conf/config.local.php`.
 
 Note: Management má iPhone a Mac - testovat na Apple prostředí!
 
+## MyCMS dist deployment
+* Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder.
+* Replace the string `MYCMSPROJECTNAMESPACE` with your project namespace.
+* Replace the string `MYCMSPROJECTSPECIFIC` with other website specific information (Brand, Twitter address, phone number, database name, name of icon in manifest.json etc.).
+* Default *admin.php* credentials are *john* / *Ew7Ri561*   - MUST be deleted after the real admin account is set up.
+* Delete this section after the changes above are made
+
 ## reCAPTCHA
 
 Paste this snippet at the end of the <form> where you want the reCAPTCHA widget to appear:
@@ -68,6 +74,8 @@ Paste this snippet at the end of the <form> where you want the reCAPTCHA widget 
 
 # CMS notes
 
+## Agenda
+Agenda is an item in the admin.php menu that refers to a set of rows in database. (TODO: be more specific)
 
 ## Asset folder structure
 * `assets/career/` - pro média spojené s pracovními příležitostmi
@@ -83,6 +91,18 @@ Paste this snippet at the end of the <form> where you want the reCAPTCHA widget 
 * `images` - other miscelaneous images (logos, page headers, etc.)
 
 Note: assets expects only ONE sub-level.
+
+### admin.php expects
+* scripts\bootstrap.js
+* scripts\admin-specific.js
+* scripts\ie10-viewport-bug-workaround.js
+* scripts\summernote.js
+* styles\bootstrap.css
+* styles\bootstrap-datetimepicker.css
+* styles\font-awesome.css
+* styles\ie10-viewport-bug-workaround.css
+* styles\summernote.css
+* fonts\fa*.*
 
 # Debugging
 
@@ -129,11 +149,6 @@ When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in
 
 # TODO
 
-## TODO dist deployment
-Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder.
-Replace the string `MYCMSPROJECTNAMESPACE` with your project namespace.
-Replace the string `MYCMSPROJECTSPECIFIC` with other website specific information (Brand, Twitter address, phone number...).
-
 ## TODO lokalizace
 
 
@@ -147,4 +162,6 @@ Replace the string `MYCMSPROJECTSPECIFIC` with other website specific informatio
 
 
 ## TODO other
-
+* 1812 až friendlyUrl součástí MyCMS, tak v .latte zrušit {dirname($_SERVER['SCRIPT_NAME'])} a dát místo toho applicationDir
+* 190611 add article and search page types including controller tests
+* 190611 Make SASS to CSS conversion automatic (e.g. gulp)

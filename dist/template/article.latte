@@ -1,0 +1,12 @@
+{layout '@layout.latte'}
+{block content}
+<div class="container">
+    {var $article['image'] = $article['image'] ?: 'assets/green-grass.jpg'}
+    {ifset $article['title']}{var $article['title'] = $article['title']}{else}{var $article['title'] = 'Welcome to MyCMS article'}{/ifset}
+    <img src="{stripslashes($article['image'])|noescape}" alt="{$article['title']}" title="{$article['title']}" class="w-100" />
+</div>
+<div class="container content">
+    <h2 class="heading-main">Main heading</h2>
+    Lorem ipsum
+</div>
+{/block}

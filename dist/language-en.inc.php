@@ -1,5 +1,5 @@
 <?php
-$translation = array(
+$translation = [
     'language:en' => 'English',
     'language:cs' => 'česky',
     'Mapa stránek' => 'Sitemap',
@@ -11,4 +11,5 @@ $translation = array(
     'Hledáte' => 'You search for',
     'Zadaný e-mail již existuje.' => 'Email already exists.',
     'Váš e-mail se nepodařilo přidat k odběru.' => 'Error adding your email to the newsletter.',
-);
+    'Pravidla pro užívání portálu' => 'Terms & conditions',
+];
