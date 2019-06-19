@@ -3,11 +3,13 @@
 /**
  * Config for the project
  */
+ini_set('session.use_strict_mode', 1);
+ini_set('display_errors', 0); //errors only in the log; override it in your config.local.php if you need
+
 define('DB_HOST', 'localhost');
 define('DB_PORT', ini_get('mysqli.default_port'));
 define('TAB_PREFIX', 'MYCMSPROJECTSPECIFIC_'); //prefix for database tables
 
-ini_set('session.use_strict_mode', 1);
 define('LOG_FILE', './log/log.txt');
 define('DEFAULT_LANGUAGE', 'cs');
 define('PATH_MODULE', 10); // length of one node in category.path in digits
@@ -72,7 +74,6 @@ $WEBSITE = array(
 );
 
 
-ini_set('display_errors', 0); //errors only in the log; override it in your config.local.php if you need
 include_once __DIR__ . '/config.local.php'; //use config.local.dist.php as specimen
 //constants not set in config.local.php
 foreach (

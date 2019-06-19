@@ -1,11 +1,11 @@
 <?php
 
-namespace GodsDev\MYCMSPROJECTNAMESPACE;
+namespace GodsDev\mycmsprojectnamespace;
 
 use GodsDev\MyCMS\MyCMS;
 use GodsDev\MyCMS\MyController;
 use GodsDev\Tools\Tools;
-use GodsDev\MYCMSPROJECTNAMESPACE\ProjectSpecific;
+use GodsDev\mycmsprojectnamespace\ProjectSpecific;
 use Tracy\Debugger;
 
 class Controller extends MyController
@@ -17,7 +17,7 @@ class Controller extends MyController
     /** @var array */
     protected $sectionStyles;
 
-    /** @var \GodsDev\MYCMSPROJECTNAMESPACE\ProjectSpecific */
+    /** @var \GodsDev\mycmsprojectnamespace\ProjectSpecific */
     private $projectSpecific;
 
     /** @var string */

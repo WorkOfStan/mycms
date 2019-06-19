@@ -10,7 +10,7 @@ $AGENDAS = array(
 
 require_once './prepare.php';
 
-$TableAdmin = new \GodsDev\MYCMSPROJECTNAMESPACE\TableAdmin(
+$TableAdmin = new \GodsDev\mycmsprojectnamespace\TableAdmin(
         $MyCMS->dbms,
         (isset($_GET['table']) ? $_GET['table'] : ''),
         array('SETTINGS' => $MyCMS->SETTINGS, 'language' => $_SESSION['language'])
@@ -19,13 +19,13 @@ $TableAdmin = new \GodsDev\MYCMSPROJECTNAMESPACE\TableAdmin(
 
 $MyCMS->csrfStart();
 if (isset($_POST) && is_array($_POST) && !empty($_POST)) {
-    $adminProcess = new \GodsDev\MYCMSPROJECTNAMESPACE\AdminProcess($MyCMS, array(
+    $adminProcess = new \GodsDev\mycmsprojectnamespace\AdminProcess($MyCMS, array(
         'tableAdmin' => $TableAdmin,
         'agendas' => $AGENDAS
     ));
     $adminProcess->adminProcess($_POST);
 }
-$admin = new \GodsDev\MYCMSPROJECTNAMESPACE\Admin($MyCMS, array(
+$admin = new \GodsDev\mycmsprojectnamespace\Admin($MyCMS, array(
     'agendas' => $AGENDAS,
     'TableAdmin' => $TableAdmin,
 //        'clientSideResources' => array(

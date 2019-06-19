@@ -101,5 +101,4 @@ Run from a command line:
 ./vendor/bin/phpunit
 ```
 
-# @todo
-* 180221: curate `dist` folder so that it may be used out of the box
+Note that `dist` folder contains the starting MyCMS based project deployment and testing runs through `dist` as well, so for development, the environment has to be set up for `dist` as well. 

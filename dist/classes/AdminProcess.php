@@ -1,6 +1,6 @@
 <?php
 
-namespace GodsDev\MYCMSPROJECTNAMESPACE;
+namespace GodsDev\mycmsprojectnamespace;
 
 /**
  * process for TableAdmin agendas

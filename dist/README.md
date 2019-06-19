@@ -34,6 +34,12 @@ to-be-done - as GA events
 * Production: UA-XYZ
 * Test: UA-39642385-1
 
+# MyCMS dist deployment
+* Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder.
+* Replace the string `mycmsprojectnamespace` with your project namespace.
+* Replace the string `MYCMSPROJECTSPECIFIC` with other website specific information (Brand, Twitter address, phone number, database name, name of icon in manifest.json etc.).
+* Default *admin.php* credentials are *john* / *Ew7Ri561*   - MUST be deleted after the real admin account is set up.
+* Delete this section after the changes above are made
 
 # Deployment
 
@@ -43,6 +49,7 @@ Create `conf/config.local.php` based on `config.local.dist.php` including the na
 
 `composer update`
 
+Create `phinx.yml` based on `phinx.dist.yml` including the name of the database created above
 
 Note: All changes in database (structure) SHOULD be made by phinx migrations. Create your local `phinx.yml` as a copy of `phinx.dist.yml` to make it work, where you set your database connection into *development* section. 
 ```bash
@@ -57,13 +64,6 @@ define('UNDER_CONSTRUCTION', true);
 to `conf/config.local.php`. 
 
 Note: Management má iPhone a Mac - testovat na Apple prostředí!
-
-## MyCMS dist deployment
-* Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder.
-* Replace the string `MYCMSPROJECTNAMESPACE` with your project namespace.
-* Replace the string `MYCMSPROJECTSPECIFIC` with other website specific information (Brand, Twitter address, phone number, database name, name of icon in manifest.json etc.).
-* Default *admin.php* credentials are *john* / *Ew7Ri561*   - MUST be deleted after the real admin account is set up.
-* Delete this section after the changes above are made
 
 ## reCAPTCHA
 

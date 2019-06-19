@@ -1,6 +1,6 @@
 <?php
 
-namespace GodsDev\MYCMSPROJECTNAMESPACE;
+namespace GodsDev\mycmsprojectnamespace;
 
 use GodsDev\MyCMS\MyCMS;
 use GodsDev\MyCMS\MyCommon;

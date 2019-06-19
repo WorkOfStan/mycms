@@ -1,10 +1,10 @@
 <?php
 
-namespace GodsDev\MYCMSPROJECTNAMESPACE;
+namespace GodsDev\mycmsprojectnamespace;
 
-use GodsDev\MYCMSPROJECTNAMESPACE\MyCMSProject;
-use GodsDev\MYCMSPROJECTNAMESPACE\Admin;
-use GodsDev\MYCMSPROJECTNAMESPACE\TableAdmin;
+use GodsDev\mycmsprojectnamespace\MyCMSProject;
+use GodsDev\mycmsprojectnamespace\Admin;
+use GodsDev\mycmsprojectnamespace\TableAdmin;
 use Tracy\Debugger;
 
 require_once __DIR__ . '/../../conf/config.php';
@@ -63,7 +63,7 @@ class AdminTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MYCMSPROJECTNAMESPACE\Admin::outputAdmin
+     * @covers GodsDev\mycmsprojectnamespace\Admin::outputAdmin
      */
     public function testOutputAdmin()
     {
