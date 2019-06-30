@@ -15,7 +15,7 @@ class MyCMSProject extends \GodsDev\MyCMS\MyCMS
     /** @var array */
     public $PAGES_SPECIAL;
 
-    /** @var array */    
+    /** @var array */
     public $SETTINGS;
 
     /** @var array */

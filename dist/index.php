@@ -12,7 +12,7 @@ require_once './prepare.php';
 
 if (isset($_POST) && is_array($_POST) && !empty($_POST)) {
     //set up translation for some multi-lingual messages
-    $MyCMS->getSessionLanguage($_GET, $_SESSION, true);    
+    $MyCMS->getSessionLanguage($_GET, $_SESSION, true);
     require_once './process.php';
 }
 $MyCMS->csrfStart();

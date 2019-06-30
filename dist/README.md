@@ -47,15 +47,7 @@ Create database with `Collation=utf8_general_ci`
 
 Create `conf/config.local.php` based on `config.local.dist.php` including the name of the database created above
 
-`composer update`
-
 Create `phinx.yml` based on `phinx.dist.yml` including the name of the database created above
-
-Note: All changes in database (structure) SHOULD be made by phinx migrations. Create your local `phinx.yml` as a copy of `phinx.dist.yml` to make it work, where you set your database connection into *development* section. 
-```bash
-vendor/bin/phinx migrate -e development # or production or testing
-```
-
 
 Under construction mode may be turned on (for non admin IP adresses i.e. not in `$debugIpArray`) by adding
 ```php
@@ -64,6 +56,15 @@ define('UNDER_CONSTRUCTION', true);
 to `conf/config.local.php`. 
 
 Note: Management má iPhone a Mac - testovat na Apple prostředí!
+
+## `build.sh` runs the following commands
+
+`composer update`
+
+Note: All changes in database (structure) SHOULD be made by phinx migrations. Create your local `phinx.yml` as a copy of `phinx.dist.yml` to make it work, where you set your database connection into *development* section. 
+```bash
+vendor/bin/phinx migrate -e development # or production or testing
+```
 
 ## reCAPTCHA
 
