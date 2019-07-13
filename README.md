@@ -102,3 +102,7 @@ Run from a command line:
 ```
 
 Note that `dist` folder contains the starting MyCMS based project deployment and testing runs through `dist` as well, so for development, the environment has to be set up for `dist` as well. 
+
+# TODO
+
+* 190705: v classes\LogMysqli.php probíhá logování `'log/sql' . date("Y-m-d") . '.log.sql');` do aktuálního adresáře volajícího skriptu - což u API není výhodné. Jak vycházet z APP_ROOT?

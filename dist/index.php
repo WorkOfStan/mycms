@@ -20,11 +20,12 @@ $MyCMS->csrfStart();
 use Tracy\Debugger;
 
 Debugger::barDump($MyCMS, 'MyCMS before controller');
-$controller = new \GodsDev\mycmsprojectnamespace\Controller($MyCMS, array(
-    'get' => $_GET, 
+$controller = new \GodsDev\mycmsprojectnamespace\Controller($MyCMS, [
+    'get' => $_GET,
     'session' => $_SESSION,
-    'language' => $_SESSION['language'],    
-    ));
+    'language' => $_SESSION['language'],
+    'verbose' => DEBUG_VERBOSE,
+    ]);
 $controllerResult = $controller->controller();
 $MyCMS->template = $controllerResult['template'];
 $MyCMS->context = $controllerResult['context'];
@@ -39,18 +40,18 @@ use \GodsDev\Tools\Tools;
 $customFilters = new \GodsDev\mycmsprojectnamespace\Latte\CustomFilters($MyCMS);
 
 $MyCMS->renderLatte(DIR_TEMPLATE_CACHE, array($customFilters, 'common'), array_merge(
-    array(
-        'WEBSITE' => $MyCMS->WEBSITE,
-        'SETTINGS' => $MyCMS->SETTINGS,
-        'ref' => $MyCMS->template,
-        'gauid' => GA_UID,
-        'token' => end($_SESSION['token']),
-        'search' => Tools::setifnull($_GET['search'], ''),
-        'messages' => Tools::setifnull($_SESSION['messages'], []),
-        'language' => $_SESSION['language'],        
-        'translations' => $MyCMS->TRANSLATIONS,
-        'development' => $developmentEnvironment,
-        'pageResourceVersion' => PAGE_RESOURCE_VERSION,
-        'useCaptcha' => USE_CAPTCHA,
-    ), $MyCMS->context
+        [
+            'WEBSITE' => $MyCMS->WEBSITE,
+            'SETTINGS' => $MyCMS->SETTINGS,
+            'ref' => $MyCMS->template,
+            'gauid' => GA_UID,
+            'token' => end($_SESSION['token']),
+            'search' => Tools::setifnull($_GET['search'], ''),
+            'messages' => Tools::setifnull($_SESSION['messages'], []),
+            'language' => $_SESSION['language'],
+            'translations' => $MyCMS->TRANSLATIONS,
+            'development' => $developmentEnvironment,
+            'pageResourceVersion' => PAGE_RESOURCE_VERSION,
+            'useCaptcha' => USE_CAPTCHA,
+        ], $MyCMS->context
 ));

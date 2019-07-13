@@ -119,6 +119,9 @@ Pro výpis proměnné do logu použij:
 
 `$debugIpArray` in `config.php` contains IPs for Tracy.
 
+## REST API
+
+Note: header("Content-type: application/json"); in outputJSON hides Tracy
 
 # Error handling
 
@@ -143,7 +146,7 @@ Pages have view-TEMPLATE class in <body/> to allow for exceptions.
 
 Convert SASS to CSS by
 ```sh
-sass styles/index.sass styles/index.css
+sass styles/index.sass styles/index.css  # made also by build.sh
 ```
 
 When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in `config.php` in order to force cache reload these resources.

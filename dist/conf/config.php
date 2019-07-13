@@ -11,7 +11,6 @@ define('DB_PORT', ini_get('mysqli.default_port'));
 define('TAB_PREFIX', 'MYCMSPROJECTSPECIFIC_'); //prefix for database tables
 
 define('LOG_FILE', './log/log.txt');
-define('DEFAULT_LANGUAGE', 'cs');
 define('PATH_MODULE', 10); // length of one node in category.path in digits
 define('RECAPTCHA_KEY', '............');
 define('EXPAND_INFIX', "\t"); // infix for JSON-exapandable values
@@ -78,6 +77,7 @@ include_once __DIR__ . '/config.local.php'; //use config.local.dist.php as speci
 //constants not set in config.local.php
 foreach (
 array(
+    'DEFAULT_LANGUAGE' => 'cs',
     'UNDER_CONSTRUCTION' => false,
     'GA_UID' => 'UA-39642385-1',
 //    'PAGINATION_SEARCH' => 10,
@@ -89,6 +89,7 @@ array(
     'EMAIL_ADMIN' => 'rejthar@gods.cz', //email used by Tracy\Debugger
     'PAGE_RESOURCE_VERSION' => 1,
     'USE_CAPTCHA' => false,
+    'DEBUG_VERBOSE' => false,
 //    'FRIENDLY_URL' => true,
 //    'HOME_TOKEN' => '', //když web běží v rootu domény, tak je defaultní token `PATHINFO_FILENAME` prázdný řetězec; pokud běží jinde, tak je tím jméno rodičovského adresáře k nastavení v config.local.php
 //    'FORCE_301' => true, //if FRIENDLY_URL but called as parametric, force 301 redirect, it is good for SEO

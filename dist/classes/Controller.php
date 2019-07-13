@@ -7,6 +7,7 @@ use GodsDev\MyCMS\MyController;
 use GodsDev\Tools\Tools;
 use GodsDev\mycmsprojectnamespace\ProjectSpecific;
 use Tracy\Debugger;
+use Tracy\ILogger;
 
 class Controller extends MyController
 {
