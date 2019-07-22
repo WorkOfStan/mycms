@@ -1,7 +1,7 @@
 MyCMS
 -----
 
-Simple framework to help developing websites. Works as a devstack which you install and then write your classes specific for the project.
+Simple framework to help developing interactive websites. Works as a devstack which you install and then write your classes specific for the project.
 
 # Features
 - [jQuery](https://jquery.org/) and [Bootstrap](https://getbootstrap.com/docs/4.0/components/) (version 4) used in the presentation

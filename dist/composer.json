@@ -2,18 +2,12 @@
     "name": "godsdev/mycmsprojectnamespace",
     "description": "MYCMSPROJECTSPECIFIC xyz website 201x",
     "type": "project",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/GodsDev/mycms"
-        }
-    ],
     "require": {
         "php": "^5.6 || ^7.0",
         "robmorgan/phinx": "^0.9.1",
         "beberlei/assert": "^2.7",
         "swiftmailer/swiftmailer": "^5.4",
-        "godsdev/mycms": "dev-develop"
+        "godsdev/mycms": "^0.3.10"
     },
     "require-dev": {
         "phpunit/phpunit": "^4|^5"
