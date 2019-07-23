@@ -22,11 +22,11 @@ RedirectMatch 404 \/temp\/
 RedirectMatch 404 sql\/
 RedirectMatch 404 \/db\/
 RedirectMatch 404 \.yml
-RedirectMatch 404 \.sh
+RedirectMatch 404 \.sh$
 RedirectMatch 404 classes\/
 RedirectMatch 404 \/logs\/
 # RedirectMatch 404 data\/
 RedirectMatch 404 conf\/
-RedirectMatch 404 VERSION
+RedirectMatch 404 /VERSION$
 RedirectMatch 404 /\.sass-cache
 </IfModule>
