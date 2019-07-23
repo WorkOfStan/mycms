@@ -76,7 +76,44 @@ Paste this snippet at the end of the <form> where you want the reCAPTCHA widget 
 # CMS notes
 
 ## Agenda
-Agenda is an item in the admin.php menu that refers to a set of rows in database. (TODO: be more specific)
+Agenda is an item in the admin.php left menu that refers to a set of rows in database. (All tables can be also accessed from the bottom of the page.)
+
+Examples of settings:
+```php
+$AGENDAS = array(
+    'division' => array('column' => 'division_' . $tmp),
+    'page' => array('table' => 'content', 'where' => 'type="page"', 'column' => "\0CONCAT(code,'|',page_$tmp)"),
+    'news' => array('table' => 'content', 'where' => 'type="news"', 'column' => 'content_' . $tmp, 'prefill' => array('type' => 'news')),
+    'slide' => array('table' => 'content', 'where' => 'type="slide"', 'column' => 'content_' . $tmp, 'prefill' => array('type' => 'event')),
+    'event' => array('table' => 'content', 'where' => 'type="event"', 'column' => "\0CONCAT(page_$tmp,'|',content_$tmp)", 'prefill' => array('type' => 'event')),
+);
+
+$AGENDAS = array(
+    'category' => array('path' => 'path'),
+    'press' => array('table' => 'content', 'where' => 'type="press"', 'prefill' => array('type' => 'press')),
+    'testimonial' => array('table' => 'content', 'where' => 'type="testimonial"', 'column' => 'description_' . DEFAULT_LANGUAGE, 'prefill' => array('type' => 'testimonial')),
+    'claim' => array('table' => 'content', 'where' => 'type="claim"', 'column' => 'description_' . DEFAULT_LANGUAGE, 'prefill' => array('type' => 'claim')),
+    'perex' => array('table' => 'content', 'where' => 'type="perex"', 'column' => 'description_' . DEFAULT_LANGUAGE, 'prefill' => array('type' => 'perex'))
+);
+
+$AGENDAS = [
+    'item' => [
+        'column' => 'name',  # Name of column where the value is displayed from
+        'where' => 'active="1"' # Filter on displayed columns
+    ],
+    'consumption' => [
+        'column' => 'created',
+        'where' => 'active="1"'
+    ],
+    'amount' => [
+        'column' => 'created',
+        'where' => 'active="1"'
+    ],
+];
+```
+(TODO: explain more examples.)
+
+
 
 ## Asset folder structure
 * `assets/career/` - pro média spojené s pracovními příležitostmi
