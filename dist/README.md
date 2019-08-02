@@ -57,6 +57,13 @@ to `conf/config.local.php`.
 
 Note: Management má iPhone a Mac - testovat na Apple prostředí!
 
+## Ad firewall
+
+If the web will be running behind firewall hence REMOTE_ADDR would contain only firewall IP, then the original REMOTE_ADDR should be passed in another HTTP header, e.g. CLIENT_IP.
+So that trusted IPs for debugging may be used.
+For this deployment scenarion only (because otherwise it would be a vulnerability) uncomment `isset($_SERVER['HTTP_CLIENT_IP']) ? in_array($_SERVER['HTTP_CLIENT_IP'], $debugIpArray) :` line in `index.php` and `api\*\index.php`.
+
+
 ## `build.sh` runs the following commands
 
 `composer update`
