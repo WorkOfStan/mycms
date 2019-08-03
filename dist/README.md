@@ -39,6 +39,7 @@ to-be-done - as GA events
 * Replace the string `mycmsprojectnamespace` with your project namespace.
 * Replace the string `MYCMSPROJECTSPECIFIC` with other website specific information (Brand, Twitter address, phone number, database name, name of icon in manifest.json etc.).
 * Default *admin.php* credentials are *john* / *Ew7Ri561*   - MUST be deleted after the real admin account is set up.
+* Change `define('MYCMS_SECRET', 'u7-r!!T7.&&7y6ru');` //16-byte random string, unique per project in `conf/config.php`
 * Delete this section after the changes above are made
 
 # Deployment

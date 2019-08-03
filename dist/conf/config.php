@@ -19,6 +19,7 @@ define('DIR_TEMPLATE_CACHE', __DIR__ . '/../cache'); //for Latte
 define('L_UCFIRST', max(MB_CASE_UPPER, MB_CASE_LOWER, MB_CASE_TITLE) + 1);
 define('URL_RECAPTCHA_VERIFY', 'https://www.google.com/recaptcha/api/siteverify');
 define('DIR_ASSETS', 'assets/');
+define('MYCMS_SECRET', 'u7-r!!T7.&&7y6ru'); //16-byte random string, unique per project
 
 //for godsdev/backyard
 $backyardConf = array(
