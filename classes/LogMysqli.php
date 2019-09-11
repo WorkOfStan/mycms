@@ -13,6 +13,7 @@ class LogMysqli extends BackyardMysqli
 
     use \Nette\SmartObject;
 
+    /** @var array keywords in current DBMS */
     protected $KEYWORDS = [
         'ACCESSIBLE', 'ADD', 'ALL', 'ALTER', 'ANALYZE', 'AND', 'AS', 'ASC', 'ASENSITIVE', 
         'BEFORE', 'BETWEEN', 'BIGINT', 'BINARY', 'BLOB', 'BOTH', 'BY', 'CALL', 'CASCADE',
@@ -94,7 +95,7 @@ class LogMysqli extends BackyardMysqli
     public function escapeDbIdentifier($string)
     {
         $string = str_replace('`', '``', $string);
-        if (!preg_match('/[^a-z0-9_]+/i', $string) || in_array($string, $this->KEYWORDS)) {
+        if (preg_match('/[^a-z0-9_]+/i', $string) || in_array(strtoupper($string), $this->KEYWORDS)) {
             $string = "`$string`";
         }
         return $string;
