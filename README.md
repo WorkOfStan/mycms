@@ -48,6 +48,8 @@ Folder `/dist` contains initial *distribution* files for a new project using MyC
 Replace the string `MYCMSPROJECTNAMESPACE` with your project namespace.
 Replace the string `MYCMSPROJECTSPECIFIC` with other website specific information (Brand, Twitter address, phone number...).
 
+MyCMS is used only as a library, so the application using it SHOULD implement `RedirectMatch 404 vendor\/` statement as proposed in `dist/.htaccess` to keep the library hidden from web access.
+
 ## Languages
 Following settings are expected from the Application that uses MyCMS
 ```php
