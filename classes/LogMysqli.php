@@ -56,13 +56,14 @@ class LogMysqli extends BackyardMysqli
      * Logs SQL statement not starting with SELECT or SET
      *
      * @param string $sql SQL to execute
-     * @param bool $ERROR_LOG_OUTPUT
+     * @param bool $ERROR_LOG_OUTPUT optional
+     * @param bool $logQuery optional default logging of database changing statement can be (for security reasons) turned off by value false
      * @return \mysqli_result Object|false
      * @throws DBQueryException
      */
-    public function query($sql, $ERROR_LOG_OUTPUT = true)
+    public function query($sql, $ERROR_LOG_OUTPUT = true, $logQuery = true)
     {
-        if (!preg_match('/^SELECT |^SET |^SHOW /i', $sql)) {
+        if ($logQuery && !preg_match('/^SELECT |^SET |^SHOW /i', $sql)) {
             //mb_eregi_replace does not destroy e.g. character Š
             error_log(trim(mb_eregi_replace('/\s+/', ' ', $sql)) . '; -- [' . date("d-M-Y H:i:s") . ']' . (isset($_SESSION['user']) ? " by ({$_SESSION['user']})" : '') . PHP_EOL, 3, 'log/sql' . date("Y-m-d") . '.log.sql');
         }
