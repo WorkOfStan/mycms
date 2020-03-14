@@ -150,6 +150,9 @@ Note: assets expects only ONE sub-level.
 * styles\summernote.css
 * fonts\fa*.*
 
+## Admin UI
+Add protected functions to Admin.php according to MyAdmin.php in order to add menu relevant for the application, such as Translations, FriendlyURL, Divisions and products, etc.
+
 # Debugging
 
 Pro výpis proměnné nebo exception do `Tracy` použij:
