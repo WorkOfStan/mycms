@@ -9,7 +9,7 @@ namespace GodsDev\MyCMS;
  *   TableAdmin.php
  */
 use GodsDev\Tools\Tools;
-use GodsDev\MyCMS\MyCMS;
+//use GodsDev\MyCMS\MyCMS;
 use GodsDev\MyCMS\MyCommon;
 use Tracy\Debugger;
 
@@ -100,7 +100,7 @@ class MyAdminProcess extends MyCommon
             $time = time();
             foreach ($admins as $admin) {
                 $tabs = json_decode($admin['activity'], true);
-                $tabs = is_array($tabs) ? $tab : [];
+                $tabs = is_array($tabs) ? $tabs : [];
                 $new = true;
                 foreach ($tabs as $tabIndex => $tab) {
                     if (isset($tab['table'], $tab['id'], $tab['token'], $tab['time'])) {
@@ -563,7 +563,7 @@ class MyAdminProcess extends MyCommon
                         Tools::resolve($this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'admin
                     SET password_hashed="' . $this->MyCMS->escapeSQL(sha1($post['new-password'] . $row['salt'])) . '"
                     WHERE admin="' . $this->MyCMS->escapeSQL($_SESSION['user']) . '"'), $this->tableAdmin->translate('Password was changed.'), $this->tableAdmin->translate('Error occured changing password.')
-                        );
+                        , true, false); //this statement MUST NOT be logged by LogMysqli mechanism
                         $this->redir();
                     }
                 }

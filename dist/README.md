@@ -34,6 +34,13 @@ to-be-done - as GA events
 * Production: UA-XYZ
 * Test: UA-39642385-1
 
+# MyCMS dist deployment
+* Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder.
+* Replace the string `mycmsprojectnamespace` with your project namespace.
+* Replace the string `MYCMSPROJECTSPECIFIC` with other website specific information (Brand, Twitter address, phone number, database name, name of icon in manifest.json etc.).
+* Default *admin.php* credentials are *john* / *Ew7Ri561*   - MUST be deleted after the real admin account is set up.
+* Change `define('MYCMS_SECRET', 'u7-r!!T7.&&7y6ru');` //16-byte random string, unique per project in `conf/config.php`
+* Delete this section after the changes above are made
 
 # Deployment
 
@@ -41,14 +48,7 @@ Create database with `Collation=utf8_general_ci`
 
 Create `conf/config.local.php` based on `config.local.dist.php` including the name of the database created above
 
-`composer update`
-
-
-Note: All changes in database (structure) SHOULD be made by phinx migrations. Create your local `phinx.yml` as a copy of `phinx.dist.yml` to make it work, where you set your database connection into *development* section. 
-```bash
-vendor/bin/phinx migrate -e development # or production or testing
-```
-
+Create `phinx.yml` based on `phinx.dist.yml` including the name of the database created above
 
 Under construction mode may be turned on (for non admin IP adresses i.e. not in `$debugIpArray`) by adding
 ```php
@@ -58,12 +58,21 @@ to `conf/config.local.php`.
 
 Note: Management má iPhone a Mac - testovat na Apple prostředí!
 
-## MyCMS dist deployment
-* Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder.
-* Replace the string `MYCMSPROJECTNAMESPACE` with your project namespace.
-* Replace the string `MYCMSPROJECTSPECIFIC` with other website specific information (Brand, Twitter address, phone number, database name, name of icon in manifest.json etc.).
-* Default *admin.php* credentials are *john* / *Ew7Ri561*   - MUST be deleted after the real admin account is set up.
-* Delete this section after the changes above are made
+## Ad firewall
+
+If the web will be running behind firewall hence REMOTE_ADDR would contain only firewall IP, then the original REMOTE_ADDR should be passed in another HTTP header, e.g. CLIENT_IP.
+So that trusted IPs for debugging may be used.
+For this deployment scenarion only (because otherwise it would be a vulnerability) uncomment `isset($_SERVER['HTTP_CLIENT_IP']) ? in_array($_SERVER['HTTP_CLIENT_IP'], $debugIpArray) :` line in `index.php` and `api\*\index.php`.
+
+
+## `build.sh` runs the following commands
+
+`composer update`
+
+Note: All changes in database (structure) SHOULD be made by phinx migrations. Create your local `phinx.yml` as a copy of `phinx.dist.yml` to make it work, where you set your database connection into *development* section. 
+```bash
+vendor/bin/phinx migrate -e development # or production or testing
+```
 
 ## reCAPTCHA
 
@@ -75,7 +84,44 @@ Paste this snippet at the end of the <form> where you want the reCAPTCHA widget 
 # CMS notes
 
 ## Agenda
-Agenda is an item in the admin.php menu that refers to a set of rows in database. (TODO: be more specific)
+Agenda is an item in the admin.php left menu that refers to a set of rows in database. (All tables can be also accessed from the bottom of the page.)
+
+Examples of settings:
+```php
+$AGENDAS = array(
+    'division' => array('column' => 'division_' . $tmp),
+    'page' => array('table' => 'content', 'where' => 'type="page"', 'column' => "\0CONCAT(code,'|',page_$tmp)"),
+    'news' => array('table' => 'content', 'where' => 'type="news"', 'column' => 'content_' . $tmp, 'prefill' => array('type' => 'news')),
+    'slide' => array('table' => 'content', 'where' => 'type="slide"', 'column' => 'content_' . $tmp, 'prefill' => array('type' => 'event')),
+    'event' => array('table' => 'content', 'where' => 'type="event"', 'column' => "\0CONCAT(page_$tmp,'|',content_$tmp)", 'prefill' => array('type' => 'event')),
+);
+
+$AGENDAS = array(
+    'category' => array('path' => 'path'),
+    'press' => array('table' => 'content', 'where' => 'type="press"', 'prefill' => array('type' => 'press')),
+    'testimonial' => array('table' => 'content', 'where' => 'type="testimonial"', 'column' => 'description_' . DEFAULT_LANGUAGE, 'prefill' => array('type' => 'testimonial')),
+    'claim' => array('table' => 'content', 'where' => 'type="claim"', 'column' => 'description_' . DEFAULT_LANGUAGE, 'prefill' => array('type' => 'claim')),
+    'perex' => array('table' => 'content', 'where' => 'type="perex"', 'column' => 'description_' . DEFAULT_LANGUAGE, 'prefill' => array('type' => 'perex'))
+);
+
+$AGENDAS = [
+    'item' => [
+        'column' => 'name',  # Name of column where the value is displayed from
+        'where' => 'active="1"' # Filter on displayed columns
+    ],
+    'consumption' => [
+        'column' => 'created',
+        'where' => 'active="1"'
+    ],
+    'amount' => [
+        'column' => 'created',
+        'where' => 'active="1"'
+    ],
+];
+```
+(TODO: explain more examples.)
+
+
 
 ## Asset folder structure
 * `assets/career/` - pro média spojené s pracovními příležitostmi
@@ -118,6 +164,9 @@ Pro výpis proměnné do logu použij:
 
 `$debugIpArray` in `config.php` contains IPs for Tracy.
 
+## REST API
+
+Note: header("Content-type: application/json"); in outputJSON hides Tracy
 
 # Error handling
 
@@ -142,7 +191,7 @@ Pages have view-TEMPLATE class in <body/> to allow for exceptions.
 
 Convert SASS to CSS by
 ```sh
-sass styles/index.sass styles/index.css
+sass styles/index.sass styles/index.css  # made also by build.sh
 ```
 
 When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in `config.php` in order to force cache reload these resources.

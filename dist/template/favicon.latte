@@ -19,7 +19,7 @@
 
 <link rel="icon" type="image/png" sizes="192x192"  href="{dirname($_SERVER['SCRIPT_NAME'])}/android-icon-192x192.png">
 
-<link rel="manifest" href="{dirname($_SERVER['SCRIPT_NAME'])}/manifest.json">
+<link rel="manifest" href="{dirname($_SERVER['SCRIPT_NAME'])}/manifest.json" crossorigin="use-credentials">{* for staging server that uses basic HTTP authentication to restrict access: crossOrigin="use-credentials" to allow the manifest fetch to use the previous authentication *}
 {*<meta name="msapplication-TileColor" content="#ffffff">*}
 <meta name="msapplication-TileImage" content="{dirname($_SERVER['SCRIPT_NAME'])}/ms-icon-144x144.png">
 {*<meta name="theme-color" content="#ffffff">*}

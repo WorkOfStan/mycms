@@ -1,6 +1,6 @@
 <?php
 
-namespace GodsDev\MYCMSPROJECTNAMESPACE;
+namespace GodsDev\mycmsprojectnamespace;
 
 /**
  * Class for a MyCMS object.
@@ -11,13 +11,13 @@ class MyCMSProject extends \GodsDev\MyCMS\MyCMS
 {
 
     // attributes we need for this project
-    
+
     /** @var array */
     public $PAGES_SPECIAL;
-    
-    /** @var array */    
+
+    /** @var array */
     public $SETTINGS;
-    
+
     /** @var array */
     public $WEBSITE;
 

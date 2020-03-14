@@ -7,7 +7,9 @@
 require './../../set-environment.php';
 
 // Under construction section // Note: if condition changes, pls change also $developmentEnvironment assignement in prepare.php
-if (UNDER_CONSTRUCTION && !(isset($_SERVER['HTTP_CLIENT_IP']) ? in_array($_SERVER['HTTP_CLIENT_IP'], $debugIpArray) : in_array($_SERVER['REMOTE_ADDR'], $debugIpArray))) {
+if (UNDER_CONSTRUCTION && !(
+    //isset($_SERVER['HTTP_CLIENT_IP']) ? in_array($_SERVER['HTTP_CLIENT_IP'], $debugIpArray) : // to be used only if behind firewall and the original REMOTE_ADDR present in HTTP_CLIENT_IP - otherwise should not be used as it would be a vulnerability
+    in_array($_SERVER['REMOTE_ADDR'], $debugIpArray))) {
     include './../../under-construction.html';
     exit;
 }
@@ -25,13 +27,14 @@ $backyard->Json->outputJSON('{"action":"3-' . $_SESSION['language'] . '"}', true
 
 // $this->get['article']) && (isset($this->get['id']
 //Debugger::barDump($MyCMS, 'MyCMS before controller');
-$controller = new GodsDev\AltronNet\Controller($MyCMS, array(
+$controller = new GodsDev\mycmsprojectnamespace\Controller($MyCMS, array(
     'get' => array(
         'action' => '',
         'id' => (int) $_GET['id'],
     ),
     'session' => $_SESSION,
     'language' => $_SESSION['language'],
+    'verbose' => DEBUG_VERBOSE,
     'requestUri' => $_SERVER['REQUEST_URI'], //Note: this API expects ?article&id=N anyway
     ));
 $controllerResult = $controller->controller();

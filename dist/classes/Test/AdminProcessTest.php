@@ -1,8 +1,8 @@
 <?php
 
-namespace GodsDev\MYCMSPROJECTNAMESPACE;
+namespace GodsDev\mycmsprojectnamespace;
 
-use GodsDev\MYCMSPROJECTNAMESPACE\MyCMSProject;
+use GodsDev\mycmsprojectnamespace\MyCMSProject;
 use Tracy\Debugger;
 
 require_once __DIR__ . '/../../conf/config.php';
@@ -68,7 +68,7 @@ class AdminProcessTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MYCMSPROJECTNAMESPACE\AdminProcess::adminProcess
+     * @covers GodsDev\mycmsprojectnamespace\AdminProcess::adminProcess
      * @todo   Implement testAdminProcess().
      */
     public function testAdminProcess()
@@ -80,7 +80,7 @@ class AdminProcessTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MYCMSPROJECTNAMESPACE\AdminProcess::getAgenda
+     * @covers GodsDev\mycmsprojectnamespace\AdminProcess::getAgenda
      * @todo Depends on the web structure
      */
     public function testGetAgenda()

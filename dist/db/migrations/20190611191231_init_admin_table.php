@@ -29,7 +29,7 @@ class InitAdminTable extends AbstractMigration
     public function change()
     {
         
-                $dump1 = <<<'MYSQLDUMP'
+        $dump1 = <<<'MYSQLDUMP'
 SET NAMES utf8;
 SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
@@ -50,7 +50,7 @@ INSERT INTO `MYCMSPROJECTSPECIFIC_admin` (`id`, `admin`, `salt`, `password_hashe
 (1, 'john', 141327478, '0a9a3657709db688184b9eae1b86f3466775357a', 2, '1');
 MYSQLDUMP;
 
-        $this->execute($dump1);        
-        
+        $this->execute($dump1);
+
     }
 }

@@ -217,8 +217,8 @@ class MyTableLister
         foreach ($columns as $key => $value) {
             if (isset($this->fields[$key]['foreign_table']) && $this->fields[$key]['foreign_table']) {
                 $result['join'] .= ' LEFT JOIN ' . $this->fields[$key]['foreign_table']
-                    . ' ON ' . $this->table . '.' . $key
-                    . '=' . $this->fields[$key]['foreign_table'] . '.' . $this->fields[$key]['foreign_column'];
+                    . ' ON ' . $this->escapeDbIdentifier($this->table) . '.' . $this->escapeDbIdentifier($key)
+                    . '=' . $this->escapeDbIdentifier($this->fields[$key]['foreign_table']) . '.' . $this->escapeDbIdentifier($this->fields[$key]['foreign_column']);
                 // try if column of the same name as the table exists (as a replacement for foreign table); use the first field in the table if it doesn't exist 
                 $tmp = $this->dbms->query('SHOW FIELDS FROM ' . $this->escapeDbIdentifier($this->fields[$key]['foreign_table']))->fetch_all();
                 foreach ($tmp as $k => $v) {

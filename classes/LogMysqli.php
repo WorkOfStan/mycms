@@ -13,6 +13,7 @@ class LogMysqli extends BackyardMysqli
 
     use \Nette\SmartObject;
 
+    /** @var array keywords in current DBMS */
     protected $KEYWORDS = [
         'ACCESSIBLE', 'ADD', 'ALL', 'ALTER', 'ANALYZE', 'AND', 'AS', 'ASC', 'ASENSITIVE', 
         'BEFORE', 'BETWEEN', 'BIGINT', 'BINARY', 'BLOB', 'BOTH', 'BY', 'CALL', 'CASCADE',
@@ -55,13 +56,14 @@ class LogMysqli extends BackyardMysqli
      * Logs SQL statement not starting with SELECT or SET
      *
      * @param string $sql SQL to execute
-     * @param bool $ERROR_LOG_OUTPUT
+     * @param bool $ERROR_LOG_OUTPUT optional
+     * @param bool $logQuery optional default logging of database changing statement can be (for security reasons) turned off by value false
      * @return \mysqli_result Object|false
      * @throws DBQueryException
      */
-    public function query($sql, $ERROR_LOG_OUTPUT = true)
+    public function query($sql, $ERROR_LOG_OUTPUT = true, $logQuery = true)
     {
-        if (!preg_match('/^SELECT |^SET |^SHOW /i', $sql)) {
+        if ($logQuery && !preg_match('/^SELECT |^SET |^SHOW /i', $sql)) {
             //mb_eregi_replace does not destroy e.g. character Š
             error_log(trim(mb_eregi_replace('/\s+/', ' ', $sql)) . '; -- [' . date("d-M-Y H:i:s") . ']' . (isset($_SESSION['user']) ? " by ({$_SESSION['user']})" : '') . PHP_EOL, 3, 'log/sql' . date("Y-m-d") . '.log.sql');
         }
@@ -94,7 +96,7 @@ class LogMysqli extends BackyardMysqli
     public function escapeDbIdentifier($string)
     {
         $string = str_replace('`', '``', $string);
-        if (!preg_match('/[^a-z0-9_]+/i', $string) || in_array($string, $this->KEYWORDS)) {
+        if (preg_match('/[^a-z0-9_]+/i', $string) || in_array(strtoupper($string), $this->KEYWORDS)) {
             $string = "`$string`";
         }
         return $string;

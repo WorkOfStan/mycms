@@ -1,8 +1,8 @@
 <?php
 
-namespace GodsDev\MYCMSPROJECTNAMESPACE;
+namespace GodsDev\mycmsprojectnamespace;
 
-use GodsDev\MYCMSPROJECTNAMESPACE\MyCMSProject;
+use GodsDev\mycmsprojectnamespace\MyCMSProject;
 use Tracy\Debugger;
 
 require_once __DIR__ . '/../../conf/config.php';
@@ -61,7 +61,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MYCMSPROJECTNAMESPACE\Controller::controller
+     * @covers GodsDev\mycmsprojectnamespace\Controller::controller
      */
     public function testControllerNoContext()
     {
@@ -71,7 +71,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MYCMSPROJECTNAMESPACE\Controller::controller
+     * @covers GodsDev\mycmsprojectnamespace\Controller::controller
      */
     public function testControllerContext()
     {
@@ -82,7 +82,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * @covers GodsDev\MYCMSPROJECTNAMESPACE\Controller::controller
+     * @covers GodsDev\mycmsprojectnamespace\Controller::controller
      */
     public function testControllerAbout()
     {
@@ -104,7 +104,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MYCMSPROJECTNAMESPACE\Controller::getVars
+     * @covers GodsDev\mycmsprojectnamespace\Controller::getVars
      */
     public function testGetVars()
     {
