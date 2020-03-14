@@ -1,0 +1,19 @@
+// gradient between background picture and content
+=gradient
+    &::before
+        content: " "
+        display: block
+        position: absolute
+        width: 100% 
+        height: 100%
+        top: 0px
+        background: linear-gradient(to bottom, rgba(0,0,0,$intensity-gradient) 0%,rgba(0,0,0,0) #{$height-gradient})
+        z-index: $z-gradient
+
+    
+// universal rollover effect
+=rollover
+    transition: opacity $speed-rollover
+    cursor: pointer
+    &:hover
+        opacity: $opacity-rollover

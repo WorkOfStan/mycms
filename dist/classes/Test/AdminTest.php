@@ -1,8 +1,10 @@
 <?php
 
-namespace GodsDev\MYCMSPROJECTNAMESPACE;
+namespace GodsDev\mycmsprojectnamespace;
 
-use GodsDev\MyCMS\MyCMS;
+use GodsDev\mycmsprojectnamespace\MyCMSProject;
+use GodsDev\mycmsprojectnamespace\Admin;
+use GodsDev\mycmsprojectnamespace\TableAdmin;
 use Tracy\Debugger;
 
 require_once __DIR__ . '/../../conf/config.php';
@@ -14,7 +16,7 @@ class AdminTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
-     * @var MyCMS
+     * @var MyCMSProject
      */
     protected $myCms;
 
@@ -38,15 +40,17 @@ class AdminTest extends \PHPUnit_Framework_TestCase
                 'cn' => '中文'
             ),
             'logger' => $backyard->BackyardError,
-            'dbms' => new \GodsDev\Backyard\BackyardMysqli(DB_HOST . ":" . DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE, $backyard->BackyardError), //@todo - use test db instead. Or use other TAB_PREFIX !
+            'dbms' => new \GodsDev\MyCMS\LogMysqli(DB_HOST . ":" . DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE, $backyard->BackyardError), //@todo - use test db instead. Or use other TAB_PREFIX !
         );
-        $this->myCms = new MyCMS($mycmsOptions);
+        $this->myCms = new MyCMSProject($mycmsOptions);
         $_SESSION = array(
             'language' => $this->myCms->getSessionLanguage(array(), array(), false),
             'token' => rand(1e8, 1e9),
         ); //because $_SESSION is not defined in the PHPUnit mode
         //maybe according to what you test, change $this->myCms->context before invoking $this->object = new Admin; within Test methods        
-        $this->object = new Admin($this->myCms, array('agendas' => array()));
+        $this->object = new Admin($this->myCms, array('agendas' => array(),
+            'TableAdmin' => new TableAdmin($mycmsOptions['dbms'], '', array())
+        ));
     }
 
     /**
@@ -55,17 +59,33 @@ class AdminTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        
+
     }
 
     /**
-     * @covers GodsDev\MYCMSPROJECTNAMESPACE\Admin::outputAdmin
+     * @covers GodsDev\mycmsprojectnamespace\Admin::outputAdmin
      */
     public function testOutputAdmin()
     {
-        ob_start();
-        $this->assertNull($this->object->outputAdmin());
-        ob_get_clean();//The pair ob_start() - ob_get_clean() will remove the buffer without printing it and return its contents
+        $response = $this->object->outputAdmin();
+        $this->assertStringStartsWith('<!DOCTYPE html>', $response);
+        $this->assertStringEndsWith('</html>', $response);
+
+//        // TODO: check HTML validity
+//        // use SimpleXMLElement;
+//		// Fail if errors
+//		$xml = new SimpleXMLElement($response);
+//		$nonDocumentErrors = $xml->{'non-document-error'};
+//		$errors = $xml->error;
+//		if (count($nonDocumentErrors) > 0) {
+//			// Indeterminate
+//			$this->markTestIncomplete();
+//		} elseif (count($errors) > 0) {
+//			// Invalid
+//			$this->fail("HTML output did not validate.");
+//		}
+//		// Valid
+//		$this->assertTrue(TRUE);
     }
 
 }

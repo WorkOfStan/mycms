@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{$_SESSION['language']}">
+<html lang="{$language}">
     <head>
         <meta charset="utf-8">
         <title>{$pageTitle ? $pageTitle . " · " : ""}MYCMSPROJECTSPECIFIC</title>
@@ -11,13 +11,14 @@
         <link rel="stylesheet" href="scripts/lib/owlcarousel/assets/owl.carousel.min.css">
         <link rel="stylesheet" href="scripts/lib/owlcarousel/assets/owl.theme.green.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link rel="stylesheet" href="styles/index.css?v=11">
-        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-        <script type="text/javascript">
+        <link rel="stylesheet" href="styles/index.css?v={$pageResourceVersion}">
+        {include 'favicon.latte'}
+        <script>
             GA_UID = {$gauid};
             TOKEN = {$token};
         </script>
-        <script type="text/javascript" n:syntax="off">
+        {* Google Analytics Autotrack *}
+        <script n:syntax="off">
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
             m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -33,16 +34,7 @@
             ga('send', 'pageview');
         </script>
         <script async src="scripts/autotrack.2.4.1.js"></script>
-        <script src='https://www.google.com/recaptcha/api.js?hl={$_SESSION[language] == 'cn' ? 'ZH-CN' : $_SESSION[language]}'></script>
-        <!--Start of Zopim Live Chat Script-->
-        <script type="text/javascript" n:syntax="off">
-            window.$zopim||(function(d,s){var z=$zopim=function(c){z._.push(c)},$=z.s=
-            d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set.
-            _.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute("charset","utf-8");
-            $.src="//v2.zopim.com/?3dFJRzvgtEBjjXlD3rdAKKFjYR2STMOW";z.t=+new Date;$.
-            type="text/javascript";e.parentNode.insertBefore($,e)})(document,"script");
-        </script>
-        <!--End of Zopim Live Chat Script-->
+        <script src='https://www.google.com/recaptcha/api.js?hl={$language == 'cn' ? 'ZH-CN' : $language}'></script>
     </head>
     <body class="view-{$ref}">
         {include 'header.latte'}
@@ -65,7 +57,7 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
         <script src="scripts/lib/owlcarousel/owl.carousel.min.js"></script>
         <script src="https://cdn.rawgit.com/michalsnik/aos/2.1.1/dist/aos.js"></script>
-        <script src="scripts/index.js?v=3"></script>
+        <script src="scripts/index.js?v={$pageResourceVersion}"></script>
         {block script}{/block}
     </body>
 </html>

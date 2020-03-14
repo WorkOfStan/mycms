@@ -9,7 +9,7 @@ namespace GodsDev\MyCMS;
  *   TableAdmin.php
  */
 use GodsDev\Tools\Tools;
-use GodsDev\MyCMS\MyCMS;
+//use GodsDev\MyCMS\MyCMS;
 use GodsDev\MyCMS\MyCommon;
 use Tracy\Debugger;
 
@@ -100,7 +100,7 @@ class MyAdminProcess extends MyCommon
             $time = time();
             foreach ($admins as $admin) {
                 $tabs = json_decode($admin['activity'], true);
-                $tabs = is_array($tabs) ? $tab : [];
+                $tabs = is_array($tabs) ? $tabs : [];
                 $new = true;
                 foreach ($tabs as $tabIndex => $tab) {
                     if (isset($tab['table'], $tab['id'], $tab['token'], $tab['time'])) {
@@ -190,7 +190,7 @@ class MyAdminProcess extends MyCommon
                         . "SET time_zone = '+00:00';\n"
                         . "SET foreign_key_checks = 0;\n"
                         . "SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';\n\n"
-                        . "DROP TABLE IF EXISTS {$post['database-table']};\n{$output['Create Table']};\n\n"; //@todo specific to MySQL/MariaDb
+                        . "DROP TABLE {$post['database-table']} IF EXISTS;\n{$output['Create Table']};\n\n"; //@todo specific to MySQL/MariaDb
                     $query = $this->MyCMS->dbms->query($sql);
                     $duplicateKey = '';
                     for ($i = 0; $row = $query->fetch_assoc(); $i++) {
@@ -366,7 +366,7 @@ class MyAdminProcess extends MyCommon
                     $result['processed-files'] = $ZipArchive->numFiles;
                     $result['messages'] = $result['success'] ? $this->tableAdmin->translate('Archive unpacked.') . ' ' . $this->tableAdmin->translate('Affected files: ') . $ZipArchive->numFiles . '.'
                         : $this->tableAdmin->translate('Error occured unpacking the archive.');
-                    Tools::addMessage($result['success'], $result['messages']);
+                    Tools::addMessage($result['success'], $result['message']);
                     $ZipArchive->close();
                 } else {
                     $result['messages'] = $this->tableAdmin->translate('Error occured unpacking the archive.');
@@ -445,7 +445,7 @@ class MyAdminProcess extends MyCommon
                 $this->MyCMS->logger->warning('Admin not logged in - wrong name.');
             }
             Tools::addMessage('error', isset($post['autologin']) ? $this->tableAdmin->translate('Error occured automatically logging You in.') : $this->tableAdmin->translate('Error occured logging You in.'));
-            if (!isset($post['no-redir'])) {
+            if (!isset($post['no-redir']) && !isset($post['autologin'])) {
                 $this->redir();
             }
         }
@@ -563,7 +563,7 @@ class MyAdminProcess extends MyCommon
                         Tools::resolve($this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'admin
                     SET password_hashed="' . $this->MyCMS->escapeSQL(sha1($post['new-password'] . $row['salt'])) . '"
                     WHERE admin="' . $this->MyCMS->escapeSQL($_SESSION['user']) . '"'), $this->tableAdmin->translate('Password was changed.'), $this->tableAdmin->translate('Error occured changing password.')
-                        );
+                        , true, false); //this statement MUST NOT be logged by LogMysqli mechanism
                         $this->redir();
                     }
                 }

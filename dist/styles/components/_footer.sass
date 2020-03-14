@@ -1,0 +1,117 @@
+.footer
+    color: $color-text-lightGrey
+    background: $color-grey-darker
+    font-size: $font-s
+    h2, h3
+        color: $color-white
+    a
+        color: $color-text-lightGrey
+
+
+.footer__nav
+    +padding-y($space-s)
+    ul
+        +not-list
+        display: flex
+        justify-content: flex-end
+        +separate($space-l)
+        +for-max(575px)
+            flex-direction: column
+            +separate(0)
+
+    a
+        color: $color-white
+        
+
+.footer__main
+    background: $color-grey-lighter
+    +padding-y($space-m)
+    form
+        display: flex
+        align-items: center
+        +separate($space-s)
+        margin-bottom: $space-m
+        [class^="icon"]
+            $size: 40px
+            width: $size
+            height: $size
+            +for-max(768px)
+                display: none
+        h2
+            font-size: $font-m
+            max-width: 270px
+        input
+            flex-grow: 1
+        +for-max(767px)
+            flex-wrap: wrap
+            h2
+                width: 100%
+                max-width: none
+                margin-bottom: $space-s
+        +for-max(400px)
+            input
+                width: 100%
+                margin-bottom: $space-s
+
+
+
+.footer__bottom
+    padding-top: $space-m
+    .container
+        display: flex
+        flex-wrap: wrap
+        +separate($space-l)
+    h3
+        margin-bottom: $space-s
+    ul
+        +not-list
+
+    .footer__contact
+        .footer__addresses
+            display: flex
+            flex-wrap: wrap
+            address
+                +separator($space-l)
+                margin-bottom: $space-m
+
+    .footer__links
+        flex-grow: 1
+        margin-bottom: $space-m
+
+    .footer__social
+        font-size: $font-m
+        margin-bottom: $space-m
+        ul
+            display: flex
+        li
+            +separator($space-s)
+        a
+            color: $color-white
+            display: inline-block
+            background: linear-gradient(to bottom, rgba(76,85,97,0) 0%,rgba(76,85,97,1) 100%)
+            padding: $space-s
+            +rollover
+
+    .languageSelector
+        margin-left: auto //zarovnání vždy doprava
+        +for-min(991px)
+            display: none
+        .dropdown-item
+            color: black
+        a
+            color: $color-white
+
+.footer__copyright
+    background: $color-white
+    color: $color-black
+    +padding-y($space-s)
+    .container
+        display: flex
+        p:first-child
+            flex-grow: 1
+        +for-max(450px)
+            flex-direction: column
+            p:first-child
+                margin-bottom: $space-s
+    a
+        color: $color-calm

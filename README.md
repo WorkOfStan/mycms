@@ -1,7 +1,7 @@
 MyCMS
 -----
 
-Simple framework to help developing websites. Works as a devstack which you install and then write your classes specific for the project.
+Simple framework to help developing interactive websites. Works as a devstack which you install and then write your classes specific for the project.
 
 # Features
 - [jQuery](https://jquery.org/) and [Bootstrap](https://getbootstrap.com/docs/4.0/components/) (version 4) used in the presentation
@@ -46,7 +46,9 @@ Note: `$MyCMS` name is expected by `ProjectSpecific extends ProjectCommon` class
 ## `/dist`
 Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder.
 Replace the string `MYCMSPROJECTNAMESPACE` with your project namespace.
-Replace the string `MYCMSPROJECTSPECIFIC` with other website specific.
+Replace the string `MYCMSPROJECTSPECIFIC` with other website specific information (Brand, Twitter address, phone number...).
+
+MyCMS is used only as a library, so the application using it SHOULD implement `RedirectMatch 404 vendor\/` statement as proposed in `dist/.htaccess` to keep the library hidden from web access.
 
 ## Languages
 Following settings are expected from the Application that uses MyCMS
@@ -101,5 +103,11 @@ Run from a command line:
 ./vendor/bin/phpunit
 ```
 
-# @todo
-* 180221: curate `dist` folder so that it may be used out of the box
+Note that `dist` folder contains the starting MyCMS based project deployment and testing runs through `dist` as well, so for development, the environment has to be set up for `dist` as well. 
+
+# TODO
+
+* 190705: v classes\LogMysqli.php probíhá logování `'log/sql' . date("Y-m-d") . '.log.sql');` do aktuálního adresáře volajícího skriptu - což u API není výhodné. Jak vycházet z APP_ROOT?
+* 190723: pokud jsou v té samé doméně dvě různé instance MyCMS, tak přihlášením do jednoho admin.php jsem přihlášen do všech, i když ten uživatel tam ani neexistuje
+* TO BE CHECKED 190723: nastavování hesla by se nemělo do log.sql ukládat - volat instanci BackyardMysqli namísto LogMysqli?? @crs2: Řešilo by to přidání parametru (do query() v LogMysqli.php), který by volání error_log() potlačil? A poté u změny hesla volání tohoto parametru? + Ještě mě napadá řešení na úrovni samotného sloupce tabulky, tj. definování (v LogMysqli.php), které sloupce které tabulky obsahují citlivé údaje pro logování. Ale to by vyžadovalo parsing SQL.
+* 200314: administrace FriendlyURL je v F4T/classes/Admin::outputSpecialMenuLinks() a ::sectionUrls() .. zobecnit do MyCMS a zapnout pokud FRIENDLY_URL == true

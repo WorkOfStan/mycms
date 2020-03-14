@@ -1,0 +1,30 @@
+$gap: 10px
+
+body
+  background: white
+
+a
+  font-weight: bold
+  color: $color-calm
+
+hr
+  height: 1px
+  background-color: $color-hr
+  border: none
+
+.footer
+  margin-top: $space-xxl
+
+
+.only-desktop
+    +for-max($breakpoint-mobile)
+        display: none
+.only-mobile
+    +for-min($breakpoint-mobile)
+        display: none
+
+.mylivechat_collapsed_text2
+  color: white
+  font-size: 15px
+  padding-left: $gap
+  padding-top: 2px
