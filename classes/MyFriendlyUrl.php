@@ -1,10 +1,7 @@
 <?php
-//TODO: this is a non-production version to be tested first in dev versions of current projects instead of their existing project specific MyFriendlyURL classes
 namespace GodsDev\MyCMS;
 
-//use GodsDev\MyCMS\MyCMS;
 use GodsDev\Tools\Tools;
-//use GodsDev\MyCMS\MyCommon;
 use Tracy\Debugger;
 
 class MyFriendlyUrl extends MyCommon
