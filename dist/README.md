@@ -29,7 +29,7 @@ Gtag version may be used only after https://github.com/googleanalytics/autotrack
 I.e. probably when it will be out of beta.
 script/autotrack.V.V.V.js and script/autotrack.V.V.V.js.map are manually taken from current (v2.4.1) https://github.com/googleanalytics/autotrack repository.
 
-to-be-done - as GA events
+@todo - as GA events
 
 * Production: UA-XYZ
 * Test: UA-39642385-1
@@ -155,14 +155,15 @@ Add protected functions to Admin.php according to MyAdmin.php in order to add me
 
 # Debugging
 
-Pro výpis proměnné nebo exception do `Tracy` použij:
 ```php
-\Tracy\Debugger::barDump($mixedVar);
-```
+// to write out a variable to `Tracy`
+\Tracy\Debugger::barDump($mixedVar, 'Info why to show it');
 
-Pro výpis proměnné do logu použij:
-```php
-\Tracy\Debugger::log($stringVar, 'DEBUG');
+// to log a variable value into its error level log
+\Tracy\Debugger::log($stringVar, \Tracy\ILogger::DEBUG); // Note: \Tracy\ILogger::DEBUG equals 'debug'
+
+// to throw an exception
+throw new \Exception('Exception description');
 ```
 
 `$debugIpArray` in `config.php` contains IPs for Tracy.
@@ -185,7 +186,6 @@ Logs are in folder `log`:
 # Templating
 
 `latte` templates are used.
-
 
 
 # Visual style
