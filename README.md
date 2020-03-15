@@ -21,9 +21,10 @@ Require MyCMS in [`composer.json`](https://getcomposer.org/).
     }
 }
 ```
-The `composer install` command will load the library's files into `./vendor/godsdev/mycms/`. The library's classes are in `./vendor/godsdev/mycms/classes/` and most of them are named to begin with `My`.
+The `composer install` command will load the library's files into `./vendor/godsdev/mycms/`. The library's classes are in `./vendor/godsdev/mycms/classes/`
+and most of them are use prefix `My`.
 
-To customize the project, create your own classes as children inheriting MyCMS' classes in the `./classes/` directory and name it without the initial `My` in its name.  
+To customize the project, create your own classes as children inheriting MyCMS' classes in the `./classes/` directory and name them it without the initial `My` in its name.  
 
 ```php
 $MyCMS = new \GodsDev\MyCMS\MyCMS(
@@ -40,7 +41,7 @@ $MyCMS->renderLatte(DIR_TEMPLATE_CACHE, "\\GodsDev\\ProjectName\\Latte\\CustomFi
 
 Files `process.php` and `admin-process.php` MUST exist and process forms.
 
-Note: `$MyCMS` name is expected by `ProjectSpecific extends ProjectCommon` class (@todo replace global $MyCMS by proper parameter handling)
+Note: `$MyCMS` name is expected by `ProjectSpecific extends ProjectCommon` class (@todo replace global $MyCMS by parameter handling)
 
 # Deployment
 ## `/dist`
@@ -94,7 +95,8 @@ In `class/Admin.php` you can redefine the `clientSideResources` variable with re
     ];
 ```
 
-`admin.css` may be inherited to a child project, however as vendor folder has usually denied access from browser, the content of that standard `admin.css` MUST be available through method MyAdmin::getAdminCss.
+`admin.css` may be inherited to a child project, however as vendor folder SHOULD have denied access from browser, 
+the content of that standard `admin.css` MUST be available through method MyAdmin::getAdminCss.
 
 # Testing
 
@@ -103,7 +105,8 @@ Run from a command line:
 ./vendor/bin/phpunit
 ```
 
-Note that `dist` folder contains the starting MyCMS based project deployment and testing runs through `dist` as well, so for development, the environment has to be set up for `dist` as well. 
+Note that `dist` folder contains the starting MyCMS based project deployment and testing runs through `dist` as well, 
+so for development, the environment has to be set up for `dist` as well. 
 
 # TODO
 
