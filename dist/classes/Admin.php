@@ -21,10 +21,10 @@ class Admin extends MyAdmin
     /** @var array tables and columns to search in admin */
     protected $searchColumns = [
         'category' => ['id', 'category_#', 'description_#'], // "#" will be replaced by current language
-        'content' => ['id', 'content_#', 'description_#'],
-        'product' => ['id', 'product_#', 'description_#'],
+        'content' => ['id', 'content_#', 'description_#'], // "#" will be replaced by current language
+        'product' => ['id', 'product_#', 'description_#'], // "#" will be replaced by current language
     ];
-    
+
     /**
      * 
      * @param \GodsDev\MyCMS\MyCMS $MyCMS

@@ -1,6 +1,9 @@
 <?php
 
-namespace GodsDev\MyCMS;
+namespace GodsDev\MyCMS\Test;
+
+use GodsDev\MyCMS\MyCMS;
+use GodsDev\MyCMS\MyController;
 
 require_once __DIR__ . '/../../conf/config.php';
 
