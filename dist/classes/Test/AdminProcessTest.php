@@ -1,7 +1,8 @@
 <?php
 
-namespace GodsDev\mycmsprojectnamespace;
+namespace GodsDev\mycmsprojectnamespace\Test;
 
+use GodsDev\mycmsprojectnamespace\AdminProcess;
 use GodsDev\mycmsprojectnamespace\MyCMSProject;
 use Tracy\Debugger;
 
@@ -85,7 +86,7 @@ class AdminProcessTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetAgenda()
     {
-        
+
         //$adminAgendaCategoryArray = $this->object->getAgenda('category');
         //$this->assertEquals(array('id' => '10', 'name' => 'MYCMSPROJECTSPECIFIC', 'path' => '0000000001'), $adminAgendaCategoryArray[0]);
         $this->markTestIncomplete(

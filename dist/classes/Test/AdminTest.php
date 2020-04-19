@@ -1,9 +1,9 @@
 <?php
 
-namespace GodsDev\mycmsprojectnamespace;
+namespace GodsDev\mycmsprojectnamespace\Test;
 
-use GodsDev\mycmsprojectnamespace\MyCMSProject;
 use GodsDev\mycmsprojectnamespace\Admin;
+use GodsDev\mycmsprojectnamespace\MyCMSProject;
 use GodsDev\mycmsprojectnamespace\TableAdmin;
 use Tracy\Debugger;
 
@@ -59,7 +59,7 @@ class AdminTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-
+        
     }
 
     /**

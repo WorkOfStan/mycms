@@ -1,8 +1,9 @@
 <?php
 
-namespace GodsDev\MyCMS;
+namespace GodsDev\MyCMS\Test;
 
 use GodsDev\MyCMS\MyCMS;
+use GodsDev\MyCMS\ProjectCommon;
 //use GodsDev\MyCMS\LogMysqli;
 use GodsDev\Backyard\Backyard;
 use Tracy\Debugger;

@@ -1,7 +1,8 @@
 <?php
 
-namespace GodsDev\mycmsprojectnamespace;
+namespace GodsDev\mycmsprojectnamespace\Test;
 
+use GodsDev\mycmsprojectnamespace\Controller;
 use GodsDev\mycmsprojectnamespace\MyCMSProject;
 use Tracy\Debugger;
 
@@ -57,7 +58,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-
+        
     }
 
     /**
@@ -79,7 +80,6 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         $this->object = new Controller($this->myCms);
         $this->assertArraySubset(array("template" => "home", "context" => $this->myCms->context), $this->object->controller());
     }
-
 
     /**
      * @covers GodsDev\mycmsprojectnamespace\Controller::controller
