@@ -330,7 +330,8 @@ class MyTableLister
 //                    $result .= ', ' . $this->escapeDbIdentifier($field) . ' = ' . $this->escapeDbIdentifier($field);
 //                    break;
                 default:
-                    continue;
+                    //PHP 7.3.0	continue within a switch that is attempting to act like a break statement for the switch will trigger an E_WARNING.
+                    break; //mělo by `continue` nahrazeno `break` anebo `continue 2` ??
             }
         }
     }
