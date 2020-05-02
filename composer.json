@@ -36,7 +36,12 @@
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
-            "GodsDev\\MyCMS\\": ["classes/"],
+            "GodsDev\\MyCMS\\": ["classes/"]
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "GodsDev\\MyCMS\\Test\\": ["classes/Test/"],
             "GodsDev\\mycmsprojectnamespace\\": ["dist/classes/"]
         }
     }
