@@ -28,5 +28,10 @@
         "psr-4": {
             "GodsDev\\mycmsprojectnamespace\\": ["classes/"]
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "GodsDev\\mycmsprojectnamespace\\Test\\": ["classes/Test/"]
+        }
     }
 }
