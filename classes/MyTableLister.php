@@ -295,7 +295,11 @@ class MyTableLister
     }
 
     /**
-     * Compose a part of an UPDATE SQL statement for selected records with given columns and _GET variables 
+     * Compose a part of an UPDATE SQL statement for selected records with given columns and _GET variables
+     * Method bulkUpdateSQL() creates part of SQL statement UPDATE for bulk editing of columns.
+     * Input is an array, where each column can have an operation and an operand (e.g. add or substract from a column).
+     * Operation `original` means "leave the column as is" (i.e. don't use it in this SQL statement)
+     * And for any other (=unknown) operation is the column ignored, i.e. is not used in this SQL statement.
      *
      * @param array &$vars variables used to filter records
      * @return string
@@ -330,8 +334,8 @@ class MyTableLister
 //                    $result .= ', ' . $this->escapeDbIdentifier($field) . ' = ' . $this->escapeDbIdentifier($field);
 //                    break;
                 default:
-                    //PHP 7.3.0	continue within a switch that is attempting to act like a break statement for the switch will trigger an E_WARNING.
-                    break; //mělo by `continue` nahrazeno `break` anebo `continue 2` ??
+                    error_log('bulkUpdateSQL unknown operator ' . (string) Tools::set($vars['op'][$field]));
+                    break;
             }
         }
     }
