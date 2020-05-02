@@ -8,10 +8,10 @@
     stopOnFailure="false"> 
     <testsuites> 
         <testsuite name="Application Test Suite">
-            <directory>./classes/Test/</directory>
+            <directory>./Test/</directory>
         </testsuite>
         <testsuite name="Distribution Test Suite">
-            <directory>./dist/classes/Test/</directory>
+            <directory>./dist/Test/</directory>
         </testsuite>
     </testsuites> 
 </phpunit>

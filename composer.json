@@ -41,7 +41,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "GodsDev\\MyCMS\\Test\\": ["classes/Test/"],
+            "GodsDev\\MyCMS\\Test\\": ["Test/"],
             "GodsDev\\mycmsprojectnamespace\\": ["dist/classes/"]
         }
     }
