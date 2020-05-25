@@ -18,7 +18,7 @@ class MyCommon
 
     /**
      * Bleeds information
-     * false - nothing, true - Debugger::barDump(), 2 - var_dump()
+     * false - nothing, true - Debugger::barDump()
      * 
      * @var bool
      */
@@ -40,8 +40,7 @@ class MyCommon
     }
 
     /**
-     * Dumps information about a variable in Tracy Debug Bar.
-     * or dumps it to standard output
+     * Dumps information about a variable in Tracy Debug Bar or is silent
      * 
      * @param  mixed  $var
      * @param  string $title
@@ -53,10 +52,6 @@ class MyCommon
         if ($this->verbose === true) { //TODO change to loose condition
             return Debugger::barDump($var, $title, $options);
         }
-        // was used for some forgotten reason back in 2018
-//        elseif (is_int($this->verbose) && $this->verbose === 2) {
-//            var_dump("{$title}:", $var);
-//        }
         return $var;
     }
 
