@@ -3,15 +3,29 @@
 # php_flag magic_quotes_gpc Off
 # php_flag magic_quotes_runtime Off
 
+# Friendly URL
+RewriteEngine on
+
+# redirect all requests to /en/assets* and /de/assets* to /assets*
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(en|de|cn)/(styles|assets|fonts|images|scripts|api|favicon.ico)(.*)$ $2$3 [L,QSA]
+
+# redirect all other requests to /en/* and /de/* and /cn/*
+# to index.php and set the language parameter
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(en|de|cn)?/?(.*)$ index.php?language=$1&$2 [L,QSA]
+
 # Friendly share URL
-# RewriteEngine on
-# RewriteRule !^(favicon\.ico|robots\.txt|index\.php|(styles|items|images|fonts|scripts)/?.*)$ index.php [L]
-# RewriteCond %{REQUEST_FILENAME}       !-f
-# RewriteCond %{REQUEST_FILENAME}       !-d
-# RewriteRule ^(.*)$ index.php/$1 [L,QSA]
+RewriteRule ^admin\.php(\?.*)?$ admin.php [L,QSA]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php/$1 [L,QSA]
 
 # Hide composer, logs
-<IfModule mod_alias.c>
+# If mod_alias is not enabled, the Apache should fail to show anything in order to always hide the files in the section below
+#<IfModule mod_alias.c>
 RedirectMatch 404 /\.git
 RedirectMatch 404 vendor\/
 RedirectMatch 404 composer\.
@@ -26,8 +40,7 @@ RedirectMatch 404 \.sh$
 RedirectMatch 404 classes\/
 RedirectMatch 404 Test\/
 RedirectMatch 404 \/logs\/
-# RedirectMatch 404 data\/
 RedirectMatch 404 conf\/
 RedirectMatch 404 /VERSION$
 RedirectMatch 404 /\.sass-cache
-</IfModule>
+#</IfModule>

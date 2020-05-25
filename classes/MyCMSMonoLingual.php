@@ -69,29 +69,6 @@ class MyCMSMonoLingual
     }
 
     /**
-     * In case of form processing includes either admin-process.php or process.php.
-     *
-     * @todo - test fully
-     *
-     */
-    /* OBSOLETE METHOD - REMOVE SOON
-    public function formController($databaseTable = '')
-    {
-        // fork for for admin and form processing
-        if (isset($_POST) && is_array($_POST)) {
-            if (basename($_SERVER['PHP_SELF']) == 'admin.php') {
-                require_once './user-defined.php';
-                $GLOBALS['TableAdmin'] = new \GodsDev\MyCMS\TableAdmin($this->dbms, $databaseTable);
-                require_once './admin-process.php';
-            } else {
-                require_once './process.php';
-            }
-        }
-    }
-     * 
-     */
-
-    /**
      * Add a new CSRF token in $_SESSION['token']
      * @param bool $checkOnly - add new token only if $_SESSION['token'] is empty
      * @todo - test fully
@@ -102,7 +79,7 @@ class MyCMSMonoLingual
             $_SESSION['token'] = [];
         }
         if (!$checkOnly || !count($_SESSION['token'])) {
-            $_SESSION['token'] []= rand(1e8, 1e9);
+            $_SESSION['token'] [] = rand(1e8, 1e9);
         }
     }
 
@@ -126,7 +103,7 @@ class MyCMSMonoLingual
     {
         return $this->dbms->escapeSQL($string);
     }
-    
+
     public function fetchSingle($sql)
     {
         return $this->dbms->fetchSingle($sql);

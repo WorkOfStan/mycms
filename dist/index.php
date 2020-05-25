@@ -21,9 +21,14 @@ $MyCMS->csrfStart();
 
 use Tracy\Debugger;
 
+$request = array_merge($_GET, $_POST);
+DEBUG_VERBOSE and Debugger::barDump($request, 'request');
+
 Debugger::barDump($MyCMS, 'MyCMS before controller');
 $controller = new \GodsDev\mycmsprojectnamespace\Controller($MyCMS, [
-    'get' => $_GET,
+    'get' => $request,
+//    'httpMethod' => $_SERVER['REQUEST_METHOD'], //TODO: pre-filter!
+    'requestUri' => $_SERVER['REQUEST_URI'], // necessary for FriendlyURL feature
     'session' => $_SESSION,
     'language' => $_SESSION['language'],
     'verbose' => DEBUG_VERBOSE,

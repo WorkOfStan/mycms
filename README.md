@@ -3,20 +3,25 @@ MyCMS
 
 Simple framework to help developing interactive websites. Works as a devstack which you install and then write your classes specific for the project.
 
+[![Total Downloads](https://img.shields.io/packagist/dt/godsdev/mycms.svg)](https://packagist.org/packages/godsdev/mycms)
+[![Latest Stable Version](https://img.shields.io/packagist/v/godsdev/mycms.svg)](https://packagist.org/packages/godsdev/mycms)
+
 # Features
 - [jQuery](https://jquery.org/) and [Bootstrap](https://getbootstrap.com/docs/4.0/components/) (version 4) used in the presentation
 - [Latte](http://latte.nette.org/) used as a templating engine
 - [MySQL](https://dev.mysql.com/)/[MariaDB](http://mariadb.com) used as the website database
 - includes a general administration
-- other dependent libraries and technologies - Tracy, Nette\SmartObject, Psr\Log\LoggerInterface, GodsDev\Backyard\BackyardMysqli
+- other used libraries and technologies - [Tracy](https://github.com/nette/tracy), [Nette\SmartObject](https://doc.nette.org/en/3.0/smartobject), [Psr\Log\LoggerInterface](https://www.php-fig.org/psr/psr-3/), [GodsDev\Backyard\BackyardMysqli](https://github.com/GodsDev/backyard/blob/master/GodsDev/Backyard/BackyardMysqli.php)
 
 # Installation
+Apache modules `mod_alias` (for hiding non-public files) and `mod_rewrite` (for friendly URL features) are expected.
+
 Require MyCMS in [`composer.json`](https://getcomposer.org/).
 ```json
 {
     ...
     "required": {
-        "GodsDev/mycms": "^0.3.4" //or the latest version
+        "GodsDev/mycms": "^0.3.15" //or the latest version
         ...
     }
 }
@@ -45,7 +50,7 @@ Note: `$MyCMS` name is expected by `ProjectSpecific extends ProjectCommon` class
 
 # Deployment
 ## `/dist`
-Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder.
+Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder in order to easily start.
 Replace the string `MYCMSPROJECTNAMESPACE` with your project namespace.
 Replace the string `MYCMSPROJECTSPECIFIC` with other website specific information (Brand, Twitter address, phone number...).
 

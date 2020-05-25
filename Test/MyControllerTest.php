@@ -59,7 +59,7 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
     public function testControllerNoContext()
     {
         $this->object = new MyController($this->myCms);
-        $this->assertEquals(array("template" => "home", "context" => array()), $this->object->controller());
+        $this->assertEquals(['template' => 'home', 'context' => ['pageTitle' => '']], $this->object->controller());
     }
 
     /**

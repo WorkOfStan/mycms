@@ -31,7 +31,12 @@ class MyController extends MyCommon
     public function __construct(MyCMS $MyCMS, array $options = [])
     {
         parent::__construct($MyCMS, $options);
-        $this->result = ["template" => "home", "context" => ($this->MyCMS->context ? $this->MyCMS->context : [])];
+        $this->result = [
+            'template' => 'home',
+            'context' => ($this->MyCMS->context ? $this->MyCMS->context : [
+            'pageTitle' => '',
+            ])
+        ];
     }
 
     /**

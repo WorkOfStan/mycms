@@ -56,7 +56,17 @@ $myCmsConf = array(
     ),
     'WEBSITE' => array(
     //this will be filled with $WEBSITE['cs'] or $WEBSITE['en'] according to the current language
-    )
+    ),
+    'templateAssignementParametricRules' => array(
+        //TODO EXPLAIN possibilities!
+//        'line' => ['template' => 'home'], //MyFriendlyURL::TEMPLATE_DEFAULT
+//        'portfolio' => ['template' => 'portfolio'],
+//        'search' => ['template' => 'search-results'],
+//        'wizard' => ['template' => 'wizard'],
+//        'article' => ['template' => 'article', 'idcode' => true],
+//        'category' => ['template' => 'category', 'idcode' => true], // category is only used for switch, final template will be either home or article
+//        'product' => ['template' => 'product'],
+    ),    
 );
 $WEBSITE = array(
     'en' => array(
@@ -91,10 +101,10 @@ array(
     'PAGE_RESOURCE_VERSION' => 1,
     'USE_CAPTCHA' => false,
     'DEBUG_VERBOSE' => false,
-//    'FRIENDLY_URL' => true,
-//    'HOME_TOKEN' => '', //když web běží v rootu domény, tak je defaultní token `PATHINFO_FILENAME` prázdný řetězec; pokud běží jinde, tak je tím jméno rodičovského adresáře k nastavení v config.local.php
-//    'FORCE_301' => true, //if FRIENDLY_URL but called as parametric, force 301 redirect, it is good for SEO
-//    'REDIRECTOR_ENABLED' => false, //table redirector with columns old_url, new_url, active exists
+    'FRIENDLY_URL' => false,
+    'HOME_TOKEN' => '', //když web běží v rootu domény, tak je defaultní token `PATHINFO_FILENAME` prázdný řetězec; pokud běží jinde, tak je tím jméno rodičovského adresáře k nastavení v config.local.php
+    'FORCE_301' => true, //if FRIENDLY_URL but called as parametric, force 301 redirect, it is good for SEO
+    'REDIRECTOR_ENABLED' => false, //table redirector with columns old_url, new_url, active exists
 ) as $constant => $value) {
     if (!defined($constant)) {
         define($constant, $value);

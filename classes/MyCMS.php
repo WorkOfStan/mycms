@@ -32,6 +32,13 @@ class MyCMS extends MyCMSMonoLingual
     public $TRANSLATIONS;
 
     /**
+     * PARAMETRIC URL into TEMPLATE conditions (for FriendlyURL functionality)
+     * 
+     * @var array
+     */
+    public $templateAssignementParametricRules;
+
+    /**
      * Constructor
      *
      * @param array $myCmsConf
@@ -53,8 +60,8 @@ class MyCMS extends MyCMSMonoLingual
     public function getSessionLanguage(array $getArray, array $sessionArray, $makeInclude = true)
     {
         $resultLanguage = (isset($getArray['language']) && isset($this->TRANSLATIONS[$getArray['language']])) ?
-                $getArray['language'] :
-                ((isset($sessionArray['language']) && isset($this->TRANSLATIONS[$sessionArray['language']])) ? $sessionArray['language'] : DEFAULT_LANGUAGE);
+            $getArray['language'] :
+            ((isset($sessionArray['language']) && isset($this->TRANSLATIONS[$sessionArray['language']])) ? $sessionArray['language'] : DEFAULT_LANGUAGE);
         if ($makeInclude) {
             $languageFile = DIR_TEMPLATE . '/../language-' . $resultLanguage . '.inc.php';
             if (file_exists($languageFile)) {

@@ -18,6 +18,15 @@ apt install libapache2-mod-php7.0 apache2 mysql-server git composer php-xml php-
 
 Git flow (master,develop,feature,release,fix,hotfix)
 
+# Security
+
+Check that `phinx.yml` and folder `log` are not accessible. Because `mod_alias` not only has to be enabled, but also
+in the `/etc/apache2/apache2.conf`, there has to be this setting:
+```sh
+<Directory /var/www/>
+        AllowOverride All # enables .htaccess
+        Options FollowSymLinks # not! Options Indexes FollowSymLinks which allows directory browsing
+```
 
 # Content
 
@@ -80,6 +89,67 @@ Paste this snippet at the end of the <form> where you want the reCAPTCHA widget 
 ```html
 <div class="g-recaptcha" data-sitekey="................"></div>
 ```
+
+# SEO
+
+Friendly URLs and redirects are *always* processed (if `mod_rewrite` is enabled and Rewrite section in `.htaccess` is present).
+If the web does not run in the root directory, set its parent folder name in `conf\config.local.php`:
+TODO, 200523: just the parent folder name or the whole path??
+```php
+define('HOME_TOKEN', 'parent-directory');
+```
+
+Name (???TODO - to znamená HTML tag title nebo něco jiného ??) all the pages in order not to confuse Google with multiple pages with the same content.
+
+Showing Friendly URLs may be turned off in `conf\config.local.php`:
+```php
+define('FRIENDLY_URL', false);
+```
+
+Imagine that
+`/?article=1` has friendly URL `/alfa` and `/?article=2` has friendly URL `/beta`, then:
+
+|    |       FRIENDLY_URL = false      |  FRIENDLY_URL = true |
+|----------|-------------|------|
+| **FORCE_301 = false** |  `/?article=1` displays *`article 1`* | `/?article=1` displays *`article 1`* |
+|  |  `/?article=1&x=y` displays *`article 1`* | `/?article=1&x=y` displays *`article 1`* |
+|  |  `/alfa` displays *`article 1`*    |  `/alfa` displays *`article 1`*  |
+|  |  `/alfa&article=2` displays *`article 1`*    |  `/alfa&article=2` displays *`article 1`*  |
+|  |  generates(TODO upřesnit) link to `/?article=1`    |  generates(TODO upřesnit) link to `/alfa`  |
+| **FORCE_301 = true** |  `/?article=1` displays *`article 1`* | `/?article=1` redirects to `/alfa` |
+|  |  `/?article=1&x=y` redirects to `/?article=1`  | `/?article=1&x=y` redirects to `/alfa` |
+|  |  `/alfa` displays `article1`    |  `/alfa` displays *`article 1`*  |
+|  |  generates(TODO upřesnit) link to `/?article=1`    |  generates(TODO upřesnit) link to `/alfa`  |
+
+
+TODO: make more clear
+* Tabulky `#_content`, `#_product` musí mít sloupce `url_##` (## = dvoumístný kód pro všechny jazykové verze).
+* Do `url_##` se uloží "webalizované" názvy dané stránky/produktu (dle funkce `Tools::webalize`). Výjimkou může být `_content`, který není plnohodnotná stránka – ten může obsahovat `NULL`. Převod lze zprvu udělat programaticky (je to na pár řádků), pak do CMS přidat tlačítko pro převod nebo převod udělat při uložení.
+
+`FORCE_301` performs 301 redirect to the most friendly URL that is available (i.e. either friendly URL or parametric URL on application directory) which means 
+that each page is displayed with a unique URL.
+Therefore it is not necessary to translate URL within content (e.g. from the parametric to friendly) as they end up on the right unique URL.
+
+#### Example of rules
+* `/?product=4` → `/konzultacni-poradenctvi`
+* `/?page=about` → `/o-firme-sro`
+* `/?news=37` → `/news/albus-novak-is-the-new-commercial-director-at-firma-sro
+
+TODO: explain and translate:
+Jazyk je uveden jako první a to dvoumístným kódem a lomítkem, např. `/cs/logistika`. Defaultní jazyk (čeština) takto uveden být nemá.
+
+TODO: explain and translate:
+Interně se jazyk do políčka `url_##` pro jiné (nedefaultní) jazyky nevkládá
+
+## Languages
+
+TODO: zkontrolovat:
+`.htaccess` is ready for languages `en|de|cn` (`cs` is considered as the default language),
+where page resouces may be in folders `styles|assets|fonts|images|scripts` which ignore the language directory.
+
+TODO: zkontrolovat:
+Adapt respectively also `const PARSE_PATH_PATTERN` in `Controller::determineTemplate`
+and `if (in_array($token, array(HOME_TOKEN, '', 'index', 'en')))` in `Controller::determineTemplate`.
 
 # CMS notes
 
@@ -166,7 +236,7 @@ Add protected functions to Admin.php according to MyAdmin.php in order to add me
 throw new \Exception('Exception description');
 ```
 
-`$debugIpArray` in `config.php` contains IPs for Tracy.
+`$debugIpArray` in `config.php` contains IPs where Tracy will be displayed.
 
 ## REST API
 

@@ -22,7 +22,7 @@ $backyardConf = array(
     'logging_level' => 3,
 );
 
-if (file_exists(__DIR__ . '/env_config_private.php')) {//backward compatible
+if (file_exists(__DIR__ . '/env_config_private.php')) {//backward compatible (still in 0.3.15)
     error_log("env_config_private.php MUST NOT be used ANYMORE!!! It will be discontinued in the next minor version."); //delete this if in the next version
     include_once __DIR__ . '/env_config_private.php';
 }
