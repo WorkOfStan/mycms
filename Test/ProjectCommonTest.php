@@ -37,14 +37,14 @@ class ProjectCommonTest extends \PHPUnit_Framework_TestCase
         global $backyardConf;
         Debugger::enable(Debugger::DEVELOPMENT, __DIR__ . '/../log');
         $backyard = new Backyard($backyardConf);
-        $mycmsOptions = array(
-            'TRANSLATIONS' => array(
+        $mycmsOptions = [
+            'TRANSLATIONS' => [
                 'en' => 'English',
                 'cn' => '中文'
-            ),
+            ],
             'logger' => $backyard->BackyardError,
             'dbms' => null, //new LogMysqli(DB_HOST . ":" . DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE, $backyard->BackyardError), //@todo - use test db instead. Or use other TAB_PREFIX !
-        );
+        ];
         $this->myCms = new MyCMS($mycmsOptions);
 //        $_SESSION = array(); //because $_SESSION is not defined in the PHPUnit mode
         $this->language = $this->myCms->getSessionLanguage(array(), array(), false);

@@ -33,13 +33,13 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
     {
         global $backyardConf;
         $backyard = new \GodsDev\Backyard\Backyard($backyardConf);
-        $mycmsOptions = array(
-            'TRANSLATIONS' => array(
+        $mycmsOptions = [
+            'TRANSLATIONS' => [
                 'en' => 'English',
                 'cn' => '中文'
-            ),
+            ],
             'logger' => $backyard->BackyardError,
-        );
+        ];
         $this->myCms = new MyCMS($mycmsOptions);
         //$this->object = new MyController;
     }
@@ -69,7 +69,7 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
     {
         $this->myCms->context = array("1" => "2", "3" => "4", "c");
         $this->object = new MyController($this->myCms);
-        $this->assertEquals(array("template" => "home", "context" => $this->myCms->context), $this->object->controller());
+        $this->assertEquals(["template" => "home", "context" => $this->myCms->context], $this->object->controller());
     }
 
     /**
@@ -77,12 +77,12 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetVars()
     {
-        $this->myCms->context = array("1" => "2", "3" => "4", "c");
-        $options = array(
-            "get" => array("v1" => "getSth"),
-            "session" => array("v1" => "getSth"),
-            //"section_styles" => array("red", "blue",),
-        );
+        $this->myCms->context = ["1" => "2", "3" => "4", "c"];
+        $options = [
+            "get" => ["v1" => "getSth"],
+            "session" => ["v1" => "getSth"],
+            //"section_styles" => ["red", "blue",],
+        ];
         $this->object = new MyController($this->myCms, $options);
         $this->assertEquals($options, $this->object->getVars());
     }

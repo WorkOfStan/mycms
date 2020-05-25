@@ -27,13 +27,13 @@ class MyCMSTest extends \PHPUnit_Framework_TestCase
     {
         global $backyardConf;
         $backyard = new \GodsDev\Backyard\Backyard($backyardConf);
-        $mycmsOptions = array(
-            'TRANSLATIONS' => array(
+        $mycmsOptions = [
+            'TRANSLATIONS' => [
                 'en' => 'English',
                 'cn' => '中文'
-            ),
+            ],
             'logger' => $backyard->BackyardError,
-        );
+        ];
         $this->object = new MyCMS($mycmsOptions);
     }
 
@@ -51,10 +51,10 @@ class MyCMSTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetSessionLanguageBasic()
     {
-        $this->assertEquals('en', $this->object->getSessionLanguage(array('language' => 'en'), array('language' => 'en'), false), 'Fail for both languages are same en');
-        $this->assertEquals('en', $this->object->getSessionLanguage(array('language' => 'xx'), array('language' => 'xx'), false), 'Fail unknown language is return');
-        $this->assertEquals('en', $this->object->getSessionLanguage(array('language' => 'en'), array('language' => 'cn'), false), 'get language should prevail');
-        $this->assertEquals('cn', $this->object->getSessionLanguage(array('language' => 'cn'), array('language' => 'en'), false), 'get language should prevail');
+        $this->assertEquals('en', $this->object->getSessionLanguage(['language' => 'en'], ['language' => 'en'], false), 'Fail for both languages are same en');
+        $this->assertEquals('en', $this->object->getSessionLanguage(['language' => 'xx'], ['language' => 'xx'], false), 'Fail unknown language is return');
+        $this->assertEquals('en', $this->object->getSessionLanguage(['language' => 'en'], ['language' => 'cn'], false), 'get language should prevail');
+        $this->assertEquals('cn', $this->object->getSessionLanguage(['language' => 'cn'], ['language' => 'en'], false), 'get language should prevail');
     }
 
     /**
@@ -62,12 +62,12 @@ class MyCMSTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetSessionLanguageAdvanced()
     {
-        $this->assertEquals('cn', $this->object->getSessionLanguage(array(), array('language' => 'cn'), false), 'Solo session prevails');
-        $this->assertEquals('cn', $this->object->getSessionLanguage(array('language' => 'cn'), array(), false), 'Solo get is used');
-        $this->assertEquals('en', $this->object->getSessionLanguage(array(), array('language' => 'xx'), false), 'Solo wrong session is ignored');
-        $this->assertEquals('en', $this->object->getSessionLanguage(array('language' => 'xx'), array(), false), 'Solo wrong get is ignored');
-        $this->assertEquals('cn', $this->object->getSessionLanguage(array('language' => 'xx'), array('language' => 'cn'), false), 'get language should prevail only if correct');
-        $this->assertEquals('en', $this->object->getSessionLanguage(array('language' => 'xx'), array('language' => 'en'), false), 'get language should prevail only if correct');
+        $this->assertEquals('cn', $this->object->getSessionLanguage([], ['language' => 'cn'], false), 'Solo session prevails');
+        $this->assertEquals('cn', $this->object->getSessionLanguage(['language' => 'cn'], [], false), 'Solo get is used');
+        $this->assertEquals('en', $this->object->getSessionLanguage([], ['language' => 'xx'], false), 'Solo wrong session is ignored');
+        $this->assertEquals('en', $this->object->getSessionLanguage(['language' => 'xx'], [], false), 'Solo wrong get is ignored');
+        $this->assertEquals('cn', $this->object->getSessionLanguage(['language' => 'xx'], ['language' => 'cn'], false), 'get language should prevail only if correct');
+        $this->assertEquals('en', $this->object->getSessionLanguage(['language' => 'xx'], ['language' => 'en'], false), 'get language should prevail only if correct');
     }
 
     /**

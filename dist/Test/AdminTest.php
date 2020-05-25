@@ -34,23 +34,23 @@ class AdminTest extends \PHPUnit_Framework_TestCase
         global $backyardConf;
         Debugger::enable(Debugger::DEVELOPMENT, __DIR__ . '/../log');
         $backyard = new \GodsDev\Backyard\Backyard($backyardConf);
-        $mycmsOptions = array(
-            'TRANSLATIONS' => array(
+        $mycmsOptions = [
+            'TRANSLATIONS' => [
                 'en' => 'English',
                 'cn' => '中文'
-            ),
+            ],
             'logger' => $backyard->BackyardError,
             'dbms' => new \GodsDev\MyCMS\LogMysqli(DB_HOST . ":" . DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE, $backyard->BackyardError), //@todo - use test db instead. Or use other TAB_PREFIX !
-        );
+        ];
         $this->myCms = new MyCMSProject($mycmsOptions);
-        $_SESSION = array(
-            'language' => $this->myCms->getSessionLanguage(array(), array(), false),
+        $_SESSION = [
+            'language' => $this->myCms->getSessionLanguage([], [], false),
             'token' => rand(1e8, 1e9),
-        ); //because $_SESSION is not defined in the PHPUnit mode
+        ]; //because $_SESSION is not defined in the PHPUnit mode
         //maybe according to what you test, change $this->myCms->context before invoking $this->object = new Admin; within Test methods        
-        $this->object = new Admin($this->myCms, array('agendas' => array(),
-            'TableAdmin' => new TableAdmin($mycmsOptions['dbms'], '', array())
-        ));
+        $this->object = new Admin($this->myCms, ['agendas' => [],
+            'TableAdmin' => new TableAdmin($mycmsOptions['dbms'], '', [])
+        ]);
     }
 
     /**

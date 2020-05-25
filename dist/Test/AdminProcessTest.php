@@ -33,30 +33,30 @@ class AdminProcessTest extends \PHPUnit_Framework_TestCase
         global $backyardConf;
         Debugger::enable(Debugger::DEVELOPMENT, __DIR__ . '/../log');
         $backyard = new \GodsDev\Backyard\Backyard($backyardConf);
-        $mycmsOptions = array(
-            'TRANSLATIONS' => array(
+        $mycmsOptions = [
+            'TRANSLATIONS' => [
                 'en' => 'English',
                 'cn' => '中文'
-            ),
+            ],
             'logger' => $backyard->BackyardError,
             'dbms' => new \GodsDev\MyCMS\LogMysqli(DB_HOST . ":" . DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE, $backyard->BackyardError), //@todo - use test db instead. Or use other TAB_PREFIX !
-        );
+        ];
         $this->myCms = new MyCMSProject($mycmsOptions);
-        $_SESSION = array(
-            'language' => $this->myCms->getSessionLanguage(array(), array(), false),
+        $_SESSION = [
+            'language' => $this->myCms->getSessionLanguage([], [], false),
             'token' => rand(1e8, 1e9),
-        ); //because $_SESSION is not defined in the PHPUnit mode
-        $AGENDAS = array(
-            'category' => array('path' => 'path'),
-            //        'page' => array('table' => 'content', 'where' => 'type="page"', 'prefill' => array('type' => 'page')),
-            'press' => array('table' => 'content', 'where' => 'type="press"', 'prefill' => array('type' => 'press')),
-            'slide' => array('table' => 'content', 'where' => 'type="slide"', 'column' => 'content_' . DEFAULT_LANGUAGE, 'prefill' => array('type' => 'slide')),
-            'claim' => array('table' => 'content', 'where' => 'type="claim"', 'column' => 'description_' . DEFAULT_LANGUAGE, 'prefill' => array('type' => 'claim')),
-            'testimonial' => array('table' => 'content', 'where' => 'type="testimonial"', 'column' => 'description_' . DEFAULT_LANGUAGE, 'prefill' => array('type' => 'testimonial')),
-            'system' => array('table' => 'content', 'where' => 'type="system"', 'column' => 'code', 'prefill' => array('type' => 'system'))
-        );
+        ]; //because $_SESSION is not defined in the PHPUnit mode
+        $AGENDAS = [
+            'category' => ['path' => 'path'],
+            //        'page' => ['table' => 'content', 'where' => 'type="page"', 'prefill' => ['type' => 'page']],
+            'press' => ['table' => 'content', 'where' => 'type="press"', 'prefill' => ['type' => 'press']],
+            'slide' => ['table' => 'content', 'where' => 'type="slide"', 'column' => 'content_' . DEFAULT_LANGUAGE, 'prefill' => ['type' => 'slide']],
+            'claim' => ['table' => 'content', 'where' => 'type="claim"', 'column' => 'description_' . DEFAULT_LANGUAGE, 'prefill' => ['type' => 'claim']],
+            'testimonial' => ['table' => 'content', 'where' => 'type="testimonial"', 'column' => 'description_' . DEFAULT_LANGUAGE, 'prefill' => ['type' => 'testimonial']],
+            'system' => ['table' => 'content', 'where' => 'type="system"', 'column' => 'code', 'prefill' => ['type' => 'system']],
+        ];
         //maybe according to what you test, change $this->myCms->context before invoking $this->object = new Admin; within Test methods        
-        $this->object = new AdminProcess($this->myCms, array('agendas' => $AGENDAS));
+        $this->object = new AdminProcess($this->myCms, ['agendas' => $AGENDAS]);
     }
 
     /**
@@ -88,7 +88,7 @@ class AdminProcessTest extends \PHPUnit_Framework_TestCase
     {
 
         //$adminAgendaCategoryArray = $this->object->getAgenda('category');
-        //$this->assertEquals(array('id' => '10', 'name' => 'MYCMSPROJECTSPECIFIC', 'path' => '0000000001'), $adminAgendaCategoryArray[0]);
+        //$this->assertEquals(['id' => '10', 'name' => 'MYCMSPROJECTSPECIFIC', 'path' => '0000000001'], $adminAgendaCategoryArray[0]);
         $this->markTestIncomplete(
             __FUNCTION__ . ' has not been implemented yet.'
         );

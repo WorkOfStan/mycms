@@ -8,6 +8,7 @@ use Assert\Assertion;
 
 /**
  * functions specific to the project
+ * TODO: make these methods useful for dist project as a demonstration
  */
 class ProjectSpecific extends ProjectCommon
 {
@@ -17,9 +18,6 @@ class ProjectSpecific extends ProjectCommon
     /**
      * accepted attributes:
      */
-
-    /** @var string */
-    protected $language;
 
     /** Search for specified text in the database, return results
      * @param string text being searched for
