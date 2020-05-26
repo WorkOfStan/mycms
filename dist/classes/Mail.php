@@ -2,12 +2,9 @@
 
 namespace GodsDev\mycmsprojectnamespace;
 
+use Assert\Assertion;
 use GodsDev\MyCMS\MyCMS;
 use GodsDev\MyCMS\MyCommon;
-use Assert\Assertion;
-
-//use Psr\Log\LoggerInterface;
-//use Tracy\Debugger;
 
 class Mail extends MyCommon
 {
@@ -30,7 +27,7 @@ class Mail extends MyCommon
      * @param \GodsDev\MyCMS\MyCMS $MyCMS
      * @param array $options overrides default values of properties
      */
-    public function __construct(MyCMS $MyCMS, array $options = array())
+    public function __construct(MyCMS $MyCMS, array $options = [])
     {
         parent::__construct($MyCMS, $options);
         $this->logger = $this->MyCMS->logger;
@@ -45,8 +42,8 @@ class Mail extends MyCommon
         // Create the Transport
         $this->logger->debug("SMTP transport uses " . SMTP_HOST . ":" . SMTP_PORT);
         $transport = \Swift_SmtpTransport::newInstance(SMTP_HOST, SMTP_PORT)
-                ->setUsername('')
-                ->setPassword('')
+            ->setUsername('')
+            ->setPassword('')
         ;
 
         /*
@@ -85,7 +82,7 @@ class Mail extends MyCommon
      * @param array $options
      * @return mixed false or int
      */
-    public function sendMail($to, $subject, $messageTxt, array $options = array())
+    public function sendMail($to, $subject, $messageTxt, array $options = [])
     {
         Assertion::email(NOTIFY_FROM_ADDRESS, 'E-mail sender');
         Assertion::email($to, 'E-mail recipient');
@@ -103,13 +100,13 @@ class Mail extends MyCommon
 //        $filenameTxt = 'temp/' . 'test.txt';
 
         $message = \Swift_Message::newInstance($subject)
-                ->setFrom(array(NOTIFY_FROM_ADDRESS => NOTIFY_FROM_NAME))
-                ->setTo(array($to))
-                ->setBody(
+            ->setFrom(array(NOTIFY_FROM_ADDRESS => NOTIFY_FROM_NAME))
+            ->setTo(array($to))
+            ->setBody(
 //                        file_get_contents($filenameTxt)
 //                "Test sender at {$timestamp} "
-                $messageTxt
-                )
+            $messageTxt
+            )
         // And optionally an alternative body
         //              ->addPart(file_get_contents($filename), 'text/html')
         ;

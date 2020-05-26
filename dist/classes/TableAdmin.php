@@ -1,4 +1,5 @@
 <?php
+
 namespace GodsDev\mycmsprojectnamespace;
 
 use GodsDev\Tools\Tools;
@@ -165,22 +166,22 @@ class TableAdmin extends \GodsDev\MyCMS\MyTableAdmin
                 'ZipArchive::2' => 'Selhalo dočasné přejmenování souboru',
                 'ZipArchive::3' => 'Selhalo uzavření zip archivu',
                 'ZipArchive::4' => 'Chyba posunu ukazatele do souboru',
-                'ZipArchive::5' => 'Chyba čtení.', 
+                'ZipArchive::5' => 'Chyba čtení.',
                 'ZipArchive::6' => 'Chyba zápisu',
                 'ZipArchive::7' => 'Chyba CRC',
                 'ZipArchive::8' => 'Obsažený zip archiv byl zavřen',
-                'ZipArchive::9' => 'Neexistující soubor.', 
-                'ZipArchive::10' => 'Archiv již existuje.', 
-                'ZipArchive::11' => 'Soubor se nepodařilo otevřít.', 
+                'ZipArchive::9' => 'Neexistující soubor.',
+                'ZipArchive::10' => 'Archiv již existuje.',
+                'ZipArchive::11' => 'Soubor se nepodařilo otevřít.',
                 'ZipArchive::12' => 'Selhalo vytvoření dočasného souboru',
                 'ZipArchive::13' => 'Chyba knihovny Zlib',
-                'ZipArchive::14' => 'Selhání alokace paměti.', 
+                'ZipArchive::14' => 'Selhání alokace paměti.',
                 'ZipArchive::15' => 'Položka byla změněna',
                 'ZipArchive::16' => 'Nepodporovaná kompresní metoda',
                 'ZipArchive::17' => 'Předčasný konec souboru',
-                'ZipArchive::18' => 'Neplatný parametr.', 
-                'ZipArchive::19' => 'Není zip archiv.', 
-                'ZipArchive::21' => 'Nekonzistentní zip archiv.', 
+                'ZipArchive::18' => 'Neplatný parametr.',
+                'ZipArchive::19' => 'Není zip archiv.',
+                'ZipArchive::21' => 'Nekonzistentní zip archiv.',
                 'ZipArchive::20' => 'Interní chyba',
                 'ZipArchive::22' => "Can't remove file",
                 'ZipArchive::23' => 'Položka byla smazána',
@@ -241,7 +242,7 @@ class TableAdmin extends \GodsDev\MyCMS\MyTableAdmin
                 'column:url_cs' => 'URL (česky)',
                 'column:url_en' => 'URL (anglicky)',
                 'column:visits' => 'počet návštěv',
-            ];            
+            ];
         } elseif ($_SESSION['language'] == 'en') {
             $this->TRANSLATION += [
                 //ZipArchive
@@ -300,15 +301,14 @@ class TableAdmin extends \GodsDev\MyCMS\MyTableAdmin
     public function customInput($field, $value, array $record = [])
     {
         $result = false;
-/*        $fieldLang = $field;
-        foreach ($this->TRANSLATIONS as $key => $value) {
-            if (substr($field, -3) == '_' . $key) {
-                $fieldLang = substr($field, -3) . '_##';
-            }
-        }*/
+        /*        $fieldLang = $field;
+          foreach ($this->TRANSLATIONS as $key => $value) {
+          if (substr($field, -3) == '_' . $key) {
+          $fieldLang = substr($field, -3) . '_##';
+          }
+          } */
         switch (mb_substr($this->table, mb_strlen(TAB_PREFIX)) . "\\" . $field) {
             //case "tableName\\fieldName": $result = ""; break; // SPECIMEN
-
         }
         return $result;
     }
@@ -330,7 +330,7 @@ class TableAdmin extends \GodsDev\MyCMS\MyTableAdmin
             $length = [strlen($_POST['path-parent']), strlen($_POST['path-original'])];
             if ($_POST['path-original'] && $_POST['fields']['id'] != '') { // existing record whose parent category changed - we need to shift its sibblings that follow after it to fill the gap 
                 $this->dbms->query('LOCK TABLES ' . Tools::escapeDbIdentifier($_POST['table']) . ' WRITE'); // we can't allow for other admin to write into categories during this op
-                $this->dbms->query($sql='UPDATE ' . Tools::escapeDbIdentifier($_POST['table']) . ' SET path = NULL WHERE id=' . (int) $_POST['fields']['id'] . ' LIMIT 1'); //category.path is a unique key so to allow for the following change we need to set this path to NULL
+                $this->dbms->query($sql = 'UPDATE ' . Tools::escapeDbIdentifier($_POST['table']) . ' SET path = NULL WHERE id=' . (int) $_POST['fields']['id'] . ' LIMIT 1'); //category.path is a unique key so to allow for the following change we need to set this path to NULL
                 if (Tools::set($_POST['fields-null']['path'])) {
                     $this->dbms->query('UNLOCK TABLES');
                     return false;
@@ -351,7 +351,7 @@ class TableAdmin extends \GodsDev\MyCMS\MyTableAdmin
             }
             // get path of the "last" child of given parent category, add +1
             $tmp = $this->dbms->fetchSingle('SELECT MAX(MID(path, ' . ($length[0] + PATH_MODULE) . ')) FROM ' . Tools::escapeDbIdentifier($_POST['table'])
-                    . ' WHERE LEFT(path, ' . $length[0] . ')="' . $this->dbms->escapeSQL($_POST['path-parent']) . '" AND LENGTH(path)=' . ($length[0] + PATH_MODULE));
+                . ' WHERE LEFT(path, ' . $length[0] . ')="' . $this->dbms->escapeSQL($_POST['path-parent']) . '" AND LENGTH(path)=' . ($length[0] + PATH_MODULE));
             $_POST['fields']['path'] = $_POST['path-parent'] . str_pad(intval($tmp) + 1, PATH_MODULE, '0', STR_PAD_LEFT);
             $this->dbms->query('UNLOCK TABLES');
             return false;
@@ -399,6 +399,7 @@ class TableAdmin extends \GodsDev\MyCMS\MyTableAdmin
      */
     function customSearch()
     {
+        
     }
 
     /**
@@ -408,6 +409,7 @@ class TableAdmin extends \GodsDev\MyCMS\MyTableAdmin
      */
     function customCondition()
     {
+        
     }
 
     /**
@@ -421,4 +423,5 @@ class TableAdmin extends \GodsDev\MyCMS\MyTableAdmin
     {
         return $row[$column];
     }
+
 }

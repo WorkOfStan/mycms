@@ -51,7 +51,7 @@ class ProjectSpecific extends ProjectCommon
         return $result;
     }
 
-    /** 
+    /**
      * Fetch from database a content of given id
      * @param mixed $id of the content 
      * @return array resultset
@@ -119,11 +119,11 @@ class ProjectSpecific extends ProjectCommon
             $styleKey = $sectionKey % count($options['SECTION_STYLES']);
             $classes = $options['SECTION_STYLES'][$styleKey] . (($options['SECTION_STYLES'][$styleKey] == 'photo') ? " " . Tools::webalize($options['product'] . ' ' . $sectionKey) : '');
             $tempDiv = "\n<div data-aos=\"fade-up\" class=\"container\">\n{$section}\n</div>\n";
-            $result .= ($options['hide_product_heading'] && ($sectionCount == 0))?$tempDiv: //when tiles are used, <div class="container"/> should not be within section because it spoils the size of tiles (might be fixed in CSS instead?)
-                    ('<section class="' . trim($classes) . '" id="product-section-' . $sectionKey . '">'
-                    . $tempDiv
-                    . "</section>\n");
-            $sectionCount++;                    
+            $result .= ($options['hide_product_heading'] && ($sectionCount == 0)) ? $tempDiv : //when tiles are used, <div class="container"/> should not be within section because it spoils the size of tiles (might be fixed in CSS instead?)
+                ('<section class="' . trim($classes) . '" id="product-section-' . $sectionKey . '">'
+                . $tempDiv
+                . "</section>\n");
+            $sectionCount++;
         }
         return $result;
     }

@@ -9,7 +9,6 @@ namespace GodsDev\mycmsprojectnamespace;
  */
 class MyCMSProject extends \GodsDev\MyCMS\MyCMS
 {
-
     // attributes we need for this project
 
     /** @var array */

@@ -5,7 +5,6 @@ namespace GodsDev\mycmsprojectnamespace;
 use GodsDev\MyCMS\MyCMS;
 use GodsDev\MyCMS\MyFriendlyUrl;
 use GodsDev\mycmsprojectnamespace\ProjectSpecific;
-//use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use Tracy\ILogger;
 

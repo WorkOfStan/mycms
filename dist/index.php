@@ -34,7 +34,6 @@ $controller = new \GodsDev\mycmsprojectnamespace\Controller($MyCMS, [
     'verbose' => DEBUG_VERBOSE,
     'featureFlags' => $featureFlags,
     ]);
-//$controllerResult = $controller->controller();
 $controllerResult = $controller->run();
 $MyCMS->template = $controllerResult['template'];
 $MyCMS->context = $controllerResult['context'];
