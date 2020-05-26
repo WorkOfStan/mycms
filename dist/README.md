@@ -133,7 +133,7 @@ Therefore it is not necessary to translate URL within content (e.g. from the par
 #### Example of rules
 * `/?product=4` → `/konzultacni-poradenctvi`
 * `/?page=about` → `/o-firme-sro`
-* `/?news=37` → `/news/albus-novak-is-the-new-commercial-director-at-firma-sro
+* `/?news=37` → `/news/albus-novak-is-the-new-commercial-director-at-firma-sro`
 
 TODO: explain and translate:
 Jazyk je uveden jako první a to dvoumístným kódem a lomítkem, např. `/cs/logistika`. Defaultní jazyk (čeština) takto uveden být nemá.

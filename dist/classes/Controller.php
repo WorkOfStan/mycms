@@ -5,16 +5,11 @@ namespace GodsDev\mycmsprojectnamespace;
 use GodsDev\MyCMS\MyCMS;
 use GodsDev\MyCMS\MyController;
 use GodsDev\mycmsprojectnamespace\ProjectSpecific;
-//use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use Tracy\ILogger;
 
 class Controller extends MyController
 {
-
-    //moved to MyCommon
-//    const TEMPLATE_NOT_FOUND = 'error404'; // SHOULD be same as in FriendlyURL
-//    const TEMPLATE_DEFAULT = 'home'; // SHOULD be same as in GodsDev\MyCMS\MyController and in FriendlyURL
 
     use \Nette\SmartObject;
 
@@ -77,23 +72,6 @@ class Controller extends MyController
     }
 
     /**
-     * Simple method because of PHPUnit test
-     *
-     * @param array $options
-     * @return mixed string when template determined, array with redir field when redirect
-     * TODO: move to parent, i.e. to MyCMS\MyController, as public
-     */
-    /*
-    public function determineTemplate(array $options = array())
-    {
-        //This is only placeholder as a preparation for a proper FriendlyURL mechanism
-        return $this->MyCMS->template; // = 'home'; already set in MyControler
-//        return $this->friendlyUrl->determineTemplate($options);
-    }
-     * 
-     */
-    
-    /**
      * Processes $this->MyCMS->template after method determineTemplate
      * Set $this->MyCMS->context accordingly for all (or multiple) pages
      * Might even change $this->MyCMS->template value
@@ -105,7 +83,6 @@ class Controller extends MyController
     {
         return true;
     }
-    
 
     /**
      * Processes $this->MyCMS->template after method determineTemplate
@@ -135,83 +112,6 @@ class Controller extends MyController
         return false;
     }
 
-    /**
-     * 301 Redirects to $redir (incl. relative) and die
-     * TODO: move to parent, i.e. to MyCMS\MyController, as protected
-     * 
-     * @param string $redir
-     */
-    /*
-    private function redir($redir)
-    {
-        if (isset($_SESSION['user'])) {
-            Debugger::getBar()->addPanel(new \GodsDev\MyCMS\Tracy\BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION));
-        }
-        $sqlStatementsArray = $this->MyCMS->dbms->getStatementsArray();
-        if (!empty($sqlStatementsArray)) {
-            Debugger::getBar()->addPanel(new \GodsDev\MyCMS\Tracy\BarPanelTemplate('SQL: ' . count($sqlStatementsArray), $sqlStatementsArray));
-        }
-        $this->MyCMS->logger->info("Redir to {$redir} with SESSION[language]={$_SESSION['language']}");
-        header("Location: {$redir}", true, 301); // For SEO 301 is much better than 303
-        header('Connection: close');
-        die('<script type="text/javascript">window.location=' . json_encode($redir) . ";</script>\n"
-            . '<a href=' . urlencode($redir) . '>&rarr;</a>'
-        );
-    }
-     * 
-     */
-
-    /**
-     * Outputs changed $MyCMS->template and $MyCMS->context as fields of an array
-     * 
-     * @return array
-     */
-    /*
-    public function controller()
-    {
-        $this->verbose and Debugger::barDump($this->language, 'Language on controller start');
-        $result = parent::controller();
-
-        //@todo refactor to use $result['template'] and ['context'] instead of $this->MyCMS->template and context ?
-        $this->MyCMS->template = $result['template'];
-        $this->MyCMS->context = $result['context'];
-        $this->MyCMS->context['pageTitle'] = '';
-
-        $options = array(
-            'REQUEST_URI' => $this->requestUri,
-        );
-
-        // prepare variables and set templates for each kind of request
-        $templateDetermined = $this->determineTemplate($options); //TODO: rovnou $this->friendlyUrl->determineTemplate($options) ??? ale teď tam mám foreach a if //Note: $this->MyCMS->template = 'home'; already set in MyControler
-        //
-        // Note: $_SESSION['language'] je potřeba, protože to nastavuje stav jazyka pro browser
-        // Note: $this->session je potřeba, protože je ekvivalentní proměnné $_SESSION, která je vstupem MyCMS->getSessionLanguage
-        // Note: $this->language je potřeba, protože nastavuje jazyk v rámci instance Controller
-        $this->session['language'] = $this->language; // = $this->friendlyUrl->getLanguage();
-        $_SESSION['language'] = $this->MyCMS->getSessionLanguage(Tools::ifset($this->get, []), Tools::ifset($this->session, []), true); // Language is finally determined, therefore make the include creating TRANSLATION
-        $this->MyCMS->logger->info("After determineTemplate: this->language={$this->language}, this->session['language']={$this->session['language']}, _SESSION['language']={$_SESSION['language']} this->get[language]=" . (isset($this->get['language']) ? $this->get['language'] : 'n/a'));
-//        Debugger::barDump($this->get, 'get in controller after determineTemplate');
-        if (is_string($templateDetermined)) {
-            $this->MyCMS->template = $templateDetermined;
-        } elseif (is_array($templateDetermined) && isset($templateDetermined['redir'])) {
-            $this->redir($templateDetermined['redir']);
-        }
-        // PROJECT SPECIFIC CHANGE OF OPTIONS AFTER LANGUAGE IS DETERMINED
-        $this->prepareTemplate($options);
-
-        // PUT CONTROLLER CODE HERE
-        // TODO: zde volat $this->prepareAllPages();
-
-        if ($this->MyCMS->template === self::TEMPLATE_NOT_FOUND) { //TODO: remove this comment ... 'error404') {
-            http_response_code(404);
-        }
-
-        return array(
-            'template' => $this->MyCMS->template,
-            'context' => $this->MyCMS->context,
-        );
-    }
-*/
     /**
      * For PHP Unit test
      * 

@@ -11,7 +11,7 @@ class TableAdmin extends \GodsDev\MyCMS\MyTableAdmin
         parent::__construct($dbms, $table, $options);
         $this->TRANSLATIONS = [
             'cs' => 'Česky',
-            'en' => 'English'
+            'en' => 'English',
         ];
         if (Tools::setifempty($_SESSION['language'], 'en') == 'cs') {
             $this->TRANSLATION += [

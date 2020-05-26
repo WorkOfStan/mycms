@@ -10,9 +10,6 @@ class MyFriendlyUrl extends MyCommon
 
     const PAGE_NOT_FOUND = '404';
     const PARSE_PATH_PATTERN = '~/(en\/|de/|cn/)?(.*/)?.*?~';
-    //moved to MyCommon
-//    const TEMPLATE_NOT_FOUND = 'error404'; // SHOULD be same as in Controller
-//    const TEMPLATE_DEFAULT = 'home'; // SHOULD be same as in GodsDev\MyCMS\MyController and in Controller and in config.php
 
     use \Nette\SmartObject;
 
@@ -278,11 +275,8 @@ class MyFriendlyUrl extends MyCommon
         }
         parse_str((substr($params, 0, 1) === '?') ? substr($params, 1) : $params, $output); // array $output contains all parameters
         $output2 = array_slice($output, 0, 1); // $output2 contains only the first parameter
-//        $this->verboseBarDump($output, 'friendlyfyUrl output');
-//        $this->verboseBarDump($output2, 'friendlyfyUrl output2');
         $output2Array = array_keys($output2);
         $outputKey = reset($output2Array);
-//        $this->verboseBarDump($this->MyCMS->templateAssignementParametricRules, 'fU tAPR');
         $outputValue = (isset($this->MyCMS->templateAssignementParametricRules[$outputKey]) && isset($this->MyCMS->templateAssignementParametricRules[$outputKey]['idcode']) && $this->MyCMS->templateAssignementParametricRules[$outputKey]['idcode']) ?
             (isset($output['id']) ? (int) ($output['id']) : (string) Tools::ifset($output['code'], '')) : $output2[$outputKey];
 
