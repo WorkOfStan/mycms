@@ -1,0 +1,30 @@
+{layout '@layout.latte'}
+{block content}
+{* this latte SHOULD be replaced by something specific to your project, or it may be deleted if link to it is removed from menu *}
+<div class="container">
+    {*
+    {if !$line && $slides}
+        <div class="owl-carousel owl-theme">
+            {foreach $slides as $slide}
+                <div class="owl-slide"{if isset($slide['context']['slideBackground'])} style="background-image:url({stripslashes($slide['context']['slideBackground'])|noescape});"{/if}>
+                    <h2>{$slide['title']}</h2>
+                    <div>{$slide['description']|noescape}</div>
+                    <a href="?product={$slide['id']}" class="round-btn">{="Více o produktu"|translate}</a>
+                </div>
+            {/foreach}
+        </div>
+    {/if}
+    *}
+
+    <section class="main-content">
+        <div class="container" data-aos="fade-up">
+            Item {$ref} Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </div>
+        <div class="container" data-aos="fade-up">
+            Item {$ref} Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </div>
+        <br>
+    </section>
+
+</div>
+{/block}

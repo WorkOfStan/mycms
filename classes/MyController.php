@@ -2,6 +2,10 @@
 
 namespace GodsDev\MyCMS;
 
+use GodsDev\MyCMS\MyFriendlyUrl;
+use GodsDev\Tools\Tools;
+use Tracy\Debugger;
+
 /**
  * Controller ascertain what the request is
  * 
@@ -12,6 +16,9 @@ class MyController extends MyCommon
 
     /** @var array */
     protected $result;
+
+    /** @var \GodsDev\MyCMS\MyFriendlyUrl */
+    private $friendlyUrl;
 
     /**
      * accepted attributes:
@@ -37,11 +44,12 @@ class MyController extends MyCommon
             'pageTitle' => '',
             ])
         ];
+        $this->friendlyUrl = new MyFriendlyUrl($MyCMS, $options);
     }
 
     /**
+     * Kept only for backward compatibility for apps using 0.3.15 or older; to be replaced by run()
      * Outputs changed $MyCMS->template and $MyCMS->context as fields of an array
-     * Keep only for backward compatibility for apps using 0.3.15 or older; to be replaced by run()
      * 
      * @return array
      */
@@ -60,10 +68,38 @@ class MyController extends MyCommon
         return [
             "get" => $this->get,
             "session" => $this->session
-                //,"section_styles" => $this->sectionStyles
+            //,"section_styles" => $this->sectionStyles
         ];
     }
-    
+
+    /**
+     * To be defined in child
+     * Processes $this->MyCMS->template after method determineTemplate
+     * Set $this->MyCMS->context accordingly for all (or multiple) pages
+     * Might even change $this->MyCMS->template value
+     *
+     * @param array $options
+     * @return bool true on success, false on error
+     */
+    private function prepareAllTemplates(array $options = [])
+    {
+        return true;
+    }
+
+    /**
+     * To be defined in child
+     * Processes $this->MyCMS->template after method determineTemplate
+     * Set $this->MyCMS->context accordingly for single templates
+     * May even change $this->MyCMS->template value
+     *
+     * @param array $options
+     * @return bool true on success, false on error
+     */
+    private function prepareTemplate(array $options = [])
+    {
+        return true;
+    }
+
     /**
      * 301 Redirects to $redir (incl. relative) and die
      *
@@ -84,8 +120,8 @@ class MyController extends MyCommon
         die('<script type="text/javascript">window.location=' . json_encode($redir) . ";</script>\n"
             . '<a href=' . urlencode($redir) . '>&rarr;</a>'
         );
-    }    
-    
+    }
+
     /**
      * Determines template, set Session language, runs prepareTemplate for single template and prepareAllTemplates for general transformations
      * Outputs changed $MyCMS->template and $MyCMS->context as fields of an array
@@ -100,28 +136,20 @@ class MyController extends MyCommon
     public function run()
     {
         $this->verbose and Debugger::barDump($this->language, 'Language on controller start');
-
-        //@todo refactor to use $this->result['template'] and ['context'] instead of $this->MyCMS->template and context ?
         $this->MyCMS->template = $this->result['template'];
         $this->MyCMS->context = $this->result['context'];
-        $this->MyCMS->context['pageTitle'] = '';
 
-        $options = array(
-            'REQUEST_URI' => $this->requestUri,
-        );
+        $options = ['REQUEST_URI' => $this->requestUri,];
 
         // prepare variables and set templates for each kind of request
-        $templateDetermined = // $this->determineTemplate($options); //TODO: rovnou 
-                              $this->friendlyUrl->determineTemplate($options);// 
-                              ////Note: $this->MyCMS->template = 'home'; already set in MyControler
-        //
+        $templateDetermined = $this->friendlyUrl->determineTemplate($options); // Note: $this->MyCMS->template = 'home'; already set in MyControler
         // Note: $_SESSION['language'] je potřeba, protože to nastavuje stav jazyka pro browser
         // Note: $this->session je potřeba, protože je ekvivalentní proměnné $_SESSION, která je vstupem MyCMS->getSessionLanguage
         // Note: $this->language je potřeba, protože nastavuje jazyk v rámci instance Controller
         $this->session['language'] = $this->language; // = $this->friendlyUrl->getLanguage();
         $_SESSION['language'] = $this->MyCMS->getSessionLanguage(Tools::ifset($this->get, []), Tools::ifset($this->session, []), true); // Language is finally determined, therefore make the include creating TRANSLATION
         $this->MyCMS->logger->info("After determineTemplate: this->language={$this->language}, this->session['language']={$this->session['language']}, _SESSION['language']={$_SESSION['language']} this->get[language]=" . (isset($this->get['language']) ? $this->get['language'] : 'n/a'));
-//        Debugger::barDump($this->get, 'get in controller after determineTemplate');
+        $this->verbose and Debugger::barDump($this->get, 'get in controller after determineTemplate');
         if (is_string($templateDetermined)) {
             $this->MyCMS->template = $templateDetermined;
         } elseif (is_array($templateDetermined) && isset($templateDetermined['redir'])) {
@@ -133,15 +161,14 @@ class MyController extends MyCommon
         // PUT CONTROLLER CODE HERE
         $this->prepareAllTemplates($options);
 
-        if ($this->MyCMS->template === self::TEMPLATE_NOT_FOUND) { //TODO: remove this comment ... 'error404') {
-            http_response_code(404); //TODO: zkontrolovat, že fakt 404!  i se změnou řádku výše
+        if ($this->MyCMS->template === self::TEMPLATE_NOT_FOUND) {
+            http_response_code(404);
         }
 
-        return array(
+        return [
             'template' => $this->MyCMS->template,
             'context' => $this->MyCMS->context,
-        );
+        ];
     }
-    
 
 }
