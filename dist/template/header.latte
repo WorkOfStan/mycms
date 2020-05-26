@@ -11,10 +11,11 @@
         {*foreach $categories as $key => $value}
             <li {if $key == $line || ($ref == 'product' && isset($product['category_id']) && $product['category_id'] == $key)} class="active"{/if}><a href="?line={$key}">{$value}</a></li>
         {/foreach*}
-            <li class="active"><a href="?id=1">Item 1</a></li>
-            <li><a href="?id=2">Item 2</a></li>
-            <li><a href="?id=3">Item 3</a></li>
-            <li><a href="?id=4">Item 4</a></li>
+        {* populated from config.php *}
+        {foreach $WEBSITE['menu'] as $key => $value}
+            <li{if $ref == $key} class="active"{/if}><a href="{$key}">{$value}</a></li>
+        {/foreach}
+            <li{if $ref == 'home'} class="active"{/if}><a href="?id=4">Item 5</a></li>
         </ul>
 
         <ul class="right-bar">

@@ -32,8 +32,10 @@ $controller = new \GodsDev\mycmsprojectnamespace\Controller($MyCMS, [
     'session' => $_SESSION,
     'language' => $_SESSION['language'],
     'verbose' => DEBUG_VERBOSE,
+    'featureFlags' => $featureFlags,
     ]);
-$controllerResult = $controller->controller();
+//$controllerResult = $controller->controller();
+$controllerResult = $controller->run();
 $MyCMS->template = $controllerResult['template'];
 $MyCMS->context = $controllerResult['context'];
 Debugger::barDump($controllerResult, 'ControllerResult');
@@ -46,7 +48,7 @@ use \GodsDev\Tools\Tools;
 
 $customFilters = new \GodsDev\mycmsprojectnamespace\Latte\CustomFilters($MyCMS);
 
-$MyCMS->renderLatte(DIR_TEMPLATE_CACHE, array($customFilters, 'common'), array_merge(
+$MyCMS->renderLatte(DIR_TEMPLATE_CACHE, [$customFilters, 'common'], array_merge(
         [
             'WEBSITE' => $MyCMS->WEBSITE,
             'SETTINGS' => $MyCMS->SETTINGS,
@@ -60,5 +62,6 @@ $MyCMS->renderLatte(DIR_TEMPLATE_CACHE, array($customFilters, 'common'), array_m
             'development' => $developmentEnvironment,
             'pageResourceVersion' => PAGE_RESOURCE_VERSION,
             'useCaptcha' => USE_CAPTCHA,
+            'featureFlags' => $featureFlags,
         ], $MyCMS->context
 ));

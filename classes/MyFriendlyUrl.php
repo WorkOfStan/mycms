@@ -10,8 +10,9 @@ class MyFriendlyUrl extends MyCommon
 
     const PAGE_NOT_FOUND = '404';
     const PARSE_PATH_PATTERN = '~/(en\/|de/|cn/)?(.*/)?.*?~';
-    const TEMPLATE_NOT_FOUND = 'error404'; // SHOULD be same as in Controller
-    const TEMPLATE_DEFAULT = 'home'; // SHOULD be same as in GodsDev\MyCMS\MyController and in Controller and in config.php
+    //moved to MyCommon
+//    const TEMPLATE_NOT_FOUND = 'error404'; // SHOULD be same as in Controller
+//    const TEMPLATE_DEFAULT = 'home'; // SHOULD be same as in GodsDev\MyCMS\MyController and in Controller and in config.php
 
     use \Nette\SmartObject;
 

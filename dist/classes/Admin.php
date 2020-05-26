@@ -2,8 +2,6 @@
 
 namespace GodsDev\mycmsprojectnamespace;
 
-//use GodsDev\Tools\Tools;
-//use Tracy\Debugger;
 use GodsDev\MyCMS\MyAdmin;
 use GodsDev\MyCMS\MyCMS;
 

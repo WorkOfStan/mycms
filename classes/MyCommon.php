@@ -11,6 +11,9 @@ use Tracy\Debugger;
 class MyCommon
 {
 
+    const TEMPLATE_NOT_FOUND = 'error404'; // MUST be the same both for Controller extends MyController extends MyCommon and MyFriendlyUrl extends MyCommon
+    const TEMPLATE_DEFAULT = 'home'; // MUST be the same both for Controller extends MyController extends MyCommon and MyFriendlyUrl extends MyCommon
+
     use \Nette\SmartObject;
 
     /** @var \GodsDev\MyCMS\MyCMS */

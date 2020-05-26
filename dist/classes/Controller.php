@@ -4,16 +4,17 @@ namespace GodsDev\mycmsprojectnamespace;
 
 use GodsDev\MyCMS\MyCMS;
 use GodsDev\MyCMS\MyController;
-use GodsDev\Tools\Tools;
 use GodsDev\mycmsprojectnamespace\ProjectSpecific;
+//use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use Tracy\ILogger;
 
 class Controller extends MyController
 {
 
-    const TEMPLATE_NOT_FOUND = 'error404'; // SHOULD be same as in FriendlyURL
-    const TEMPLATE_DEFAULT = 'home'; // SHOULD be same as in GodsDev\MyCMS\MyController and in FriendlyURL
+    //moved to MyCommon
+//    const TEMPLATE_NOT_FOUND = 'error404'; // SHOULD be same as in FriendlyURL
+//    const TEMPLATE_DEFAULT = 'home'; // SHOULD be same as in GodsDev\MyCMS\MyController and in FriendlyURL
 
     use \Nette\SmartObject;
 
@@ -23,13 +24,22 @@ class Controller extends MyController
     protected $requestUri = ''; //default is homepage
 
     /** @var array */
-    protected $sectionStyles;
+    protected $sectionStyles; //TODO is needed? Probably remove from here and also MyCMS/dist.
 
     /** @var \GodsDev\mycmsprojectnamespace\ProjectSpecific */
     private $projectSpecific;
 
+    /** @var \GodsDev\mycmsprojectnamespace\FriendlyUrl */
+    private $friendlyUrl;
+
     /** @var string */
-    protected $language = 'cs'; //default is Czech for MYCMSPROJECTSPECIFIC
+    protected $httpMethod;
+
+    /** @var string */
+    protected $language = DEFAULT_LANGUAGE;
+
+    /** @var array */
+    protected $featureFlags; //TODO: Maybe move to MyController ?
 
     /**
      * Bleeds information within determineTemplate method
@@ -59,6 +69,11 @@ class Controller extends MyController
     {
         parent::__construct($MyCMS, $options);
         $this->projectSpecific = new ProjectSpecific($this->MyCMS, ['language' => $this->language]);
+        //Note: $this->featureFlags is populated
+        $this->friendlyUrl = new FriendlyUrl($MyCMS, $options);
+        if (substr($this->friendlyUrl->applicationDir, -1) === '/') {
+            throw new \Exception('applicationDir MUST NOT end with slash');
+        }
     }
 
     /**
@@ -68,24 +83,42 @@ class Controller extends MyController
      * @return mixed string when template determined, array with redir field when redirect
      * TODO: move to parent, i.e. to MyCMS\MyController, as public
      */
+    /*
     public function determineTemplate(array $options = array())
     {
         //This is only placeholder as a preparation for a proper FriendlyURL mechanism
         return $this->MyCMS->template; // = 'home'; already set in MyControler
 //        return $this->friendlyUrl->determineTemplate($options);
     }
+     * 
+     */
+    
+    /**
+     * Processes $this->MyCMS->template after method determineTemplate
+     * Set $this->MyCMS->context accordingly for all (or multiple) pages
+     * Might even change $this->MyCMS->template value
+     *
+     * @param array $options
+     * @return bool true on success, false on error
+     */
+    private function prepareAllTemplates(array $options = [])
+    {
+        return true;
+    }
+    
 
     /**
-     * Process $this->MyCMS->template after method determineTemplate
-     * Set $this->MyCMS->context accordingly
+     * Processes $this->MyCMS->template after method determineTemplate
+     * Set $this->MyCMS->context accordingly for single templates
      * May even change $this->MyCMS->template value
      *
      * @param array $options
-     * @return boolean
+     * @return bool true on success, false on error
      */
     private function prepareTemplate(array $options = [])
     {
         $this->verbose and Debugger::barDump($this->MyCMS->template, 'template used to prepareTemplate switch');
+        Debugger::barDump($requestMethod = $this->httpMethod, 'REQUEST_METHOD'); //TODO filtrovat, resp. předat parametricky
         switch ($this->MyCMS->template) {
             case self::TEMPLATE_DEFAULT: return true;
             case self::TEMPLATE_NOT_FOUND: return true;
@@ -108,6 +141,7 @@ class Controller extends MyController
      * 
      * @param string $redir
      */
+    /*
     private function redir($redir)
     {
         if (isset($_SESSION['user'])) {
@@ -124,12 +158,15 @@ class Controller extends MyController
             . '<a href=' . urlencode($redir) . '>&rarr;</a>'
         );
     }
+     * 
+     */
 
     /**
      * Outputs changed $MyCMS->template and $MyCMS->context as fields of an array
      * 
      * @return array
      */
+    /*
     public function controller()
     {
         $this->verbose and Debugger::barDump($this->language, 'Language on controller start');
@@ -145,8 +182,8 @@ class Controller extends MyController
         );
 
         // prepare variables and set templates for each kind of request
-        $templateDetermined = $this->determineTemplate($options);
-
+        $templateDetermined = $this->determineTemplate($options); //TODO: rovnou $this->friendlyUrl->determineTemplate($options) ??? ale teď tam mám foreach a if //Note: $this->MyCMS->template = 'home'; already set in MyControler
+        //
         // Note: $_SESSION['language'] je potřeba, protože to nastavuje stav jazyka pro browser
         // Note: $this->session je potřeba, protože je ekvivalentní proměnné $_SESSION, která je vstupem MyCMS->getSessionLanguage
         // Note: $this->language je potřeba, protože nastavuje jazyk v rámci instance Controller
@@ -163,8 +200,9 @@ class Controller extends MyController
         $this->prepareTemplate($options);
 
         // PUT CONTROLLER CODE HERE
+        // TODO: zde volat $this->prepareAllPages();
 
-        if ($this->MyCMS->template === 'error404') {
+        if ($this->MyCMS->template === self::TEMPLATE_NOT_FOUND) { //TODO: remove this comment ... 'error404') {
             http_response_code(404);
         }
 
@@ -173,7 +211,7 @@ class Controller extends MyController
             'context' => $this->MyCMS->context,
         );
     }
-
+*/
     /**
      * For PHP Unit test
      * 

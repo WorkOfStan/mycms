@@ -7,9 +7,9 @@ namespace GodsDev\mycmsprojectnamespace;
  * dependencies: 
  * * TableAdmin.php
  */
-use GodsDev\Tools\Tools;
 use GodsDev\MyCMS\MyCMS;
 use GodsDev\MyCMS\MyAdminProcess;
+use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 
 define('PROCESS_LIMIT', 100);
@@ -206,11 +206,11 @@ class AdminProcess extends MyAdminProcess
         Tools::setifempty($options['path']);
         $sql = isset($options['path']) ? 'CONCAT(REPEAT("… ",LENGTH(' . $this->MyCMS->dbms->escapeDbIdentifier($options['path']) . ') / ' . PATH_MODULE . ' - 1),' . $options['table'] . '_' . DEFAULT_LANGUAGE . ')' : (isset($options['column']) ? $options['column'] : $options['table'] . '_' . DEFAULT_LANGUAGE);
         $sql = 'SELECT id,' . (isset($options['path']) ? $sql : $this->MyCMS->dbms->escapeDbIdentifier($sql)) . ' AS name'
-                . Tools::wrap($options['sort'], ',', ' AS sort') . Tools::wrap($options['path'], ',', ' AS path')
-                . ' FROM ' . $this->MyCMS->dbms->escapeDbIdentifier(TAB_PREFIX . $options['table'])
-                . Tools::wrap(isset($options['where']) ? $options['where'] : '', ' WHERE ')
-                . Tools::wrap($options['sort'] . ($options['sort'] && $options['path'] ? ',' : '') . $options['path'], ' ORDER BY ')
-                . ' LIMIT ' . $this::PROCESS_LIMIT;
+            . Tools::wrap($options['sort'], ',', ' AS sort') . Tools::wrap($options['path'], ',', ' AS path')
+            . ' FROM ' . $this->MyCMS->dbms->escapeDbIdentifier(TAB_PREFIX . $options['table'])
+            . Tools::wrap(isset($options['where']) ? $options['where'] : '', ' WHERE ')
+            . Tools::wrap($options['sort'] . ($options['sort'] && $options['path'] ? ',' : '') . $options['path'], ' ORDER BY ')
+            . ' LIMIT ' . $this::PROCESS_LIMIT;
         $query = $this->MyCMS->dbms->query($sql);
         if ($query) {
             for ($i = 1; $row = $query->fetch_assoc(); $i++) {

@@ -47,10 +47,10 @@ class FriendlyUrl extends MyFriendlyUrl
     }
 
     /**
-     * SQL statement searching for $token in url_LL column of table product
+     * SQL statement searching for $token in url_LL column of table(s) with content pieces addressed by FriendlyURL tokens
      * 
      * @param string $token
-     * @return mixed null on failure or string on success
+     * @return mixed null on empty result, false on database failure or one-dimensional array on success
      */
     protected function findFriendlyUrlToken($token)
     {
@@ -66,16 +66,17 @@ class FriendlyUrl extends MyFriendlyUrl
     }
 
     /**
-     * Returns Friendly Url string for type=id URL if it is available
+     * Returns Friendly Url string for type=id URL if it is available or it returns type=id
      * 
-     * @param string $outputKey
-     * @param string $outputValue
-     * @return mixed null or string
+     * @param string $outputKey `type`
+     * @param string $outputValue `id`
+     * @return mixed null (do not change the output) or string (URL - friendly or parametric)
      */
     protected function switchParametric($outputKey, $outputValue)
     {
         Debugger::barDump("{$outputKey} => {$outputValue}", 'switchParametric started');
         $this->projectSpecific->language($this->language);
+        /*
         //A example
         $this->projectSpecific->setCategories();
         switch ($outputKey) {
@@ -135,6 +136,24 @@ class FriendlyUrl extends MyFriendlyUrl
                 Debugger::log("undefined friendlyfyUrl for {$outputKey} => {$outputValue}", ILogger::ERROR);
         }
         // /F example
+*/
+
+        switch ($outputKey) {
+            case 'article':
+                if (empty($outputValue)) {
+                    return isset($this->get['offset']) ? "?news&offset=" . (int) $this->get['offset'] : "?news";
+                }
+                $content = $this->MyCMS->dbms->fetchSingle('SELECT id, name_' . $this->language . ' AS name,'
+                    . $this->projectSpecific->getLinkSql("?article=", $this->language)
+                    . ' FROM ' . TAB_PREFIX . 'content WHERE active = 1 '
+                    . ' AND id = "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"');
+                Debugger::barDump($content, 'content piece');
+                return is_null($content) ? (self::PAGE_NOT_FOUND) : $content['link'];
+            case 'language':
+                return null; // i.e. do not change the output or return "?{$outputKey}={$outputValue}";
+            default:
+                Debugger::log("undefined friendlyfyUrl for {$outputKey} => {$outputValue}", ILogger::ERROR);
+        }
 
         return null;
     }
