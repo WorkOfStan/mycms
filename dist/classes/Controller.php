@@ -79,7 +79,7 @@ class Controller extends MyController
      * @param array $options
      * @return bool true on success, false on error
      */
-    private function prepareAllTemplates(array $options = [])
+    protected function prepareAllTemplates(array $options = [])
     {
         return true;
     }
@@ -92,7 +92,7 @@ class Controller extends MyController
      * @param array $options
      * @return bool true on success, false on error
      */
-    private function prepareTemplate(array $options = [])
+    protected function prepareTemplate(array $options = [])
     {
         $this->verbose and Debugger::barDump($this->MyCMS->template, 'template used to prepareTemplate switch');
         Debugger::barDump($requestMethod = $this->httpMethod, 'REQUEST_METHOD'); //TODO filtrovat, resp. předat parametricky
