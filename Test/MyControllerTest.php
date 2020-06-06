@@ -61,7 +61,7 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
         $this->object = new MyController($this->myCms);
         $this->assertEquals(['template' => 'home', 'context' => [
                 'pageTitle' => '',
-                'applicationDir' => dirname($_SERVER['PHP_SELF']) . '/',
+//                'applicationDir' => dirname($_SERVER['PHP_SELF']) . '/',
             ]], $this->object->controller());
     }
 

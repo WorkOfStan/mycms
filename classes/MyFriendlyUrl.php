@@ -84,7 +84,8 @@ class MyFriendlyUrl extends MyCommon
      *   0 => "/a/c/" ... the text that matched the full pattern
      *   1 => "" ... language subpattern
      *   2 => "a/c/"  ... rest of the path subpattern
-     * ]        // matchResult =
+     * ]
+     * matchResult = (1=pattern matches `PARSE_PATH_PATTERN`, 0=it does not, or FALSE=error)
      * 
      * @param array $options
      * @return mixed 1) bool (true) or 2) array with redir string field or 3) array with token string field and matches array field (see above)
@@ -154,8 +155,7 @@ class MyFriendlyUrl extends MyCommon
      */
     public function determineTemplate(array $options = [])
     {
-        $this->verboseBarDump($options, 'FriendlyURL: determineTemplate options');
-        $this->verboseBarDump($this->get, 'FriendlyURL: get to determineTemplate');
+        $this->verboseBarDump(['options' => $options, 'get' => $this->get], 'FriendlyURL: determineTemplate options and HTTP request parameters');
 
         //FRIENDLY URL & Redirect variables
         $friendlyUrlRedirectVariables = $this->friendlyIdentifyRedirect($options);

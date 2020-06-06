@@ -18,18 +18,27 @@ class MyController extends MyCommon
     /** @var array */
     protected $result;
 
-    /** @var \GodsDev\MyCMS\MyFriendlyUrl */
-    private $friendlyUrl;
-
     /**
      * accepted attributes:
      */
 
-    /** @var array */
+    /**
+     * HTTP request parameters
+     * 
+     * @var type 
+     */
     protected $get;
 
     /** @var array */
     protected $session;
+
+    /**
+     * Friendly URL instance MAY be passsed from project Controller.
+     * It is eventually instantiated in Controller in order to use project specific methods.
+     * 
+     * @var \GodsDev\MyCMS\MyFriendlyUrl
+     */
+    protected $friendlyUrl;
 
     /**
      * 
@@ -39,14 +48,18 @@ class MyController extends MyCommon
     public function __construct(MyCMS $MyCMS, array $options = [])
     {
         parent::__construct($MyCMS, $options);
-        $this->friendlyUrl = new MyFriendlyUrl($MyCMS, $options);
         $this->result = [
             'template' => 'home',
             'context' => ($this->MyCMS->context ? $this->MyCMS->context : [
             'pageTitle' => '',
-            'applicationDir' => $this->friendlyUrl->applicationDir . '/', // so that URL relative to root may be constructed in latte (e.g. language selector) $this->friendlyUrl->applicationDir never ends with / . Latte may use URL relative to domain root. $this->MyCMS->context['applicationDir'] always ends with /
             ])
         ];
+        if (isset($this->friendlyUrl) && ($this->friendlyUrl instanceof MyFriendlyUrl)) {
+            if (substr($this->friendlyUrl->applicationDir, -1) === '/') {
+                throw new \Exception('applicationDir MUST NOT end with slash');
+            }
+            $this->result['context']['applicationDir'] = $this->friendlyUrl->applicationDir . '/'; // so that URL relative to root may be constructed in latte (e.g. language selector) $this->friendlyUrl->applicationDir never ends with / . Latte may use URL relative to domain root. $this->MyCMS->context['applicationDir'] always ends with /
+        }
     }
 
     /**

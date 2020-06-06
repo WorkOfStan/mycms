@@ -4,6 +4,7 @@ namespace GodsDev\mycmsprojectnamespace;
 
 use GodsDev\MyCMS\MyCMS;
 use GodsDev\MyCMS\MyController;
+use GodsDev\mycmsprojectnamespace\FriendlyUrl;
 use GodsDev\mycmsprojectnamespace\ProjectSpecific;
 use Tracy\Debugger;
 use Tracy\ILogger;
@@ -24,17 +25,18 @@ class Controller extends MyController
     /** @var \GodsDev\mycmsprojectnamespace\ProjectSpecific */
     private $projectSpecific;
 
-    /** @var \GodsDev\mycmsprojectnamespace\FriendlyUrl */
-    private $friendlyUrl;
-
     /** @var string */
     protected $httpMethod;
 
     /** @var string */
     protected $language = DEFAULT_LANGUAGE;
 
-    /** @var array */
-    protected $featureFlags; //TODO: Maybe move to MyController ?
+    /**
+     * Feature flags that bubble down to latte and controller
+     * 
+     * @var array 
+     */
+    protected $featureFlags;
 
     /**
      * Bleeds information within determineTemplate method
@@ -62,13 +64,11 @@ class Controller extends MyController
      */
     public function __construct(MyCMS $MyCMS, array $options = [])
     {
-        parent::__construct($MyCMS, $options);
+        parent::__construct($MyCMS, array_merge($options, [
+            'friendlyUrl' => new FriendlyUrl($MyCMS, $options), //$this->friendlyUrl instantiated
+        ]));
         $this->projectSpecific = new ProjectSpecific($this->MyCMS, ['language' => $this->language]);
         //Note: $this->featureFlags is populated
-        $this->friendlyUrl = new FriendlyUrl($MyCMS, $options);
-        if (substr($this->friendlyUrl->applicationDir, -1) === '/') {
-            throw new \Exception('applicationDir MUST NOT end with slash');
-        }
     }
 
     /**
