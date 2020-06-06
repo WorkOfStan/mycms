@@ -93,42 +93,44 @@ Paste this snippet at the end of the <form> where you want the reCAPTCHA widget 
 # SEO
 
 Friendly URLs and redirects are *always* processed (if `mod_rewrite` is enabled and Rewrite section in `.htaccess` is present).
-If the web does not run in the root directory, set its parent folder name in `conf\config.local.php`:
-TODO, 200523: just the parent folder name or the whole path??
+If the web runs in the root of the domain, then the default token `PATHINFO_FILENAME` is an empty string;
+if the web does not run in the root directory, set its parent folder name (not the whole path) in `conf\config.local.php`:
 ```php
 define('HOME_TOKEN', 'parent-directory');
 ```
-
-Name (???TODO - to znamená HTML tag title nebo něco jiného ??) all the pages in order not to confuse Google with multiple pages with the same content.
 
 Showing Friendly URLs may be turned off in `conf\config.local.php`:
 ```php
 define('FRIENDLY_URL', false);
 ```
 
-Imagine that
+Constant `FORCE_301` enforces [HTTP 301 redirect](https://en.wikipedia.org/wiki/HTTP_301) to the most friendly URL that is available
+(i.e. either friendly URL or parametric URL on application directory) which means 
+that each page is displayed with a unique URL. It is good for SEO.
+Therefore it is not necessary to translate URL within content (e.g. from the parametric to friendly) as they end up on the right unique URL, anyway.
+
+Given that
 `/?article=1` has friendly URL `/alfa` and `/?article=2` has friendly URL `/beta`, then:
 
-|    |       FRIENDLY_URL = false      |  FRIENDLY_URL = true |
-|----------|-------------|------|
-| **FORCE_301 = false** |  `/?article=1` displays *`article 1`* | `/?article=1` displays *`article 1`* |
-|  |  `/?article=1&x=y` displays *`article 1`* | `/?article=1&x=y` displays *`article 1`* |
-|  |  `/alfa` displays *`article 1`*    |  `/alfa` displays *`article 1`*  |
-|  |  `/alfa&article=2` displays *`article 1`*    |  `/alfa&article=2` displays *`article 1`*  |
-|  |  generates(TODO upřesnit) link to `/?article=1`    |  generates(TODO upřesnit) link to `/alfa`  |
-| **FORCE_301 = true** |  `/?article=1` displays *`article 1`* | `/?article=1` redirects to `/alfa` |
-|  |  `/?article=1&x=y` redirects to `/?article=1`  | `/?article=1&x=y` redirects to `/alfa` |
-|  |  `/alfa` displays `article1`    |  `/alfa` displays *`article 1`*  |
-|  |  generates(TODO upřesnit) link to `/?article=1`    |  generates(TODO upřesnit) link to `/alfa`  |
-
+| | FRIENDLY_URL = false                          |  FRIENDLY_URL = true |
+|-|-----------------------------------------------|------|
+| **FORCE_301 = false** | | |
+| | `/?article=1` displays *`article 1`*            | `/?article=1` displays *`article 1`*          |
+| |  `/?article=1&x=y` displays *`article 1`*       | `/?article=1&x=y` displays *`article 1`*      |
+| |  `/alfa` displays *`article 1`*                 |  `/alfa` displays *`article 1`*               |
+| |  `/alfa?article=2` displays *`article 2`*       |  `/alfa?article=2` displays *`article 2`*     |
+| |  ProjectCommon->getLinkSql() generates link to `/?article=1` |  **ProjectCommon->getLinkSql() generates link to `/alfa`**  |
+| **FORCE_301 = true**  | | |
+| |  `/?article=1` displays *`article 1`*             | **`/?article=1` redirects to `/alfa`**      |
+| |  `/?article=1&x=y` displays *`article 1`*         | **`/?article=1&x=y` redirects to `/alfa`**  |
+| |  `/alfa` displays `article1`                      |  `/alfa` displays *`article 1`*             |
+| |  **`/alfa?article=2` redirects to `/?article=2`** |  **`/alfa?article=2` redirects to `/beta`** |
+| |  ProjectCommon->getLinkSql() generates link to `/?article=1` |  ProjectCommon->getLinkSql() generates link to `/alfa`  |
 
 TODO: make more clear
 * Tabulky `#_content`, `#_product` musí mít sloupce `url_##` (## = dvoumístný kód pro všechny jazykové verze).
 * Do `url_##` se uloží "webalizované" názvy dané stránky/produktu (dle funkce `Tools::webalize`). Výjimkou může být `_content`, který není plnohodnotná stránka – ten může obsahovat `NULL`. Převod lze zprvu udělat programaticky (je to na pár řádků), pak do CMS přidat tlačítko pro převod nebo převod udělat při uložení.
 
-`FORCE_301` performs 301 redirect to the most friendly URL that is available (i.e. either friendly URL or parametric URL on application directory) which means 
-that each page is displayed with a unique URL.
-Therefore it is not necessary to translate URL within content (e.g. from the parametric to friendly) as they end up on the right unique URL.
 
 #### Example of rules
 * `/?product=4` → `/konzultacni-poradenctvi`
@@ -236,7 +238,7 @@ Add protected functions to Admin.php according to MyAdmin.php in order to add me
 throw new \Exception('Exception description');
 ```
 
-`$debugIpArray` in `config.php` contains IPs where Tracy will be displayed.
+`$debugIpArray` in `config.php` contains IPs for which Tracy will be displayed.
 
 ## REST API
 
@@ -272,7 +274,7 @@ When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in
 # TODO
 
 ## TODO lokalizace
-
+200526, jazykový přepínač rovnou vybere správné URL, pokud pro daný jazky existuje
 
 ## TODO CMS
 

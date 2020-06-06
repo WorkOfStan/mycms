@@ -94,7 +94,7 @@ class Controller extends MyController
      */
     protected function prepareTemplate(array $options = [])
     {
-        $this->verbose and Debugger::barDump($this->MyCMS->template, 'template used to prepareTemplate switch');
+        $this->verboseBarDump($this->MyCMS->template, 'template used to prepareTemplate switch');
         Debugger::barDump($requestMethod = $this->httpMethod, 'REQUEST_METHOD'); //TODO filtrovat, resp. předat parametricky
         switch ($this->MyCMS->template) {
             case self::TEMPLATE_DEFAULT: return true;

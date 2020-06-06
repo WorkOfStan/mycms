@@ -10,16 +10,16 @@ define('DB_HOST', 'localhost');
 define('DB_PORT', ini_get('mysqli.default_port'));
 define('TAB_PREFIX', 'MYCMSPROJECTSPECIFIC_'); //prefix for database tables
 
-define('LOG_FILE', './log/log.txt');
-define('PATH_MODULE', 10); // length of one node in category.path in digits
-define('RECAPTCHA_KEY', '............');
-define('EXPAND_INFIX', "\t"); // infix for JSON-exapandable values
+define('DIR_ASSETS', 'assets/');
 define('DIR_TEMPLATE', __DIR__ . '/../template'); //for Latte
 define('DIR_TEMPLATE_CACHE', __DIR__ . '/../cache'); //for Latte
+define('EXPAND_INFIX', "\t"); // infix for JSON-exapandable values
 define('L_UCFIRST', max(MB_CASE_UPPER, MB_CASE_LOWER, MB_CASE_TITLE) + 1);
-define('URL_RECAPTCHA_VERIFY', 'https://www.google.com/recaptcha/api/siteverify');
-define('DIR_ASSETS', 'assets/');
+define('LOG_FILE', './log/log.txt');
 define('MYCMS_SECRET', 'u7-r!!T7.&&7y6ru'); //16-byte random string, unique per project
+define('PATH_MODULE', 10); // length of one node in category.path in digits
+define('RECAPTCHA_KEY', '............');
+define('URL_RECAPTCHA_VERIFY', 'https://www.google.com/recaptcha/api/siteverify');
 //
 //for godsdev/backyard
 $backyardConf = [
@@ -107,23 +107,23 @@ include_once __DIR__ . '/config.local.php'; //use config.local.dist.php as speci
 //constants not set in config.local.php
 foreach (
 [
+    'DEBUG_VERBOSE' => false,
     'DEFAULT_LANGUAGE' => 'cs',
-    'UNDER_CONSTRUCTION' => false,
+    'EMAIL_ADMIN' => 'rejthar@gods.cz', //email used by Tracy\Debugger
+    'FORCE_301' => true, //enforce 301 redirect to the most friendly URL available
+    'FRIENDLY_URL' => false, //default = do not generate friendly URL
     'GA_UID' => 'UA-39642385-1',
-//    'PAGINATION_SEARCH' => 10,
-//    'PAGINATION_NEWS' => 2,
-    'SMTP_HOST' => 'localhost',
-    'SMTP_PORT' => 25,
+    'HOME_TOKEN' => '', //If the web runs in the root of the domain, then the default token `PATHINFO_FILENAME` is an empty string; if the web does not run in the root directory, set its parent folder name (not the whole path) here.
     'NOTIFY_FROM_ADDRESS' => 'notifier-MYCMSPROJECTSPECIFIC@godsapps.eu', //@todo založit příslušnou schránku
     'NOTIFY_FROM_NAME' => 'Notifikátor',
-    'EMAIL_ADMIN' => 'rejthar@gods.cz', //email used by Tracy\Debugger
     'PAGE_RESOURCE_VERSION' => 1,
-    'USE_CAPTCHA' => false,
-    'DEBUG_VERBOSE' => false,
-    'FRIENDLY_URL' => false,
-    'HOME_TOKEN' => '', //když web běží v rootu domény, tak je defaultní token `PATHINFO_FILENAME` prázdný řetězec; pokud běží jinde, tak je tím jméno rodičovského adresáře k nastavení v config.local.php
-    'FORCE_301' => true, //if FRIENDLY_URL but called as parametric, force 301 redirect, it is good for SEO
+//    'PAGINATION_SEARCH' => 10,
+//    'PAGINATION_NEWS' => 2,
     'REDIRECTOR_ENABLED' => false, //table redirector with columns old_url, new_url, active exists
+    'SMTP_HOST' => 'localhost',
+    'SMTP_PORT' => 25,
+    'UNDER_CONSTRUCTION' => false,
+    'USE_CAPTCHA' => false,
 ] as $constant => $value) {
     if (!defined($constant)) {
         define($constant, $value);
