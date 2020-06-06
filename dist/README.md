@@ -286,6 +286,5 @@ When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in
 
 
 ## TODO other
-* 1812 až friendlyUrl součástí MyCMS, tak v .latte zrušit {dirname($_SERVER['SCRIPT_NAME'])} a dát místo toho applicationDir
 * 190611 add article and search page types including controller tests
 * 190611 Make SASS to CSS conversion automatic (e.g. gulp)

@@ -3,15 +3,16 @@
     <head>
         <meta charset="utf-8">
         <title>{$pageTitle ? $pageTitle . " · " : ""}{$WEBSITE['title']}</title>
+        <meta name="description" content="{$WEBSITE['slogan']}">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i,700,700i&amp;subset=latin-ext">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.rawgit.com/michalsnik/aos/2.1.1/dist/aos.css">
-        <link rel="stylesheet" href="scripts/lib/owlcarousel/assets/owl.carousel.min.css">
-        <link rel="stylesheet" href="scripts/lib/owlcarousel/assets/owl.theme.green.min.css">
+        <link rel="stylesheet" href="{$applicationDir}scripts/lib/owlcarousel/assets/owl.carousel.min.css">
+        <link rel="stylesheet" href="{$applicationDir}scripts/lib/owlcarousel/assets/owl.theme.green.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link rel="stylesheet" href="styles/index.css?v={$pageResourceVersion}">
+        <link rel="stylesheet" href="{$applicationDir}styles/index.css?v={$pageResourceVersion}">
         {include 'favicon.latte'}
         <script>
             GA_UID = {$gauid};
@@ -33,7 +34,7 @@
             ga('require', 'pageVisibilityTracker');
             ga('send', 'pageview');
         </script>
-        <script async src="scripts/autotrack.2.4.1.js"></script>
+        <script async src="{$applicationDir}scripts/autotrack.2.4.1.js"></script>
         <script src='https://www.google.com/recaptcha/api.js?hl={$language == 'cn' ? 'ZH-CN' : $language}'></script>
     </head>
     <body class="view-{$ref}">
@@ -55,9 +56,9 @@
         <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
-        <script src="scripts/lib/owlcarousel/owl.carousel.min.js"></script>
+        <script src="{$applicationDir}scripts/lib/owlcarousel/owl.carousel.min.js"></script>
         <script src="https://cdn.rawgit.com/michalsnik/aos/2.1.1/dist/aos.js"></script>
-        <script src="scripts/index.js?v={$pageResourceVersion}"></script>
+        <script src="{$applicationDir}scripts/index.js?v={$pageResourceVersion}"></script>
         {block script}{/block}
     </body>
 </html>

@@ -2,7 +2,7 @@
 <header class="header">
     <div class="container">
         <h1>
-            <a href="{dirname($_SERVER['SCRIPT_NAME'])}" title="{="Na úvodní stranu"|translate}">MYCMSPROJECTSPECIFIC homepage link</a>
+            <a href="{$applicationDir}" title="{="Na úvodní stranu"|translate}">MYCMSPROJECTSPECIFIC homepage link</a>
         </h1>
 
         <span class="hamburger"><i class="fa fa-bars"></i><i class="fa fa-times"></i></span>
@@ -13,20 +13,20 @@
         {/foreach*}
         {* populated from config.php *}
         {foreach $WEBSITE['menu'] as $key => $value}
-            <li{if $ref == $key} class="active"{/if}><a href="{$key}">{$value}</a></li>
+            <li{if $ref == $key} class="active"{/if}><a href="{$applicationDir}{$key}">{$value}</a></li>
         {/foreach}
-            <li{if $ref == 'home'} class="active"{/if}><a href="?id=5">Item 5</a></li>
+            <li{if $ref == 'home'} class="active"{/if}><a href="{$applicationDir}?id=5">Item 5</a></li>
         </ul>
 
         <ul class="right-bar">
-            <li class="dropdown"><a href="?category&code=contacts" title="{="Kontakty"|translate}">{="Kontakty"|translate}</a></li>
+            <li class="dropdown"><a href="{$applicationDir}?category&code=contacts" title="{="Kontakty"|translate}">{="Kontakty"|translate}</a></li>
             {include 'language-selector.latte', selectorId => 'header'}
             <li><a href="#" class="toggleSearch" title="{="hledat"|translate|firstUpper}"><i class="fa fa-search"></i></a></li>
         </ul>
     </div>
 
     <div class="searchbar">
-        <form method="GET" action="{$_SERVER['REQUEST_URI']}">
+        <form method="GET" action="{$applicationDir}">
             <div class="container">
                 <input type="text" name="search" required>
                 <button type="submit" class="btn btn-secondary">{="hledat"|translate|firstUpper}</button>

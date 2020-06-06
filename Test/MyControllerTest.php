@@ -59,7 +59,10 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
     public function testControllerNoContext()
     {
         $this->object = new MyController($this->myCms);
-        $this->assertEquals(['template' => 'home', 'context' => ['pageTitle' => '']], $this->object->controller());
+        $this->assertEquals(['template' => 'home', 'context' => [
+                'pageTitle' => '',
+                'applicationDir' => dirname($_SERVER['PHP_SELF']) . '/',
+            ]], $this->object->controller());
     }
 
     /**
@@ -67,9 +70,9 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function testControllerContext()
     {
-        $this->myCms->context = array("1" => "2", "3" => "4", "c");
+        $this->myCms->context = ['1' => '2', '3' => '4', 'c'];
         $this->object = new MyController($this->myCms);
-        $this->assertEquals(["template" => "home", "context" => $this->myCms->context], $this->object->controller());
+        $this->assertEquals(['template' => 'home', 'context' => $this->myCms->context], $this->object->controller());
     }
 
     /**
@@ -77,11 +80,11 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetVars()
     {
-        $this->myCms->context = ["1" => "2", "3" => "4", "c"];
+        $this->myCms->context = ['1' => '2', '3' => '4', 'c'];
         $options = [
-            "get" => ["v1" => "getSth"],
-            "session" => ["v1" => "getSth"],
-            //"section_styles" => ["red", "blue",],
+            'get' => ['v1' => 'getSth'],
+            'session' => ['v1' => 'getSth'],
+            //'section_styles' => ['red', 'blue',],
         ];
         $this->object = new MyController($this->myCms, $options);
         $this->assertEquals($options, $this->object->getVars());

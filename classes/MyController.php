@@ -3,6 +3,7 @@
 namespace GodsDev\MyCMS;
 
 use GodsDev\MyCMS\MyFriendlyUrl;
+use GodsDev\MyCMS\Tracy\BarPanelTemplate;
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 
@@ -38,18 +39,24 @@ class MyController extends MyCommon
     public function __construct(MyCMS $MyCMS, array $options = [])
     {
         parent::__construct($MyCMS, $options);
+        $this->friendlyUrl = new MyFriendlyUrl($MyCMS, $options);
         $this->result = [
             'template' => 'home',
             'context' => ($this->MyCMS->context ? $this->MyCMS->context : [
             'pageTitle' => '',
+            'applicationDir' => $this->friendlyUrl->applicationDir . '/', // so that URL relative to root may be constructed in latte (e.g. language selector) $this->friendlyUrl->applicationDir never ends with / . Latte may use URL relative to domain root. $this->MyCMS->context['applicationDir'] always ends with /
             ])
         ];
-        $this->friendlyUrl = new MyFriendlyUrl($MyCMS, $options);
     }
 
     /**
      * Kept only for backward compatibility for apps using 0.3.15 or older; to be replaced by run()
      * Outputs changed $MyCMS->template and $MyCMS->context as fields of an array
+     * 
+     * Expected in Controller:
+     * $this->friendlyUrl->determineTemplate($options);
+     * $this->prepareTemplate($options);
+     * $this->prepareAllTemplates($options);
      * 
      * @return array
      */
@@ -66,9 +73,9 @@ class MyController extends MyCommon
     public function getVars()
     {
         return [
-            "get" => $this->get,
-            "session" => $this->session
-            //,"section_styles" => $this->sectionStyles
+            'get' => $this->get,
+            'session' => $this->session,
+            //'section_styles' => $this->sectionStyles,
         ];
     }
 
@@ -108,11 +115,11 @@ class MyController extends MyCommon
     protected function redir($redir)
     {
         if (isset($_SESSION['user'])) {
-            Debugger::getBar()->addPanel(new \GodsDev\MyCMS\Tracy\BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION));
+            Debugger::getBar()->addPanel(new BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION));
         }
         $sqlStatementsArray = $this->MyCMS->dbms->getStatementsArray();
         if (!empty($sqlStatementsArray)) {
-            Debugger::getBar()->addPanel(new \GodsDev\MyCMS\Tracy\BarPanelTemplate('SQL: ' . count($sqlStatementsArray), $sqlStatementsArray));
+            Debugger::getBar()->addPanel(new BarPanelTemplate('SQL: ' . count($sqlStatementsArray), $sqlStatementsArray));
         }
         $this->MyCMS->logger->info("Redir to {$redir} with SESSION[language]={$_SESSION['language']}");
         header("Location: {$redir}", true, 301); // For SEO 301 is much better than 303
@@ -126,16 +133,11 @@ class MyController extends MyCommon
      * Determines template, set Session language, runs prepareTemplate for single template and prepareAllTemplates for general transformations
      * Outputs changed $MyCMS->template and $MyCMS->context as fields of an array
      * 
-     * Expected in Controller:
-     * $this->friendlyUrl->determineTemplate($options);
-     * $this->prepareTemplate($options);
-     * $this->prepareAllTemplates($options);
-     * 
      * @return array
      */
     public function run()
     {
-        $this->verbose and Debugger::barDump($this->language, 'Language on controller start');
+        $this->verboseBarDump($this->language, 'Language on controller start');
         $this->MyCMS->template = $this->result['template'];
         $this->MyCMS->context = $this->result['context'];
 
@@ -149,7 +151,7 @@ class MyController extends MyCommon
         $this->session['language'] = $this->language; // = $this->friendlyUrl->getLanguage();
         $_SESSION['language'] = $this->MyCMS->getSessionLanguage(Tools::ifset($this->get, []), Tools::ifset($this->session, []), true); // Language is finally determined, therefore make the include creating TRANSLATION
         $this->MyCMS->logger->info("After determineTemplate: this->language={$this->language}, this->session['language']={$this->session['language']}, _SESSION['language']={$_SESSION['language']} this->get[language]=" . (isset($this->get['language']) ? $this->get['language'] : 'n/a'));
-        $this->verbose and Debugger::barDump($this->get, 'get in controller after determineTemplate');
+        $this->verboseBarDump($this->get, 'get in controller after determineTemplate');
         if (is_string($templateDetermined)) {
             $this->MyCMS->template = $templateDetermined;
         } elseif (is_array($templateDetermined) && isset($templateDetermined['redir'])) {
