@@ -33,7 +33,6 @@ RedirectMatch 404 phpunit\.xml
 RedirectMatch 404 \.gitignore
 RedirectMatch 404 README\.md
 RedirectMatch 404 \/temp\/
-RedirectMatch 404 sql\/
 RedirectMatch 404 \/db\/
 RedirectMatch 404 \.yml
 RedirectMatch 404 \.sh$

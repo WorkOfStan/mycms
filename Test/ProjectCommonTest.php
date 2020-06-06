@@ -47,9 +47,9 @@ class ProjectCommonTest extends \PHPUnit_Framework_TestCase
         ];
         $this->myCms = new MyCMS($mycmsOptions);
 //        $_SESSION = array(); //because $_SESSION is not defined in the PHPUnit mode
-        $this->language = $this->myCms->getSessionLanguage(array(), array(), false);
+        $this->language = $this->myCms->getSessionLanguage([], [], false);
 
-        $this->object = new ProjectCommon($this->myCms, array('language' => $this->language));
+        $this->object = new ProjectCommon($this->myCms, ['language' => $this->language]);
     }
 
     /**
