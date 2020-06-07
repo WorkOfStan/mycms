@@ -127,6 +127,8 @@ Given that
 | |  **`/alfa?article=2` redirects to `/?article=2`** |  **`/alfa?article=2` redirects to `/beta`** |
 | |  ProjectCommon->getLinkSql() generates link to `/?article=1` |  ProjectCommon->getLinkSql() generates link to `/alfa`  |
 
+Inner workings of friendly URL mechanism are described in [MyCMS/README.md](https://github.com/GodsDev/mycms#how-does-friendly-url-works-with-controller)
+
 TODO: make more clear
 * Tabulky `#_content`, `#_product` musí mít sloupce `url_##` (## = dvoumístný kód pro všechny jazykové verze).
 * Do `url_##` se uloží "webalizované" názvy dané stránky/produktu (dle funkce `Tools::webalize`). Výjimkou může být `_content`, který není plnohodnotná stránka – ten může obsahovat `NULL`. Převod lze zprvu udělat programaticky (je to na pár řádků), pak do CMS přidat tlačítko pro převod nebo převod udělat při uložení.

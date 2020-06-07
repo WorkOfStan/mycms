@@ -64,6 +64,8 @@ class MyFriendlyUrl extends MyCommon
     /**
      * Wrapper for creating redir response
      * 
+     * TODO: consider creating object redirWrapper that would be chacked as instanceof instead of checking for presence of field 'redir'. Only question is how to Debugger::getBar()->addPanel as done in MyController::redir
+     * 
      * @param string $url
      * @param string $barDumpTitle
      * @return array with redir string field
@@ -88,7 +90,7 @@ class MyFriendlyUrl extends MyCommon
      * matchResult = (1=pattern matches `PARSE_PATH_PATTERN`, 0=it does not, or FALSE=error)
      * 
      * @param array $options
-     * @return mixed 1) bool (true) or 2) array with redir string field or 3) array with token string field and matches array field (see above)
+     * @return mixed `bool (true)` when `TEMPLATE_NOT_FOUND` || `array` with redir string field || `array` with token string field and matches array field (see above)
      */
     protected function friendlyIdentifyRedirect(array $options = [])
     {
@@ -131,7 +133,7 @@ class MyFriendlyUrl extends MyCommon
 
         // If there are more (non language) folders, the base of relative URLs would be incorrect, therefore either redirect to a base URL with query parameters or to a 404 Page not found.
         if ($this->verboseBarDump(isset($matches[2]), 'friendlyIdentifyRedirect: folderInPath')) {
-            $this->verboseBarDump($addLanguageDirectory = FRIENDLY_URL && ($this->language != DEFAULT_LANGUAGE) // other than default language should have its directory
+            $this->verboseBarDump(($addLanguageDirectory = FRIENDLY_URL) && ($this->language != DEFAULT_LANGUAGE) // other than default language should have its directory
                 && !preg_match("~/{$this->language}/~", $this->requestUri), 'friendlyIdentifyRedirect: addLanguageDirectory many folders'); // unless the page already has it
             return isset($url['query']) ? $this->redirWrapper('/?' . $url['query'], 'complex URL with params') : $this->redirWrapper(($addLanguageDirectory ? "/{$this->language}/" : '/') . self::PAGE_NOT_FOUND . '?url=' . $interestingPath, '404 for complex unknown URL');
         }
@@ -150,8 +152,10 @@ class MyFriendlyUrl extends MyCommon
      * The default template already set in MyControler as `$this->MyCMS->template = 'home';
      * $this->MyCMS->templateAssignementParametricRules is array where key is get parameter and value is array of 'template' => template-name and optionally (bool)'idcode' if value is not in $_GET[key] but either in (int)id or (string)code GET parameters
      * 
+     * TODO: simplify management of TEMPLATE_NOT_FOUND result as currently it is indicated as self::TEMPLATE_NOT_FOUND || null || true 
+     * 
      * @param array $options OPTIONAL verbose==true bleeds info to standard output
-     * @return mixed string with name of the template when template determined, array with redir field when redirect, bool when default template SHOULD be used
+     * @return mixed `string` with name of the template when template determined || `array` with redir field when redirect || `bool (true)` when template set to `TEMPLATE_NOT_FOUND`
      */
     public function determineTemplate(array $options = [])
     {
@@ -197,7 +201,7 @@ class MyFriendlyUrl extends MyCommon
         // URL token not found
         $this->MyCMS->logger->error("404 Not found - {$options['REQUEST_URI']} and token=`{$token}`");
         if ($this->verbose) {
-            echo "No condition catched the input."; //TODO: localise (en, cs...)
+            echo "No condition catched the input."; //TODO: localise (en, cs...) //TODO use some other mechanism than echo ??
         }
         return self::TEMPLATE_NOT_FOUND;
     }
@@ -208,7 +212,8 @@ class MyFriendlyUrl extends MyCommon
      * @param array $options for recursive determineTemplate call
      * @param string $token calculated by friendlyIdentifyRedirect
      * @param array $matches calculated by friendlyIdentifyRedirect
-     * @return mixed bool or array
+     * @return mixed `null` leads to self::TEMPLATE_NOT_FOUND || `string` with name of the template when template determined || `array` with redir field when redirect || `bool (true)` when template set to `TEMPLATE_NOT_FOUND`
+     * 
      */
     private function pureFriendlyUrl(array $options, $token, array $matches)
     {
@@ -222,16 +227,16 @@ class MyFriendlyUrl extends MyCommon
             $this->language = DEFAULT_LANGUAGE;
             $this->verboseBarDump($this->language, 'pureFriendlyUrl: Language reset to DEFAULT');
         }
-        // If there is a pure friendly URL, i.e. the token exactly matches a record in content database, decode it to type=id
+        // If there is a pure friendly URL, i.e. the token exactly matches a record in content database, decode it internally to type=id
         $found = $this->findFriendlyUrlToken($token);
         $this->verboseBarDump($found, 'pureFriendlyUrl: found');
         if ($found) {
             $this->verboseBarDump($found, 'pureFriendlyUrl: found friendly URL');
             $this->get[$found['type']] = $this->get['id'] = $found['id'];
             $this->verboseBarDump($this->get, 'pureFriendlyUrl: this->get within pureFriendlyUrl');
-            return $this->determineTemplate($options);
+            return $this->determineTemplate($options); //TODO maybe only the loop of 'templateAssignementParametricRules' is relevant for recursion??
         }
-        return null; //null does not trigger any reaction
+        return null; //null leads to self::TEMPLATE_NOT_FOUND
     }
 
     /**
@@ -239,7 +244,7 @@ class MyFriendlyUrl extends MyCommon
      * SQL statement searching for $token in url_LL column of table(s) with content pieces addressed by FriendlyURL tokens
      * 
      * @param string $token
-     * @return mixed null on empty result, false on database failure or one-dimensional array on success
+     * @return mixed null on empty result, false on database failure or one-dimensional array [id, type] on success
      */
     protected function findFriendlyUrlToken($token)
     {

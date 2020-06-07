@@ -5,6 +5,7 @@ namespace GodsDev\mycmsprojectnamespace;
 use GodsDev\MyCMS\MyCMS;
 use GodsDev\MyCMS\MyFriendlyUrl;
 use GodsDev\mycmsprojectnamespace\ProjectSpecific;
+//use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use Tracy\ILogger;
 
@@ -36,20 +37,21 @@ class FriendlyUrl extends MyFriendlyUrl
      * @param MyCMS $MyCMS
      * @param array $options overides default values of declared properties
      */
-    public function __construct(MyCMS $MyCMS, array $options = array())
+    public function __construct(MyCMS $MyCMS, array $options = [])
     {
         parent::__construct($MyCMS, $options);
-        $this->projectSpecific = new ProjectSpecific($this->MyCMS, array(
+        //TODO consider injecting projectSpecific from Controller instead of creating new instance
+        $this->projectSpecific = new ProjectSpecific($this->MyCMS, [
             'language' => $this->language,
             'requestUri' => $this->requestUri,
-        ));
+        ]);
     }
 
     /**
      * SQL statement searching for $token in url_LL column of table(s) with content pieces addressed by FriendlyURL tokens
      * 
      * @param string $token
-     * @return mixed null on empty result, false on database failure or one-dimensional array on success
+     * @return mixed null on empty result, false on database failure or one-dimensional array [id, type] on success
      */
     protected function findFriendlyUrlToken($token)
     {

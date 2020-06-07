@@ -1,13 +1,10 @@
-MyCMS
+MyCMS [![Total Downloads](https://img.shields.io/packagist/dt/godsdev/mycms.svg)](https://packagist.org/packages/godsdev/mycms) [![Latest Stable Version](https://img.shields.io/packagist/v/godsdev/mycms.svg)](https://packagist.org/packages/godsdev/mycms)
 -----
 
 Simple framework to help developing interactive websites. Works as a devstack which you install and then write your classes specific for the project.
 
-[![Total Downloads](https://img.shields.io/packagist/dt/godsdev/mycms.svg)](https://packagist.org/packages/godsdev/mycms)
-[![Latest Stable Version](https://img.shields.io/packagist/v/godsdev/mycms.svg)](https://packagist.org/packages/godsdev/mycms)
-
 # Features
-- [jQuery](https://jquery.org/) and [Bootstrap](https://getbootstrap.com/docs/4.0/components/) (version 4) used in the presentation
+- [jQuery](https://jquery.org/) and [Bootstrap (version 4)](https://getbootstrap.com/docs/4.0/components/) used in the presentation
 - [Latte](http://latte.nette.org/) used as a templating engine
 - [MySQL](https://dev.mysql.com/)/[MariaDB](http://mariadb.com) used as the website database
 - includes a general administration
@@ -33,11 +30,11 @@ To customize the project, create your own classes as children inheriting MyCMS' 
 
 ```php
 $MyCMS = new \GodsDev\MyCMS\MyCMS(
-    array(
+    [
         // compulsory
         'logger' => $logger, // object \Psr\Log\LoggerInterface
         //optional
-    )
+    ]
 );
 
 //Finish with Latte initialization & Mark-up output
@@ -66,14 +63,14 @@ Following files are expected to exist within the Application
 where `$resultLanguage` is a (ISO 3166-2) two-letter language code.
 Language versions (or translations, resp.) are specified when instatiating the MyCMS object. For example:
 ```php
-array(
+[
     ...
-    'TRANSLATIONS' => array(
+    'TRANSLATIONS' => [
         'en' => 'ENG',
         'cn' => '中文',
         'cs' => 'CZ'
-    ),
-)
+    ],
+]
 ```
 
 # Admin notes
@@ -107,11 +104,58 @@ the content of that standard `admin.css` MUST be available through method MyAdmi
 
 Run from a command line:
 ```sh
-./vendor/bin/phpunit
+$ ./vendor/bin/phpunit
 ```
 
-Note that `dist` folder contains the starting MyCMS based project deployment and testing runs through `dist` as well, 
-so for development, the environment has to be set up for `dist` as well. 
+Note that `dist` folder contains the starting MyCMS based project deployment and testing runs through `dist` as well,
+so for development, the environment has to be set up for `dist` as well.
+
+# How does Friendly URL works within Controller
+
+[SEO settings details in `dist` folder](dist/README.md#seo)
+
+```
+new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
+│   // request URI is set in multiple places
+│   ->requestUri
+│   ->projectSpecific->requestUri
+│   ->friendlyUrl->requestUri
+│   ->friendlyUrl->projectSpecific->requestUri
+│
+└───run()
+│   │
+│   └───$controller->friendlyUrl
+│       └── ->determineTemplate(['REQUEST_URI' => $this->requestUri]) // @return mixed string with name of the template when template determined, array with redir field when redirect, bool when default template SHOULD be used
+│            │   ->friendlyIdentifyRedirect(['REQUEST_URI' => $this->requestUri]) @return mixed 1) bool (true) or 2) array with redir string field or 3) array with token string field and matches array field (see above)
+│                 │   if ($token === self::PAGE_NOT_FOUND) {
+│                       │   $this->MyCMS->template = self::TEMPLATE_NOT_FOUND;
+│                       │   **@return true;**
+│                 │   FORCE_301
+│                       │   ->friendlyfyUrl(URL query) //@return string query key of parse_url, e.g  var1=12&var2=b
+│                            │   ->switchParametric(`type`, `value`) //project specific request to database @return mixed null (do not change the output) or string (URL - friendly or parametric)
+│                                 │   If something new calculated, then **@return redirWrapper(URL - friendly or parametric)**
+│                 │   REDIRECTOR_ENABLED
+│                       │   ->old_url == interestingPath (=part of PATH beyond applicationDir)
+│                            │   **@return redirWrapper(new_path)**
+│                 │   If there are more (non language) folders, the base of relative URLs would be incorrect, therefore either **redirect** to a base URL with query parameters or to a 404 Page not found.
+│                 │   **@return [token, matches]**
+│            │   @return array with redir field when redirect || bool when default template SHOULD be used
+│   └─── redir?? redir or continue with `TEMPLATE_NOT_FOUND`
+│            │   [token, matches]
+│            │   loop through $myCmsConf['templateAssignementParametricRules'] and if $this->get[`type`] found: @return template || `TEMPLATE_NOT_FOUND` (if invalid `value`)
+│   └─── continue with template || `TEMPLATE_NOT_FOUND`
+│            │   ->pureFriendlyUrl(['REQUEST_URI' => $this->requestUri], $token, $matches); //FRIENDLY URL & Redirect calculation where $token, $matches are expected from above
+│                       │   default scripts and language directories all result into the default template @return self::TEMPLATE_DEFAULT
+│            │   @return self::TEMPLATE_DEFAULT
+│   └─── continue with `TEMPLATE_DEFAULT`
+│                       │   ->findFriendlyUrlToken(token) //project specific request to database @return mixed null on empty result, false on database failure or one-dimensional array [id, type] on success
+                                                             If there is a pure friendly URL, i.e. the token exactly matches a record in content database, decode it internally to type=id
+                                                             SQL statement searching for $token in url_LL column of table(s) with content pieces addressed by FriendlyURL tokens
+│                            │   spoof $this->get[$found['type']] = $this->get['id'] = $found['id']; return $this->determineTemplate($options);
+│                            │   or @return null
+│            │   @return self::TEMPLATE_NOT_FOUND
+│   └─── continue with `TEMPLATE_NOT_FOUND`
+```
 
 # TODO
 
@@ -120,5 +164,5 @@ so for development, the environment has to be set up for `dist` as well.
 * TO BE CHECKED 190723: nastavování hesla by se nemělo do log.sql ukládat - volat instanci BackyardMysqli namísto LogMysqli?? @crs2: Řešilo by to přidání parametru (do query() v LogMysqli.php), který by volání error_log() potlačil? A poté u změny hesla volání tohoto parametru? + Ještě mě napadá řešení na úrovni samotného sloupce tabulky, tj. definování (v LogMysqli.php), které sloupce které tabulky obsahují citlivé údaje pro logování. Ale to by vyžadovalo parsing SQL.
 * 200314: administrace FriendlyURL je v F4T/classes/Admin::outputSpecialMenuLinks() a ::sectionUrls() .. zobecnit do MyCMS a zapnout pokud FRIENDLY_URL == true
 * 200526, CMS: * 200526: If Texy is used (see only in MyTableAdmin `($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : '')` then describe it. Otherwise remove it from composer.json, Latte\CustomFilters\, ProjectCommon, dist\index.php.
-* 200526: update jquery 3.2.1 -> 3.5.1 and describe dependencies
+* 200526: update jquery 3.2.1 -> 3.5.1 and describe dependencies; and also other js libraries
 * 200529: Minimum of PHP 7.2 required now: PHPUnit latest + Phinx latest https://github.com/cakephp/phinx/releases
