@@ -13,7 +13,7 @@ if (UNDER_CONSTRUCTION && !(
 require_once './prepare.php';
 
 if (isset($_POST) && is_array($_POST) && !empty($_POST)) {
-    //set up translation for some multi-lingual messages
+    // set up translation for some multi-lingual messages
     $MyCMS->getSessionLanguage($_GET, $_SESSION, true);
     require_once './process.php';
 }
@@ -27,7 +27,7 @@ DEBUG_VERBOSE and Debugger::barDump($request, 'request');
 Debugger::barDump($MyCMS, 'MyCMS before controller');
 $controller = new \GodsDev\mycmsprojectnamespace\Controller($MyCMS, [
     'get' => $request,
-//    'httpMethod' => $_SERVER['REQUEST_METHOD'], //TODO: pre-filter!
+    'httpMethod' => $_SERVER['REQUEST_METHOD'], // TODO: pre-filter!
     'requestUri' => $_SERVER['REQUEST_URI'], // necessary for FriendlyURL feature
     'session' => $_SESSION,
     'language' => $_SESSION['language'],
@@ -58,6 +58,7 @@ $MyCMS->renderLatte(DIR_TEMPLATE_CACHE, [$customFilters, 'common'], array_merge(
             'messages' => Tools::setifnull($_SESSION['messages'], []),
             'language' => $_SESSION['language'],
             'translations' => $MyCMS->TRANSLATIONS,
+            'languageSelector' => $myCmsConf['LANGUAGE_SELECTOR'],
             'development' => $developmentEnvironment,
             'pageResourceVersion' => PAGE_RESOURCE_VERSION,
             'useCaptcha' => USE_CAPTCHA,

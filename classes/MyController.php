@@ -49,7 +49,7 @@ class MyController extends MyCommon
     {
         parent::__construct($MyCMS, $options);
         $this->result = [
-            'template' => 'home',
+            'template' => self::TEMPLATE_DEFAULT,
             'context' => ($this->MyCMS->context ? $this->MyCMS->context : [
             'pageTitle' => '',
             ])

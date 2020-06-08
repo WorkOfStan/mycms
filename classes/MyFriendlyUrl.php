@@ -9,7 +9,7 @@ class MyFriendlyUrl extends MyCommon
 {
 
     const PAGE_NOT_FOUND = '404';
-    const PARSE_PATH_PATTERN = '~/(en\/|de/|cn/)?(.*/)?.*?~';
+    const PARSE_PATH_PATTERN = '~/(en\/|de/|fr/|sk/|zh/)?(.*/)?.*?~'; //TODO až vyřeším co je to en\/ , tak seřadit abecedně
 
     use \Nette\SmartObject;
 

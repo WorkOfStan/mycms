@@ -9,13 +9,13 @@ RewriteEngine on
 # redirect all requests to /en/assets* and /de/assets* to /assets*
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(en|de|cn)/(styles|assets|fonts|images|scripts|api|favicon.ico)(.*)$ $2$3 [L,QSA]
+RewriteRule ^(de|en|fr|sk|zh)/(styles|assets|fonts|images|scripts|api|favicon.ico)(.*)$ $2$3 [L,QSA]
 
 # redirect all other requests to /en/* and /de/* and /cn/*
 # to index.php and set the language parameter
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(en|de|cn)?/?(.*)$ index.php?language=$1&$2 [L,QSA]
+RewriteRule ^(de|en|fr|sk|zh)?/?(.*)$ index.php?language=$1&$2 [L,QSA]
 
 # Friendly share URL
 RewriteRule ^admin\.php(\?.*)?$ admin.php [L,QSA]

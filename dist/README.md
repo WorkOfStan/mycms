@@ -55,7 +55,7 @@ script/autotrack.V.V.V.js and script/autotrack.V.V.V.js.map are manually taken f
 
 Create database with `Collation=utf8_general_ci`
 
-Create `conf/config.local.php` based on `config.local.dist.php` including the name of the database created above
+Create `conf/config.local.php` based on `config.local.dist.php` including the name of the database created above and change any settings you like.
 
 Create `phinx.yml` based on `phinx.dist.yml` including the name of the database created above
 
@@ -127,7 +127,7 @@ Given that
 | |  **`/alfa?article=2` redirects to `/?article=2`** |  **`/alfa?article=2` redirects to `/beta`** |
 | |  ProjectCommon->getLinkSql() generates link to `/?article=1` |  ProjectCommon->getLinkSql() generates link to `/alfa`  |
 
-Inner workings of friendly URL mechanism are described in [MyCMS/README.md](https://github.com/GodsDev/mycms#how-does-friendly-url-works-with-controller)
+Inner workings of friendly URL mechanism are described in [MyCMS/README.md](https://github.com/GodsDev/mycms#how-does-friendly-url-works-within-controller)
 
 TODO: make more clear
 * Tabulky `#_content`, `#_product` musí mít sloupce `url_##` (## = dvoumístný kód pro všechny jazykové verze).
@@ -145,20 +145,44 @@ Jazyk je uveden jako první a to dvoumístným kódem a lomítkem, např. `/cs/l
 TODO: explain and translate:
 Interně se jazyk do políčka `url_##` pro jiné (nedefaultní) jazyky nevkládá
 
-## Languages
+## Language management
 
-TODO: zkontrolovat:
-`.htaccess` is ready for languages `en|de|cn` (`cs` is considered as the default language),
+Languages are identified by two letter combination according to [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).
+
+### Used languages
+Language versions (or translations) are specified when instatiating the MyCMS object in [conf/config.php](conf/config.php). For example:
+```php
+[
+    ...
+    'TRANSLATIONS' => [
+        'en' => 'ENG',
+        'zh' => '中文',
+        'cs' => 'CZ',
+    ],
+]
+```
+For each language a corresponding file `language-xx.inc.php` is expected.
+
+TODO: test this below
+[.htaccess](.htaccess) is ready for languages `de|en|fr|sk|zh` to show content in the appropriate language folder
+(`cs` is considered as the default language, so it is accessible directly in application root),
 where page resouces may be in folders `styles|assets|fonts|images|scripts` which ignore the language directory.
 
-TODO: zkontrolovat:
+TODO: test this below
 Adapt respectively also `const PARSE_PATH_PATTERN` in `Controller::determineTemplate`
+TODO: test this below (add all languages? nebylo by lepší to přidat cyklem z TRANSLATIONS?
 and `if (in_array($token, array(HOME_TOKEN, '', 'index', 'en')))` in `Controller::determineTemplate`.
+
+### Default language
+Default language set in [conf/config.php](conf/config.php) as constant `'DEFAULT_LANGUAGE' => 'cs',`
+is the language in which the web starts without any additional information about language
+(such as language folder or session).
+The default language is typically shown in the application root.
 
 # CMS notes
 
 ## Agenda
-Agenda is an item in the admin.php left menu that refers to a set of rows in database. (All tables can be also accessed from the bottom of the page.)
+Agenda is an item in the `admin.php` left menu that refers to a set of rows in database. (All tables can be also accessed from the bottom of the page.)
 
 Examples of settings:
 ```php
@@ -244,7 +268,7 @@ throw new \Exception('Exception description');
 
 ## REST API
 
-Note: header("Content-type: application/json"); in outputJSON hides Tracy
+Note: `header("Content-type: application/json");` in outputJSON hides Tracy
 
 # Error handling
 
@@ -259,7 +283,7 @@ Logs are in folder `log`:
 
 # Templating
 
-`latte` templates are used.
+[`latte` templates](https://latte.nette.org/) are used.
 
 
 # Visual style
@@ -268,7 +292,7 @@ Pages have view-TEMPLATE class in <body/> to allow for exceptions.
 
 Convert SASS to CSS by
 ```sh
-sass styles/index.sass styles/index.css  # made also by build.sh
+sass styles/index.sass styles/index.css  # performed also by [build.sh](build.sh)
 ```
 
 When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in `config.php` in order to force cache reload these resources.
@@ -276,7 +300,8 @@ When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in
 # TODO
 
 ## TODO lokalizace
-200526, jazykový přepínač rovnou vybere správné URL, pokud pro daný jazky existuje
+* 200526: jazykový přepínač rovnou vybere správné URL, pokud pro daný jazky existuje
+* 200608: describe scenario when no language is `default` in terms that all pages run within /iso-639-1/ folder
 
 ## TODO CMS
 

@@ -6,16 +6,16 @@
 /**
  * Debugging
  */
-//ini_set('display_errors', 1); //allow ONLY in your own development environment
-//define('DEBUG_VERBOSE', true); //show all debug messages to the admin
-define('EMAIL_ADMIN', 'rejthar@gods.cz'); //email used by Tracy\Debugger
+//ini_set('display_errors', 1); // allow ONLY in your own development environment
+//define('DEBUG_VERBOSE', true); // show all debug messages to the admin
+define('EMAIL_ADMIN', 'rejthar@gods.cz'); // email used by Tracy\Debugger
 define('MAIL_SENDING_ACTIVE', false);
-define('NOTIFY_FROM_ADDRESS', 'notifier-MYCMSPROJECTSPECIFIC@godsapps.eu'); //@todo založit příslušnou schránku
+define('NOTIFY_FROM_ADDRESS', 'notifier-MYCMSPROJECTSPECIFIC@godsapps.eu'); // @todo založit příslušnou schránku
 define('NOTIFY_FROM_NAME', 'Notifikátor');
-//define ('SMTP_HOST', 'localhost');
-//define ('SMTP_PORT', 25);
+//define('SMTP_HOST', 'localhost');
+//define('SMTP_PORT', 25);
 //define('UNDER_CONSTRUCTION', true);
-//$backyardConf['logging_level'] = 5;//debug
+//$backyardConf['logging_level'] = 5; // debug
 
 /**
  * Database
@@ -39,19 +39,21 @@ define('RECAPTCHA_SECRET', '...');
 /**
  * UI and FriendlyURL
  */
-//define('FORCE_301', false); //enforce 301 redirect to the most friendly URL available
-//define('FRIENDLY_URL', false); //show friendly URL
-//define('GA_UID', 'UA-39642385-1');//if you want other than default test GA UID
-//define('HOME_TOKEN', 'parent-directory'); //If the web runs in the root of the domain, then the default token `PATHINFO_FILENAME` is an empty string; if the web does not run in the root directory, set its parent folder name (not the whole path) here.
-//define('REDIRECTOR_ENABLED', true); //table redirector with columns old_url, new_url, active exists
+//define('DEFAULT_LANGUAGE', 'en'); // change the default language for a particular instance of the application
+//define('FORCE_301', false); // true=enforce 301 redirect to the most friendly URL available
+//define('FRIENDLY_URL', false); // show friendly URL
+//define('GA_UID', 'UA-39642385-1'); // if you want other than default test GA UID
+//define('HOME_TOKEN', 'parent-directory'); // If the web runs in the root of the domain, then the default token `PATHINFO_FILENAME` is an empty string; if the web does not run in the root directory, set its parent folder name (not the whole path) here.
+//define('REDIRECTOR_ENABLED', true); // table redirector with columns old_url, new_url, active exists
+//unset($myCmsConf['TRANSLATIONS']['zh']); // unset language for a particular instance of the application, here e.g. Chinese
 
 /**
  * Development
  */
-//define('USE_CAPTCHA', false); //to turn off CAPTCHA for your dev environment. (Never turn it off however for environment available over internet.)
+//define('USE_CAPTCHA', false); // to turn off CAPTCHA for your dev environment. (Never turn it off however for environment available over internet.)
 //feature flags (use keys without spaces to avoid problems in javascript)
 $featureFlags = [
 //    'offline_dev' => true,
 //    'console_log_list_values' => true,
 ];
-//$debugIpArray[] = '192.168.1.145';//add other IP addresses to see full errors
+//$debugIpArray[] = '192.168.1.145'; // add other IP addresses to see full errors
