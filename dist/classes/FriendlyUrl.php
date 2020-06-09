@@ -40,6 +40,8 @@ class FriendlyUrl extends MyFriendlyUrl
     public function __construct(MyCMS $MyCMS, array $options = [])
     {
         parent::__construct($MyCMS, $options);
+        // construct a regexp rule from array_keys($MyCMS->TRANSLATIONS) without DEFAULT_LANGUAGE
+        $this->parsePathPattern = '~/(' . implode('/|', array_diff(array_keys($MyCMS->TRANSLATIONS), [DEFAULT_LANGUAGE])) . '/)?(.*/)?.*?~';
         //TODO consider injecting projectSpecific from Controller instead of creating new instance
         $this->projectSpecific = new ProjectSpecific($this->MyCMS, [
             'language' => $this->language,
@@ -78,66 +80,66 @@ class FriendlyUrl extends MyFriendlyUrl
         Debugger::barDump("{$outputKey} => {$outputValue}", 'switchParametric started');
         $this->projectSpecific->language($this->language);
         /*
-        //A example
-        $this->projectSpecific->setCategories();
-        switch ($outputKey) {
-            case "line":
-                return (isset($this->MyCMS->context['categories'][(string) $outputValue]['link'])) ?
-                    ($this->MyCMS->context['categories'][(string) $outputValue]['link']) : (self::PAGE_NOT_FOUND);
-            case "product":
-                $product = $this->MyCMS->dbms->fetchSingle('SELECT category_id, id, product_' . $this->language . ' AS product,'
-                    . $this->projectSpecific->getLinkSql("?product=", $this->language)
-                    . ' FROM ' . TAB_PREFIX . 'product WHERE active = 1 AND category_id IN (' . Tools::arrayListed($this->MyCMS->context['categories'], 8 | 128) . ') '
-                    . ' AND id = "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"');
-                Debugger::barDump($product, 'product');
-                return is_null($product) ? (self::PAGE_NOT_FOUND) : $product['link'];
-            case 'language':
-                return null; // i.e. do not change the output or return "?{$outputKey}={$outputValue}";
-            //TODO: case ?category&code=career
-            case 'article':
-                $article = $this->projectSpecific->getContent(is_int($outputValue) ? $outputValue : null, is_int($outputValue) ? null : $outputValue, [
-                    'PATH_HOME' => $this->MyCMS->SETTINGS['PATH_HOME'], // for $this->projectSpecific->getBreadcrumbs
-                    'REQUEST_URI' => $this->requestUri
-                ]);
-                Debugger::barDump($article, 'article');
-                return is_null($article) ? (self::PAGE_NOT_FOUND) : $article['link'];
-//            default:
-//                Debugger::log("undefined friendlyfyUrl for {$outputKey} => {$outputValue}", ILogger::ERROR);
-        }
-        // /A example
-        //F example
-        switch ($outputKey) {
-            case 'news':
-                if (empty($outputValue)) {
-                    return isset($this->get['offset']) ? "?news&offset=" . (int) $this->get['offset'] : "?news";
-                }
-                $news = $this->MyCMS->dbms->fetchSingle('SELECT id, page_' . $this->language . ' AS page,'
-                    . $this->projectSpecific->getLinkSql("?news=", $this->language)
-                    . ' FROM ' . TAB_PREFIX . 'content WHERE active = 1 '
-                    . ' AND id = "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"');
-                Debugger::barDump($news, 'news');
-                return is_null($news) ? (self::PAGE_NOT_FOUND) : $news['link'];
-            case 'page':
-                $page = $this->MyCMS->dbms->fetchSingle('SELECT id, page_' . $this->language . ' AS page,'
-                    . $this->projectSpecific->getLinkSql("?page=", $this->language, 'link', null, 'code')
-                    . ' FROM ' . TAB_PREFIX . 'content WHERE active = 1 '
-                    . ' AND code = "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"');
-                Debugger::barDump($page, 'page');
-                return is_null($page) ? (self::PAGE_NOT_FOUND) : $page['link'];
-            case 'product':
-                $product = $this->MyCMS->dbms->fetchSingle('SELECT division_id, id, product_' . $this->language . ' AS product,'
-                    . $this->projectSpecific->getLinkSql("?product=", $this->language)
-                    . ' FROM ' . TAB_PREFIX . 'product WHERE active = 1 '
-                    . ' AND id = "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"');
-                Debugger::barDump($product, 'product');
-                return is_null($product) ? (self::PAGE_NOT_FOUND) : $product['link'];
-            case 'language':
-                return null; //or return "?{$outputKey}={$outputValue}";
-            default:
-                Debugger::log("undefined friendlyfyUrl for {$outputKey} => {$outputValue}", ILogger::ERROR);
-        }
-        // /F example
-*/
+          //A example
+          $this->projectSpecific->setCategories();
+          switch ($outputKey) {
+          case "line":
+          return (isset($this->MyCMS->context['categories'][(string) $outputValue]['link'])) ?
+          ($this->MyCMS->context['categories'][(string) $outputValue]['link']) : (self::PAGE_NOT_FOUND);
+          case "product":
+          $product = $this->MyCMS->dbms->fetchSingle('SELECT category_id, id, product_' . $this->language . ' AS product,'
+          . $this->projectSpecific->getLinkSql("?product=", $this->language)
+          . ' FROM ' . TAB_PREFIX . 'product WHERE active = 1 AND category_id IN (' . Tools::arrayListed($this->MyCMS->context['categories'], 8 | 128) . ') '
+          . ' AND id = "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"');
+          Debugger::barDump($product, 'product');
+          return is_null($product) ? (self::PAGE_NOT_FOUND) : $product['link'];
+          case 'language':
+          return null; // i.e. do not change the output or return "?{$outputKey}={$outputValue}";
+          //TODO: case ?category&code=career
+          case 'article':
+          $article = $this->projectSpecific->getContent(is_int($outputValue) ? $outputValue : null, is_int($outputValue) ? null : $outputValue, [
+          'PATH_HOME' => $this->MyCMS->SETTINGS['PATH_HOME'], // for $this->projectSpecific->getBreadcrumbs
+          'REQUEST_URI' => $this->requestUri
+          ]);
+          Debugger::barDump($article, 'article');
+          return is_null($article) ? (self::PAGE_NOT_FOUND) : $article['link'];
+          //            default:
+          //                Debugger::log("undefined friendlyfyUrl for {$outputKey} => {$outputValue}", ILogger::ERROR);
+          }
+          // /A example
+          //F example
+          switch ($outputKey) {
+          case 'news':
+          if (empty($outputValue)) {
+          return isset($this->get['offset']) ? "?news&offset=" . (int) $this->get['offset'] : "?news";
+          }
+          $news = $this->MyCMS->dbms->fetchSingle('SELECT id, page_' . $this->language . ' AS page,'
+          . $this->projectSpecific->getLinkSql("?news=", $this->language)
+          . ' FROM ' . TAB_PREFIX . 'content WHERE active = 1 '
+          . ' AND id = "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"');
+          Debugger::barDump($news, 'news');
+          return is_null($news) ? (self::PAGE_NOT_FOUND) : $news['link'];
+          case 'page':
+          $page = $this->MyCMS->dbms->fetchSingle('SELECT id, page_' . $this->language . ' AS page,'
+          . $this->projectSpecific->getLinkSql("?page=", $this->language, 'link', null, 'code')
+          . ' FROM ' . TAB_PREFIX . 'content WHERE active = 1 '
+          . ' AND code = "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"');
+          Debugger::barDump($page, 'page');
+          return is_null($page) ? (self::PAGE_NOT_FOUND) : $page['link'];
+          case 'product':
+          $product = $this->MyCMS->dbms->fetchSingle('SELECT division_id, id, product_' . $this->language . ' AS product,'
+          . $this->projectSpecific->getLinkSql("?product=", $this->language)
+          . ' FROM ' . TAB_PREFIX . 'product WHERE active = 1 '
+          . ' AND id = "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"');
+          Debugger::barDump($product, 'product');
+          return is_null($product) ? (self::PAGE_NOT_FOUND) : $product['link'];
+          case 'language':
+          return null; //or return "?{$outputKey}={$outputValue}";
+          default:
+          Debugger::log("undefined friendlyfyUrl for {$outputKey} => {$outputValue}", ILogger::ERROR);
+          }
+          // /F example
+         */
 
         switch ($outputKey) {
             case 'article':

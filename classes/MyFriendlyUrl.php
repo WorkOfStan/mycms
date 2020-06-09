@@ -9,9 +9,16 @@ class MyFriendlyUrl extends MyCommon
 {
 
     const PAGE_NOT_FOUND = '404';
-    const PARSE_PATH_PATTERN = '~/(de/|en/|fr/|sk/|zh/)?(.*/)?.*?~'; //TODO vygenerovat pomocí array_keys($this->MyCMS->TRANSLATIONS) resp. mělo by být definováno až ve FriendlyURL ať to je podle nastavení aplikace
 
     use \Nette\SmartObject;
+
+    /**
+     * interestingPath pattern to match `language subpattern` and the `rest of the path` in the method friendlyIdentifyRedirect
+     * It SHOULD be changed by the child class FriendlyUrl to use the languages used in the MyCMS application
+     * 
+     * @var string
+     */
+    protected $parsePathPattern = '~/(de/|en/|zh/)?(.*/)?.*?~';
 
     /**
      * accepted attributes:
@@ -68,11 +75,12 @@ class MyFriendlyUrl extends MyCommon
      * 
      * @param string $url
      * @param string $barDumpTitle
+     * @param int $httpCode
      * @return array with redir string field
      */
-    protected function redirWrapper($url, $barDumpTitle)
+    protected function redirWrapper($url, $barDumpTitle, $httpCode = 301)
     {
-        return ['redir' => $this->verboseBarDump($this->applicationDir . $url, 'redir identified: ' . $barDumpTitle)];
+        return ['redir' => $this->verboseBarDump($this->applicationDir . $url, 'redir identified: ' . $barDumpTitle), 'httpCode' => $httpCode];
     }
 
     /**
@@ -117,14 +125,14 @@ class MyFriendlyUrl extends MyCommon
         }
 
         $matches = [];
-        $matchResult = preg_match(self::PARSE_PATH_PATTERN, $interestingPath, $matches);
-        $this->verboseBarDump(['PARSE_PATH_PATTERN' => self::PARSE_PATH_PATTERN, 'folderInPath matches' => $matches, 'match result' => $matchResult], 'match result (1=pattern matches given subject, 0=it does not, or FALSE=error)');
+        $matchResult = preg_match($this->parsePathPattern, $interestingPath, $matches);
+        $this->verboseBarDump(['parsePathPattern' => $this->parsePathPattern, 'folderInPath matches' => $matches, 'match result' => $matchResult], 'match result (1=pattern matches given subject, 0=it does not, or FALSE=error)');
         //language reset if path requires it
         if (isset($matches[1]) && !(substr($interestingPath, 0, strlen('/assets/')) === '/assets/')) { // non-existent page resources SHOULD NOT change the web language to the default
             // transforms 'en/' to 'en' //$makeInclude=false as $this->MyCMS->TRANSLATION is already set.
             $this->verboseBarDump($this->language = $this->MyCMS->getSessionLanguage(['language' => substr($matches[1], 0, 2)], $this->session, false), 'friendlyIdentifyRedirect: Language reset according to path');
         } elseif (!isset($matches[1]) && FORCE_301 && ($this->language != DEFAULT_LANGUAGE)) {
-            return $this->redirWrapper('/' . $this->language . $interestingPath, 'SEO Force 301 language folder');
+            return $this->redirWrapper('/' . $this->language . $interestingPath, 'SEO Force 302 language folder', 302); // this kind of redirect may be caused by using the same token for multiple languages without using language subpatern folder, so 302 Found aka Moved Temporarily is the best choice
         }
         // If there is a redirect specified
         if (REDIRECTOR_ENABLED && $this->verboseBarDump(($found = $this->MyCMS->fetchSingle('SELECT `new_url` FROM ' . TAB_PREFIX . 'redirector WHERE `old_url`="' . $interestingPath . '" AND `active` = "1"')), 'friendlyIdentifyRedirect: found redirect')) {
@@ -212,7 +220,6 @@ class MyFriendlyUrl extends MyCommon
      * @param string $token calculated by friendlyIdentifyRedirect
      * @param array $matches calculated by friendlyIdentifyRedirect
      * @return mixed `null` leads to self::TEMPLATE_NOT_FOUND || `string` with name of the template when template determined || `array` with redir field when redirect || `bool (true)` when template set to `TEMPLATE_NOT_FOUND`
-     * 
      */
     private function pureFriendlyUrl(array $options, $token, array $matches)
     {

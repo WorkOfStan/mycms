@@ -6,6 +6,7 @@ use GodsDev\MyCMS\MyFriendlyUrl;
 use GodsDev\MyCMS\Tracy\BarPanelTemplate;
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
+use Webmozart\Assert\Assert;
 
 /**
  * Controller ascertain what the request is
@@ -124,9 +125,11 @@ class MyController extends MyCommon
      * 301 Redirects to $redir (incl. relative) and die
      *
      * @param string $redir
+     * @param int $httpCode Default is 301 as for SEO 301 is much better than 303
      */
-    protected function redir($redir)
+    protected function redir($redir, $httpCode = 301)
     {
+        Assert::inArray($httpCode, [301, 302, 303], 'Unauthorized redirect type %s');
         if (isset($_SESSION['user'])) {
             Debugger::getBar()->addPanel(new BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION));
         }
@@ -135,7 +138,7 @@ class MyController extends MyCommon
             Debugger::getBar()->addPanel(new BarPanelTemplate('SQL: ' . count($sqlStatementsArray), $sqlStatementsArray));
         }
         $this->MyCMS->logger->info("Redir to {$redir} with SESSION[language]={$_SESSION['language']}");
-        header("Location: {$redir}", true, 301); // For SEO 301 is much better than 303
+        header("Location: {$redir}", true, $httpCode); // Note: for SEO 301 is much better than 303
         header('Connection: close');
         die('<script type="text/javascript">window.location=' . json_encode($redir) . ";</script>\n"
             . '<a href=' . urlencode($redir) . '>&rarr;</a>'
@@ -168,7 +171,7 @@ class MyController extends MyCommon
         if (is_string($templateDetermined)) {
             $this->MyCMS->template = $templateDetermined;
         } elseif (is_array($templateDetermined) && isset($templateDetermined['redir'])) {
-            $this->redir($templateDetermined['redir']);
+            $this->redir($templateDetermined['redir'], $templateDetermined['httpCode']);
         }
         // PROJECT SPECIFIC CHANGE OF OPTIONS AFTER LANGUAGE IS DETERMINED
         $this->prepareTemplate($options);

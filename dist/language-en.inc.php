@@ -1,4 +1,5 @@
 <?php
+
 $translation = [
     'language:en' => 'English',
     'language:cs' => 'česky',

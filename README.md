@@ -124,7 +124,7 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 │                 │    │        └──If something new calculated, then 
 │             <────────────── @return redirWrapper(URL - friendly or parametric)
 │                 │    └── if !isset($matches[1]) && ($this->language != DEFAULT_LANGUAGE) // no language subpatern and the language isn't default
-│             <─────────── @return redirWrapper(languageFolder . interestingPath) // interestingPath is part of PATH beyond applicationDir
+│             <─────────── @return 302 redirWrapper(languageFolder . interestingPath) // interestingPath is part of PATH beyond applicationDir
 │                 ├──REDIRECTOR_ENABLED
 │                 │    └──if old_url == interestingPath (=part of PATH beyond applicationDir)
 │             <─────────── @return redirWrapper(new_path)

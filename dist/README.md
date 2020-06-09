@@ -163,13 +163,9 @@ Language versions (or translations) are specified when instatiating the MyCMS ob
 ```
 For each language a corresponding file `language-xx.inc.php` is expected.
 
-TODO: test this below
 [.htaccess](.htaccess) is ready for languages `de|en|fr|sk|zh` to show content in the appropriate language folder
 (`cs` is considered as the default language, so it is accessible directly in application root),
 where page resouces may be in folders `styles|assets|fonts|images|scripts` which ignore the language directory.
-
-TODO: test this below
-Adapt respectively also `const PARSE_PATH_PATTERN` in `Controller::determineTemplate` ... lze ve FriendlyUrl předefinovat     const PARSE_PATH_PATTERN  ???
 
 ### Default language
 Default language set in [conf/config.php](conf/config.php) as constant `'DEFAULT_LANGUAGE' => 'cs',`
@@ -313,3 +309,4 @@ When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in
 ## TODO other
 * 190611 add article and search page types including controller tests
 * 190611 Make SASS to CSS conversion automatic (e.g. gulp)
+* 200609: replace beberlei/assert by webmozart/assert as it is already required by phpdocumentor/reflection-docblock required by phpspec/prophecy required by phpunit/phpunit

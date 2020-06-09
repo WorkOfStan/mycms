@@ -13,7 +13,7 @@
             <form method="POST" action="{$applicationDir}">
                 {*<label for="newsletter-email"><i class="icon-newsletter"></i></label>*}
                 <h2><label for="newsletter-email">{="Subscribe to our Newsletter by email."|translate}</label></h2>
-                <input type="email" name="newsletter" id="newsletter-email" placeholder="{="Enter Your email here"|translate}" required>
+                <input type="email" name="newsletter" id="newsletter-email" placeholder="{="Zde uveďte Vaši e-mailovou adresu"|translate}" required>
                 <input type="hidden" name="token" value="{$token}">
                 <div class="submit-form">
                     <span><span>{="By subscribing you agree to our handling of your {personal data}."|translate|replace:'{':'<a href="?page=personal-data" target="_blank">'|replace:'}':'</a>'|noescape}</span></span>
