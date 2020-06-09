@@ -153,7 +153,7 @@ class FriendlyUrl extends MyFriendlyUrl
             case 'language':
                 return null; // i.e. do not change the output or return "?{$outputKey}={$outputValue}";
             default:
-                Debugger::log("undefined friendlyfyUrl for {$outputKey} => {$outputValue}", ILogger::ERROR);
+                Debugger::log("switchParametric: undefined friendlyfyUrl for {$outputKey} => {$outputValue}", ILogger::ERROR);
         }
 
         return null;

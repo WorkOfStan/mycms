@@ -52,7 +52,7 @@ Note: `$MyCMS` name is expected by `ProjectSpecific extends ProjectCommon` class
 Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder in order to easily start.
 Replace the string `MYCMSPROJECTNAMESPACE` with your project namespace.
 Replace the string `MYCMSPROJECTSPECIFIC` with other website specific information (Brand, Twitter address, phone number, database table prefix in migrations...).
-If you want to use your own table name prefix, it is recommanded to change database related strings before first running [`./build.sh`](build.sh).
+If you want to use your own table name prefix, it is recommanded to change database related strings before first running [`./build.sh`](dist/build.sh).
 
 It is recommanded to adapt classes Contoller.php, FriendlyUrl.php and ProjectSpecific.php to your needs following the recommendations in comments.
 For deployment look also to [Deployment chapter](dist/README.md#deployment) and [Language management](dist/README.md#language-management) in dist/README.md.
@@ -114,29 +114,31 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 │   │
 │   └───$controller->friendlyUrl
 │       └── ->determineTemplate(['REQUEST_URI' => $this->requestUri]) // returns mixed string with name of the template when template determined, array with redir field when redirect, bool when default template SHOULD be used
-│            └── ->friendlyIdentifyRedirect(['REQUEST_URI' => $this->requestUri]) // returns mixed 1) bool (true) or 2) array with redir string field or 3) array with token string field and matches array field (see above)
-│                 └──if $token === self::PAGE_NOT_FOUND
-│                       │   $this->MyCMS->template = self::TEMPLATE_NOT_FOUND
+│            ├── ->friendlyIdentifyRedirect(['REQUEST_URI' => $this->requestUri]) // returns mixed 1) bool (true) or 2) array with redir string field or 3) array with token string field and matches array field (see above)
+│            │   ├──if $token === self::PAGE_NOT_FOUND
+│            │   │    └──$this->MyCMS->template = self::TEMPLATE_NOT_FOUND
 │             <──────── @return true
-│                 └──FORCE_301
-│                       │   ->friendlyfyUrl(URL query) // returns string query key of parse_url, e.g  var1=12&var2=b
-│                            │   ->switchParametric(`type`, `value`) // project specific request to database returns mixed null (do not change the output) or string (URL - friendly or parametric)
-│                                 │   If something new calculated, then 
+│                 ├──FORCE_301
+│                 │    ├── ->friendlyfyUrl(URL query) // returns string query key of parse_url, e.g  var1=12&var2=b
+│                 │    │   └── ->switchParametric(`type`, `value`) // project specific request to database returns mixed null (do not change the output) or string (URL - friendly or parametric)
+│                 │    │        └──If something new calculated, then 
 │             <────────────── @return redirWrapper(URL - friendly or parametric)
-│                 └──REDIRECTOR_ENABLED
-│                       │   if old_url == interestingPath (=part of PATH beyond applicationDir)
+│                 │    └── if !isset($matches[1]) && ($this->language != DEFAULT_LANGUAGE) // no language subpatern and the language isn't default
+│             <─────────── @return redirWrapper(languageFolder . interestingPath) // interestingPath is part of PATH beyond applicationDir
+│                 ├──REDIRECTOR_ENABLED
+│                 │    └──if old_url == interestingPath (=part of PATH beyond applicationDir)
 │             <─────────── @return redirWrapper(new_path)
-│                 │   If there are more (non language) folders, the base of relative URLs would be incorrect, therefore 
+│                 └──If there are more (non language) folders, the base of relative URLs would be incorrect, therefore 
 │             <──────── @return **redirect** either to a base URL with query parameters or to a 404 Page not found
-│             <──── @return [token, matches]**
+│             <──── @return [token, matches]
 │         <──── @return array with redir field when redirect || bool when default template SHOULD be used
 │            │
-│            │   [token, matches]
-│            │   loop through $myCmsConf['templateAssignementParametricRules'] and if $this->get[`type`] found: 
-│         <──── @return template || `TEMPLATE_NOT_FOUND` (if invalid `value`)
+│            ├──[token, matches]
+│            ├──loop through $myCmsConf['templateAssignementParametricRules'] and if $this->get[`type`] found: 
+│         <────── @return template || `TEMPLATE_NOT_FOUND` (if invalid `value`)
 │            │
 │            └── ->pureFriendlyUrl(['REQUEST_URI' => $this->requestUri], $token, $matches); //FRIENDLY URL & Redirect calculation where $token, $matches are expected from above
-│                       │   default scripts and language directories all result into the default template 
+│                       ├──default scripts and language directories all result into the default template 
 │             <─────────── @return self::TEMPLATE_DEFAULT
 │         <──── @return self::TEMPLATE_DEFAULT
 │                       │
@@ -158,5 +160,5 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 * 200314: administrace FriendlyURL je v F4T/classes/Admin::outputSpecialMenuLinks() a ::sectionUrls() .. zobecnit do MyCMS a zapnout pokud FRIENDLY_URL == true
 * 200526: CMS: * 200526: If Texy is used (see only in MyTableAdmin `($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : '')` then describe it. Otherwise remove it from composer.json, Latte\CustomFilters\, ProjectCommon, dist\index.php.
 * 200526: update jquery 3.2.1 -> 3.5.1 and describe dependencies; and also other js libraries
-* 200529: Minimum of PHP 7.2 required now: PHPUnit latest + Phinx latest https://github.com/cakephp/phinx/releases
+* 200529: Minimum of PHP 7.2 required now: PHPUnit latest + Phinx latest https://github.com/cakephp/phinx/releases .. planned for release 0.5.0
 * 200608: replace all `array(` by `[`

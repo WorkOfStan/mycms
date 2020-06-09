@@ -9,7 +9,7 @@ class MyFriendlyUrl extends MyCommon
 {
 
     const PAGE_NOT_FOUND = '404';
-    const PARSE_PATH_PATTERN = '~/(en\/|de/|fr/|sk/|zh/)?(.*/)?.*?~'; //TODO až vyřeším co je to en\/ , tak seřadit abecedně
+    const PARSE_PATH_PATTERN = '~/(de/|en/|fr/|sk/|zh/)?(.*/)?.*?~'; //TODO vygenerovat pomocí array_keys($this->MyCMS->TRANSLATIONS) resp. mělo by být definováno až ve FriendlyURL ať to je podle nastavení aplikace
 
     use \Nette\SmartObject;
 
@@ -54,7 +54,7 @@ class MyFriendlyUrl extends MyCommon
      * @param MyCMS $MyCMS
      * @param array $options overides default values of declared properties
      */
-    public function __construct(MyCMS $MyCMS, array $options = array())
+    public function __construct(MyCMS $MyCMS, array $options = [])
     {
         parent::__construct($MyCMS, $options);
         Debugger::barDump($options, 'friendlyUrl instantiated');
@@ -101,11 +101,12 @@ class MyFriendlyUrl extends MyCommon
             $this->MyCMS->template = self::TEMPLATE_NOT_FOUND;
             return true;
         }
+        $this->verboseBarDump(['FORCE_301' => FORCE_301, 'FRIENDLY_URL' => FRIENDLY_URL, 'REDIRECTOR_ENABLED' => REDIRECTOR_ENABLED,], 'Constants');
         //part of PATH beyond applicationDir
         $this->verboseBarDump($interestingPath = ( substr($url['path'], 0, strlen($this->applicationDir)) === $this->applicationDir ) ? (substr($url['path'], strlen($this->applicationDir))) : $url['path'], 'friendlyIdentifyRedirect: interestingPath');
 
         //if FORCE_301 set as true and it is possible, redir to Friendly URLs (if FRIENDLY_URL and set) to Friendly URLs or to simple parametric URLs (type=id) //TODO: explain better
-        if ($this->verboseBarDump(FORCE_301, 'FORCE_301') && !empty($this->verboseBarDump($friendlyUrl = $this->friendlyfyUrl(isset($url['query']) ? '?' . $url['query'] : ''), 'friendlyIdentifyRedirect: friendlyUrl'))) {
+        if (FORCE_301 && !empty($this->verboseBarDump($friendlyUrl = $this->friendlyfyUrl(isset($url['query']) ? '?' . $url['query'] : ''), 'friendlyIdentifyRedirect: friendlyUrl'))) {
             if (($friendlyUrl != ('?' . $url['query']))) {
                 $this->verboseBarDump($addLanguageDirectory = ($this->language != DEFAULT_LANGUAGE) // other than default language should have its directory
                     && !preg_match("~^{$this->language}/~", $friendlyUrl), 'friendlyIdentifyRedirect: addLanguageDirectory 301'); // unless the friendlyURL already has it
@@ -117,13 +118,13 @@ class MyFriendlyUrl extends MyCommon
 
         $matches = [];
         $matchResult = preg_match(self::PARSE_PATH_PATTERN, $interestingPath, $matches);
-        $this->verboseBarDump($matches, 'friendlyIdentifyRedirect: folderInPath matches');
-        $this->verboseBarDump($matchResult, 'friendlyIdentifyRedirect: match result (1=pattern matches given subject, 0=it does not, or FALSE=error)');
+        $this->verboseBarDump(['PARSE_PATH_PATTERN' => self::PARSE_PATH_PATTERN, 'folderInPath matches' => $matches, 'match result' => $matchResult], 'match result (1=pattern matches given subject, 0=it does not, or FALSE=error)');
         //language reset if path requires it
         if (isset($matches[1]) && !(substr($interestingPath, 0, strlen('/assets/')) === '/assets/')) { // non-existent page resources SHOULD NOT change the web language to the default
-            // Note: Controller MUST request the current values of $this->language and $this->session['language']
-            $this->language = $this->MyCMS->getSessionLanguage(['language' => substr($matches[1], 0, 2)], $this->session, false); // transforms 'en/' to 'en' //$makeInclude=false as $this->MyCMS->TRANSLATION is already set.
-            $this->verboseBarDump($this->language, 'friendlyIdentifyRedirect: Language reset according to path');
+            // transforms 'en/' to 'en' //$makeInclude=false as $this->MyCMS->TRANSLATION is already set.
+            $this->verboseBarDump($this->language = $this->MyCMS->getSessionLanguage(['language' => substr($matches[1], 0, 2)], $this->session, false), 'friendlyIdentifyRedirect: Language reset according to path');
+        } elseif (!isset($matches[1]) && FORCE_301 && ($this->language != DEFAULT_LANGUAGE)) {
+            return $this->redirWrapper('/' . $this->language . $interestingPath, 'SEO Force 301 language folder');
         }
         // If there is a redirect specified
         if (REDIRECTOR_ENABLED && $this->verboseBarDump(($found = $this->MyCMS->fetchSingle('SELECT `new_url` FROM ' . TAB_PREFIX . 'redirector WHERE `old_url`="' . $interestingPath . '" AND `active` = "1"')), 'friendlyIdentifyRedirect: found redirect')) {
@@ -133,11 +134,11 @@ class MyFriendlyUrl extends MyCommon
 
         // If there are more (non language) folders, the base of relative URLs would be incorrect, therefore either redirect to a base URL with query parameters or to a 404 Page not found.
         if ($this->verboseBarDump(isset($matches[2]), 'friendlyIdentifyRedirect: folderInPath')) {
-            $this->verboseBarDump(($addLanguageDirectory = FRIENDLY_URL) && ($this->language != DEFAULT_LANGUAGE) // other than default language should have its directory
+            $this->verboseBarDump($addLanguageDirectory = FRIENDLY_URL && $this->language != DEFAULT_LANGUAGE // other than default language should have its directory
                 && !preg_match("~/{$this->language}/~", $this->requestUri), 'friendlyIdentifyRedirect: addLanguageDirectory many folders'); // unless the page already has it
             return isset($url['query']) ? $this->redirWrapper('/?' . $url['query'], 'complex URL with params') : $this->redirWrapper(($addLanguageDirectory ? "/{$this->language}/" : '/') . self::PAGE_NOT_FOUND . '?url=' . $interestingPath, '404 for complex unknown URL');
         }
-        return compact('token', 'matches');
+        return $this->verboseBarDump(compact('token', 'matches'), 'friendlyIdentifyRedirect: return [token, matches]');
     }
 
     /**
@@ -200,9 +201,7 @@ class MyFriendlyUrl extends MyCommon
 
         // URL token not found
         $this->MyCMS->logger->error("404 Not found - {$options['REQUEST_URI']} and token=`{$token}`");
-        if ($this->verbose) {
-            echo "No condition catched the input."; //TODO: localise (en, cs...) //TODO use some other mechanism than echo ??
-        }
+        $this->verboseBarDump("No condition catched the input.", "determineTemplate fail");
         return self::TEMPLATE_NOT_FOUND;
     }
 

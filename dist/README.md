@@ -169,9 +169,7 @@ TODO: test this below
 where page resouces may be in folders `styles|assets|fonts|images|scripts` which ignore the language directory.
 
 TODO: test this below
-Adapt respectively also `const PARSE_PATH_PATTERN` in `Controller::determineTemplate`
-TODO: test this below (add all languages? nebylo by lepší to přidat cyklem z TRANSLATIONS?
-and `if (in_array($token, array(HOME_TOKEN, '', 'index', 'en')))` in `Controller::determineTemplate`.
+Adapt respectively also `const PARSE_PATH_PATTERN` in `Controller::determineTemplate` ... lze ve FriendlyUrl předefinovat     const PARSE_PATH_PATTERN  ???
 
 ### Default language
 Default language set in [conf/config.php](conf/config.php) as constant `'DEFAULT_LANGUAGE' => 'cs',`

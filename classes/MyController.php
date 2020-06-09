@@ -161,7 +161,7 @@ class MyController extends MyCommon
         // Note: $_SESSION['language'] je potřeba, protože to nastavuje stav jazyka pro browser
         // Note: $this->session je potřeba, protože je ekvivalentní proměnné $_SESSION, která je vstupem MyCMS->getSessionLanguage
         // Note: $this->language je potřeba, protože nastavuje jazyk v rámci instance Controller
-        $this->session['language'] = $this->language; // = $this->friendlyUrl->getLanguage();
+        $this->session['language'] = $this->language = $this->friendlyUrl->getLanguage();
         $_SESSION['language'] = $this->MyCMS->getSessionLanguage(Tools::ifset($this->get, []), Tools::ifset($this->session, []), true); // Language is finally determined, therefore make the include creating TRANSLATION
         $this->MyCMS->logger->info("After determineTemplate: this->language={$this->language}, this->session['language']={$this->session['language']}, _SESSION['language']={$_SESSION['language']} this->get[language]=" . (isset($this->get['language']) ? $this->get['language'] : 'n/a'));
         $this->verboseBarDump($this->get, 'get in controller after determineTemplate');
