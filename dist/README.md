@@ -260,6 +260,8 @@ throw new \Exception('Exception description');
 
 `$debugIpArray` in `config.php` contains IPs for which Tracy will be displayed.
 
+Recommendation: use webmozart/assert (instead of beberlei/assert) as it is already required by phpdocumentor/reflection-docblock required by phpspec/prophecy required by phpunit/phpunit
+
 ## REST API
 
 Note: `header("Content-type: application/json");` in outputJSON hides Tracy
@@ -309,5 +311,4 @@ When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in
 ## TODO other
 * 190611: add article and search page types including controller tests
 * 190611: Make SASS to CSS conversion automatic (e.g. gulp)
-* 200609: replace beberlei/assert by webmozart/assert as it is already required by phpdocumentor/reflection-docblock required by phpspec/prophecy required by phpunit/phpunit
 * 200609: admin table (with salt etc.) SHOULD NOT be available through admin.php
