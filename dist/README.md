@@ -298,7 +298,7 @@ When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in
 * 200608: describe scenario when no language is `default` in terms that all pages run within /iso-639-1/ folder
 
 ## TODO CMS
-
+* 200610: bool field show as on/off 1/0 true/false or something else more reasonable than int input box
 
 ## TODO SEO
 
@@ -307,6 +307,7 @@ When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in
 
 
 ## TODO other
-* 190611 add article and search page types including controller tests
-* 190611 Make SASS to CSS conversion automatic (e.g. gulp)
+* 190611: add article and search page types including controller tests
+* 190611: Make SASS to CSS conversion automatic (e.g. gulp)
 * 200609: replace beberlei/assert by webmozart/assert as it is already required by phpdocumentor/reflection-docblock required by phpspec/prophecy required by phpunit/phpunit
+* 200609: admin table (with salt etc.) SHOULD NOT be available through admin.php

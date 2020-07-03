@@ -51,7 +51,7 @@ Note: `$MyCMS` name is expected by `ProjectSpecific extends ProjectCommon` class
 ## `/dist`
 Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder in order to easily start.
 Replace the string `MYCMSPROJECTNAMESPACE` with your project namespace.
-Replace the string `MYCMSPROJECTSPECIFIC` with other website specific information (Brand, Twitter address, phone number, database table prefix in migrations...).
+Replace the string `MYCMSPROJECTSPECIFIC` with other website specific information (Brand, Twitter address, phone number, database table prefix in phinx.yml...).
 If you want to use your own table name prefix, it is recommanded to change database related strings before first running [`./build.sh`](dist/build.sh).
 
 It is recommanded to adapt classes Contoller.php, FriendlyUrl.php and ProjectSpecific.php to your needs following the recommendations in comments.
@@ -96,6 +96,8 @@ $ ./vendor/bin/phpunit
 Note that `dist` folder contains the starting MyCMS based project deployment and testing runs through `dist` as well,
 so for development, the environment has to be set up for `dist` as well.
 
+Note: running `vendor/bin/phpunit` from root will result in using MyCMS classes from the root Classes even from `mycms/dist/Test`.
+While running `vendor/bin/phpunit` from `dist` will result in using MyCMS classes from the `dist/vendor/godsdev/mycms/classes`.
 # How does Friendly URL works within Controller
 
 [SEO settings details including language management in `dist` folder](dist/README.md#seo)
@@ -162,3 +164,4 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 * 200526: update jquery 3.2.1 -> 3.5.1 and describe dependencies; and also other js libraries
 * 200529: Minimum of PHP 7.2 required now: PHPUnit latest + Phinx latest https://github.com/cakephp/phinx/releases .. planned for release 0.5.0
 * 200608: replace all `array(` by `[`
+* 200622: once FriendlyUrl incl tests is part of develop - add github actions lint

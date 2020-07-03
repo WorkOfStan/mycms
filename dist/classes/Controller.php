@@ -8,6 +8,7 @@ use GodsDev\mycmsprojectnamespace\FriendlyUrl;
 use GodsDev\mycmsprojectnamespace\ProjectSpecific;
 use Tracy\Debugger;
 use Tracy\ILogger;
+use Webmozart\Assert\Assert;
 
 class Controller extends MyController
 {
@@ -95,7 +96,8 @@ class Controller extends MyController
     protected function prepareTemplate(array $options = [])
     {
         $this->verboseBarDump($this->MyCMS->template, 'template used to prepareTemplate switch');
-        Debugger::barDump($requestMethod = $this->httpMethod, 'REQUEST_METHOD'); //TODO filtrovat, resp. předat parametricky
+        Assert::inArray($this->httpMethod, ['GET', 'POST',], 'Unauthorized HTTP method %s');
+        Debugger::barDump($requestMethod = $this->httpMethod, 'REQUEST_METHOD');
         switch ($this->MyCMS->template) {
             case self::TEMPLATE_DEFAULT: return true;
             case self::TEMPLATE_NOT_FOUND: return true;

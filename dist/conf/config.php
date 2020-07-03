@@ -2,13 +2,17 @@
 
 /**
  * Config for the project
+ * 
+ * EDIT ONLY AS PART OF GIT REPOSITORY
+ * FOR LOCAL CHANGES USE config.local.php
+ * 
  */
 ini_set('session.use_strict_mode', 1);
 ini_set('display_errors', 0); // errors only in the log; override it in your config.local.php if you need
 
 define('DB_HOST', 'localhost');
 define('DB_PORT', ini_get('mysqli.default_port'));
-define('TAB_PREFIX', 'MYCMSPROJECTSPECIFIC_'); // prefix for database tables
+define('TAB_PREFIX', 'mycmsprojectspecific_'); // prefix for database tables - use the same string in phinx.yml in the table_prefix field
 
 define('DIR_ASSETS', 'assets/');
 define('DIR_TEMPLATE', __DIR__ . '/../template'); // for Latte

@@ -17,11 +17,12 @@ environments:
     development:
         adapter: mysql
         host: localhost
-        name: development_db
+        name: MYCMSPROJECTSPECIFIC
         user: root
         pass: ''
         port: 3306
         charset: utf8
+        table_prefix: 'mycmsprojectspecific_'
 
     testing:
         adapter: mysql
