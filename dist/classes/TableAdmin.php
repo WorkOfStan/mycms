@@ -308,12 +308,13 @@ class TableAdmin extends \GodsDev\MyCMS\MyTableAdmin
     public function customInput($field, $value, array $record = [])
     {
         $result = false;
-        /*        $fieldLang = $field;
-          foreach ($this->TRANSLATIONS as $key => $value) {
-          if (substr($field, -3) == '_' . $key) {
-          $fieldLang = substr($field, -3) . '_##';
-          }
-          } */
+        //TODO: explain code below
+//        $fieldLang = $field;
+//        foreach ($this->TRANSLATIONS as $key => $value) {
+//            if (substr($field, -3) == '_' . $key) {
+//                $fieldLang = substr($field, -3) . '_##';
+//            }
+//        }
         switch (mb_substr($this->table, mb_strlen(TAB_PREFIX)) . "\\" . $field) {
             //case "tableName\\fieldName": $result = ""; break; // SPECIMEN
             // URL fields have btn-webalize button

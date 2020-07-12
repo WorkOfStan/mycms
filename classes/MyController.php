@@ -95,9 +95,10 @@ class MyController extends MyCommon
 
     /**
      * To be defined in child
-     * Processes $this->MyCMS->template after method determineTemplate
+     * Processes $this->MyCMS->template after method prepareTemplate
      * Set $this->MyCMS->context accordingly for all (or multiple) pages
      * Might even change $this->MyCMS->template value
+     * Contains the typical controller code
      *
      * @param array $options
      * @return bool true on success, false on error
@@ -176,7 +177,7 @@ class MyController extends MyCommon
         // PROJECT SPECIFIC CHANGE OF OPTIONS AFTER LANGUAGE IS DETERMINED
         $this->prepareTemplate($options);
 
-        // PUT CONTROLLER CODE HERE
+        // TYPICAL CONTROLLER CODE
         $this->prepareAllTemplates($options);
 
         if ($this->MyCMS->template === self::TEMPLATE_NOT_FOUND) {

@@ -2,7 +2,8 @@
 
 namespace GodsDev\mycmsprojectnamespace;
 
-use Assert\Assertion;
+//TODO check if beberlei/assert was successfully replaced by Webmozart, check 2 Assert::email below
+use Webmozart\Assert\Assert;
 use GodsDev\MyCMS\MyCMS;
 use GodsDev\MyCMS\MyCommon;
 
@@ -84,8 +85,8 @@ class Mail extends MyCommon
      */
     public function sendMail($to, $subject, $messageTxt, array $options = [])
     {
-        Assertion::email(NOTIFY_FROM_ADDRESS, 'E-mail sender');
-        Assertion::email($to, 'E-mail recipient');
+        Assert::email(NOTIFY_FROM_ADDRESS, 'E-mail sender');
+        Assert::email($to, 'E-mail recipient');
         if (defined('MAIL_SENDING_ACTIVE') && MAIL_SENDING_ACTIVE === false) {
             $this->logger->info("NOT SENDING {$to}/{$subject}/{$messageTxt}");
             return false;

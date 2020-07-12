@@ -329,3 +329,4 @@ When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in
 * 200712: update jquery https://jquery.com/ incl. map --> admin.php expects section
 * 200712: update fontawesome --> admin.php expects section
 * 200712: when adding new Content automatically uncheck the NULL checkbox so that something is saved!
+* 200712: remove unnecessary `sql =` constructs

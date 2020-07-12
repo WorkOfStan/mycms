@@ -73,9 +73,10 @@ class Controller extends MyController
     }
 
     /**
-     * Processes $this->MyCMS->template after method determineTemplate
+     * Processes $this->MyCMS->template after method prepareTemplate
      * Set $this->MyCMS->context accordingly for all (or multiple) pages
      * Might even change $this->MyCMS->template value
+     * Contains the typical controller code
      *
      * @param array $options
      * @return bool true on success, false on error

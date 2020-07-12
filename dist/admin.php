@@ -8,12 +8,17 @@ require_once './prepare.php';
 $AGENDAS = [
     'category' => [
         'column' => "name_{$_SESSION['language']}",
+        'prefill' => [
+            'sort' => 0,
+            'added' => 'now',
+        ]
     ],
     'product' => [
         'column' => "name_{$_SESSION['language']}",
         'prefill' => [
             'context' => '{}',
             'sort' => 0,
+            'added' => 'now',
         ],
     ],
     'page' => [
@@ -24,7 +29,7 @@ $AGENDAS = [
             'type' => 'page',
             'context' => '{}',
             'sort' => 0,
-            'added' => 'now', // date('Y-m-d H:i:s'),
+            'added' => 'now',
         ],
     ],
     'ad' => [
@@ -35,7 +40,7 @@ $AGENDAS = [
             'type' => 'ad',
             'context' => '{}',
             'sort' => 0,
-            'added' => 'now', // date('Y-m-d H:i:s'),
+            'added' => 'now',
         ],
     ],
 ];
