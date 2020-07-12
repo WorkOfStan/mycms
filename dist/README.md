@@ -218,7 +218,7 @@ $AGENDAS = [
             'type' => 'page',
             'context' => '{}',
             'sort' => 0,
-            'added' => 'now',   // results to date('Y-m-d H:i:s'),
+            'added' => 'now',   // results to date('Y-m-d\TH:i:s')
         ],
     ],
 ];
@@ -300,7 +300,7 @@ Pages have view-TEMPLATE class in <body/> to allow for exceptions.
 
 Convert SASS to CSS (performed also by [build.sh](build.sh)) by
 ```sh
-sass styles/index.sass styles/index.css  # performed also by [build.sh](build.sh)
+sass styles/index.sass styles/index.css
 ```
 
 When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in `config.php` in order to force cache reload these resources.
@@ -328,3 +328,4 @@ When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in
 * 200712: update bootstrap https://getbootstrap.com/ incl. map --> admin.php expects section
 * 200712: update jquery https://jquery.com/ incl. map --> admin.php expects section
 * 200712: update fontawesome --> admin.php expects section
+* 200712: when adding new Content automatically uncheck the NULL checkbox so that something is saved!

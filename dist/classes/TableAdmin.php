@@ -7,9 +7,16 @@ use GodsDev\Tools\Tools;
 class TableAdmin extends \GodsDev\MyCMS\MyTableAdmin
 {
 
+    /**
+     * 
+     * @param \mysqli $dbms database management system (e.g. new mysqli())
+     * @param string $table table name
+     * @param array $options
+     */
     function __construct(\mysqli $dbms, $table, array $options = [])
     {
         parent::__construct($dbms, $table, $options);
+        // TODO uses all example languages
         $this->TRANSLATIONS = [
             'cs' => 'Česky',
             'en' => 'English',
@@ -309,6 +316,21 @@ class TableAdmin extends \GodsDev\MyCMS\MyTableAdmin
           } */
         switch (mb_substr($this->table, mb_strlen(TAB_PREFIX)) . "\\" . $field) {
             //case "tableName\\fieldName": $result = ""; break; // SPECIMEN
+            // URL fields have btn-webalize button
+            case "content\\url_cs":
+            case "content\\url_de":
+            case "content\\url_en":
+            case "content\\url_fr":
+                $result = '<div class="input-group">'
+                    . Tools::htmlInput("fields[$field]", '', $value, array('class' => 'form-control input-url', 'id' => $field . $this->rand))
+                    . '<span class="input-group-btn">'
+                    . '<button type="button" class="btn btn-secondary btn-webalize"' // btn-webalize referes to listener in admin.js // TODO webalize according to the first row on the page (i.e. name, not description)
+                    . ' data-url="' . Tools::h($field . $this->rand) . '"'
+                    . ' data-name="' . Tools::h(mb_substr($this->table, mb_strlen(TAB_PREFIX)) . '_' . mb_substr($field, -2) . $this->rand) . '"'
+                    . ' data-table="' . Tools::h($this->table) . '"'
+                    . ' title="' . $this->translate('Convert') . '"><i class="fa fa-adjust" aria-hidden="true"></i></button>'
+                    . '</span></div>';
+                break;
         }
         return $result;
     }

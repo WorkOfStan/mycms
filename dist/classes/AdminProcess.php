@@ -201,19 +201,15 @@ class AdminProcess extends MyAdminProcess
      */
     public function getAgenda($agenda)
     {
-//        Debugger::barDump($agenda, 'getAgenda(agenda)');
         $result = $correctOrder = [];
         if (!isset($this->agendas[$agenda])) {
             return $result;
         }
+        /** @var array $options array of agenda set in admin.php in $AGENDAS */
         $options = $this->agendas[$agenda];
-//        Debugger::barDump($options, 'getAgenda options');
         Tools::setifempty($options['table'], $agenda);
         Tools::setifempty($options['sort']);
         Tools::setifempty($options['path']);
-//        if(is_array($options['column'])) {
-//          Debugger::barDump(array_map([$this->MyCMS->dbms, 'escapeDbIdentifier'],$options['column']),'Ar map');
-//        }
         $selectExpression = isset($options['path']) ?
             'CONCAT(REPEAT("… ",LENGTH(' . $this->MyCMS->dbms->escapeDbIdentifier($options['path']) . ') / ' . PATH_MODULE . ' - 1),' . $options['table'] . '_' . DEFAULT_LANGUAGE . ')' :
             (isset($options['column']) ? (

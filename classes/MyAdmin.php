@@ -136,7 +136,6 @@ class MyAdmin extends MyCommon
         $result .= '<li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="' . $TableAdmin->translate('Settings') . '"><i class="fa fa-cog"></i> ' . $TableAdmin->translate('Settings') . '</a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">';
-        // TODO offer admin languages for all languages available for the web UI
         foreach ($TableAdmin->TRANSLATIONS as $key => $value) {
             $result .= '<a class="dropdown-item' . ($key == $_SESSION['language'] ? ' active' : '') . '" href="?' . Tools::urlChange(['language' => $key]) . '"><i class="fa fa-language mr-1"></i> ' . Tools::h($value) . '</a>' . PHP_EOL;
         }

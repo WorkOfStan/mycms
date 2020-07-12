@@ -41,14 +41,14 @@ class ContentTable extends AbstractMigration
         $content
             ->addColumn('type', 'string', ['comment' => '{"display":"option", "display-own":1}', 'limit' => 100, 'null' => false,])
             ->addIndex(['type'])
-            ->addColumn('code', 'string', ['comment' => 'page shortcut', 'limit' => 100, 'null' => false,])
+            ->addColumn('code', 'string', ['comment' => 'page shortcut', 'default' => '', 'limit' => 100, 'null' => false,])
             ->create();
 
         foreach ($languages as $language) {
             $content
-                ->addColumn('name_' . $language, 'string', ['comment' => '{"required":true, "comment":"Item name"}', 'limit' => 200, 'null' => false,])
-                ->addColumn('content_' . $language, 'text', ['comment' => '{"display":"html"}', 'limit' => MysqlAdapter::TEXT_REGULAR, 'null' => true,])
-                ->addColumn('url_' . $language, 'string', ['comment' => '{"edit":"input", "comment":"FriendlyURL"}', 'limit' => 200, 'null' => true,])
+                ->addColumn('name_' . $language, 'string', ['comment' => 'Item name (required for listing)', 'default' => '', 'limit' => 200, 'null' => false,])
+                ->addColumn('content_' . $language, 'text', ['comment' => '{"display":"html", "comment": "HTML content of the element"}', 'limit' => MysqlAdapter::TEXT_REGULAR, 'null' => true,])
+                ->addColumn('url_' . $language, 'string', ['comment' => 'FriendlyURL', 'limit' => 200, 'null' => true,])
                 ->addIndex('url_' . $language)
                 ->update();
         }
@@ -71,9 +71,9 @@ class ContentTable extends AbstractMigration
 
         foreach ($languages as $language) {
             $category
-                ->addColumn('name_' . $language, 'string', ['comment' => '{"required":true, "comment":"Item name"}', 'limit' => 200, 'null' => false,])
-                ->addColumn('content_' . $language, 'text', ['comment' => '{"display":"html"}', 'limit' => MysqlAdapter::TEXT_REGULAR, 'null' => true,])
-                ->addColumn('url_' . $language, 'string', ['comment' => '{"edit":"input", "comment":"FriendlyURL"}', 'limit' => 200, 'null' => true,])
+                ->addColumn('name_' . $language, 'string', ['comment' => 'Item name (required for listing)', 'default' => '', 'limit' => 200, 'null' => false,])
+                ->addColumn('content_' . $language, 'text', ['comment' => '{"display":"html", "comment": "HTML content of the element"}', 'limit' => MysqlAdapter::TEXT_REGULAR, 'null' => true,])
+                ->addColumn('url_' . $language, 'string', ['comment' => 'FriendlyURL', 'limit' => 200, 'null' => true,])
                 ->addIndex('url_' . $language)
                 ->update();
             $defaultCategory['name_' . $language] = "Default {$language}";
@@ -101,9 +101,9 @@ class ContentTable extends AbstractMigration
 
         foreach ($languages as $language) {
             $product
-                ->addColumn('name_' . $language, 'string', ['comment' => '{"required":true, "comment":"Item name"}', 'limit' => 200, 'null' => false,])
-                ->addColumn('content_' . $language, 'text', ['comment' => '{"display":"html"}', 'limit' => MysqlAdapter::TEXT_REGULAR, 'null' => true,])
-                ->addColumn('url_' . $language, 'string', ['comment' => '{"edit":"input", "comment":"FriendlyURL"}', 'limit' => 200, 'null' => true,])
+                ->addColumn('name_' . $language, 'string', ['comment' => 'Item name (required for listing)', 'default' => '', 'limit' => 200, 'null' => false,])
+                ->addColumn('content_' . $language, 'text', ['comment' => '{"display":"html", "comment": "HTML content of the element"}', 'limit' => MysqlAdapter::TEXT_REGULAR, 'null' => true,])
+                ->addColumn('url_' . $language, 'string', ['comment' => 'FriendlyURL', 'limit' => 200, 'null' => true,])
                 ->addIndex('url_' . $language)
                 ->update();
         }

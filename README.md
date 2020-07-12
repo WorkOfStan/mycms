@@ -71,11 +71,13 @@ MyCMS is used only as a library, so the application using it SHOULD implement `R
 Columns of tables displayed in admin can use various features set in the comment:
 | comment | feature                               |
 |---------|---------------------------------------|
-| {"display":"html"} | HTML editor (Summer?) | |
+| {"display":"html"} | HTML editor Summernote |
+| {"display":"layout-row"} | ?? |
 | {"display":"option"} | Existing values are offered in select box |
 | {"display":"option","display-own":1} | ... and an input box for adding previously unused values |
 | {"display":"path"} |	??  |
-| {"edit": "input"} | natáhne tam zřejmě z prvního pole na stránce a URL-ify?? |
+| {"display":"texyla"} | ?? Texyla editor |
+| {"edit": "input"} | zatím nic: todo: natáhnout string z prvního pole na stránce a webalize |
 | {"edit":"json"} | rozpadne interní json do příslušných polí --- ovšem pokud prázdné, je potřeba vložit JSON (proto je default '{}') |
 | {"foreign-table":"category","foreign-column":"category_en"} | odkaz do jiné tabulky ke snadnému výběru |
 | {"foreign-table":"category","foreign-column":"category_en","foreign-path":"path"} | ?? |
@@ -186,7 +188,7 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 * TO BE CHECKED 190723: nastavování hesla by se nemělo do log.sql ukládat - volat instanci BackyardMysqli namísto LogMysqli?? @crs2: Řešilo by to přidání parametru (do query() v LogMysqli.php), který by volání error_log() potlačil? A poté u změny hesla volání tohoto parametru? + Ještě mě napadá řešení na úrovni samotného sloupce tabulky, tj. definování (v LogMysqli.php), které sloupce které tabulky obsahují citlivé údaje pro logování. Ale to by vyžadovalo parsing SQL.
 * 200314: administrace FriendlyURL je v F4T/classes/Admin::outputSpecialMenuLinks() a ::sectionUrls() .. zobecnit do MyCMS a zapnout pokud FRIENDLY_URL == true
 * 200526: CMS: * 200526: If Texy is used (see only in MyTableAdmin `($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : '')` then describe it. Otherwise remove it from composer.json, Latte\CustomFilters\, ProjectCommon, dist\index.php.
-* 200526: update jquery 3.2.1 -> 3.5.1 and describe dependencies; and also other js libraries
+* 200526: update jquery 3.2.1 -> 3.5.1 and describe dependencies; and also other js libraries (maybe only in dist??)
 * 200529: Minimum of PHP 7.2 required now: PHPUnit latest + Phinx latest https://github.com/cakephp/phinx/releases .. planned for release 0.5.0
 * 200608: replace all `array(` by `[`
 * 200622: once FriendlyUrl incl tests is part of develop - add github actions lint
