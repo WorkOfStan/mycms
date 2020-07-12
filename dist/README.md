@@ -75,13 +75,13 @@ For this deployment scenarion only (because otherwise it would be a vulnerabilit
 
 
 ## `build.sh` runs the following commands
-
-`composer update`
-
-Note: All changes in database (structure) SHOULD be made by phinx migrations. Create your local `phinx.yml` as a copy of `phinx.dist.yml` to make it work, where you set your database connection into *development* section. 
+1. `composer update`
+2. Note: All changes in database (structure) SHOULD be made by phinx migrations. Create your local `phinx.yml` as a copy of `phinx.dist.yml` to make it work, where you set your database connection into *development* section. 
 ```bash
 vendor/bin/phinx migrate -e development # or production or testing
 ```
+3. `vendor/bin/phpunit` to always check the functionality
+4. `sass styles/index.sass styles/index.css` to keep order in the generated css
 
 ## reCAPTCHA
 
@@ -244,15 +244,14 @@ if path used: 'CONCAT(REPEAT("… ",LENGTH(' . $this->MyCMS->dbms->escapeDbIdent
 Note: assets expects only ONE sub-level.
 
 ### admin.php expects
+* [Summernote](https://summernote.org/getting-started/#installation) v.0.8.18 (2020-05-20) (styles/summernote.css, styles/font/summernote.*, scripts/summernote.js, scripts/summernote.js.map)
 * scripts\bootstrap.js
 * scripts\admin-specific.js
 * scripts\ie10-viewport-bug-workaround.js
-* scripts\summernote.js
 * styles\bootstrap.css
 * styles\bootstrap-datetimepicker.css
 * styles\font-awesome.css
 * styles\ie10-viewport-bug-workaround.css
-* styles\summernote.css
 * fonts\fa*.*
 
 ## Admin UI
@@ -299,7 +298,7 @@ Logs are in folder `log`:
 
 Pages have view-TEMPLATE class in <body/> to allow for exceptions.
 
-Convert SASS to CSS by
+Convert SASS to CSS (performed also by [build.sh](build.sh)) by
 ```sh
 sass styles/index.sass styles/index.css  # performed also by [build.sh](build.sh)
 ```
@@ -325,3 +324,7 @@ When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in
 * 190611: add article and search page types including controller tests
 * 190611: Make SASS to CSS conversion automatic (e.g. gulp)
 * 200609: admin table (with salt etc.) SHOULD NOT be available through admin.php
+* 200712: migrate popper https://popper.js.org/docs/v2/migration-guide/ incl. map --> admin.php expects section
+* 200712: update bootstrap https://getbootstrap.com/ incl. map --> admin.php expects section
+* 200712: update jquery https://jquery.com/ incl. map --> admin.php expects section
+* 200712: update fontawesome --> admin.php expects section
