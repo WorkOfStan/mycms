@@ -56,7 +56,8 @@ If you want to use your own table name prefix, it is recommanded to change datab
 
 To adapt the content and its structure either adapt migrations [content_table](dist/db/migrations/20200607204634_content_table.php) and [content_example](dist/db/migrations/20200703213436_content_example.php) 
 before first running build
-or adapt the database content after running build.
+or adapt the database content after running build
+or run build, see for yourself how it works, then adapt migrations, drop tables and run build again.
 
 It is recommanded to adapt classes Contoller.php, FriendlyUrl.php and ProjectSpecific.php to your needs following the recommendations in comments.
 For deployment look also to [Deployment chapter](dist/README.md#deployment) and [Language management](dist/README.md#language-management) in dist/README.md.
@@ -68,18 +69,21 @@ MyCMS is used only as a library, so the application using it SHOULD implement `R
 ## Database
 
 Columns of tables displayed in admin can use various features set in the comment:
-* {"display":"path"}	??
-* {"foreign-table":"category","foreign-column":"category_en"} .. odkaz do jiné tabulky ke snadnému výběru
-* {"foreign-table":"category","foreign-column":"category_en","foreign-path":"path"}	
-* {"display":"option","display-own":1}
-* {"required":true}
-* {"edit": "input"} .. natáhne tam zřejmě z prvního pole na stránce a URL-ify??
-* {"display":"html"}  ... HTML editor (Summer?)
-* {"edit":"json"} ...   rozpadne interní json do příslušných polí --- ovšem pokud prázdné, je potřeba vložit JSON (proto je default '{}')
+| comment | feature                               |
+|---------|---------------------------------------|
+| {"display":"html"} | HTML editor (Summer?) | |
+| {"display":"option"} | Existing values are offered in select box |
+| {"display":"option","display-own":1} | ... and an input box for adding previously unused values |
+| {"display":"path"} |	??  |
+| {"edit": "input"} | natáhne tam zřejmě z prvního pole na stránce a URL-ify?? |
+| {"edit":"json"} | rozpadne interní json do příslušných polí --- ovšem pokud prázdné, je potřeba vložit JSON (proto je default '{}') |
+| {"foreign-table":"category","foreign-column":"category_en"} | odkaz do jiné tabulky ke snadnému výběru |
+| {"foreign-table":"category","foreign-column":"category_en","foreign-path":"path"} | ?? |
+| {"required":true} |  ??   |
 
-TODO        active   ... přepínací kruhový button
+TODO: active=0/1 display as on/off button
 
-TODO: better explain. Btw: shouldn't it be in dist/README.md ??
+TODO: better explain.
 
 ## clientSideResources
 In `class/Admin.php` you can redefine the `clientSideResources` variable with resources to load to the admin. Its default is:

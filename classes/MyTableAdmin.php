@@ -178,12 +178,15 @@ class MyTableAdmin extends MyTableLister
             $input = '<select name="fields[' . Tools::h($key) . ']" id="' . Tools::h($key . $this->rand) . '" class="form-control d-inline-block w-initial"'
                     . (isset($comment['display-own']) && $comment['display-own'] ? ' onchange="$(\'#' . Tools::h($key . $this->rand) . '_\').val(null)"' : '') . '>'
                     . '<option></option>';
+            // if prefill value is not yet among the existing values, set as value for the own-value input box
+            $ownValue = $value;
             while ($row = $query->fetch_row()) {
                 $input .= Tools::htmlOption($row[0], $row[0], $value);
+                $ownValue = ($row[0] === $value) ? '' : $ownValue;
             }
             $input .= '</select>';
             if (Tools::nonzero($comment['display-own'])) {
-                $input .= ' ' . Tools::htmlInput("fields-own[$key]", $this->translate('Own value:'), '', [ 
+                $input .= ' ' . Tools::htmlInput("fields-own[$key]", $this->translate('Own value:'), $ownValue, [ 
                             'id' => $key . $this->rand . '_',
                             'class' => 'form-control d-inline-block w-initial',
                             'label-class' => 'mx-3 font-weight-normal',

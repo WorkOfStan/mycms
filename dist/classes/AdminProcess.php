@@ -193,19 +193,34 @@ class AdminProcess extends MyAdminProcess
         //unset($_SESSION['token'][array_search($post['token'], $_SESSION['token'])]);
     }
 
-    //public (instead of protected) for PHPUnit test
+    /**
+     * It is public for PHPUnit test
+     * 
+     * @param string $agenda
+     * @return array
+     */
     public function getAgenda($agenda)
     {
+//        Debugger::barDump($agenda, 'getAgenda(agenda)');
         $result = $correctOrder = [];
         if (!isset($this->agendas[$agenda])) {
             return $result;
         }
         $options = $this->agendas[$agenda];
+//        Debugger::barDump($options, 'getAgenda options');
         Tools::setifempty($options['table'], $agenda);
         Tools::setifempty($options['sort']);
         Tools::setifempty($options['path']);
-        $sql = isset($options['path']) ? 'CONCAT(REPEAT("… ",LENGTH(' . $this->MyCMS->dbms->escapeDbIdentifier($options['path']) . ') / ' . PATH_MODULE . ' - 1),' . $options['table'] . '_' . DEFAULT_LANGUAGE . ')' : (isset($options['column']) ? $options['column'] : $options['table'] . '_' . DEFAULT_LANGUAGE);
-        $sql = 'SELECT id,' . (isset($options['path']) ? $sql : $this->MyCMS->dbms->escapeDbIdentifier($sql)) . ' AS name'
+//        if(is_array($options['column'])) {
+//          Debugger::barDump(array_map([$this->MyCMS->dbms, 'escapeDbIdentifier'],$options['column']),'Ar map');
+//        }
+        $selectExpression = isset($options['path']) ?
+            'CONCAT(REPEAT("… ",LENGTH(' . $this->MyCMS->dbms->escapeDbIdentifier($options['path']) . ') / ' . PATH_MODULE . ' - 1),' . $options['table'] . '_' . DEFAULT_LANGUAGE . ')' :
+            (isset($options['column']) ? (
+            is_array($options['column']) ? ('CONCAT(' . implode(",'|',", array_map([$this->MyCMS->dbms, 'escapeDbIdentifier'], $options['column'])) . ')') :
+            $this->MyCMS->dbms->escapeDbIdentifier($options['column'])
+            ) : $this->MyCMS->dbms->escapeDbIdentifier($options['table'] . '_' . DEFAULT_LANGUAGE));
+        $sql = 'SELECT id,' . $selectExpression . ' AS name'
             . Tools::wrap($options['sort'], ',', ' AS sort') . Tools::wrap($options['path'], ',', ' AS path')
             . ' FROM ' . $this->MyCMS->dbms->escapeDbIdentifier(TAB_PREFIX . $options['table'])
             . Tools::wrap(isset($options['where']) ? $options['where'] : '', ' WHERE ')

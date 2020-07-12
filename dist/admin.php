@@ -2,13 +2,43 @@
 
 // Admin
 require_once './set-environment.php';
-
-//$AGENDAS setting MUST be before prepare.php because it is used in AdminProcess.php and after set-environment.php where DEFAULT_LANGUAGE is set. For reference see README.md.
-$AGENDAS = [
-    'category' => ['path' => 'path'], //TODO: create some sample table to demonstrate the usage
-];
-
 require_once './prepare.php';
+
+//$AGENDAS is used in AdminProcess.php. If $_SESSION['language'] is used in it, set it after prepare.php, where $_SESSION['language'] is fixed. For reference see README.md.
+$AGENDAS = [
+    'category' => [
+        'column' => "name_{$_SESSION['language']}",
+    ],
+    'product' => [
+        'column' => "name_{$_SESSION['language']}",
+        'prefill' => [
+            'context' => '{}',
+            'sort' => 0,
+        ],
+    ],
+    'page' => [
+        'table' => 'content',
+        'where' => 'type="page"',
+        'column' => ['code', "name_{$_SESSION['language']}"],
+        'prefill' => [
+            'type' => 'page',
+            'context' => '{}',
+            'sort' => 0,
+            'added' => 'now', // date('Y-m-d H:i:s'),
+        ],
+    ],
+    'ad' => [
+        'table' => 'content',
+        'where' => 'type="ad"',
+        'column' => ['code', "name_{$_SESSION['language']}"],
+        'prefill' => [
+            'type' => 'ad',
+            'context' => '{}',
+            'sort' => 0,
+            'added' => 'now', // date('Y-m-d H:i:s'),
+        ],
+    ],
+];
 
 $TableAdmin = new \GodsDev\mycmsprojectnamespace\TableAdmin(
     $MyCMS->dbms,

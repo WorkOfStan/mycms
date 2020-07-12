@@ -180,6 +180,7 @@ Agenda is an item in the `admin.php` left menu that refers to a set of rows in d
 
 Examples of settings:
 ```php
+$tmp = $language;
 $AGENDAS = array(
     'division' => array('column' => 'division_' . $tmp),
     'page' => array('table' => 'content', 'where' => 'type="page"', 'column' => "\0CONCAT(code,'|',page_$tmp)"),
@@ -198,8 +199,8 @@ $AGENDAS = array(
 
 $AGENDAS = [
     'item' => [
-        'column' => 'name',  # Name of column where the value is displayed from
-        'where' => 'active="1"' # Filter on displayed columns
+        'column' => 'name',     // Name of column where the value is displayed from
+        'where' => 'active="1"' // Filter on displayed columns
     ],
     'consumption' => [
         'column' => 'created',
@@ -209,10 +210,22 @@ $AGENDAS = [
         'column' => 'created',
         'where' => 'active="1"'
     ],
+    'page' => [
+        'table' => 'content',
+        'where' => 'type="page"',
+        'column' => ['code', "name_{$_SESSION['language']}"], // use array of columns to add their value concatentated in the list below agenda (note: \0CONCAT was used for this before proper SQL escaping)
+        'prefill' => [
+            'type' => 'page',
+            'context' => '{}',
+            'sort' => 0,
+            'added' => 'now',   // results to date('Y-m-d H:i:s'),
+        ],
+    ],
 ];
 ```
-(TODO: explain more examples.)
+if path used: 'CONCAT(REPEAT("… ",LENGTH(' . $this->MyCMS->dbms->escapeDbIdentifier($options['path']) . ') / ' . PATH_MODULE . ' - 1),' . $options['table'] . '_' . DEFAULT_LANGUAGE . ')' 
 
+(TODO: explain better with examples.)
 
 
 ## Asset folder structure
