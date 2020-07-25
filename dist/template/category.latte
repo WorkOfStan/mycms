@@ -1,0 +1,18 @@
+{layout '@layout.latte'}
+{block content}
+<div class="container">
+Null category => list of categories
+
+Udělat abstrakci list.latte
+
+    {var $product['image'] = $product['image'] ?: 'assets/green-grass.jpg'}
+    {ifset $product['title']}{var $product['title'] = $product['title']}{else}{var $product['title'] = 'Welcome to MyCMS product'}{/ifset}
+    <img src="{stripslashes($product['image'])|noescape}" alt="{$product['title']}" title="{$product['title']}" class="w-100" />
+</div>
+<div class="container content">
+    <h2 class="heading-main">{$product['title']}</h2>
+    {$product['description']}
+Change above to category
+List of products including image - see news
+</div>
+{/block}
