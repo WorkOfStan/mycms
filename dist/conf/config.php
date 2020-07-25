@@ -84,6 +84,8 @@ $myCmsConf = [
         'item-B' => ['template' => 'item-B'],
         'item-gama' => ['template' => 'item-gama'],
         'item-4' => ['template' => 'item-4'],
+        'category' => ['template' => 'category', 'idcode' => true],
+        'product' => ['template' => 'product', 'idcode' => true],
     ],
 ];
 $WEBSITE = [
@@ -98,6 +100,7 @@ $WEBSITE = [
             'item-B' => 'Item 2',
             'item-gama' => 'Item 3',
             'item-4' => 'Item 4',
+            'category=1' => 'Category 1',
         ],
     //TODO populate pageTitle automatically from menu ? maybe within prepareAll use something like context[pageTitle]=isset(website[menu][ref])?website[menu][ref]:context[pageTitle]
     ],
@@ -112,6 +115,7 @@ $WEBSITE = [
             'item-B' => 'Položka 2',
             'item-gama' => 'Položka 3',
             'item-4' => 'Položka 4',
+            'category=1' => 'Kategorie 1',
         ],
     ],
     'de' => [
@@ -125,6 +129,7 @@ $WEBSITE = [
             'item-B' => 'Artikel 2',
             'item-gama' => 'Artikel 3',
             'item-4' => 'Artikel 4',
+            'category=1' => 'Kategorien 1',
         ],
     ],
     'fr' => [
@@ -138,6 +143,7 @@ $WEBSITE = [
             'item-B' => 'Article 2',
             'item-gama' => 'Article 3',
             'item-4' => 'Article 4',
+            'category=1' => 'Categorie 1',
         ],
     ],
 ];
