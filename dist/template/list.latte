@@ -1,0 +1,30 @@
+          News to List  
+{foreach $news as $newsDetail}
+                <div class="news" data-aos="fade-up">
+
+                    <div class="media">
+                        <div class="news__perex media-body">
+                            <h2 class="news__heading"><a href="?news={$newsDetail[id]}">{$newsDetail[title]}</a></h2>
+                            <time>{$newsDetail[added]}</time>
+                            <p>{$newsDetail[perex]|noescape}</p>
+                            <div class="news__more">
+                                <a href="?news={$newsDetail[id]}" class="button">{="Show more"|translate} <i class="fas fa-angle-right"></i></a>
+                            </div>
+                        </div>
+                        <img class="news__picture ml-3" src="media/news/{$newsDetail[id]}.jpg" alt="{$newsDetail[title]}" title="{$newsDetail[title]}">
+                    </div>
+                </div>
+            {/foreach}
+            {if !$news}
+                <p class="alert alert-info mt-2">{="No results."|translate}</p>
+            {elseif $totalRows > $limit}
+                <ul class="pagination">
+                    {for $i = 0; $i < $totalRows; $i += $limit}
+                        {if $offset == $i}
+                            <li class="page-item disabled"><a href="#" class="page-link">{$i / $limit + 1}</a></li>
+                        {else}
+                            <li class="page-item"><a href="?news&amp;offset={$i}" class="page-link">{$i / $limit + 1}</a></li>
+                        {/if}
+                    {/for}
+                </ul>
+            {/if}
