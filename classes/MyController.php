@@ -114,7 +114,7 @@ class MyController extends MyCommon
      * Set $this->MyCMS->context accordingly for single templates
      * May even change $this->MyCMS->template value
      *
-     * @param array $options
+     * @param array $options ['REQUEST_URI']
      * @return bool true on success, false on error
      */
     protected function prepareTemplate(array $options = [])

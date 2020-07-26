@@ -91,7 +91,7 @@ class Controller extends MyController
      * Set $this->MyCMS->context accordingly for single templates
      * May even change $this->MyCMS->template value
      *
-     * @param array $options
+     * @param array $options ['REQUEST_URI']
      * @return bool true on success, false on error
      */
     protected function prepareTemplate(array $options = [])
@@ -103,8 +103,8 @@ class Controller extends MyController
             case self::TEMPLATE_DEFAULT: return true;
             case self::TEMPLATE_NOT_FOUND: return true;
             case 'category':
-                $this->MyCMS->context['content'] = $this->projectSpecific->getCatgory($this->get['id'], $this->get['code'], ['language' => $this->language]);//todo maybe options contain language field??
-                return true;     
+                $this->MyCMS->context['content'] = $this->projectSpecific->getCategory($this->get['id'], $this->get['code'], ['language' => $this->language]);
+                return true;
             case 'line': return true; // line uses default home template
             case 'product':
                 $this->MyCMS->context['content'] = $this->projectSpecific->getContent($this->get['id'], $this->get['code'], ['language' => $this->language]);
