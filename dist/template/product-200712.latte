@@ -1,0 +1,44 @@
+{layout '@layout.latte'}
+{block content}
+    <div class="main container">
+        {if isset($news[title])}
+            <section class="content content--grey">
+                <div class="news__header">
+                    <img class="news__picture" src="media/news/{$news[id]}.jpg" alt="{$news[title]}" title="{$news[title]}">        
+                    <h1>
+                        {*<i class="icon-ok icon--large"></i>*}
+                        {$news[title]}
+                    </h1>
+
+                    <time>{$news[added]}</time>
+                </div>
+            </section>
+
+            <section class="content">
+                {*<img class="news__picture" src="media/news/{$news[id]}.jpg" alt="{$news[title]}" title="{$news[title]}">*}
+                <div class="news__perex">
+                    {$news[perex]|noescape}
+                </div>
+
+                <hr>
+
+                <div class="news__content" data-aos="fade-up">
+                    {$news[content]|noescape}
+                </div>
+                
+                {* TODO: předchozí novinka / následující novinka - pokud samozřejmě existují
+                <div class="buttons">
+                    <a class="button button--blue" href="#">Back eximo</a>
+                    <a class="button" href="#">Next eximo</a>
+                </div>                
+                *}
+            </section>
+        {else}
+            <section class="content">
+                {* @todo do access logu zapsat jako 404 *}
+                <h2>{="Error"|translate}</h2>
+                {="News not found."|translate}
+            </section>
+        {/if}
+    </div>
+{/block}
