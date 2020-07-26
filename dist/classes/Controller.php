@@ -102,7 +102,13 @@ class Controller extends MyController
         switch ($this->MyCMS->template) {
             case self::TEMPLATE_DEFAULT: return true;
             case self::TEMPLATE_NOT_FOUND: return true;
+            case 'category':
+                $this->MyCMS->context['content'] = $this->projectSpecific->getCatgory($this->get['id'], $this->get['code'], ['language' => $this->language]);//todo maybe options contain language field??
+                return true;     
             case 'line': return true; // line uses default home template
+            case 'product':
+                $this->MyCMS->context['content'] = $this->projectSpecific->getContent($this->get['id'], $this->get['code'], ['language' => $this->language]);
+                return true;
             case 'search-results': //search _GET[search] contains the search phrase
                 $this->MyCMS->context['offset'] = isset($this->get['offset']) ? filter_var($this->get['offset'], FILTER_VALIDATE_INT, ['default' => 0, 'min_range' => 0, 'max_range' => 1e9]) : 0;
                 $this->MyCMS->context['results'] = $this->projectSpecific->searchResults($this->get['search'], $this->MyCMS->context['offset'], $this->MyCMS->context['totalRows']);
