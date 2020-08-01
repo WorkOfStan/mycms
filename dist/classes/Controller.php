@@ -6,6 +6,7 @@ use GodsDev\MyCMS\MyCMS;
 use GodsDev\MyCMS\MyController;
 use GodsDev\mycmsprojectnamespace\FriendlyUrl;
 use GodsDev\mycmsprojectnamespace\ProjectSpecific;
+use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use Tracy\ILogger;
 use Webmozart\Assert\Assert;
@@ -103,7 +104,7 @@ class Controller extends MyController
             case self::TEMPLATE_DEFAULT: return true;
             case self::TEMPLATE_NOT_FOUND: return true;
             case 'category':
-                $this->MyCMS->context['content'] = $this->projectSpecific->getCategory($this->get['id'], $this->get['code'], ['language' => $this->language]);
+                $this->MyCMS->context['content'] = $this->projectSpecific->getCategory(Tools::ifset($this->get['id']), Tools::ifset($this->get['code']), ['language' => $this->language]);
                 return true;
             case 'line': return true; // line uses default home template
             case 'product':

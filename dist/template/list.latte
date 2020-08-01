@@ -1,11 +1,11 @@
-{* required: $paramName *}
-{* TODO: CSS class news, news__perex, news__heading, news__more, news__picture *}
-News to List
+{* check F project to see $totalRows, $limit *}
+{* required: $list[][id,title,added,perex] ; $paramName ; $idGlue is &id= or = ; media/$paramName/id.jpg ; $totalRows ; $limit *}
+{* TODO: generalize CSS class news, news__perex, news__heading, news__more, news__picture *}
             {foreach $list as $listDetail}
                 <div class="news" data-aos="fade-up">
                     <div class="media">
                         <div class="news__perex media-body">
-                            <h2 class="news__heading"><a href="?{$paramName}={$listDetail[id]}">{$listDetail[title]}</a></h2>
+                            <h2 class="news__heading"><a href="?{$paramName}{$idGlue}{$listDetail[id]}">{$listDetail[title]}</a></h2>
                             <time>{$listDetail[added]}</time>
                             <p>{$listDetail[perex]|noescape}</p>
                             <div class="news__more">

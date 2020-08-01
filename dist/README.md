@@ -133,6 +133,7 @@ TODO: make more clear
 * Tabulky `#_content`, `#_product` musí mít sloupce `url_##` (## = dvoumístný kód pro všechny jazykové verze).
 * Do `url_##` se uloží "webalizované" názvy dané stránky/produktu (dle funkce `Tools::webalize`). Výjimkou může být `_content`, který není plnohodnotná stránka – ten může obsahovat `NULL`. Převod lze zprvu udělat programaticky (je to na pár řádků), pak do CMS přidat tlačítko pro převod nebo převod udělat při uložení.
 
+TODO: ?article=1 vs ?article&id=1 a souvislost s 'idcode' => true ?
 
 #### Example of rules
 * `/?product=4` → `/konzultacni-poradenctvi`
