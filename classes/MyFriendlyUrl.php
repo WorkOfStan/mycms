@@ -193,7 +193,7 @@ class MyFriendlyUrl extends MyCommon
                 if (isset($this->get['id'])) {
                     $this->get['id'] = filter_var($tempGetId = $this->get['id'], FILTER_VALIDATE_INT, array('default' => 0, 'min_range' => 0, 'max_range' => 1e9));
                     if (!$this->get['id']) {
-                        $this->MyCMS->logger->error($this->verboseBarDump("this->get['id'] {$tempGetId} did not pass number filter"), "get id did not pass filter");
+                        $this->MyCMS->logger->error($this->verboseBarDump("this->get['id'] {$tempGetId} did not pass number filter", "get id did not pass filter"));
                         return self::TEMPLATE_NOT_FOUND;
                     }
                 }

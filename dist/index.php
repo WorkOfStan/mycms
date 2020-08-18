@@ -37,7 +37,7 @@ $controller = new \GodsDev\mycmsprojectnamespace\Controller($MyCMS, [
 $controllerResult = $controller->run();
 $MyCMS->template = $controllerResult['template'];
 $MyCMS->context = $controllerResult['context'];
-Debugger::barDump($controllerResult, 'ControllerResult');
+Debugger::barDump($controllerResult, 'ControllerResult', [Tracy\Dumper::DEPTH => 5]);
 
 // texy initialization (@todo refactor) .. used in CustomFilters
 $Texy = null;

@@ -42,7 +42,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
                 'cn' => '中文'
             ],
             'logger' => $backyard->BackyardError,
-            'dbms' => new \GodsDev\MyCMS\LogMysqli(DB_HOST . ":" . DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE, $backyard->BackyardError), //@todo - use test db instead. Or use other TAB_PREFIX !
+            'dbms' => new \GodsDev\MyCMS\LogMysqli(DB_HOST . ':' . DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE, $backyard->BackyardError), //@todo - use test db instead. Or use other TAB_PREFIX !
         ];
         $this->myCms = new MyCMSProject($mycmsOptions);
 
@@ -68,7 +68,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     {
         $this->object = new Controller($this->myCms, ['language' => $this->language]);
         $controller = $this->object->controller();
-        $this->assertArraySubset(["template" => "home", "context" => []], $controller);
+        $this->assertArraySubset(['template' => 'home', 'context' => []], $controller);
     }
 
     /**
@@ -76,9 +76,9 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function testControllerContext()
     {
-        $this->myCms->context = ["1" => "2", "3" => "4", "c"];
+        $this->myCms->context = ['1' => '2', '3' => '4', 'c'];
         $this->object = new Controller($this->myCms);
-        $this->assertArraySubset(["template" => "home", "context" => $this->myCms->context], $this->object->controller());
+        $this->assertArraySubset(['template' => 'home', 'context' => $this->myCms->context], $this->object->controller());
     }
 
     /**
@@ -87,17 +87,17 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     public function testControllerAbout()
     {
         $this->object = new Controller($this->myCms, [
-            "get" => [
-                "about" => '',
+            'get' => [
+                'about' => '',
             ],
-//            "session" => $_SESSION,
-            "sectionStyles" => ["red"],
+//            'session' => $_SESSION,
+            'sectionStyles' => ['red'],
         ]);
         $controller = $this->object->controller();
-        $this->assertArrayHasKey("template", $controller);
+        $this->assertArrayHasKey('template', $controller);
         $this->assertInternalType('string', $controller['template']);
         $this->assertEquals('home', $controller['template']);
-        $this->assertArrayHasKey("context", $controller);
+        $this->assertArrayHasKey('context', $controller);
         $this->assertInternalType('array', $controller['context']);
 //        $this->assertInternalType('array', $controller['context']['items']);
 //        $this->assertEquals(6, count($controller['context']['items']));
@@ -108,11 +108,11 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetVars()
     {
-        $this->myCms->context = ["1" => "2", "3" => "4", "c"];
+        $this->myCms->context = ['1' => '2', '3' => '4', 'c'];
         $options = [
-            "get" => ["v1" => "getSth"],
-            "session" => ["v1" => "getSth"],
-            "sectionStyles" => ["red", "blue",],
+            'get' => ['v1' => 'getSth'],
+            'session' => ['v1' => 'getSth'],
+            'sectionStyles' => ['red', 'blue',],
         ];
         $this->object = new Controller($this->myCms, $options);
         $this->assertEquals($options, $this->object->getVars());

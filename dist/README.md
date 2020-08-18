@@ -331,3 +331,6 @@ When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in
 * 200712: update fontawesome --> admin.php expects section
 * 200712: when adding new Content automatically uncheck the NULL checkbox so that something is saved!
 * 200712: remove unnecessary `sql =` constructs
+* 200802: test with 2 categories
+* 200802: image for product and category in assets
+* 200802: zkusit category a product pro další jazyky než cs
