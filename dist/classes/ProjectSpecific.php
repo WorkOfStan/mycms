@@ -4,7 +4,7 @@ namespace GodsDev\mycmsprojectnamespace;
 
 use GodsDev\MyCMS\ProjectCommon;
 use GodsDev\Tools\Tools;
-use Assert\Assertion;
+use Webmozart\Assert\Assert;
 
 /**
  * functions specific to the project
@@ -18,6 +18,9 @@ class ProjectSpecific extends ProjectCommon
     /**
      * accepted attributes:
      */
+
+    /** @var string */
+    protected $requestUri = ''; //default is homepage
 
     /** Search for specified text in the database, return results
      * @param string text being searched for
@@ -52,19 +55,29 @@ class ProjectSpecific extends ProjectCommon
     }
 
     /**
-     * Fetch from database a content of given id
-     * @param mixed $id of the content 
+     * Fetch from database details of content of given id/code
+     * 
+     * @param mixed $id of the content OPTIONAL
+     * @param type $code OPTIONAL
+     * @param array $options OPTIONAL
      * @return array resultset
      */
-    public function getContent($id = null, $code = null, $options = array())
+    public function getContent($id = null, $code = null, array $options = [])
     {
-        $result = array();
-        if ((!is_null($id) || !is_null($code)) && ($result = $this->MyCMS->fetchSingle($sql = 'SELECT co.id,product_id,type,co.code,co.added,co.context,category_id,path,
-            co.content_' . $options['language'] . ' AS title,
-            co.perex_' . $options['language'] . ' AS perex,
-            co.description_' . $options['language'] . ' AS description 
-            FROM ' . TAB_PREFIX . 'content co LEFT JOIN ' . TAB_PREFIX . 'category ca ON category_id=ca.id 
-            WHERE co.active="1"' . Tools::wrap($this->MyCMS->escapeSQL($code), ' AND co.code="', '"') . Tools::wrap(intval($id), ' AND co.id=') . ' LIMIT 1'))) {
+        $result = [];
+        if ((!is_null($id) || !is_null($code)) && ($result = $this->MyCMS->fetchSingle('SELECT co.id,'
+            . ' product_id,'
+            . ' type,'
+            . ' co.code,'
+            . ' co.added,'
+            . ' co.context,'
+            . ' category_id,'
+            . ' path,'
+            . ' co.content_' . $options['language'] . ' AS title,'
+            . ' co.perex_' . $options['language'] . ' AS perex,'
+            . ' co.description_' . $options['language'] . ' AS description '
+            . ' FROM ' . TAB_PREFIX . 'content co LEFT JOIN ' . TAB_PREFIX . 'category ca ON co.category_id=ca.id '
+            . ' WHERE co.active="1"' . Tools::wrap($this->MyCMS->escapeSQL($code), ' AND co.code="', '"') . Tools::wrap(intval($id), ' AND co.id=') . ' LIMIT 1'))) {
             $result['context'] = json_decode($result['context'], true) ?: array();
             $result['added'] = Tools::localeDate($result['added'], $options['language'], false);
         }
@@ -83,24 +96,60 @@ class ProjectSpecific extends ProjectCommon
     }
 
     /**
-     * Fetch from database a category of given id
+     * Fetch from database details of category of given id/code
      * 
      * @param mixed $id of the content OPTIONAL
      * @param type $code OPTIONAL
      * @param array $options OPTIONAL
      * @return array resultset
      */
-    public function getCategory($id = null, $code = null, array $options = array())
+    public function getCategory($id = null, $code = null, array $options = [])
     {
-        $result = array();
-        if ((!is_null($id) || !is_null($code)) && ($result = $this->MyCMS->fetchSingle($sql = 'SELECT id AS category_id,path,context,"page" AS type,added,
-            category_' . $options['language'] . ' AS title,
-            description_' . $options['language'] . ' AS description
-            FROM ' . TAB_PREFIX . 'category WHERE active="1"' . Tools::wrap($this->MyCMS->escapeSQL($code), ' AND code="', '"') . Tools::wrap(intval($id), ' AND id=') . ' LIMIT 1'))) {
+        $result = [];
+        if ((!is_null($id) || !is_null($code)) && ($result = $this->MyCMS->fetchSingle('SELECT id AS category_id, ' // . 'path,' 
+            . ' context,'
+//            . ' "page" AS type,'
+            . ' added,'
+            . ' name_' . $options['language'] . ' AS title,'
+            . ' content_' . $options['language'] . ' AS description'
+            . ' FROM ' . TAB_PREFIX . 'category WHERE active="1"' . Tools::wrap($this->MyCMS->escapeSQL($code), ' AND code="', '"') . Tools::wrap(intval($id), ' AND id=') . ' LIMIT 1'))) {
             $result['context'] = json_decode($result['context'], true) ?: array();
             $result['added'] = Tools::localeDate($result['added'], $options['language'], false);
         }
         return $result;
+    }
+
+    /**
+     * 
+     * @param int $id
+     * @return mixed array first selected row, null on empty SELECT, or false on error
+     */
+    public function getProduct($id)
+    {
+        Assert::integer($id, 'product MUST be identified by id');
+        return $this->MyCMS->fetchSingle('SELECT id,'
+                . 'context,'
+                . 'category_id,'
+                . ' name_' . $this->language . ' AS title,'
+                . ' content_' . $this->language . ' AS description '
+                // TODO: Note: takto se do pole context[product] přidá field [link], který obsahuje potenciálně friendly URL, ovšem relativní, tedy bez jazyka. Je to příprava pro forced 301 SEO a pro hreflang funkcionalitu.
+                . ',' . $this->getLinkSql('?product&id=', $this->language)
+                . ' FROM ' . TAB_PREFIX . 'product WHERE active="1" AND id=' . intval($id) . ' LIMIT 1'
+        );
+//        //FU
+//                $content = $this->MyCMS->dbms->fetchSingle('SELECT id, name_' . $this->language . ' AS title,'
+//                    . $this->projectSpecific->getLinkSql("?product&id=", $this->language)
+//                    . ' FROM ' . TAB_PREFIX . 'product WHERE active = 1 '
+//                    . ' AND id = "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"');
+//                //C
+//                $this->MyCMS->context['product'] = $this->MyCMS->fetchSingle('SELECT id, context, category_id,' 
+////                    . ' image,'
+//                    . ' name_' . $this->language . ' AS title,'
+//                    . ' content_' . $this->language . ' AS description '
+//                    // TODO: Note: takto se do pole context[product] přidá field [link], který obsahuje potenciálně friendly URL, ovšem relativní, tedy bez jazyka. Je to příprava pro forced 301 SEO a pro hreflang funkcionalitu.
+//                    . ',' . $this->projectSpecific->getLinkSql('?product&id=', $this->language)
+//                    . ' FROM ' . TAB_PREFIX . 'product WHERE active="1" AND id=' . intval($this->get['id']) . ' LIMIT 1' // TODO vs &id=
+//                );
     }
 
     /**
@@ -111,7 +160,7 @@ class ProjectSpecific extends ProjectCommon
      */
     public function processProductDescription($description, array $options)
     {
-        Assertion::string($description, "processProductDescription description not string");
+        Assert::string($description, 'processProductDescription description not string');
         $result = '';
         $sections = explode('<hr>', $description); //<hr> vložená v CMS znamená, že se odrotuje další section s tím, že class photo se doplňuje class-ou produktu, aby se mohla měnit fotka dle produktu a pořadí
         $sectionCount = 0;

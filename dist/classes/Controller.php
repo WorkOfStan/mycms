@@ -22,7 +22,7 @@ class Controller extends MyController
     protected $requestUri = ''; //default is homepage
 
     /** @var array */
-    protected $sectionStyles; //TODO is needed? Probably remove from here and also MyCMS/dist.
+//    protected $sectionStyles; //TODO is needed? Probably remove from here and also MyCMS/dist.
 
     /** @var \GodsDev\mycmsprojectnamespace\ProjectSpecific */
     private $projectSpecific;
@@ -104,13 +104,72 @@ class Controller extends MyController
             case self::TEMPLATE_DEFAULT: return true;
             case self::TEMPLATE_NOT_FOUND: return true;
             case 'category':
-                $this->MyCMS->context['content'] = $this->projectSpecific->getCategory(Tools::ifset($this->get['id']), Tools::ifset($this->get['code']), ['language' => $this->language]);
+                // Note: category doesn't use code field
+//DELETE                $this->verboseBarDump($this->get, 'category - get');
+//DELETE                $this->verboseBarDump(Tools::ifset($this->get['category']), 'tools ifset get category');
+                if (!Tools::ifset($this->get['category'])
+//                    && is_null(Tools::ifset($this->get['code']))
+                    ) {
+                    $categoryId = null;
+                    $this->MyCMS->context['pageTitle'] = 'Categories'; // TODO localize // TODO content element
+                    $this->MyCMS->context['content']['description'] = 'About all categories'; // TODO localize perex for all categories // TODO content element
+                } else {
+                    $this->MyCMS->context['content'] = $this->projectSpecific->getCategory(Tools::ifset($this->get['category']), 
+//                        Tools::ifset($this->get['code']), 
+                        null,
+                        ['language' => $this->language]);
+                    Debugger::barDump($this->MyCMS->context['content'], 'category');
+                    if (is_null($this->MyCMS->context['content'])) {
+                        $this->MyCMS->template = self::TEMPLATE_NOT_FOUND;
+                        return true;
+                    }
+                    $categoryId = $this->MyCMS->context['content']['category_id'];
+                    $this->MyCMS->context['pageTitle'] = $this->MyCMS->context['content']['title'];
+                }
+                // TODO add perex for categories and products from content
+                $this->verboseBarDump($categoryId, 'categoryId');
+                $this->MyCMS->context['limit'] = PAGINATION_LIMIT;
+                //TODO refactor do ternary operator
+                if (is_null($categoryId)) {
+                    // list categories
+                    $this->MyCMS->context['list'] = $this->MyCMS->dbms->queryArray('SELECT id,'
+                        . ' name_' . $this->language . ' AS title,'
+                        . ' content_' . $this->language . ' AS description,'
+                        . ' added'
+                        . ' FROM `' . TAB_PREFIX . 'category` WHERE `active` = 1 ORDER BY sort ASC');
+                } else {
+                    // list products within category
+                    $this->MyCMS->context['list'] = $this->MyCMS->dbms->queryArray('SELECT id,'
+                        . ' name_' . $this->language . ' AS title,'
+                        . ' content_' . $this->language . ' AS description,'
+                        . ' added'
+                        . ' FROM `' . TAB_PREFIX . 'product` WHERE `category_id` = ' . $categoryId . ' AND `active` = 1'
+//zde to nějak rozbije všechny výsledky                        . ' AND name_' . $this->language . ' != "",'
+                        . ' ORDER BY sort ASC');
+                    // TODO vybrat jen produkty pro aktuální jazyk
+                }
+                $this->MyCMS->context['totalRows'] = count($this->MyCMS->context['list']);
                 return true;
-            case 'line': return true; // line uses default home template
+//            case 'line': return true; // line uses default home template
             case 'product':
-                $this->MyCMS->context['content'] = $this->projectSpecific->getContent($this->get['id'], $this->get['code'], ['language' => $this->language]);
+// DELETE//                $this->MyCMS->context['content'] = $this->projectSpecific->getContent($this->get['id'], $this->get['code'], ['language' => $this->language]);
+//                $this->MyCMS->context['product'] = $this->MyCMS->fetchSingle('SELECT id, context, category_id,' 
+////                    . ' image,'
+//                    . ' name_' . $this->language . ' AS title,'
+//                    . ' content_' . $this->language . ' AS description '
+//                    // TODO: Note: takto se do pole context[product] přidá field [link], který obsahuje potenciálně friendly URL, ovšem relativní, tedy bez jazyka. Je to příprava pro forced 301 SEO a pro hreflang funkcionalitu.
+//                    . ',' . $this->projectSpecific->getLinkSql('?product&id=', $this->language)
+//                    . ' FROM ' . TAB_PREFIX . 'product WHERE active="1" AND id=' . intval($this->get['id']) . ' LIMIT 1' // TODO vs &id=
+//                );
+                $this->MyCMS->context['product'] = $this->projectSpecific->getProduct((int)$this->get['id']);
+                if(is_null($this->MyCMS->context['product'])) {
+                    $this->MyCMS->template = self::TEMPLATE_NOT_FOUND;
+                } else {
+                //TODO//$this->MyCMS->context['pageTitle'] = '';
+                }
                 return true;
             case 'search-results': //search _GET[search] contains the search phrase
+                $this->MyCMS->context['limit'] = PAGINATION_LIMIT;
                 $this->MyCMS->context['offset'] = isset($this->get['offset']) ? filter_var($this->get['offset'], FILTER_VALIDATE_INT, ['default' => 0, 'min_range' => 0, 'max_range' => 1e9]) : 0;
                 $this->MyCMS->context['results'] = $this->projectSpecific->searchResults($this->get['search'], $this->MyCMS->context['offset'], $this->MyCMS->context['totalRows']);
                 //@todo ošetřit empty result
@@ -132,7 +191,7 @@ class Controller extends MyController
         return [
             'get' => $this->get,
             'session' => $this->session,
-            'sectionStyles' => $this->sectionStyles
+//            'sectionStyles' => $this->sectionStyles,
         ];
     }
 

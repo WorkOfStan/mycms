@@ -72,7 +72,7 @@ $myCmsConf = [
     /**
      * RULES for switchParametric are configured in 'templateAssignementParametricRules'
      * Handles not only param=value but also param&id=value or param&code=value
-     * (int) id or (string) code are taken into account only if 'idcode' subfield of templateAssignementParametricRules is equal to `true`
+     * (int) id or (string) code are taken into account only if 'idcode' subfield of templateAssignementParametricRules is equal to `true` - in such case both id and code being empty ends up in 404
      * e.g.
      * 'line' => ['template' => 'home'], //MyFriendlyURL::TEMPLATE_DEFAULT
      * 'portfolio' => ['template' => 'portfolio'],
@@ -84,7 +84,9 @@ $myCmsConf = [
         'item-B' => ['template' => 'item-B'],
         'item-gama' => ['template' => 'item-gama'],
         'item-4' => ['template' => 'item-4'],
-        'category' => ['template' => 'category', 'idcode' => true],
+        'category' => ['template' => 'category', 
+//            'idcode' => true
+            ],
         'product' => ['template' => 'product', 'idcode' => true],
     ],
 ];
@@ -100,7 +102,7 @@ $WEBSITE = [
             'item-B' => 'Item 2',
             'item-gama' => 'Item 3',
             'item-4' => 'Item 4',
-            '?category&id=1' => 'Category 1',
+            '?category=1' => 'Category 1',
         ],
     //TODO populate pageTitle automatically from menu ? maybe within prepareAll use something like context[pageTitle]=isset(website[menu][ref])?website[menu][ref]:context[pageTitle]
     ],
@@ -115,7 +117,7 @@ $WEBSITE = [
             'item-B' => 'Položka 2',
             'item-gama' => 'Položka 3',
             'item-4' => 'Položka 4',
-            '?category&id=1' => 'Kategorie 1',
+            '?category=1' => 'Kategorie 1',
         ],
     ],
     'de' => [
@@ -129,7 +131,7 @@ $WEBSITE = [
             'item-B' => 'Artikel 2',
             'item-gama' => 'Artikel 3',
             'item-4' => 'Artikel 4',
-            '?category&id=1' => 'Kategorie 1',
+            '?category=1' => 'Kategorie 1',
         ],
     ],
     'fr' => [
@@ -143,7 +145,7 @@ $WEBSITE = [
             'item-B' => 'Article 2',
             'item-gama' => 'Article 3',
             'item-4' => 'Article 4',
-            '?category&id=1' => 'Categorie 1',
+            '?category=1' => 'Categorie 1',
         ],
     ],
 ];
@@ -163,6 +165,7 @@ foreach (
     'NOTIFY_FROM_ADDRESS' => 'notifier-MYCMSPROJECTSPECIFIC@godsapps.eu', // @todo založit příslušnou schránku
     'NOTIFY_FROM_NAME' => 'Notifikátor',
     'PAGE_RESOURCE_VERSION' => 1,
+    'PAGINATION_LIMIT' => 10,
 //    'PAGINATION_SEARCH' => 10,
 //    'PAGINATION_NEWS' => 2,
     'REDIRECTOR_ENABLED' => false, // table redirector with columns old_url, new_url, active exists

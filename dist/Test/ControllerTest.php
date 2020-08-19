@@ -112,7 +112,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         $options = [
             'get' => ['v1' => 'getSth'],
             'session' => ['v1' => 'getSth'],
-            'sectionStyles' => ['red', 'blue',],
+//            'sectionStyles' => ['red', 'blue',],
         ];
         $this->object = new Controller($this->myCms, $options);
         $this->assertEquals($options, $this->object->getVars());

@@ -1,4 +1,3 @@
-{* check F project to see $totalRows, $limit *}
 {* required: $list[][id,title,added,perex] ; $paramName ; $idGlue is &id= or = ; media/$paramName/id.jpg ; $totalRows ; $limit *}
 {* TODO: generalize CSS class news, news__perex, news__heading, news__more, news__picture *}
             {foreach $list as $listDetail}
@@ -7,9 +6,9 @@
                         <div class="news__perex media-body">
                             <h2 class="news__heading"><a href="?{$paramName}{$idGlue}{$listDetail[id]}">{$listDetail[title]}</a></h2>
                             <time>{$listDetail[added]}</time>
-                            <p>{$listDetail[perex]|noescape}</p>
+                            {ifset $listDetail[perex]}<p>{$listDetail[perex]|noescape}</p>{/ifset}
                             <div class="news__more">
-                                <a href="?{$paramName}={$listDetail[id]}" class="button">{="Show more"|translate} <i class="fas fa-angle-right"></i></a>
+                                <a href="?{$paramName}{$idGlue}{$listDetail[id]}" class="button">{="Show more"|translate} <i class="fa fa-angle-double-right"></i></a>
                             </div>
                         </div>
                         <img class="news__picture ml-3" src="media/{$paramName}/{$listDetail[id]}.jpg" alt="{$listDetail[title]}" title="{$listDetail[title]}">
