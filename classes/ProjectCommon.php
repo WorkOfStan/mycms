@@ -2,6 +2,8 @@
 
 namespace GodsDev\MyCMS;
 
+use Tracy\Debugger;
+
 class ProjectCommon extends MyCommon
 {
 

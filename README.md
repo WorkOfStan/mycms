@@ -1,16 +1,18 @@
 MyCMS [![Total Downloads](https://img.shields.io/packagist/dt/godsdev/mycms.svg)](https://packagist.org/packages/godsdev/mycms) [![Latest Stable Version](https://img.shields.io/packagist/v/godsdev/mycms.svg)](https://packagist.org/packages/godsdev/mycms)
 -----
 
-Brief MVC framework for interactive websites.
+Brief MVC framework for interactive websites including general administration.
 Works as a devstack which you install and then write your classes specific for the project.
 The boilerplate project is prepared in `dist` folder to be adapted as needed and it uses this `GodsDev\MyCMS` library out-of-the-box.
 
-# Features
-- [jQuery](https://jquery.org/) and [Bootstrap (version 4)](https://getbootstrap.com/docs/4.0/components/) used in the presentation
-- [Latte](http://latte.nette.org/) used as a templating engine
-- [MySQL](https://dev.mysql.com/)/[MariaDB](http://mariadb.com) used as the website database
-- includes a general administration
-- other used libraries and technologies - [Tracy](https://github.com/nette/tracy), [Nette\SmartObject](https://doc.nette.org/en/3.0/smartobject), [Psr\Log\LoggerInterface](https://www.php-fig.org/psr/psr-3/), [GodsDev\Backyard\BackyardMysqli](https://github.com/GodsDev/backyard/blob/master/GodsDev/Backyard/BackyardMysqli.php)
+MyCMS is designed to be used with following technologies:
+- [jQuery](https://jquery.org/) and [Bootstrap (version 4)](https://getbootstrap.com/docs/4.0/components/): for presentation
+- [Latte](http://latte.nette.org/): for templating
+- [MySQL](https://dev.mysql.com/)/[MariaDB](http://mariadb.com): for database backend
+- [Tracy](https://github.com/nette/tracy): for debugging
+- [Nette\SmartObject](https://doc.nette.org/en/3.0/smartobject): for ensuring strict PHP rules
+- [Psr\Log\LoggerInterface](https://www.php-fig.org/psr/psr-3/): for logging
+- [GodsDev\Backyard\BackyardMysqli](https://github.com/GodsDev/backyard/blob/master/GodsDev/Backyard/BackyardMysqli.php): for wrapping SQL layer
 
 # Installation
 Apache modules `mod_alias` (for hiding non-public files) and `mod_rewrite` (for friendly URL features) are expected.
@@ -26,7 +28,7 @@ Require MyCMS in [`composer.json`](https://getcomposer.org/).
 }
 ```
 The `composer install` command will load the library's files into `./vendor/godsdev/mycms/`. The library's classes are in `./vendor/godsdev/mycms/classes/`
-and most of them are use prefix `My`.
+and most of them use prefix `My`.
 
 To customize the project, create your own classes as children inheriting MyCMS' classes in the `./classes/` directory and name them without the initial `My` in its name.  
 
@@ -192,3 +194,5 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 * 200529: Minimum of PHP 7.2 required now: PHPUnit latest + Phinx latest https://github.com/cakephp/phinx/releases .. planned for release 0.5.0
 * 200608: replace all `array(` by `[`
 * 200622: once FriendlyUrl incl tests is part of develop - add github actions lint
+* 200819: refactor FORCE_301 to a variable, so that all scenarios can be PHPUnit tested
+* 200819: consider REQUEST_URI query vs _GET - shouldn't just one source of truth be used?

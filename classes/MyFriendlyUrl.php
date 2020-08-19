@@ -184,8 +184,8 @@ class MyFriendlyUrl extends MyCommon
             if (!isset($this->get[$getParam])) { // skip irrelevant rules
                 continue;
             }
-            $this->verboseBarDump($assignement, 'determineTemplate: assignement loop');
-            $this->verboseBarDump("{$getParam} may lead to '{$assignement['template']}' template", 'determineTemplate: template assignement');
+            $this->MyCMS->logger->info(print_r($this->verboseBarDump($assignement, 'determineTemplate: assignement loop'), true));
+            $this->MyCMS->logger->info($this->verboseBarDump("{$getParam} may lead to '{$assignement['template']}' template", 'determineTemplate: template assignement'));
             if (!isset($assignement['idcode']) || $assignement['idcode'] === false) {
                 return $this->verboseBarDump($assignement['template'], 'determineTemplate: assignement established from get parameter name');
             }
@@ -204,7 +204,7 @@ class MyFriendlyUrl extends MyCommon
         //FRIENDLY URL & Redirect calculation where $token, $matches are expected from above
         $pureFriendlyUrl = $this->pureFriendlyUrl($options, $token, $matches);
         if (!is_null($pureFriendlyUrl)) {
-            return $pureFriendlyUrl;
+            return $this->verboseBarDump($pureFriendlyUrl, 'determineTemplate return pureFriendlyUrl');
         }
 
         // URL token not found
@@ -225,7 +225,7 @@ class MyFriendlyUrl extends MyCommon
     {
         //default scripts and language directories all result into the default template
         if (in_array($token, array_merge(array(HOME_TOKEN, '', 'index'), array_keys($this->MyCMS->TRANSLATIONS)))) {
-            return self::TEMPLATE_DEFAULT;
+            return $this->verboseBarDump(self::TEMPLATE_DEFAULT, 'pureFriendlyUrl return default');
         }
 
         // Language MUST always be set
@@ -240,9 +240,9 @@ class MyFriendlyUrl extends MyCommon
             $this->verboseBarDump($found, 'pureFriendlyUrl: found friendly URL');
             $this->get[$found['type']] = $this->get['id'] = $found['id'];
             $this->verboseBarDump($this->get, 'pureFriendlyUrl: this->get within pureFriendlyUrl');
-            return $this->determineTemplate($options); //TODO maybe only the loop of 'templateAssignementParametricRules' is relevant for recursion??
+            return $this->verboseBarDump($this->determineTemplate($options), 'pureFriendlyUrl return determineTemplate()'); //TODO maybe only the loop of 'templateAssignementParametricRules' is relevant for recursion??
         }
-        return null; //null leads to self::TEMPLATE_NOT_FOUND
+        return $this->verboseBarDump(null, 'pureFriendlyUrl return null leads to self::TEMPLATE_NOT_FOUND'); //null leads to self::TEMPLATE_NOT_FOUND
     }
 
     /**

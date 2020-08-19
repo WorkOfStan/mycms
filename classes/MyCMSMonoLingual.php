@@ -104,6 +104,11 @@ class MyCMSMonoLingual
         return $this->dbms->escapeSQL($string);
     }
 
+    /**
+     * 
+     * @param string $sql
+     * @return mixed first selected row (or its first column if only one column is selected), null on empty SELECT, or false on error
+     */
     public function fetchSingle($sql)
     {
         return $this->dbms->fetchSingle($sql);

@@ -262,7 +262,8 @@ Add protected functions to Admin.php according to MyAdmin.php in order to add me
 
 ```php
 // to write out a variable to `Tracy`
-\Tracy\Debugger::barDump($mixedVar, 'Info why to show it');
+// array $options of Debugger::barDump (Dumper::DEPTH, Dumper::TRUNCATE, Dumper::LOCATION, Dumper::LAZY)
+\Tracy\Debugger::barDump($mixedVar, 'Info why to show it', $options = []);
 
 // to log a variable value into its error level log
 \Tracy\Debugger::log($stringVar, \Tracy\ILogger::DEBUG); // Note: \Tracy\ILogger::DEBUG equals 'debug'
