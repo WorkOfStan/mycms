@@ -70,7 +70,26 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         $this->object = new FriendlyUrl($this->myCms, $friendlyUrlOptions);
         $templateDetermined = $this->object->determineTemplate($determineTemplateOptions);
         $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI'] . (Tools::nonempty($friendlyUrlOptions['get']) ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '') . (Tools::nonempty($friendlyUrlOptions['session']) ? (' session:' . http_build_query($friendlyUrlOptions['session'])) : '') . ' templateDetermined: ' . print_r($templateDetermined, true);
+        if (FORCE_301) {
+            $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+            $this->assertArrayHasKey('httpCode', $templateDetermined, 'Determine template ' . $message);
+            $this->assertEquals(301, $templateDetermined['httpCode'], 'non-301 httpCode field in ' . print_r($templateDetermined, true));
+            $this->assertArrayHasKey('redir', $templateDetermined, 'Determine template ' . $message);
+            $this->assertStringEndsWith('/alfa', $templateDetermined['redir'], 'redir field MUST end with /alfa');
+        } else {
+            $this->assertEquals('product', $templateDetermined, $message);
+        }
+
+        $determineTemplateOptions = ['REQUEST_URI' => '/?product&id=2'];
+        $friendlyUrlOptions = [
+            'get' => ['product' => '', 'id' => '2'],
+            'language' => 'cs', // in production taken from $_SESSION['language']
+        ];
+        $this->object = new FriendlyUrl($this->myCms, $friendlyUrlOptions);
+        $templateDetermined = $this->object->determineTemplate($determineTemplateOptions);
+        $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI'] . (Tools::nonempty($friendlyUrlOptions['get']) ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '') . (Tools::nonempty($friendlyUrlOptions['session']) ? (' session:' . http_build_query($friendlyUrlOptions['session'])) : '') . ' templateDetermined: ' . print_r($templateDetermined, true);
         $this->assertEquals('product', $templateDetermined, $message);
+
 
         $determineTemplateOptions = ['REQUEST_URI' => '/?product&id=15000'];
         $friendlyUrlOptions = [
