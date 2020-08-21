@@ -141,7 +141,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             'get' => [],
             'requestUri' => $requestUri,
 //            "session" => $_SESSION,
-            'sectionStyles' => ['red'],
+//            'sectionStyles' => ['red'],
         ]);
         $templateDetermined = $this->object->determineTemplate([
             'PATH_HOME' => '0000000001',
@@ -156,7 +156,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             "get" => [],
             "requestUri" => $requestUri,
 //            "session" => $_SESSION,
-            "sectionStyles" => array("red"),
+//            "sectionStyles" => array("red"),
         ));
         $templateDetermined = $this->object->determineTemplate([
             'PATH_HOME' => '0000000001',
@@ -171,7 +171,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             "get" => [],
             "requestUri" => $requestUri,
             "session" => $_SESSION,
-            "sectionStyles" => array("red"),
+//            "sectionStyles" => array("red"),
         ));
         $templateDetermined = $this->object->determineTemplate([
             'PATH_HOME' => '0000000001',
@@ -189,7 +189,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             "get" => [],
             "requestUri" => $requestUri,
             "session" => $_SESSION,
-            "sectionStyles" => array("red"),
+//            "sectionStyles" => array("red"),
         ));
         $templateDetermined = $this->object->determineTemplate([
             'PATH_HOME' => '0000000001',
@@ -206,7 +206,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             "get" => [],
             "requestUri" => $requestUri,
             "session" => $_SESSION,
-            "sectionStyles" => array("red"),
+//            "sectionStyles" => array("red"),
         ));
         $templateDetermined = $this->object->determineTemplate([
             'PATH_HOME' => '0000000001',
@@ -223,7 +223,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             "get" => [],
             "requestUri" => $requestUri,
             "session" => $_SESSION,
-            "sectionStyles" => array("red"),
+//            "sectionStyles" => array("red"),
         ));
         $templateDetermined = $this->object->determineTemplate([
             'PATH_HOME' => '0000000001',
@@ -240,7 +240,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             "get" => [],
             "requestUri" => $requestUri,
             "session" => $_SESSION,
-            "sectionStyles" => array("red"),
+//            "sectionStyles" => array("red"),
         ));
         $templateDetermined = $this->object->determineTemplate([
             'PATH_HOME' => '0000000001',
@@ -256,7 +256,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             "get" => [],
             "requestUri" => $requestUri,
             "session" => $_SESSION,
-            "sectionStyles" => array("red"),
+//            "sectionStyles" => array("red"),
         ));
         $templateDetermined = $this->object->determineTemplate([
             'PATH_HOME' => '0000000001',
@@ -273,7 +273,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             "get" => [],
             "requestUri" => $requestUri,
             "session" => $_SESSION,
-            "sectionStyles" => array("red"),
+//            "sectionStyles" => array("red"),
         ));
         $templateDetermined = $this->object->determineTemplate([
             'PATH_HOME' => '0000000001',
@@ -295,7 +295,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             "language" => "en",
             "requestUri" => $requestUri,
             "session" => $_SESSION,
-            "sectionStyles" => array("red"),
+//            "sectionStyles" => array("red"),
         ));
         $templateDetermined = $this->object->determineTemplate([
             'PATH_HOME' => '0000000001',

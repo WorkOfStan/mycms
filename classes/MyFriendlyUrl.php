@@ -150,6 +150,37 @@ class MyFriendlyUrl extends MyCommon
     }
 
     /**
+     * Checks rules against current get parameters
+     * 
+     * @return mixed string template name on success, null on necessity to continue
+     */
+    private function parametricRuleToTemplate()
+    {
+        //template assigned based on 'templateAssignementParametricRules' and id/code presence checked
+        foreach ($this->MyCMS->templateAssignementParametricRules as $getParam => $assignement) {
+            if (!isset($this->get[$getParam])) { // skip irrelevant rules
+                continue;
+            }
+            $this->MyCMS->logger->info(print_r($this->verboseBarDump($assignement, 'determineTemplate: assignement loop'), true));
+            $this->MyCMS->logger->info($this->verboseBarDump("{$getParam} may lead to '{$assignement['template']}' template", 'determineTemplate: template assignement'));
+            if (!isset($assignement['idcode']) || $assignement['idcode'] === false) {
+                return $this->verboseBarDump($assignement['template'], 'determineTemplate: assignement established from get parameter name');
+            }
+            if (isset($this->get['id']) || isset($this->get['code'])) {
+                if (isset($this->get['id'])) {
+                    $this->get['id'] = filter_var($tempGetId = $this->get['id'], FILTER_VALIDATE_INT, array('default' => 0, 'min_range' => 0, 'max_range' => 1e9));
+                    if (!$this->get['id']) {
+                        $this->MyCMS->logger->error($this->verboseBarDump("this->get['id'] {$tempGetId} did not pass number filter", "get id did not pass filter"));
+                        return self::TEMPLATE_NOT_FOUND;
+                    }
+                }
+                return $this->verboseBarDump($assignement['template'], 'determineTemplate: assignement established from id or code parameter');
+            }
+        }
+        return null;
+    }
+
+    /**
      * Determines which template will be used (or redirect should be performed)
      * 
      * How does it work:
@@ -179,31 +210,15 @@ class MyFriendlyUrl extends MyCommon
         $token = $friendlyUrlRedirectVariables['token'];
         $matches = $friendlyUrlRedirectVariables['matches'];
 
-        //template assigned based on 'templateAssignementParametricRules' and id/code presence checked
-        foreach ($this->MyCMS->templateAssignementParametricRules as $getParam => $assignement) {
-            if (!isset($this->get[$getParam])) { // skip irrelevant rules
-                continue;
-            }
-            $this->MyCMS->logger->info(print_r($this->verboseBarDump($assignement, 'determineTemplate: assignement loop'), true));
-            $this->MyCMS->logger->info($this->verboseBarDump("{$getParam} may lead to '{$assignement['template']}' template", 'determineTemplate: template assignement'));
-            if (!isset($assignement['idcode']) || $assignement['idcode'] === false) {
-                return $this->verboseBarDump($assignement['template'], 'determineTemplate: assignement established from get parameter name');
-            }
-            if (isset($this->get['id']) || isset($this->get['code'])) {
-                if (isset($this->get['id'])) {
-                    $this->get['id'] = filter_var($tempGetId = $this->get['id'], FILTER_VALIDATE_INT, array('default' => 0, 'min_range' => 0, 'max_range' => 1e9));
-                    if (!$this->get['id']) {
-                        $this->MyCMS->logger->error($this->verboseBarDump("this->get['id'] {$tempGetId} did not pass number filter", "get id did not pass filter"));
-                        return self::TEMPLATE_NOT_FOUND;
-                    }
-                }
-                return $this->verboseBarDump($assignement['template'], 'determineTemplate: assignement established from id or code parameter');
-            }
+        $parametricRuleToTemplate = $this->parametricRuleToTemplate();
+        if (!is_null($parametricRuleToTemplate)) {
+            return $parametricRuleToTemplate;
         }
 
         //FRIENDLY URL & Redirect calculation where $token, $matches are expected from above
         $pureFriendlyUrl = $this->pureFriendlyUrl($options, $token, $matches);
         if (!is_null($pureFriendlyUrl)) {
+            $this->verboseBarDump($this->get, 'determineTemplate this->get before return pureFriendlyUrl');
             return $this->verboseBarDump($pureFriendlyUrl, 'determineTemplate return pureFriendlyUrl');
         }
 
@@ -240,7 +255,8 @@ class MyFriendlyUrl extends MyCommon
             $this->verboseBarDump($found, 'pureFriendlyUrl: found friendly URL');
             $this->get[$found['type']] = $this->get['id'] = $found['id'];
             $this->verboseBarDump($this->get, 'pureFriendlyUrl: this->get within pureFriendlyUrl');
-            return $this->verboseBarDump($this->determineTemplate($options), 'pureFriendlyUrl return determineTemplate()'); //TODO maybe only the loop of 'templateAssignementParametricRules' is relevant for recursion??
+//            return $this->verboseBarDump($this->determineTemplate($options), 'pureFriendlyUrl return determineTemplate()'); //TODO maybe only the loop of 'templateAssignementParametricRules' is relevant for recursion??
+            return $this->verboseBarDump($this->parametricRuleToTemplate(), 'pureFriendlyUrl return parametricRuleToTemplate()'); //TODO if this works, change the description as recursion is limited here
         }
         return $this->verboseBarDump(null, 'pureFriendlyUrl return null leads to self::TEMPLATE_NOT_FOUND'); //null leads to self::TEMPLATE_NOT_FOUND
     }

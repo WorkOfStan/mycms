@@ -51,6 +51,21 @@ class FriendlyUrl extends MyFriendlyUrl
     }
 
     /**
+     * Returns SQL statement for getting the content piece for a single content type
+     * 
+     * @param string $token
+     * @param string $type
+     * @param string $table
+     * @return string
+     */
+    private function prepareTableSelect($token, $type, $table)
+    {
+        return 'SELECT id,"' . $type . '" AS type FROM ' . TAB_PREFIX . $table . ' WHERE active=1 AND '
+            . ($type === $table ? '' : 'type like "' . $type . '" AND ') // usually type is stored in a dedicated table of the same name, otherwise a column type within the table is expected
+            . 'url_' . $this->language . '="' . $token . '"';
+    }
+
+    /**
      * SQL statement searching for $token in url_LL column of table(s) with content pieces addressed by FriendlyURL tokens
      * 
      * @param string $token
@@ -59,17 +74,22 @@ class FriendlyUrl extends MyFriendlyUrl
     protected function findFriendlyUrlToken($token)
     {
         Debugger::barDump("$token", 'findFriendlyUrlToken started');
-//        $sql = '';
-//        return $this->MyCMS->fetchSingle($sql);
-        //A example
-        return $this->MyCMS->fetchSingle('SELECT id,"product" AS type FROM ' . TAB_PREFIX . 'product WHERE url_' . $this->language . '="' . $token . '"
-                    UNION SELECT id,"article" AS type FROM ' . TAB_PREFIX . 'content WHERE url_' . $this->language . '="' . $token . '"
-                    UNION SELECT id,"category" AS type FROM ' . TAB_PREFIX . 'category WHERE url_' . $this->language . '="' . $token . '" AND path LIKE "' . $this->MyCMS->SETTINGS['PATH_HOME'] . '%"
-                    UNION SELECT id,"line" AS type FROM ' . TAB_PREFIX . 'category WHERE url_' . $this->language . '="' . $token . '" AND path LIKE "' . $this->MyCMS->SETTINGS['PATH_CATEGORY'] . '%"');
-        //F example
-        return $this->MyCMS->fetchSingle('SELECT id,"product" AS type FROM ' . TAB_PREFIX . 'product WHERE active=1 AND url_' . $this->language . '="' . $token . '"
-                    UNION SELECT id,"page" AS type FROM ' . TAB_PREFIX . 'content WHERE active=1 AND type LIKE "page" AND url_' . $this->language . '="' . $token . '"
-                    UNION SELECT id,"news" AS type FROM ' . TAB_PREFIX . 'content WHERE active=1 AND type LIKE "news" AND url_' . $this->language . '="' . $token . '"');
+        $cont = ['product' => 'product', 'category' => 'category', 'page' => 'content'];
+        // todo refactor array_map?
+        foreach ($cont as $type => $table) {
+            $outp[] = $this->prepareTableSelect($token, $type, $table);
+        }
+        $sql = implode(' UNION ', $outp);
+        return $this->MyCMS->fetchSingle($sql);
+//        //A example
+//        return $this->MyCMS->fetchSingle('SELECT id,"product" AS type FROM ' . TAB_PREFIX . 'product WHERE url_' . $this->language . '="' . $token . '"
+//                    UNION SELECT id,"article" AS type FROM ' . TAB_PREFIX . 'content WHERE url_' . $this->language . '="' . $token . '"
+//                    UNION SELECT id,"category" AS type FROM ' . TAB_PREFIX . 'category WHERE url_' . $this->language . '="' . $token . '" AND path LIKE "' . $this->MyCMS->SETTINGS['PATH_HOME'] . '%"
+//                    UNION SELECT id,"line" AS type FROM ' . TAB_PREFIX . 'category WHERE url_' . $this->language . '="' . $token . '" AND path LIKE "' . $this->MyCMS->SETTINGS['PATH_CATEGORY'] . '%"');
+//        //F example
+//        return $this->MyCMS->fetchSingle('SELECT id,"product" AS type FROM ' . TAB_PREFIX . 'product WHERE active=1 AND url_' . $this->language . '="' . $token . '"
+//                    UNION SELECT id,"page" AS type FROM ' . TAB_PREFIX . 'content WHERE active=1 AND type LIKE "page" AND url_' . $this->language . '="' . $token . '"
+//                    UNION SELECT id,"news" AS type FROM ' . TAB_PREFIX . 'content WHERE active=1 AND type LIKE "news" AND url_' . $this->language . '="' . $token . '"');
     }
 
     /**

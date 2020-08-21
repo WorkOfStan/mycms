@@ -168,12 +168,13 @@ class MyController extends MyCommon
         $this->session['language'] = $this->language = $this->friendlyUrl->getLanguage();
         $_SESSION['language'] = $this->MyCMS->getSessionLanguage(Tools::ifset($this->get, []), Tools::ifset($this->session, []), true); // Language is finally determined, therefore make the include creating TRANSLATION
         $this->MyCMS->logger->info("After determineTemplate: this->language={$this->language}, this->session['language']={$this->session['language']}, _SESSION['language']={$_SESSION['language']} this->get[language]=" . (isset($this->get['language']) ? $this->get['language'] : 'n/a'));
-        $this->verboseBarDump(['get' => $this->get, 'templateDetermined' => $templateDetermined], 'get in controller after determineTemplate');
+        $this->verboseBarDump(['get' => $this->get, 'templateDetermined' => $templateDetermined, 'friendlyUrl->get' => $this->friendlyUrl->getGet()], 'get in controller after determineTemplate');
         if (is_string($templateDetermined)) {
             $this->MyCMS->template = $templateDetermined;
         } elseif (is_array($templateDetermined) && isset($templateDetermined['redir'])) {
             $this->redir($templateDetermined['redir'], $templateDetermined['httpCode']);
         }
+        $this->get = $this->friendlyUrl->getGet(); // so that the FriendlyURL translation to parametric URL is taken into account
         // PROJECT SPECIFIC CHANGE OF OPTIONS AFTER LANGUAGE IS DETERMINED
         $this->prepareTemplate($options);
 
