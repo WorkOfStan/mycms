@@ -119,7 +119,9 @@ class MyFriendlyUrl extends MyCommon
                 $this->verboseBarDump($addLanguageDirectory = ($this->language != DEFAULT_LANGUAGE) // other than default language should have its directory
                     && !preg_match("~^{$this->language}/~", $friendlyUrl), 'friendlyIdentifyRedirect: addLanguageDirectory 301'); // unless the friendlyURL already has it
                 return $this->redirWrapper(($addLanguageDirectory ? '/' . $this->language : '') . '/' . $friendlyUrl, 'SEO Force 301 friendly');
-            } elseif ($interestingPath != '/') {
+            } elseif ($interestingPath != '/'
+                && $interestingPath != "/{$this->language}/" // allow for /en/?product&id=3 type of URL
+                ) {
                 return $this->redirWrapper('/' . $friendlyUrl, 'SEO Force 301 parametric');
             }
         }
@@ -131,8 +133,15 @@ class MyFriendlyUrl extends MyCommon
         if (isset($matches[1]) && !(substr($interestingPath, 0, strlen('/assets/')) === '/assets/')) { // non-existent page resources SHOULD NOT change the web language to the default
             // transforms 'en/' to 'en' //$makeInclude=false as $this->MyCMS->TRANSLATION is already set.
             $this->verboseBarDump($this->language = $this->MyCMS->getSessionLanguage(['language' => substr($matches[1], 0, 2)], $this->session, false), 'friendlyIdentifyRedirect: Language reset according to path');
-        } elseif (!isset($matches[1]) && FORCE_301 && ($this->language != DEFAULT_LANGUAGE)) {
-            return $this->redirWrapper('/' . $this->language . $interestingPath, 'SEO Force 302 language folder', 302); // this kind of redirect may be caused by using the same token for multiple languages without using language subpatern folder, so 302 Found aka Moved Temporarily is the best choice
+        } elseif (!isset($matches[1]) && FORCE_301 && ($this->language != DEFAULT_LANGUAGE)
+            && (!isset($this->get['language']))
+            ) {
+            // to be fixed: if this->language=en, this place lead to redirect dist/?category=1 to en/
+            //return $this->redirWrapper('/' . $this->language . $interestingPath, 'SEO Force 302 language folder', 302); // this kind of redirect may be caused by using the same token for multiple languages without using language subpatern folder, so 302 Found aka Moved Temporarily is the best choice
+            // fix: for dist/?category=1 etc. to change language to the DEFAULT_LANGUAGE = allow for /en/?product&id=3 type of URL
+//            return $this->redirWrapper($interestingPath . '?' . http_build_query(array_merge(['language' => DEFAULT_LANGUAGE], $this->get)), 'SEO Force 302 language folder', 302);
+            //TODO - ať lze přepínat jazyky!!! pomocí ?language=fr
+            return $this->redirWrapper($interestingPath . '?' . http_build_query(array_merge(['language' => DEFAULT_LANGUAGE], $this->get)), 'SEO Force 302 language folder', 302);
         }
         // If there is a redirect specified
         if (REDIRECTOR_ENABLED && $this->verboseBarDump(($found = $this->MyCMS->fetchSingle('SELECT `new_url` FROM ' . TAB_PREFIX . 'redirector WHERE `old_url`="' . $interestingPath . '" AND `active` = "1"')), 'friendlyIdentifyRedirect: found redirect')) {
@@ -192,7 +201,8 @@ class MyFriendlyUrl extends MyCommon
      * The default template already set in MyControler as `$this->MyCMS->template = 'home';
      * $this->MyCMS->templateAssignementParametricRules is array where key is get parameter and value is array of 'template' => template-name and optionally (bool)'idcode' if value is not in $_GET[key] but either in (int)id or (string)code GET parameters
      * 
-     * TODO: simplify management of TEMPLATE_NOT_FOUND result as currently it is indicated as self::TEMPLATE_NOT_FOUND || null || true 
+     * TODO: simplify management of TEMPLATE_NOT_FOUND result as currently it is indicated as self::TEMPLATE_NOT_FOUND || null || true
+     * TODO: refactor this method as a single return with conditions
      * 
      * @param array $options OPTIONAL verbose==true bleeds info to standard output
      * @return mixed `string` with name of the template when template determined || `array` with redir field when redirect || `bool (true)` when template set to `TEMPLATE_NOT_FOUND`

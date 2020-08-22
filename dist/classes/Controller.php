@@ -144,7 +144,7 @@ class Controller extends MyController
                         . ' content_' . $this->language . ' AS description,'
                         . ' added'
                         . ' FROM `' . TAB_PREFIX . 'product` WHERE `category_id` = ' . $categoryId . ' AND `active` = 1'
-//zde to nějak rozbije všechny výsledky                        . ' AND name_' . $this->language . ' != "",'
+                        . ' AND name_' . $this->language . ' NOT LIKE ""' // hide product language variants with empty title
                         . ' ORDER BY sort ASC');
                     // TODO vybrat jen produkty pro aktuální jazyk
                 }

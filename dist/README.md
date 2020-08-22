@@ -174,6 +174,18 @@ is the language in which the web starts without any additional information about
 (such as language folder or session).
 The default language is typically shown in the application root.
 
+### Accepted types of URL
+
+* /alfa .. named page in the DEFAULT_LANGUAGE
+* /en/alfa .. named page in another language
+* /?product&id=3 .. parametric page in the DEFAULT_LANGUAGE
+* /?category=1 .. parametric page in the DEFAULT_LANGUAGE
+* /en/?product&id=3 .. parametric page in another language
+* /en/?category=1 .. parametric page in another language
+* /?language=de .. language switch
+* /de/ .. default page in German
+* /?product&id=3&language=de .. parametric page in another language
+
 # CMS notes
 
 ## Agenda

@@ -113,7 +113,7 @@ class ProjectSpecific extends ProjectCommon
             . ' name_' . $options['language'] . ' AS title,'
             . ' content_' . $options['language'] . ' AS description'
             . ' FROM ' . TAB_PREFIX . 'category WHERE active="1"' . Tools::wrap($this->MyCMS->escapeSQL($code), ' AND code="', '"') . Tools::wrap(intval($id), ' AND id=') . ' LIMIT 1'))) {
-            $result['context'] = json_decode($result['context'], true) ?: array();
+            $result['context'] = json_decode($result['context'], true) ?: [];
             $result['added'] = Tools::localeDate($result['added'], $options['language'], false);
         }
         return $result;
@@ -122,7 +122,8 @@ class ProjectSpecific extends ProjectCommon
     /**
      * 
      * @param int $id
-     * @return mixed array first selected row, null on empty SELECT, or false on error
+     * @return mixed array first selected row, null on empty SELECT
+     * @throws \Exception on error
      */
     public function getProduct($id)
     {
@@ -134,7 +135,9 @@ class ProjectSpecific extends ProjectCommon
                 . ' content_' . $this->language . ' AS description '
                 // TODO: Note: takto se do pole context[product] přidá field [link], který obsahuje potenciálně friendly URL, ovšem relativní, tedy bez jazyka. Je to příprava pro forced 301 SEO a pro hreflang funkcionalitu.
                 . ',' . $this->getLinkSql('?product&id=', $this->language)
-                . ' FROM ' . TAB_PREFIX . 'product WHERE active="1" AND id=' . intval($id) . ' LIMIT 1'
+                . ' FROM ' . TAB_PREFIX . 'product WHERE active="1" AND'
+                . ' name_' . $this->language . ' NOT LIKE "" AND' // hide product language variants with empty title
+                . ' id=' . intval($id) . ' LIMIT 1'
         );
 //        //FU
 //                $content = $this->MyCMS->dbms->fetchSingle('SELECT id, name_' . $this->language . ' AS title,'

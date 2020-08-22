@@ -201,7 +201,8 @@ class LogMysqli extends BackyardMysqli
      * @example: fetchSingle('SELECT age FROM employees WHERE id = 5') --> 45
      *
      * @param string $sql SQL to be executed
-     * @return mixed first selected row (or its first column if only one column is selected), null on empty SELECT, or false on error
+     * @return mixed first selected row (or its first column if only one column is selected), null on empty SELECT
+     * @throws \Exception on error
      */
     public function fetchSingle($sql)
     {
@@ -215,7 +216,7 @@ class LogMysqli extends BackyardMysqli
             }
             return null;
         }
-        return false;
+        throw new \Exception($this->errno . ': ' . $this->error);
     }
 
     /**
