@@ -52,10 +52,7 @@ class MyCommon
      */
     protected function verboseBarDump($var, $title = null, array $options = [])
     {
-        if ($this->verbose === true) { //TODO change to loose condition
-            return Debugger::barDump($var, $title, $options);
-        }
-        return $var;
+        return ($this->verbose == true) ? Debugger::barDump($var, $title, $options) : $var;
     }
 
 }
