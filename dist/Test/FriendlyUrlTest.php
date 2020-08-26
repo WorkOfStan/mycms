@@ -29,6 +29,17 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
     protected $language;
 
     /**
+     * @var \GodsDev\Backyard\Backyard
+     */
+    protected $backyard;
+
+    /** @var string */
+    protected $apiBaseUrl;
+
+    /** @var string */
+    protected $apiBaseDomain;
+
+    /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
@@ -37,8 +48,8 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         global $backyardConf,
         $myCmsConf;
         Debugger::enable(Debugger::DEVELOPMENT, __DIR__ . '/../log');
-        $backyard = new \GodsDev\Backyard\Backyard($backyardConf);
-        $myCmsConf['logger'] = $backyard->BackyardError;
+        $this->backyard = new \GodsDev\Backyard\Backyard($backyardConf);
+        $myCmsConf['logger'] = $this->backyard->BackyardError;
         $myCmsConf['dbms'] = new \GodsDev\MyCMS\LogMysqli(DB_HOST . ':' . DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE, $myCmsConf['logger']); //@todo - use test db instead. Or use other TAB_PREFIX !
 
         $this->myCms = new MyCMSProject($myCmsConf);
@@ -46,6 +57,10 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         $_SESSION = []; //because $_SESSION is not defined in the PHPUnit mode
         $this->language = $this->myCms->getSessionLanguage([], [], false);
         //according to what is tested, change $this->myCms->context before invoking $this->object = new FriendlyUrl; within Test methods
+        $this->assertArrayHasKey('web_domain', $backyardConf, '$backyardConf[\'web_domain\'] MUST be configured in config.local.php');
+        $this->assertArrayHasKey('web_path', $backyardConf, '$backyardConf[\'web_path\'] MUST be configured in config.local.php');
+        $this->apiBaseDomain = $backyardConf['web_domain'];
+        $this->apiBaseUrl = $backyardConf['web_domain'] . $backyardConf['web_path'];
     }
 
     /**
@@ -360,6 +375,82 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('404', $this->object->friendlyfyUrl('?product=3170'), 'Nonexistent product');
         $this->assertEquals('datova-centra', $this->object->friendlyfyUrl('?line=1'));
         $this->assertEquals('404', $this->object->friendlyfyUrl('?line=1456'), 'Nonexistent category');
+    }
+
+    /**
+     * This PHPUnit test is meant just for MyCMS development. It is recommended to remove it from real applications.
+     */
+    public function testPageStatusOverHttp()
+    {
+        $urlsToBeChecked = [
+            [
+                'relative_url' => '', // home
+                'http_status' => 200,
+                'allow_redirect' => true,
+//                'contains_text' => '',
+                'is_json' => false
+            ],
+            [
+                'relative_url' => 'alfa', // alfa for CS
+                'http_status' => 200,
+                'allow_redirect' => true,
+//                'contains_text' => '',
+                'is_json' => false
+            ],
+            [
+                'relative_url' => 'en/alfa', // en/alfa
+                'http_status' => 200,
+                'allow_redirect' => true,
+//                'contains_text' => '',
+                'is_json' => false
+            ],
+            [
+                'relative_url' => 'non-sense', // non-existent page
+                'http_status' => 404,
+                'allow_redirect' => true,
+//                'contains_text' => '',
+                'is_json' => false
+            ],
+            [
+                //for FORCE_301 == true
+                'relative_url' => '?product&id=1', // redirect to alfa
+                'http_status' => 200,
+                'allow_redirect' => true,
+//                'contains_text' => '',
+                'is_json' => false
+            ],
+            [
+                //for FORCE_301 == true
+                'relative_url' => '?product&id=1', // redirect to alfa
+                'http_status' => 301,
+                'allow_redirect' => false,
+//                'contains_text' => '',
+                'is_json' => false
+            ],
+        ];
+
+        foreach ($urlsToBeChecked as $singleUrl) {
+            $url = $this->apiBaseUrl . $singleUrl['relative_url'];
+            $result = $this->backyard->Http->getData($url, 'PHPUnit/' . \PHPUnit_Runner_Version::id() . ' ' . __FUNCTION__);
+//            var_dump("first RESULT for {$url}", $result);
+            if (isset($singleUrl['allow_redirect']) && $singleUrl['allow_redirect'] && isset($result['REDIRECT_URL'])) {//fixes e.g. http to https 301 redirect
+                $result = $this->backyard->Http->getData($this->apiBaseDomain . $result['REDIRECT_URL'], 'PHPUnit/' . \PHPUnit_Runner_Version::id() . ' ' . __FUNCTION__);
+//                var_dump('2nd RESULT', $result);
+            }
+            $this->assertNotFalse($result, "cURL failed on {$url}");
+            $this->assertFalse(($result['HTTP_CODE'] === 0), "URL {$url} is not available. (Is \$backyardConf['web_address'] properly configured?)");
+            if (isset($singleUrl['http_status']) && $singleUrl['http_status']) {
+                $this->assertEquals($singleUrl['http_status'], $result['HTTP_CODE'], "URL {$url} returns other HTTP code");
+            }
+            $this->assertArrayHasKey('message_body', $result, "URL {$url} nevraci obsah.");
+            if (isset($singleUrl['contains_text'])) {
+                $this->assertContains($singleUrl['contains_text'], $result['message_body'], 'Needle is not in the haystack.');
+            }
+            if (isset($singleUrl['is_json']) && $singleUrl['is_json']) {
+                $jsonArr = json_decode($result['message_body'], true);
+                $this->assertTrue(is_array($jsonArr), "Vysledek neni pole, tedy vstup na URL {$url} nebyl JSON: " . substr($result['message_body'], 0, 20));
+            }
+        }
     }
 
 }

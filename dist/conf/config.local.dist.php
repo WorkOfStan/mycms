@@ -30,7 +30,7 @@ define('RECAPTCHA_SECRET', '...');
  * SELECT @@global.time_zone, @@session.time_zone, @@system_time_zone
  * vs
  * Default timezone in php_info();
- * 
+ *
  * Meaning that creating item and adding inventory leads to a fail, fix by harmonising the timezones:
  */
 //date_default_timezone_set('Europe/Prague');
@@ -57,3 +57,5 @@ $featureFlags = [
 //    'console_log_list_values' => true,
 ];
 //$debugIpArray[] = '192.168.1.145'; // add other IP addresses to see full errors
+$backyardConf['web_domain'] = 'https://localhost:9090'; // for GodsDev\mycmsprojectnamespace\Test\FriendlyUrlTest::testPageStatusOverHttp without trailing `/`
+$backyardConf['web_path'] = '/mycmsprojectnamespace/'; // for GodsDev\mycmsprojectnamespace\Test\FriendlyUrlTest::testPageStatusOverHttp including trailing `/`
