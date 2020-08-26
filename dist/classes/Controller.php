@@ -138,7 +138,6 @@ class Controller extends MyController
                         . ' FROM `' . TAB_PREFIX . 'product` WHERE `category_id` = ' . $categoryId . ' AND `active` = 1'
                         . ' AND name_' . $this->language . ' NOT LIKE ""' // hide product language variants with empty title
                         . ' ORDER BY sort ASC');
-                    // TODO vybrat jen produkty pro aktuální jazyk
                 }
                 $this->MyCMS->context['totalRows'] = count($this->MyCMS->context['list']);
                 return true;
@@ -147,7 +146,7 @@ class Controller extends MyController
                 if (is_null($this->MyCMS->context['product'])) {
                     $this->MyCMS->template = self::TEMPLATE_NOT_FOUND;
                 } else {
-                    //TODO//$this->MyCMS->context['pageTitle'] = '';
+                    $this->MyCMS->context['pageTitle'] = $this->MyCMS->context['product']['title'];
                 }
                 return true;
             case 'search-results': //search _GET[search] contains the search phrase
@@ -156,6 +155,18 @@ class Controller extends MyController
                 $this->MyCMS->context['results'] = $this->projectSpecific->searchResults($this->get['search'], $this->MyCMS->context['offset'], $this->MyCMS->context['totalRows']);
                 //@todo ošetřit empty result
                 $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Výsledky hledání');
+                return true;
+            case 'item-1':
+                $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 1';
+                return true;
+            case 'item-B':
+                $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 2';
+                return true;
+            case 'item-gama':
+                $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 3';
+                return true;
+            case 'item-4':
+                $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 4';
                 return true;
             default:
                 Debugger::log("Undefined template {$this->MyCMS->template}", ILogger::ERROR);

@@ -347,3 +347,4 @@ When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in
 * 200802: test with 2 categories
 * 200802: image for product and category in assets
 * 200802: zkusit category a product pro další jazyky než cs
+* 200826: home v header.latte dát něčemu jinému než obsoleted id=5, což?
