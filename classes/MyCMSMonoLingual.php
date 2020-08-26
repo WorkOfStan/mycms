@@ -10,10 +10,10 @@ use Tracy\Debugger;
  * This version has variable and methods for DBMS and result retrieval
  * and a rendering to a Latte templates.
  * For multi-language version of this class, use MyCMS.
- * 
- * For a new project it is expected to make a extended class and place 
+ *
+ * For a new project it is expected to make a extended class and place
  * additional attributes needed for running, then use that class.
- * 
+ *
  */
 class MyCMSMonoLingual
 {
@@ -105,7 +105,7 @@ class MyCMSMonoLingual
     }
 
     /**
-     * 
+     *
      * @param string $sql
      * @return mixed first selected row (or its first column if only one column is selected), null on empty SELECT, or false on error
      */
@@ -144,9 +144,8 @@ class MyCMSMonoLingual
         Debugger::barDump($_SESSION, 'Session'); //mainly for  $_SESSION['language']
         $Latte->render('template/' . $this->template . '.latte', $params); //@todo make it configurable
         unset($_SESSION['messages']);
-        $sqlStatementsArray = $this->dbms->getStatementsArray();
-        if (!empty($sqlStatementsArray)) {
-            Debugger::getBar()->addPanel(new \GodsDev\MyCMS\Tracy\BarPanelTemplate('SQL: ' . count($sqlStatementsArray), $sqlStatementsArray));
+        if (!empty($this->dbms->getStatementsArray())) {
+            Debugger::getBar()->addPanel(new \GodsDev\MyCMS\Tracy\BarPanelTemplate('SQL: ' . count($this->dbms->getStatementsArray()), $this->dbms->getStatementsArray()));
         }
     }
 

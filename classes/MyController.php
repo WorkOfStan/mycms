@@ -10,7 +10,7 @@ use Webmozart\Assert\Assert;
 
 /**
  * Controller ascertain what the request is
- * 
+ *
  * The default template is `home`
  */
 class MyController extends MyCommon
@@ -25,8 +25,8 @@ class MyController extends MyCommon
 
     /**
      * HTTP request parameters
-     * 
-     * @var type 
+     *
+     * @var type
      */
     protected $get;
 
@@ -36,13 +36,13 @@ class MyController extends MyCommon
     /**
      * Friendly URL instance MAY be passsed from project Controller.
      * It is eventually instantiated in Controller in order to use project specific methods.
-     * 
+     *
      * @var \GodsDev\MyCMS\MyFriendlyUrl
      */
     protected $friendlyUrl;
 
     /**
-     * 
+     *
      * @param \GodsDev\MyCMS\MyCMS $MyCMS
      * @param array $options that overrides default values within constructor
      */
@@ -66,12 +66,12 @@ class MyController extends MyCommon
     /**
      * Kept only for backward compatibility for apps using 0.3.15 or older; to be replaced by run()
      * Outputs changed $MyCMS->template and $MyCMS->context as fields of an array
-     * 
+     *
      * Expected in Controller:
      * $this->friendlyUrl->determineTemplate($options);
      * $this->prepareTemplate($options);
      * $this->prepareAllTemplates($options);
-     * 
+     *
      * @return array
      */
     public function controller()
@@ -81,7 +81,7 @@ class MyController extends MyCommon
 
     /**
      * For PHP Unit test
-     * 
+     *
      * @return array
      */
     public function getVars()
@@ -89,7 +89,6 @@ class MyController extends MyCommon
         return [
             'get' => $this->get,
             'session' => $this->session,
-            //'section_styles' => $this->sectionStyles,
         ];
     }
 
@@ -134,9 +133,8 @@ class MyController extends MyCommon
         if (isset($_SESSION['user'])) {
             Debugger::getBar()->addPanel(new BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION));
         }
-        $sqlStatementsArray = $this->MyCMS->dbms->getStatementsArray();
-        if (!empty($sqlStatementsArray)) {
-            Debugger::getBar()->addPanel(new BarPanelTemplate('SQL: ' . count($sqlStatementsArray), $sqlStatementsArray));
+        if (!empty($this->MyCMS->dbms->getStatementsArray())) {
+            Debugger::getBar()->addPanel(new BarPanelTemplate('SQL: ' . count($this->MyCMS->dbms->getStatementsArray()), $this->MyCMS->dbms->getStatementsArray()));
         }
         $this->MyCMS->logger->info("Redir to {$redir} with SESSION[language]={$_SESSION['language']}");
         header("Location: {$redir}", true, $httpCode); // Note: for SEO 301 is much better than 303
@@ -149,7 +147,7 @@ class MyController extends MyCommon
     /**
      * Determines template, set Session language, runs prepareTemplate for single template and prepareAllTemplates for general transformations
      * Outputs changed $MyCMS->template and $MyCMS->context as fields of an array
-     * 
+     *
      * @return array
      */
     public function run()

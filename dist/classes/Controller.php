@@ -21,9 +21,6 @@ class Controller extends MyController
     /** @var string */
     protected $requestUri = ''; //default is homepage
 
-    /** @var array */
-//    protected $sectionStyles; //TODO is needed? Probably remove from here and also MyCMS/dist.
-
     /** @var \GodsDev\mycmsprojectnamespace\ProjectSpecific */
     private $projectSpecific;
 
@@ -35,8 +32,8 @@ class Controller extends MyController
 
     /**
      * Feature flags that bubble down to latte and controller
-     * 
-     * @var array 
+     *
+     * @var array
      */
     protected $featureFlags;
 
@@ -49,18 +46,17 @@ class Controller extends MyController
 
     /**
      * Controller ascertain what the request is
-     * 
+     *
      * Expect variables:
      * $MyCMS->template, context, logger, SETTINGS
      * $_SESSION
      * $_GET
-     * $SECTION_STYLES
-     * 
+     *
      * Expect constants:
      * PATH_MODULE
      * TAB_PREFIX
      *
-     * 
+     *
      * @param \GodsDev\MyCMS\MyCMS $MyCMS
      * @param array $options overrides default values of declared properties
      */
@@ -104,20 +100,16 @@ class Controller extends MyController
             case self::TEMPLATE_DEFAULT: return true;
             case self::TEMPLATE_NOT_FOUND: return true;
             case 'category':
-                // Note: category doesn't use code field
-//DELETE                $this->verboseBarDump($this->get, 'category - get');
-//DELETE                $this->verboseBarDump(Tools::ifset($this->get['category']), 'tools ifset get category');
-                if (!Tools::ifset($this->get['category'])
-//                    && is_null(Tools::ifset($this->get['code']))
-                    ) {
+                if (!Tools::ifset($this->get['category'])) {
                     $categoryId = null;
                     $this->MyCMS->context['pageTitle'] = 'Categories'; // TODO localize // TODO content element
                     $this->MyCMS->context['content']['description'] = 'About all categories'; // TODO localize perex for all categories // TODO content element
                 } else {
-                    $this->MyCMS->context['content'] = $this->projectSpecific->getCategory(Tools::ifset($this->get['category']), 
-//                        Tools::ifset($this->get['code']), 
+                    $this->MyCMS->context['content'] = $this->projectSpecific->getCategory(
+                        Tools::ifset($this->get['category']),
                         null,
-                        ['language' => $this->language]);
+                        ['language' => $this->language]
+                    );
                     Debugger::barDump($this->MyCMS->context['content'], 'category');
                     if (is_null($this->MyCMS->context['content'])) {
                         $this->MyCMS->template = self::TEMPLATE_NOT_FOUND;
@@ -150,22 +142,12 @@ class Controller extends MyController
                 }
                 $this->MyCMS->context['totalRows'] = count($this->MyCMS->context['list']);
                 return true;
-//            case 'line': return true; // line uses default home template
             case 'product':
-// DELETE//                $this->MyCMS->context['content'] = $this->projectSpecific->getContent($this->get['id'], $this->get['code'], ['language' => $this->language]);
-//                $this->MyCMS->context['product'] = $this->MyCMS->fetchSingle('SELECT id, context, category_id,' 
-////                    . ' image,'
-//                    . ' name_' . $this->language . ' AS title,'
-//                    . ' content_' . $this->language . ' AS description '
-//                    // TODO: Note: takto se do pole context[product] přidá field [link], který obsahuje potenciálně friendly URL, ovšem relativní, tedy bez jazyka. Je to příprava pro forced 301 SEO a pro hreflang funkcionalitu.
-//                    . ',' . $this->projectSpecific->getLinkSql('?product&id=', $this->language)
-//                    . ' FROM ' . TAB_PREFIX . 'product WHERE active="1" AND id=' . intval($this->get['id']) . ' LIMIT 1' // TODO vs &id=
-//                );
-                $this->MyCMS->context['product'] = $this->projectSpecific->getProduct((int)$this->get['id']);
-                if(is_null($this->MyCMS->context['product'])) {
+                $this->MyCMS->context['product'] = $this->projectSpecific->getProduct((int) $this->get['id']);
+                if (is_null($this->MyCMS->context['product'])) {
                     $this->MyCMS->template = self::TEMPLATE_NOT_FOUND;
                 } else {
-                //TODO//$this->MyCMS->context['pageTitle'] = '';
+                    //TODO//$this->MyCMS->context['pageTitle'] = '';
                 }
                 return true;
             case 'search-results': //search _GET[search] contains the search phrase
@@ -183,7 +165,7 @@ class Controller extends MyController
 
     /**
      * For PHP Unit test
-     * 
+     *
      * @return array
      */
     public function getVars()
@@ -191,7 +173,6 @@ class Controller extends MyController
         return [
             'get' => $this->get,
             'session' => $this->session,
-//            'sectionStyles' => $this->sectionStyles,
         ];
     }
 

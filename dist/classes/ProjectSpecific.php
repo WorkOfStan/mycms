@@ -56,7 +56,7 @@ class ProjectSpecific extends ProjectCommon
 
     /**
      * Fetch from database details of content of given id/code
-     * 
+     *
      * @param mixed $id of the content OPTIONAL
      * @param type $code OPTIONAL
      * @param array $options OPTIONAL
@@ -97,7 +97,7 @@ class ProjectSpecific extends ProjectCommon
 
     /**
      * Fetch from database details of category of given id/code
-     * 
+     *
      * @param mixed $id of the content OPTIONAL
      * @param type $code OPTIONAL
      * @param array $options OPTIONAL
@@ -106,7 +106,7 @@ class ProjectSpecific extends ProjectCommon
     public function getCategory($id = null, $code = null, array $options = [])
     {
         $result = [];
-        if ((!is_null($id) || !is_null($code)) && ($result = $this->MyCMS->fetchSingle('SELECT id AS category_id, ' // . 'path,' 
+        if ((!is_null($id) || !is_null($code)) && ($result = $this->MyCMS->fetchSingle('SELECT id AS category_id, ' // . 'path,'
             . ' context,'
 //            . ' "page" AS type,'
             . ' added,'
@@ -120,7 +120,7 @@ class ProjectSpecific extends ProjectCommon
     }
 
     /**
-     * 
+     *
      * @param int $id
      * @return mixed array first selected row, null on empty SELECT
      * @throws \Exception on error
@@ -128,7 +128,8 @@ class ProjectSpecific extends ProjectCommon
     public function getProduct($id)
     {
         Assert::integer($id, 'product MUST be identified by id');
-        return $this->MyCMS->fetchSingle('SELECT id,'
+        return $this->MyCMS->fetchSingle(
+                'SELECT id,'
                 . 'context,'
                 . 'category_id,'
                 . ' name_' . $this->language . ' AS title,'
@@ -139,24 +140,10 @@ class ProjectSpecific extends ProjectCommon
                 . ' name_' . $this->language . ' NOT LIKE "" AND' // hide product language variants with empty title
                 . ' id=' . intval($id) . ' LIMIT 1'
         );
-//        //FU
-//                $content = $this->MyCMS->dbms->fetchSingle('SELECT id, name_' . $this->language . ' AS title,'
-//                    . $this->projectSpecific->getLinkSql("?product&id=", $this->language)
-//                    . ' FROM ' . TAB_PREFIX . 'product WHERE active = 1 '
-//                    . ' AND id = "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"');
-//                //C
-//                $this->MyCMS->context['product'] = $this->MyCMS->fetchSingle('SELECT id, context, category_id,' 
-////                    . ' image,'
-//                    . ' name_' . $this->language . ' AS title,'
-//                    . ' content_' . $this->language . ' AS description '
-//                    // TODO: Note: takto se do pole context[product] přidá field [link], který obsahuje potenciálně friendly URL, ovšem relativní, tedy bez jazyka. Je to příprava pro forced 301 SEO a pro hreflang funkcionalitu.
-//                    . ',' . $this->projectSpecific->getLinkSql('?product&id=', $this->language)
-//                    . ' FROM ' . TAB_PREFIX . 'product WHERE active="1" AND id=' . intval($this->get['id']) . ' LIMIT 1' // TODO vs &id=
-//                );
     }
 
     /**
-     * 
+     *
      * @param string $description
      * @param array $options
      * @return string
@@ -167,7 +154,7 @@ class ProjectSpecific extends ProjectCommon
         $result = '';
         $sections = explode('<hr>', $description); //<hr> vložená v CMS znamená, že se odrotuje další section s tím, že class photo se doplňuje class-ou produktu, aby se mohla měnit fotka dle produktu a pořadí
         $sectionCount = 0;
-        foreach ($sections as $sectionKey => $section) { //@todo určitě jdou dát jen 3 a ty rotovat dokola, ale to můžeme pořešit později            
+        foreach ($sections as $sectionKey => $section) { //@todo určitě jdou dát jen 3 a ty rotovat dokola, ale to můžeme pořešit později
             $styleKey = $sectionKey % count($options['SECTION_STYLES']);
             $classes = $options['SECTION_STYLES'][$styleKey] . (($options['SECTION_STYLES'][$styleKey] == 'photo') ? " " . Tools::webalize($options['product'] . ' ' . $sectionKey) : '');
             $tempDiv = "\n<div data-aos=\"fade-up\" class=\"container\">\n{$section}\n</div>\n";
@@ -181,7 +168,7 @@ class ProjectSpecific extends ProjectCommon
     }
 
     /**
-     * 
+     *
      * @param string $path
      * @param array $options OPTIONAL
      * @return mixed
@@ -199,7 +186,7 @@ class ProjectSpecific extends ProjectCommon
     }
 
     /**
-     * 
+     *
      * @param type $category_id
      * @param array $options OPTIONAL
      * @return mixed
@@ -224,7 +211,7 @@ class ProjectSpecific extends ProjectCommon
     }
 
     /**
-     * 
+     *
      * @param array $options OPTIONAL
      * @return string
      */

@@ -33,7 +33,7 @@ class ProjectCommon extends MyCommon
 
     /**
      * Returns SQL fragment for column link ($fieldName) which construct either parametric URL or relative friendly URL
-     * 
+     *
      * @param string $idPrefix e.g. ?article=
      * @param string $language
      * @param string $fieldName OPTIONAL field name with URL of the resulting array - default is 'link'
@@ -57,7 +57,7 @@ class ProjectCommon extends MyCommon
     /**
      * Without parameter just returns the language
      * With parameter set language (used by FriendlyUrl::switchParametric as language may change during Controller)
-     * 
+     *
      * @param string $language OPTIONAL
      * @return string
      */
@@ -83,7 +83,7 @@ class ProjectCommon extends MyCommon
     }
 
     /**
-     * 
+     *
      * @param string $stringOfTime
      * @param string $language
      */
@@ -99,14 +99,14 @@ class ProjectCommon extends MyCommon
     /**
      * Replace spaces with \0160 after selected short words
      * The list of selected words may be enlarged or redefined in the ProjectSpecific child
-     * 
+     *
      * @param string $text
      * @param array $addReplacePatterns add or redefine patterns
      * @return string
      */
     public function correctLineBreak($text, array $addReplacePatterns = [])
     {
-        $replacePatterns = array_merge(array(
+        $replacePatterns = array_merge([
             '/ a /' => ' a ',
             '/ i /' => ' i ',
             '/ k /' => ' k ',
@@ -120,7 +120,7 @@ class ProjectCommon extends MyCommon
             '/ & /' => ' & ',
             '/ an /' => ' an ',
             '/Industry 4.0/' => 'Industry 4.0',
-            ), $addReplacePatterns);
+            ], $addReplacePatterns);
         return preg_replace(array_keys($replacePatterns), array_values($replacePatterns), $text);
     }
 

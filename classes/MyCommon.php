@@ -6,7 +6,7 @@ use Tracy\Debugger;
 
 /**
  * Generic ancestor for classes that uses MyCMS
- * 
+ *
  */
 class MyCommon
 {
@@ -22,13 +22,13 @@ class MyCommon
     /**
      * Bleeds information
      * false - nothing, true - Debugger::barDump()
-     * 
+     *
      * @var bool
      */
     protected $verbose = false;
 
     /**
-     * 
+     *
      * @param \GodsDev\MyCMS\MyCMS $MyCMS
      * @param array $options overrides default values of declared properties
      */
@@ -44,7 +44,7 @@ class MyCommon
 
     /**
      * Dumps information about a variable in Tracy Debug Bar or is silent
-     * 
+     *
      * @param  mixed  $var
      * @param  string $title
      * @param  array  $options of Debugger::barDump (Dumper::DEPTH, Dumper::TRUNCATE, Dumper::LOCATION, Dumper::LAZY)
