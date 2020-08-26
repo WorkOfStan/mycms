@@ -52,7 +52,7 @@ class FriendlyUrl extends MyFriendlyUrl
 
     /**
      * Returns SQL statement for getting the content piece for a single content type
-     * 
+     *
      * @param string $token
      * @param string $type
      * @param string $table
@@ -67,7 +67,7 @@ class FriendlyUrl extends MyFriendlyUrl
 
     /**
      * SQL statement searching for $token in url_LL column of table(s) with content pieces addressed by FriendlyURL tokens
-     * 
+     *
      * @param string $token
      * @return mixed null on empty result, false on database failure or one-dimensional array [id, type] on success
      */
@@ -94,7 +94,7 @@ class FriendlyUrl extends MyFriendlyUrl
 
     /**
      * Returns Friendly Url string for type=id URL if it is available or it returns type=id
-     * 
+     *
      * @param string $outputKey `type`
      * @param string $outputValue `id`
      * @return mixed null (do not change the output) or string (URL - friendly or parametric)
@@ -189,11 +189,7 @@ class FriendlyUrl extends MyFriendlyUrl
             case 'language':
                 return null; // i.e. do not change the output or return "?{$outputKey}={$outputValue}";
             case 'product':
-//                $content = $this->MyCMS->dbms->fetchSingle('SELECT id, name_' . $this->language . ' AS title,'
-//                    . $this->projectSpecific->getLinkSql("?product&id=", $this->language)
-//                    . ' FROM ' . TAB_PREFIX . 'product WHERE active = 1 '
-//                    . ' AND id = "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"');
-                $content = $this->projectSpecific->getProduct((int)$outputValue);
+                $content = $this->projectSpecific->getProduct((int) $outputValue);
                 Debugger::barDump($content, 'product');
                 return is_null($content) ? (self::PAGE_NOT_FOUND) : $content['link'];
             default:

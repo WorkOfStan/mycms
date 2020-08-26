@@ -98,7 +98,6 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals('product', $templateDetermined, $message);
         }
 
-
         $determineTemplateOptions = ['REQUEST_URI' => '/?product&id=5'];
         $friendlyUrlOptions = [
             'get' => ['product' => '', 'id' => '5'],
@@ -108,7 +107,6 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         $templateDetermined = $this->object->determineTemplate($determineTemplateOptions);
         $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI'] . (Tools::nonempty($friendlyUrlOptions['get']) ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '') . (Tools::nonempty($friendlyUrlOptions['session']) ? (' session:' . http_build_query($friendlyUrlOptions['session'])) : '') . ' templateDetermined: ' . print_r($templateDetermined, true);
         $this->assertEquals('product', $templateDetermined, $message);
-
 
         // non-existent product
         $determineTemplateOptions = ['REQUEST_URI' => '/?product&id=15000'];
@@ -129,7 +127,6 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals('product', $templateDetermined, $message); // as to error404 it will change in Controller::prepareTemplate
         }
 
-
         $determineTemplateOptions = ['REQUEST_URI' => '/?category=1'];
         $friendlyUrlOptions = [
             'get' => ['category' => '1'],
@@ -149,7 +146,6 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         $templateDetermined = $this->object->determineTemplate($determineTemplateOptions);
         $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI'] . (Tools::nonempty($friendlyUrlOptions['get']) ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '') . (Tools::nonempty($friendlyUrlOptions['session']) ? (' session:' . http_build_query($friendlyUrlOptions['session'])) : '') . ' templateDetermined: ' . print_r($templateDetermined, true);
         $this->assertEquals('category', $templateDetermined, $message);
-
 
         // non-existent category
         $determineTemplateOptions = ['REQUEST_URI' => '/?category=10000'];
