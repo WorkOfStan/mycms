@@ -10,7 +10,7 @@ class ContentTable extends AbstractMigration
      * Creates table with content.
      * You may want to adapt language rows according to your needs.
      * And add special columns like cover_image, perex and so on according to your needs.
-     * 
+     *
      * Change Method.
      *
      * Write your reversible migrations using this method.
@@ -66,7 +66,7 @@ class ContentTable extends AbstractMigration
 
         // so that products can be placed into a default category
         $defaultCategory = [
-            "id" => 1,
+            'id' => 1,
         ];
 
         foreach ($languages as $language) {
