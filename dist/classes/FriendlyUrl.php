@@ -67,6 +67,7 @@ class FriendlyUrl extends MyFriendlyUrl
 
     /**
      * SQL statement searching for $token in url_LL column of table(s) with content pieces addressed by FriendlyURL tokens
+     * SQL statement may be adapted in any way - the UNION on tables, where type is stored in a dedicated table of the same name, otherwise a column type within the table is expected is just the simplest way.
      *
      * @param string $token
      * @return mixed null on empty result, false on database failure or one-dimensional array [id, type] on success
@@ -74,22 +75,10 @@ class FriendlyUrl extends MyFriendlyUrl
     protected function findFriendlyUrlToken($token)
     {
         Debugger::barDump("$token", 'findFriendlyUrlToken started');
-        $cont = ['product' => 'product', 'category' => 'category', 'page' => 'content'];
-        // todo refactor array_map?
-        foreach ($cont as $type => $table) {
-            $outp[] = $this->prepareTableSelect($token, $type, $table);
+        foreach (['product' => 'product', 'category' => 'category', 'page' => 'content'] as $type => $table) {
+            $output[] = $this->prepareTableSelect($token, $type, $table);
         }
-        $sql = implode(' UNION ', $outp);
-        return $this->MyCMS->fetchSingle($sql);
-//        //A example
-//        return $this->MyCMS->fetchSingle('SELECT id,"product" AS type FROM ' . TAB_PREFIX . 'product WHERE url_' . $this->language . '="' . $token . '"
-//                    UNION SELECT id,"article" AS type FROM ' . TAB_PREFIX . 'content WHERE url_' . $this->language . '="' . $token . '"
-//                    UNION SELECT id,"category" AS type FROM ' . TAB_PREFIX . 'category WHERE url_' . $this->language . '="' . $token . '" AND path LIKE "' . $this->MyCMS->SETTINGS['PATH_HOME'] . '%"
-//                    UNION SELECT id,"line" AS type FROM ' . TAB_PREFIX . 'category WHERE url_' . $this->language . '="' . $token . '" AND path LIKE "' . $this->MyCMS->SETTINGS['PATH_CATEGORY'] . '%"');
-//        //F example
-//        return $this->MyCMS->fetchSingle('SELECT id,"product" AS type FROM ' . TAB_PREFIX . 'product WHERE active=1 AND url_' . $this->language . '="' . $token . '"
-//                    UNION SELECT id,"page" AS type FROM ' . TAB_PREFIX . 'content WHERE active=1 AND type LIKE "page" AND url_' . $this->language . '="' . $token . '"
-//                    UNION SELECT id,"news" AS type FROM ' . TAB_PREFIX . 'content WHERE active=1 AND type LIKE "news" AND url_' . $this->language . '="' . $token . '"');
+        return $this->MyCMS->fetchSingle(implode(' UNION ', $output));
     }
 
     /**
@@ -168,9 +157,11 @@ class FriendlyUrl extends MyFriendlyUrl
         switch ($outputKey) {
             case 'article':
                 if (empty($outputValue)) {
+                    //TODO article? news? page?
                     return isset($this->get['offset']) ? "?news&offset=" . (int) $this->get['offset'] : "?news";
                 }
                 $content = $this->MyCMS->dbms->fetchSingle('SELECT id, name_' . $this->language . ' AS name,'
+                    //TODO article? news? page?
                     . $this->projectSpecific->getLinkSql("?article=", $this->language)
                     . ' FROM ' . TAB_PREFIX . 'content WHERE active = 1 '
                     . ' AND id = "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"');

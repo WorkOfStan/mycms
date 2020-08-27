@@ -110,22 +110,22 @@ that each page is displayed with a unique URL. It is good for SEO.
 Therefore it is not necessary to translate URL within content (e.g. from the parametric to friendly) as they end up on the right unique URL, anyway.
 
 Given that
-`/?article=1` has friendly URL `/alfa` and `/?article=2` has friendly URL `/beta`, then:
+`/?product&id=1` has friendly URL `/alfa` and `/?product&id=2` has friendly URL `/beta`, then:
 
 | | FRIENDLY_URL = false                          |  FRIENDLY_URL = true |
 |-|-----------------------------------------------|------|
 | **FORCE_301 = false** | | |
-| | `/?article=1` displays *`article 1`*            | `/?article=1` displays *`article 1`*          |
-| |  `/?article=1&x=y` displays *`article 1`*       | `/?article=1&x=y` displays *`article 1`*      |
-| |  `/alfa` displays *`article 1`*                 |  `/alfa` displays *`article 1`*               |
-| |  `/alfa?article=2` displays *`article 2`*       |  `/alfa?article=2` displays *`article 2`*     |
-| |  ProjectCommon->getLinkSql() generates link to `/?article=1` |  **ProjectCommon->getLinkSql() generates link to `/alfa`**  |
+| | `/?product&id=1` displays *`product 1`*            | `/?product&id=1` displays *`product 1`*          |
+| |  `/?product&id=1&x=y` displays *`product 1`*       | `/?product&id=1&x=y` displays *`product 1`*      |
+| |  `/alfa` displays *`product 1`*                    |  `/alfa` displays *`product 1`*                  |
+| |  `/alfa?product&id=2` displays *`product 2`*       |  `/alfa?product&id=2` displays *`product 2`*     |
+| |  ProjectCommon->getLinkSql() generates link to `/?product&id=1` |  **ProjectCommon->getLinkSql() generates link to `/alfa`**  |
 | **FORCE_301 = true**  | | |
-| |  `/?article=1` displays *`article 1`*             | **`/?article=1` redirects to `/alfa`**      |
-| |  `/?article=1&x=y` displays *`article 1`*         | **`/?article=1&x=y` redirects to `/alfa`**  |
-| |  `/alfa` displays `article1`                      |  `/alfa` displays *`article 1`*             |
-| |  **`/alfa?article=2` redirects to `/?article=2`** |  **`/alfa?article=2` redirects to `/beta`** |
-| |  ProjectCommon->getLinkSql() generates link to `/?article=1` |  ProjectCommon->getLinkSql() generates link to `/alfa`  |
+| |  `/?product&id=1` displays *`product 1`*             | **`/?product&id=1` redirects to `/alfa`**      |
+| |  `/?product&id=1&x=y` displays *`product 1`*         | **`/?product&id=1&x=y` redirects to `/alfa`**  |
+| |  `/alfa` displays `product 1`                        |  `/alfa` displays *`product 1`*                |
+| |  **`/alfa?product&id=2` redirects to `/?product&id=2`** |  **`/alfa?product&id=2` redirects to `/beta`** |
+| |  ProjectCommon->getLinkSql() generates link to `/?product&id=1` |  ProjectCommon->getLinkSql() generates link to `/alfa`  |
 
 Inner workings of friendly URL mechanism are described in [MyCMS/README.md](https://github.com/GodsDev/mycms#how-does-friendly-url-works-within-controller)
 

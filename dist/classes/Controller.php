@@ -141,6 +141,18 @@ class Controller extends MyController
                 }
                 $this->MyCMS->context['totalRows'] = count($this->MyCMS->context['list']);
                 return true;
+            case 'item-1':
+                $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 1';
+                return true;
+            case 'item-B':
+                $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 2';
+                return true;
+            case 'item-gama':
+                $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 3';
+                return true;
+            case 'item-4':
+                $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 4';
+                return true;
             case 'product':
                 $this->MyCMS->context['product'] = $this->projectSpecific->getProduct((int) $this->get['id']);
                 if (is_null($this->MyCMS->context['product'])) {
@@ -155,18 +167,6 @@ class Controller extends MyController
                 $this->MyCMS->context['results'] = $this->projectSpecific->searchResults($this->get['search'], $this->MyCMS->context['offset'], $this->MyCMS->context['totalRows']);
                 //@todo ošetřit empty result
                 $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Výsledky hledání');
-                return true;
-            case 'item-1':
-                $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 1';
-                return true;
-            case 'item-B':
-                $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 2';
-                return true;
-            case 'item-gama':
-                $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 3';
-                return true;
-            case 'item-4':
-                $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 4';
                 return true;
             default:
                 Debugger::log("Undefined template {$this->MyCMS->template}", ILogger::ERROR);

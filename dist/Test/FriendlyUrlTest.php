@@ -85,7 +85,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         $this->object = new FriendlyUrl($this->myCms, $friendlyUrlOptions);
         $templateDetermined = $this->object->determineTemplate($determineTemplateOptions);
         $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI'] . (Tools::nonempty($friendlyUrlOptions['get']) ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '') . (Tools::nonempty($friendlyUrlOptions['session']) ? (' session:' . http_build_query($friendlyUrlOptions['session'])) : '') . ' templateDetermined: ' . print_r($templateDetermined, true);
-        if (FORCE_301) {
+        if (FORCE_301 && FRIENDLY_URL) {
             $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template);
             $this->assertArrayHasKey('httpCode', $templateDetermined, 'Determine template ' . $message);
             $this->assertEquals(301, $templateDetermined['httpCode'], 'non-301 httpCode field in ' . print_r($templateDetermined, true));
@@ -103,7 +103,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         $this->object = new FriendlyUrl($this->myCms, $friendlyUrlOptions);
         $templateDetermined = $this->object->determineTemplate($determineTemplateOptions);
         $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI'] . (Tools::nonempty($friendlyUrlOptions['get']) ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '') . (Tools::nonempty($friendlyUrlOptions['session']) ? (' session:' . http_build_query($friendlyUrlOptions['session'])) : '') . ' templateDetermined: ' . print_r($templateDetermined, true);
-        if (FORCE_301) {
+        if (FORCE_301 && FRIENDLY_URL) {
             $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template);
             $this->assertArrayHasKey('httpCode', $templateDetermined, 'Determine template ' . $message);
             $this->assertEquals(301, $templateDetermined['httpCode'], 'non-301 httpCode field in ' . print_r($templateDetermined, true));
@@ -132,7 +132,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         $this->object = new FriendlyUrl($this->myCms, $friendlyUrlOptions);
         $templateDetermined = $this->object->determineTemplate($determineTemplateOptions);
         $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI'] . (Tools::nonempty($friendlyUrlOptions['get']) ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '') . (Tools::nonempty($friendlyUrlOptions['session']) ? (' session:' . http_build_query($friendlyUrlOptions['session'])) : '') . ' templateDetermined: ' . print_r($templateDetermined, true);
-        if (FORCE_301) {
+        if (FORCE_301 && FRIENDLY_URL) {
             $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template);
             $this->assertArrayHasKey('httpCode', $templateDetermined, 'Determine template ' . $message);
             $this->assertEquals(301, $templateDetermined['httpCode'], 'non-301 httpCode field in ' . print_r($templateDetermined, true));
@@ -145,6 +145,24 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         $determineTemplateOptions = ['REQUEST_URI' => '/?category=1'];
         $friendlyUrlOptions = [
             'get' => ['category' => '1'],
+            'language' => 'cs',
+        ];
+        $this->object = new FriendlyUrl($this->myCms, $friendlyUrlOptions);
+        $templateDetermined = $this->object->determineTemplate($determineTemplateOptions);
+        $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI'] . (Tools::nonempty($friendlyUrlOptions['get']) ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '') . (Tools::nonempty($friendlyUrlOptions['session']) ? (' session:' . http_build_query($friendlyUrlOptions['session'])) : '') . ' templateDetermined: ' . print_r($templateDetermined, true);
+        if (FORCE_301 && FRIENDLY_URL) {
+            $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+            $this->assertArrayHasKey('httpCode', $templateDetermined, 'Determine template ' . $message);
+            $this->assertEquals(301, $templateDetermined['httpCode'], 'non-301 httpCode field in ' . print_r($templateDetermined, true));
+            $this->assertArrayHasKey('redir', $templateDetermined, 'Determine template ' . $message);
+            $this->assertStringEndsWith('/default-category-cs', $templateDetermined['redir'], 'redir field MUST end with /default-category-cs');
+        } else {
+            $this->assertEquals('category', $templateDetermined, $message);
+        }
+
+        $determineTemplateOptions = ['REQUEST_URI' => '/?category=2'];
+        $friendlyUrlOptions = [
+            'get' => ['category' => '2'],
             'language' => 'cs',
         ];
         $this->object = new FriendlyUrl($this->myCms, $friendlyUrlOptions);
@@ -171,7 +189,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         $this->object = new FriendlyUrl($this->myCms, $friendlyUrlOptions);
         $templateDetermined = $this->object->determineTemplate($determineTemplateOptions);
         $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI'] . (Tools::nonempty($friendlyUrlOptions['get']) ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '') . (Tools::nonempty($friendlyUrlOptions['session']) ? (' session:' . http_build_query($friendlyUrlOptions['session'])) : '') . ' templateDetermined: ' . print_r($templateDetermined, true);
-        if (FORCE_301) {
+        if (FORCE_301 && FRIENDLY_URL) {
             $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template);
             $this->assertArrayHasKey('httpCode', $templateDetermined, 'Determine template ' . $message);
             $this->assertEquals(301, $templateDetermined['httpCode'], 'non-301 httpCode field in ' . print_r($templateDetermined, true));
@@ -371,10 +389,10 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         }
         $this->object = new FriendlyUrl($this->myCms, []);
 
-        $this->assertEquals('mobile-dc', $this->object->friendlyfyUrl('?product=4'));
+        $this->assertEquals('alfa', $this->object->friendlyfyUrl('?product&id=1'));
         $this->assertEquals('404', $this->object->friendlyfyUrl('?product=3170'), 'Nonexistent product');
-        $this->assertEquals('datova-centra', $this->object->friendlyfyUrl('?line=1'));
-        $this->assertEquals('404', $this->object->friendlyfyUrl('?line=1456'), 'Nonexistent category');
+        $this->assertEquals('default-category-cs', $this->object->friendlyfyUrl('?category=1'));
+        $this->assertEquals('404', $this->object->friendlyfyUrl('?category=1456'), 'Nonexistent category');
     }
 
     /**
@@ -382,26 +400,26 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
      */
     public function testPageStatusOverHttp()
     {
-        $urlsToBeChecked = [
+        $urlsToBeCheckedAny = [
             [
                 'relative_url' => '', // home
                 'http_status' => 200,
                 'allow_redirect' => true,
-//                'contains_text' => '',
+                'contains_text' => 'Lorem ipsum dolor sit amet',
                 'is_json' => false
             ],
             [
                 'relative_url' => 'alfa', // alfa for CS
                 'http_status' => 200,
                 'allow_redirect' => true,
-//                'contains_text' => '',
+                'contains_text' => 'Produkt 1',
                 'is_json' => false
             ],
             [
                 'relative_url' => 'en/alfa', // en/alfa
                 'http_status' => 200,
                 'allow_redirect' => true,
-//                'contains_text' => '',
+                'contains_text' => 'Product 1',
                 'is_json' => false
             ],
             [
@@ -411,8 +429,85 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
 //                'contains_text' => '',
                 'is_json' => false
             ],
+        ];
+        $urlsToBeCheckedFriendlyUrlFalseForce301False = [
             [
-                //for FORCE_301 == true
+                'relative_url' => '?product&id=1',
+                'http_status' => 200,
+                'allow_redirect' => false,
+                'contains_text' => 'Produkt 1',
+                'is_json' => false
+            ],
+            [
+                'relative_url' => '?product&id=1&x=y',
+                'http_status' => 200,
+                'allow_redirect' => false,
+                'contains_text' => 'Produkt 1',
+                'is_json' => false
+            ],
+            [
+                'relative_url' => 'alfa?product&id=2',
+                'http_status' => 200,
+                'allow_redirect' => false,
+                'contains_text' => 'Produkt 2',
+                'is_json' => false
+            ],
+        ];
+        $urlsToBeCheckedFriendlyUrlFalseForce301True = [
+            [
+                'relative_url' => '?product&id=1',
+                'http_status' => 200,
+                'allow_redirect' => false,
+                'contains_text' => 'Produkt 1',
+                'is_json' => false
+            ],
+            [
+                'relative_url' => '?product&id=1&x=y',
+                'http_status' => 200,
+                'allow_redirect' => false,
+                'contains_text' => 'Produkt 1',
+                'is_json' => false
+            ],
+            [
+                'relative_url' => 'alfa?product&id=2',
+                'http_status' => 301,
+                'allow_redirect' => false,
+                'redirect_contains' => '/?product&id=2',
+                'is_json' => false
+            ],
+            [
+                'relative_url' => 'alfa?product&id=2',
+                'http_status' => 200,
+                'allow_redirect' => true,
+                'contains_text' => 'Produkt 2',
+                'is_json' => false
+            ],
+        ];
+        $urlsToBeCheckedFriendlyUrlTrueForce301False = [
+            [
+                'relative_url' => '?product&id=1',
+                'http_status' => 200,
+                'allow_redirect' => false,
+                'contains_text' => 'Produkt 1',
+                'is_json' => false
+            ],
+            [
+                'relative_url' => '?product&id=1&x=y',
+                'http_status' => 200,
+                'allow_redirect' => false,
+                'contains_text' => 'Produkt 1',
+                'is_json' => false
+            ],
+            [
+                'relative_url' => 'alfa?product&id=2',
+                'http_status' => 200,
+                'allow_redirect' => false,
+                'contains_text' => 'Produkt 2',
+                'is_json' => false
+            ],
+        ];
+        $urlsToBeCheckedFriendlyUrlTrueForce301True = [
+            [
                 'relative_url' => '?product&id=1', // redirect to alfa
                 'http_status' => 200,
                 'allow_redirect' => true,
@@ -420,19 +515,51 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
                 'is_json' => false
             ],
             [
-                //for FORCE_301 == true
                 'relative_url' => '?product&id=1', // redirect to alfa
                 'http_status' => 301,
                 'allow_redirect' => false,
 //                'contains_text' => '',
                 'is_json' => false
             ],
+            [
+                'relative_url' => '?product&id=1&x=y', // redirect to alfa
+                'http_status' => 200,
+                'allow_redirect' => true,
+//                'contains_text' => '',
+                'is_json' => false
+            ],
+            [
+                'relative_url' => '?product&id=1&x=y', // redirect to alfa
+                'http_status' => 301,
+                'allow_redirect' => false,
+//                'contains_text' => '',
+                'is_json' => false
+            ],
+            [
+                'relative_url' => 'alfa?product&id=2', // redirects to beta
+                'http_status' => 301,
+                'allow_redirect' => false,
+                'redirect_contains' => '/beta',
+                'is_json' => false
+            ],
+            [
+                'relative_url' => 'alfa?product&id=2', // redirects to beta
+                'http_status' => 200,
+                'allow_redirect' => true,
+                'contains_text' => 'Produkt 2',
+                'is_json' => false
+            ],
         ];
+
+        $urlsToBeChecked = array_merge($urlsToBeCheckedAny, FRIENDLY_URL ? (FORCE_301 ? $urlsToBeCheckedFriendlyUrlTrueForce301True : $urlsToBeCheckedFriendlyUrlTrueForce301False) : (FORCE_301 ? $urlsToBeCheckedFriendlyUrlFalseForce301True : $urlsToBeCheckedFriendlyUrlFalseForce301False));
 
         foreach ($urlsToBeChecked as $singleUrl) {
             $url = $this->apiBaseUrl . $singleUrl['relative_url'];
             $result = $this->backyard->Http->getData($url, 'PHPUnit/' . \PHPUnit_Runner_Version::id() . ' ' . __FUNCTION__);
 //            var_dump("first RESULT for {$url}", $result);
+            if (isset($singleUrl['redirect_contains']) && isset($result['REDIRECT_URL'])) {
+                $this->assertContains($singleUrl['redirect_contains'], $result['REDIRECT_URL'], 'Needle is not in the haystack.');
+            }
             if (isset($singleUrl['allow_redirect']) && $singleUrl['allow_redirect'] && isset($result['REDIRECT_URL'])) {//fixes e.g. http to https 301 redirect
                 $result = $this->backyard->Http->getData($this->apiBaseDomain . $result['REDIRECT_URL'], 'PHPUnit/' . \PHPUnit_Runner_Version::id() . ' ' . __FUNCTION__);
 //                var_dump('2nd RESULT', $result);

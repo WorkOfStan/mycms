@@ -84,9 +84,7 @@ $myCmsConf = [
         'item-B' => ['template' => 'item-B'],
         'item-gama' => ['template' => 'item-gama'],
         'item-4' => ['template' => 'item-4'],
-        'category' => ['template' => 'category', 
-//            'idcode' => true
-            ],
+        'category' => ['template' => 'category'],
         'product' => ['template' => 'product', 'idcode' => true],
     ],
 ];

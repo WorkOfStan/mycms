@@ -8,7 +8,6 @@ use Webmozart\Assert\Assert;
 
 /**
  * functions specific to the project
- * TODO: make these methods useful for dist project as a demonstration
  */
 class ProjectSpecific extends ProjectCommon
 {
@@ -22,7 +21,10 @@ class ProjectSpecific extends ProjectCommon
     /** @var string */
     protected $requestUri = ''; //default is homepage
 
-    /** Search for specified text in the database, return results
+    /**
+     * Search for specified text in the database, return results
+     * TODO: make this method useful for dist project as a demonstration
+     * 
      * @param string text being searched for
      * @param int offset
      * @param type $totalRows
@@ -56,6 +58,7 @@ class ProjectSpecific extends ProjectCommon
 
     /**
      * Fetch from database details of content of given id/code
+     * TODO: make this method useful for dist project as a demonstration
      *
      * @param mixed $id of the content OPTIONAL
      * @param type $code OPTIONAL
@@ -97,6 +100,7 @@ class ProjectSpecific extends ProjectCommon
 
     /**
      * Fetch from database details of category of given id/code
+     * TODO: make this method useful for dist project as a demonstration
      *
      * @param mixed $id of the content OPTIONAL
      * @param type $code OPTIONAL
@@ -120,6 +124,7 @@ class ProjectSpecific extends ProjectCommon
     }
 
     /**
+     * Retrieves product info
      *
      * @param int $id
      * @return mixed array first selected row, null on empty SELECT
@@ -143,31 +148,7 @@ class ProjectSpecific extends ProjectCommon
     }
 
     /**
-     *
-     * @param string $description
-     * @param array $options
-     * @return string
-     */
-    public function processProductDescription($description, array $options)
-    {
-        Assert::string($description, 'processProductDescription description not string');
-        $result = '';
-        $sections = explode('<hr>', $description); //<hr> vložená v CMS znamená, že se odrotuje další section s tím, že class photo se doplňuje class-ou produktu, aby se mohla měnit fotka dle produktu a pořadí
-        $sectionCount = 0;
-        foreach ($sections as $sectionKey => $section) { //@todo určitě jdou dát jen 3 a ty rotovat dokola, ale to můžeme pořešit později
-            $styleKey = $sectionKey % count($options['SECTION_STYLES']);
-            $classes = $options['SECTION_STYLES'][$styleKey] . (($options['SECTION_STYLES'][$styleKey] == 'photo') ? " " . Tools::webalize($options['product'] . ' ' . $sectionKey) : '');
-            $tempDiv = "\n<div data-aos=\"fade-up\" class=\"container\">\n{$section}\n</div>\n";
-            $result .= ($options['hide_product_heading'] && ($sectionCount == 0)) ? $tempDiv : //when tiles are used, <div class="container"/> should not be within section because it spoils the size of tiles (might be fixed in CSS instead?)
-                ('<section class="' . trim($classes) . '" id="product-section-' . $sectionKey . '">'
-                . $tempDiv
-                . "</section>\n");
-            $sectionCount++;
-        }
-        return $result;
-    }
-
-    /**
+     * TODO: make this method useful for dist project as a demonstration
      *
      * @param string $path
      * @param array $options OPTIONAL
@@ -175,7 +156,7 @@ class ProjectSpecific extends ProjectCommon
      */
     public function getBreadcrumbs($path, array $options = array())
     {
-        $result = array();
+        $result = [];
         if ($path) {
             for ($i = 0, $l = strlen($path), $sql = ''; $i < $l; $i += PATH_MODULE) {
                 $sql .= ',"' . $this->MyCMS->escapeSQL(substr($path, 0, $i + PATH_MODULE)) . '"';
@@ -186,12 +167,13 @@ class ProjectSpecific extends ProjectCommon
     }
 
     /**
+     * TODO: make this method useful for dist project as a demonstration
      *
      * @param type $category_id
      * @param array $options OPTIONAL
      * @return mixed
      */
-    public function getChildren($category_id, array $options = array())
+    public function getChildren($category_id, array $options = [])
     {
         Tools::setifnotset($options['level'], 0);
         if ($options['level'] && Tools::nonzero($options['path'])) {
@@ -211,11 +193,12 @@ class ProjectSpecific extends ProjectCommon
     }
 
     /**
+     * TODO: make this method useful for dist project as a demonstration
      *
      * @param array $options OPTIONAL
      * @return string
      */
-    public function getSitemap(array $options = array())
+    public function getSitemap(array $options = [])
     {
         $pages = $this->MyCMS->fetchAndReindex('SELECT path,id,category_' . $options['language'] . ' AS category,path FROM ' . TAB_PREFIX . 'category WHERE LEFT(path, ' . PATH_MODULE . ')="' . $this->MyCMS->escapeSQL($options['PATH_HOME']) . '" ORDER BY path');
         $result = '';
