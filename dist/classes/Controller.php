@@ -121,24 +121,23 @@ class Controller extends MyController
                 // TODO add perex for categories and products from content
                 $this->verboseBarDump($categoryId, 'categoryId');
                 $this->MyCMS->context['limit'] = PAGINATION_LIMIT;
-                //TODO refactor do ternary operator
-                if (is_null($categoryId)) {
+                $this->MyCMS->context['list'] = $this->MyCMS->dbms->queryArray(
+                    is_null($categoryId) ?
                     // list categories
-                    $this->MyCMS->context['list'] = $this->MyCMS->dbms->queryArray('SELECT id,'
-                        . ' name_' . $this->language . ' AS title,'
-                        . ' content_' . $this->language . ' AS description,'
-                        . ' added'
-                        . ' FROM `' . TAB_PREFIX . 'category` WHERE `active` = 1 ORDER BY sort ASC');
-                } else {
+                    ('SELECT id,'
+                    . ' name_' . $this->language . ' AS title,'
+                    . ' content_' . $this->language . ' AS description,'
+                    . ' added'
+                    . ' FROM `' . TAB_PREFIX . 'category` WHERE `active` = 1 ORDER BY sort ASC') :
                     // list products within category
-                    $this->MyCMS->context['list'] = $this->MyCMS->dbms->queryArray('SELECT id,'
-                        . ' name_' . $this->language . ' AS title,'
-                        . ' content_' . $this->language . ' AS description,'
-                        . ' added'
-                        . ' FROM `' . TAB_PREFIX . 'product` WHERE `category_id` = ' . $categoryId . ' AND `active` = 1'
-                        . ' AND name_' . $this->language . ' NOT LIKE ""' // hide product language variants with empty title
-                        . ' ORDER BY sort ASC');
-                }
+                    ('SELECT id,'
+                    . ' name_' . $this->language . ' AS title,'
+                    . ' content_' . $this->language . ' AS description,'
+                    . ' added'
+                    . ' FROM `' . TAB_PREFIX . 'product` WHERE `category_id` = ' . $categoryId . ' AND `active` = 1'
+                    . ' AND name_' . $this->language . ' NOT LIKE ""' // hide product language variants with empty title
+                    . ' ORDER BY sort ASC')
+                );
                 $this->MyCMS->context['totalRows'] = count($this->MyCMS->context['list']);
                 return true;
             case 'item-1':
