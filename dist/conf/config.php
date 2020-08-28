@@ -2,10 +2,10 @@
 
 /**
  * Config for the project
- * 
+ *
  * EDIT ONLY AS PART OF GIT REPOSITORY
  * FOR LOCAL CHANGES USE config.local.php
- * 
+ *
  */
 ini_set('session.use_strict_mode', 1);
 ini_set('display_errors', 0); // errors only in the log; override it in your config.local.php if you need
@@ -70,23 +70,30 @@ $myCmsConf = [
     ],
     'WEBSITE' => [], // this will be filled with $WEBSITE['cs'] or $WEBSITE['en'] according to the current language
     /**
-     * RULES for switchParametric are configured in 'templateAssignementParametricRules'
-     * Handles not only param=value but also param&id=value or param&code=value
+     * RULES for switchParametric are configured in 'templateAssignementParametricRules' to map GET parameters to template
+     * Handles not only param=value but also param&id=value or param&code=value (Note: code value can't be numeric as it would be treated only as id.)
      * (int) id or (string) code are taken into account only if 'idcode' subfield of templateAssignementParametricRules is equal to `true` - in such case both id and code being empty ends up in 404
      * e.g.
-     * 'line' => ['template' => 'home'], //MyFriendlyURL::TEMPLATE_DEFAULT
-     * 'portfolio' => ['template' => 'portfolio'],
      * 'article' => ['template' => 'article', 'idcode' => true],
      * 'category' => ['template' => 'category', 'idcode' => true], // category is only used for switch, final template will be either home or article
+     * 'line' => ['template' => 'home'], //MyFriendlyURL::TEMPLATE_DEFAULT
+     * 'portfolio' => ['template' => 'portfolio'],
      */
     'templateAssignementParametricRules' => [
-        'item-1' => ['template' => 'item-1'],
-        'item-B' => ['template' => 'item-B'],
-        'item-gama' => ['template' => 'item-gama'],
-        'item-4' => ['template' => 'item-4'],
-        'category' => ['template' => 'category'],
-        'product' => ['template' => 'product', 'idcode' => true],
+        'article' => ['template' => 'article', 'idcode' => true], // general articles
+        'category' => ['template' => 'category'], // categories of products
+        'item-1' => ['template' => 'item-1'], // custom template
+        'item-B' => ['template' => 'item-B'], // custom template
+        'item-gama' => ['template' => 'item-gama'], // custom template
+        'item-4' => ['template' => 'item-4'], // custom template
+        'product' => ['template' => 'product', 'idcode' => true], // products
     ],
+    // FriendlyUrl::findFriendlyUrlToken maps content types to database tables where they are stored
+    'typeToTableMapping' => [
+        'article' => 'content',
+        'category' => 'category',
+        'product' => 'product',
+    ]
 ];
 $WEBSITE = [
     'en' => [
@@ -181,9 +188,10 @@ if (isset($backyardConf['mail_for_admin_enabled']) && $backyardConf['mail_for_ad
     $backyardConf['mail_for_admin_enabled'] = EMAIL_ADMIN;
 }
 // default values for feature flags (use keys without spaces to avoid problems in javascript)
-$featureFlags = array_merge([
-    'offline_dev' => false,
-    'console_log_list_values' => false,
+$featureFlags = array_merge(
+    [
+        'offline_dev' => false,
+        'console_log_list_values' => false,
     ],
     isset($featureFlags) ? $featureFlags : []
 ); // use default featureFlags even though nothing is set in `config.local.php`

@@ -45,7 +45,7 @@ class ProjectCommon extends MyCommon
     {
         $addLanguageDirectory = ($language != DEFAULT_LANGUAGE) // other than default language should have its directory
             && !preg_match("~/$language/~", $this->requestUri); // unless the page already has it
-        Debugger::barDump($addLanguageDirectory, "addLanguageDirectory getLinkSql - other then default and page does not have it");
+        $this->verboseBarDump($addLanguageDirectory, 'addLanguageDirectory getLinkSql - other then default and page does not have it');
         return ' IF(' . (FRIENDLY_URL ? 1 : 0) . ',' . ' if(' . (is_null($sourceTable) ? '' : $sourceTable . '.') . '`url_' . $language . "` <> '', "
             . ($addLanguageDirectory ? "CONCAT(\"{$language}/\", " : '')
             . (is_null($sourceTable) ? '' : $sourceTable . '.') . "`url_" . $language . '`'

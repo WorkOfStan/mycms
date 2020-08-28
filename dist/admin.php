@@ -21,12 +21,12 @@ $AGENDAS = [
             'added' => 'now',
         ],
     ],
-    'page' => [
+    'article' => [
         'table' => 'content',
-        'where' => 'type="page"',
+        'where' => 'type="article"',
         'column' => ['code', "name_{$_SESSION['language']}"],
         'prefill' => [
-            'type' => 'page',
+            'type' => 'article',
             'context' => '{}',
             'sort' => 0,
             'added' => 'now',

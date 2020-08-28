@@ -131,6 +131,31 @@ final class ContentExample extends AbstractMigration
         $product
             ->insert($productSample)
             ->update();
+
+        $content = $this->table('content');
+
+        $contentSample = [
+            'id' => '1',
+            'type' => 'article',
+            'code' => 'contacts',
+            'name_cs' => 'Kontakty',
+            'content_cs' => '<p>Adresa:</p><p>Telefon:</p><p>E-mail:</p>',
+            'url_cs' => 'kontakty',
+            'name_de' => 'Kontakte',
+            'content_de' => '<p>Adresse:</p><p>Telefon:</p><p>Email:</p>',
+            'url_de' => 'kontakte',
+            'name_en' => 'Contacts',
+            'content_en' => '<p>Address:</p><p>Phone:</p><p>Email:</p>',
+            'url_en' => 'contacts',
+            'name_fr' => 'Contacts',
+            'content_fr' => '<p>Adresse:</p><p>Téléphone:</p><p>Email:</p>',
+            'url_fr' => 'contacts',
+            'context' => '[]',
+        ];
+
+        $content
+            ->insert($contentSample)
+            ->update();
     }
 
 }

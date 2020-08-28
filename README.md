@@ -176,6 +176,7 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 │                       └── ->findFriendlyUrlToken(token) // project specific request to database @return mixed null on empty result, false on database failure or one-dimensional array [id, type] on success
 │                            │                              If there is a pure friendly URL, i.e. the token exactly matches a record in content database, decode it internally to type=id
 │                            │                              SQL statement searching for $token in url_LL column of table(s) with content pieces addressed by FriendlyURL tokens
+│                            │                              Overide the method if the default UNION on tables, where relevant types are stored, isn't sufficient
 │                            │   spoof $this->get[$found['type']] = $this->get['id'] = $found['id']
 │             <────────────── @return $this->determineTemplate(['REQUEST_URI' => $this->requestUri]) RECURSION
 │             <─────────── @return null

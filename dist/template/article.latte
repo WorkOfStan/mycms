@@ -6,7 +6,7 @@
     <img src="{stripslashes($article['image'])|noescape}" alt="{$article['title']}" title="{$article['title']}" class="w-100" />
 </div>
 <div class="container content">
-    <h2 class="heading-main">Main heading</h2>
-    Lorem ipsum
+    <h2 class="heading-main">{$article['title']}</h2>
+    {$article['description']|noescape}
 </div>
 {/block}

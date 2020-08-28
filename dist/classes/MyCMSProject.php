@@ -9,6 +9,9 @@ namespace GodsDev\mycmsprojectnamespace;
  */
 class MyCMSProject extends \GodsDev\MyCMS\MyCMS
 {
+
+    use \Nette\SmartObject;
+
     // attributes we need for this project
 
     /** @var array */

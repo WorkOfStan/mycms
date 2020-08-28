@@ -50,36 +50,36 @@ class FriendlyUrl extends MyFriendlyUrl
 //        var_dump('applicationDir', $this->applicationDir);
     }
 
-    /**
-     * Returns SQL statement for getting the content piece for a single content type
-     *
-     * @param string $token
-     * @param string $type
-     * @param string $table
-     * @return string
-     */
-    private function prepareTableSelect($token, $type, $table)
-    {
-        return 'SELECT id,"' . $type . '" AS type FROM ' . TAB_PREFIX . $table . ' WHERE active=1 AND '
-            . ($type === $table ? '' : 'type like "' . $type . '" AND ') // usually type is stored in a dedicated table of the same name, otherwise a column type within the table is expected
-            . 'url_' . $this->language . '="' . $token . '"';
-    }
-
-    /**
-     * SQL statement searching for $token in url_LL column of table(s) with content pieces addressed by FriendlyURL tokens
-     * SQL statement may be adapted in any way - the UNION on tables, where type is stored in a dedicated table of the same name, otherwise a column type within the table is expected is just the simplest way.
-     *
-     * @param string $token
-     * @return mixed null on empty result, false on database failure or one-dimensional array [id, type] on success
-     */
-    protected function findFriendlyUrlToken($token)
-    {
-        Debugger::barDump("$token", 'findFriendlyUrlToken started');
-        foreach (['product' => 'product', 'category' => 'category', 'page' => 'content'] as $type => $table) {
-            $output[] = $this->prepareTableSelect($token, $type, $table);
-        }
-        return $this->MyCMS->fetchSingle(implode(' UNION ', $output));
-    }
+//    /**
+//     * Returns SQL statement for getting the content piece for a single content type
+//     *
+//     * @param string $token
+//     * @param string $type
+//     * @param string $table
+//     * @return string
+//     */
+//    private function prepareTableSelect($token, $type, $table)
+//    {
+//        return 'SELECT id,"' . $type . '" AS type FROM ' . TAB_PREFIX . $table . ' WHERE active=1 AND '
+//            . ($type === $table ? '' : 'type like "' . $type . '" AND ') // usually type is stored in a dedicated table of the same name, otherwise a column type within the table is expected
+//            . 'url_' . $this->language . '="' . $token . '"';
+//    }
+//
+//    /**
+//     * SQL statement searching for $token in url_LL column of table(s) with content pieces addressed by FriendlyURL tokens
+//     * SQL statement may be adapted in any way - the UNION on tables, where type is stored in a dedicated table of the same name, otherwise a column type within the table is expected is just the simplest way.
+//     *
+//     * @param string $token
+//     * @return mixed null on empty result, false on database failure or one-dimensional array [id, type] on success
+//     */
+//    protected function findFriendlyUrlToken($token)
+//    {
+//        Debugger::barDump(['token' => $token, 'typeToTableMapping' => $this->MyCMS->typeToTableMapping], 'findFriendlyUrlToken started');
+//        foreach ($this->MyCMS->typeToTableMapping as $type => $table) {
+//            $output[] = $this->prepareTableSelect($token, $type, $table);
+//        }
+//        return $this->MyCMS->fetchSingle(implode(' UNION ', $output));
+//    }
 
     /**
      * Returns Friendly Url string for type=id URL if it is available or it returns type=id
@@ -157,14 +157,13 @@ class FriendlyUrl extends MyFriendlyUrl
         switch ($outputKey) {
             case 'article':
                 if (empty($outputValue)) {
-                    //TODO article? news? page?
-                    return isset($this->get['offset']) ? "?news&offset=" . (int) $this->get['offset'] : "?news";
+                    return isset($this->get['offset']) ? "?article&offset=" . (int) $this->get['offset'] : "?article";
                 }
                 $content = $this->MyCMS->dbms->fetchSingle('SELECT id, name_' . $this->language . ' AS name,'
-                    //TODO article? news? page?
-                    . $this->projectSpecific->getLinkSql("?article=", $this->language)
-                    . ' FROM ' . TAB_PREFIX . 'content WHERE active = 1 '
-                    . ' AND id = "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"');
+                    . $this->projectSpecific->getLinkSql("?article&id=", $this->language)
+                    . ' FROM ' . TAB_PREFIX . 'content WHERE active = 1 AND '
+                    . (is_numeric($outputValue) ? ' id = "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"' : ' code LIKE "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"')
+                );
                 Debugger::barDump($content, 'content piece');
                 return is_null($content) ? (self::PAGE_NOT_FOUND) : $content['link'];
             case 'category':

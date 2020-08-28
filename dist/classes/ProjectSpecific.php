@@ -24,7 +24,7 @@ class ProjectSpecific extends ProjectCommon
     /**
      * Search for specified text in the database, return results
      * TODO: make this method useful for dist project as a demonstration
-     * 
+     *
      * @param string text being searched for
      * @param int offset
      * @param type $totalRows
@@ -133,18 +133,22 @@ class ProjectSpecific extends ProjectCommon
     public function getProduct($id)
     {
         Assert::integer($id, 'product MUST be identified by id');
-        return $this->MyCMS->fetchSingle(
-                'SELECT id,'
-                . 'context,'
-                . 'category_id,'
-                . ' name_' . $this->language . ' AS title,'
-                . ' content_' . $this->language . ' AS description '
-                // TODO: Note: takto se do pole context[product] přidá field [link], který obsahuje potenciálně friendly URL, ovšem relativní, tedy bez jazyka. Je to příprava pro forced 301 SEO a pro hreflang funkcionalitu.
-                . ',' . $this->getLinkSql('?product&id=', $this->language)
-                . ' FROM ' . TAB_PREFIX . 'product WHERE active="1" AND'
-                . ' name_' . $this->language . ' NOT LIKE "" AND' // hide product language variants with empty title
-                . ' id=' . intval($id) . ' LIMIT 1'
+        $result = $this->MyCMS->fetchSingle(
+            'SELECT id,'
+            . 'context,'
+            . 'category_id,'
+            . ' name_' . $this->language . ' AS title,'
+            . ' content_' . $this->language . ' AS description '
+            // TODO: Note: takto se do pole context[product] přidá field [link], který obsahuje potenciálně friendly URL, ovšem relativní, tedy bez jazyka. Je to příprava pro forced 301 SEO a pro hreflang funkcionalitu.
+            . ',' . $this->getLinkSql('?product&id=', $this->language)
+            . ' FROM ' . TAB_PREFIX . 'product WHERE active="1" AND'
+            . ' name_' . $this->language . ' NOT LIKE "" AND' // hide product language variants with empty title
+            . ' id=' . intval($id) . ' LIMIT 1'
         );
+        if (!is_null($result)) {
+            $result['context'] = json_decode($result['context'], true) ?: [];
+        }
+        return $result;
     }
 
     /**

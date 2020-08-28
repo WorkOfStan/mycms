@@ -65,7 +65,17 @@ define('UNDER_CONSTRUCTION', true);
 ```
 to `conf/config.local.php`. 
 
-Note: Management má iPhone a Mac - testovat na Apple prostředí!
+Best practice: Management often uses iPhone or Mac, therefore don't forget to test on Apple devices as well!
+
+## Adding new type of content to be displayed
+| Add to this place | Why |
+|-----------------------------------------------|------|
+| conf/config.php 'templateAssignementParametricRules' | how a GET parameters translate to template |
+| conf/config.php 'typeToTableMapping' | type uses specific table for its records |
+| Controller::prepareTemplate | Retrieves the content for usage in View layer |
+| FriendlyUrl::switchParametric | Checks existence of the content piece and Returns Friendly Url string for type=id URL if it is available or it returns type=id |
+| admin.php $AGENDAS | convenient way to administer records within admin.php |
+| template/NEW.latte | View layer |
 
 ## Ad firewall
 
@@ -348,3 +358,4 @@ When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in
 * 200802: image for product and category in assets
 * 200802: zkusit category a product pro další jazyky než cs
 * 200826: home v header.latte dát něčemu jinému než obsoleted id=5, což?
+* 200828: content_XX HTML field (for article) doesn't automatically uncheck null checkbox, therefore the UX is that you fill-in new text and it is not saved

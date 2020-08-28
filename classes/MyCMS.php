@@ -39,6 +39,13 @@ class MyCMS extends MyCMSMonoLingual
     public $templateAssignementParametricRules;
 
     /**
+     * Type into database table mapping (for MyFriendlyUrl::findFriendlyUrlToken)
+     *
+     * @var array
+     */
+    public $typeToTableMapping;
+
+    /**
      * Constructor
      *
      * @param array $myCmsConf

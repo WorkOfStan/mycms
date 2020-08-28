@@ -99,6 +99,25 @@ class Controller extends MyController
         switch ($this->MyCMS->template) {
             case self::TEMPLATE_DEFAULT: return true;
             case self::TEMPLATE_NOT_FOUND: return true;
+            case 'article':
+                Assert::integer((int) $this->get['id'], 'product MUST be identified by id');
+                $this->MyCMS->context['article'] = $this->MyCMS->fetchSingle(
+                    'SELECT id,'
+                    . 'context,'
+//                . 'category_id,'
+                    . ' name_' . $this->language . ' AS title,'
+                    . ' content_' . $this->language . ' AS description '
+                    // TODO: Note: takto se do pole context[product] přidá field [link], který obsahuje potenciálně friendly URL, ovšem relativní, tedy bez jazyka. Je to příprava pro forced 301 SEO a pro hreflang funkcionalitu.
+                    . ',' . $this->projectSpecific->getLinkSql('?article&id=', $this->language)
+                    . ' FROM ' . TAB_PREFIX . 'content WHERE active="1" AND'
+                    . ' type LIKE "article" AND'
+//                . ' name_' . $this->language . ' NOT LIKE "" AND' // hide product language variants with empty title
+                    . ' id=' . intval((int) $this->get['id']) . ' LIMIT 1'
+                );
+                $this->MyCMS->context['article']['context'] = json_decode($this->MyCMS->context['article']['context'], true); //decodes json so that article context may be used within template
+                $this->MyCMS->context['pageTitle'] = $this->MyCMS->context['article']['title'];
+                $this->MyCMS->context['article']['image'] = array_key_exists('image', $this->MyCMS->context['article']['context']) ? (string) $this->MyCMS->context['article']['context']['image'] : '';
+                return true;
             case 'category':
                 if (!Tools::ifset($this->get['category'])) {
                     $categoryId = null;
@@ -120,6 +139,7 @@ class Controller extends MyController
                 }
                 // TODO add perex for categories and products from content
                 $this->verboseBarDump($categoryId, 'categoryId');
+//obsolete//                $this->MyCMS->context['content']['context'] = json_decode($this->MyCMS->context['content']['context'], true); //decodes json so that category context may be used within template                
                 $this->MyCMS->context['limit'] = PAGINATION_LIMIT;
                 $this->MyCMS->context['list'] = $this->MyCMS->dbms->queryArray(
                     is_null($categoryId) ?
@@ -157,6 +177,7 @@ class Controller extends MyController
                 if (is_null($this->MyCMS->context['product'])) {
                     $this->MyCMS->template = self::TEMPLATE_NOT_FOUND;
                 } else {
+//obsolete//                    $this->MyCMS->context['product']['context'] = json_decode($this->MyCMS->context['product']['context'], true); //decodes json so that product context may be used within template
                     $this->MyCMS->context['pageTitle'] = $this->MyCMS->context['product']['title'];
                 }
                 return true;

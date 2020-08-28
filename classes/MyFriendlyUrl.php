@@ -265,17 +265,40 @@ class MyFriendlyUrl extends MyCommon
     }
 
     /**
-     * Project specific function that SHOULD be overidden in child class
+     * Returns SQL statement for getting the content piece for a single content type
+     *
+     * @param string $token
+     * @param string $type
+     * @param string $table
+     * @return string
+     */
+    private function prepareTableSelect($token, $type, $table)
+    {
+        return 'SELECT id,"' . $type . '" AS type FROM ' . TAB_PREFIX . $table . ' WHERE active=1 AND '
+            . ($type === $table ? '' : 'type like "' . $type . '" AND ') // usually type is stored in a dedicated table of the same name, otherwise a column type within the table is expected
+            . 'url_' . $this->language . '="' . $token . '"';
+    }
+
+    /**
      * SQL statement searching for $token in url_LL column of table(s) with content pieces addressed by FriendlyURL tokens
+     * The UNION on tables, where type is stored in a dedicated table of the same name, otherwise a column type within the table is expected is just the simplest way,
+     * but SQL statement may be adapted in any way so this method MAY be overidden in child class
      *
      * @param string $token
      * @return mixed null on empty result, false on database failure or one-dimensional array [id, type] on success
      */
     protected function findFriendlyUrlToken($token)
     {
-        return null;
-    }
-
+        Debugger::barDump(['token' => $token, 'typeToTableMapping' => $this->MyCMS->typeToTableMapping], 'findFriendlyUrlToken started');
+        if(empty($this->MyCMS->typeToTableMapping)) {
+            return null;
+        }
+        foreach ($this->MyCMS->typeToTableMapping as $type => $table) {
+            $output[] = $this->prepareTableSelect($token, $type, $table);
+        }
+        return $this->MyCMS->fetchSingle(implode(' UNION ', $output));
+    }    
+    
     /**
      * Project specific function that SHOULD be overidden in child class
      * Returns Friendly Url string for type=id URL if it is available or it returns type=id

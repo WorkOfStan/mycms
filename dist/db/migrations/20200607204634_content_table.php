@@ -77,7 +77,7 @@ class ContentTable extends AbstractMigration
                 ->addIndex('url_' . $language)
                 ->update();
             $defaultCategory['name_' . $language] = "Default {$language}";
-            $defaultCategory['url_' . $language] = "default-category-{language}";
+            $defaultCategory['url_' . $language] = "default-category-{$language}";
         }
 
         $category
