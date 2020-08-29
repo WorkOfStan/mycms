@@ -7,7 +7,7 @@ class RedirectorTable extends AbstractMigration
 
     /**
      * Creates redirector table (use only if you use redirector feature)
-     * 
+     *
      * Change Method.
      *
      * Write your reversible migrations using this method.
@@ -35,6 +35,7 @@ class RedirectorTable extends AbstractMigration
             ->addColumn('old_url', 'string', ['limit' => 500, 'comment' => 'URL to be redirected', 'null' => false])
             ->addIndex('old_url')
             ->addColumn('new_url', 'string', ['limit' => 500, 'comment' => 'Target URL', 'null' => false])
+            ->addColumn('added', 'datetime', ['comment' => 'Creation timestamp', 'default' => 'CURRENT_TIMESTAMP', 'null' => false])
             ->addColumn('active', 'boolean', ['comment' => '0=inactive, 1=active', 'default' => 1])
             ->create();
     }

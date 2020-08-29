@@ -195,5 +195,5 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 * 200529: Minimum of PHP 7.2 required now: PHPUnit latest + Phinx latest https://github.com/cakephp/phinx/releases .. planned for release 0.5.0
 * 200608: replace all `array(` by `[`
 * 200622: once FriendlyUrl incl tests is part of develop - add github actions lint
-* 200819: refactor FORCE_301 to a variable, so that all scenarios can be PHPUnit tested
+* 200819: refactor FORCE_301, FRIENDLY_URL and REDIRECTOR_ENABLED to a variable, so that all scenarios can be PHPUnit tested
 * 200819: consider REQUEST_URI query vs _GET - shouldn't just one source of truth be used?

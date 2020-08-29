@@ -280,6 +280,10 @@ Note: assets expects only ONE sub-level.
 ## Admin UI
 Add protected functions to Admin.php according to MyAdmin.php in order to add menu relevant for the application, such as Translations, FriendlyURL, Divisions and products, etc.
 
+## Redirector
+
+Note: Both the `old_url` and `new_url` MUST start with `/`.
+
 # Debugging
 
 ```php

@@ -43,6 +43,13 @@ $AGENDAS = [
             'added' => 'now',
         ],
     ],
+    'redirector' => [
+        'table' => 'redirector',
+        'column' => 'old_url',
+        'prefill' => [
+            'added' => 'now',
+        ],
+    ],
 ];
 
 $TableAdmin = new \GodsDev\mycmsprojectnamespace\TableAdmin(

@@ -156,6 +156,27 @@ final class ContentExample extends AbstractMigration
         $content
             ->insert($contentSample)
             ->update();
+
+        $redirector = $this->table('redirector');
+
+        $redirectorSample = [
+            [
+                'old_url' => '/adresa',
+                'new_url' => '/kontakty',
+            ],
+            [
+                'old_url' => '/adresa/do/nasi/kancelare',
+                'new_url' => '/kontakty',
+            ],
+            [
+                'old_url' => '/firma/adresa',
+                'new_url' => '/kontakty',
+            ],
+        ];
+
+        $redirector
+            ->insert($redirectorSample)
+            ->update();
     }
 
 }

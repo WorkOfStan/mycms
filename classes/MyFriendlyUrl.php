@@ -117,11 +117,13 @@ class MyFriendlyUrl extends MyCommon
         if (FORCE_301 && !empty($this->verboseBarDump($friendlyUrl = $this->friendlyfyUrl(isset($url['query']) ? '?' . $url['query'] : ''), 'friendlyIdentifyRedirect: friendlyUrl'))) {
             if (($friendlyUrl != ('?' . $url['query']))) {
                 $this->verboseBarDump($addLanguageDirectory = ($this->language != DEFAULT_LANGUAGE) // other than default language should have its directory
-                    && !preg_match("~^{$this->language}/~", $friendlyUrl), 'friendlyIdentifyRedirect: addLanguageDirectory 301'); // unless the friendlyURL already has it
+                    && !preg_match("~^{$this->language}/~", $friendlyUrl), 'friendlyIdentifyRedirect: addLanguageDirectory 301 friendly'); // unless the friendlyURL already has it
                 return $this->redirWrapper(($addLanguageDirectory ? '/' . $this->language : '') . '/' . $friendlyUrl, 'SEO Force 301 friendly');
             } elseif ($interestingPath != '/' && $interestingPath != "/{$this->language}/"
             ) {
-                return $this->redirWrapper('/' . $friendlyUrl, 'SEO Force 301 parametric');
+                $this->verboseBarDump($addLanguageDirectory = ($this->language != DEFAULT_LANGUAGE) // other than default language should have its directory
+                    && !preg_match("~^language={$this->language}~", $friendlyUrl), 'friendlyIdentifyRedirect: addLanguageDirectory 301 parametric'); // unless the friendlyURL already has it
+                return $this->redirWrapper('/' . $friendlyUrl . ($addLanguageDirectory ? "&language={$this->language}" : ''), 'SEO Force 301 parametric');
             }
         }
 
@@ -290,15 +292,15 @@ class MyFriendlyUrl extends MyCommon
     protected function findFriendlyUrlToken($token)
     {
         Debugger::barDump(['token' => $token, 'typeToTableMapping' => $this->MyCMS->typeToTableMapping], 'findFriendlyUrlToken started');
-        if(empty($this->MyCMS->typeToTableMapping)) {
+        if (empty($this->MyCMS->typeToTableMapping)) {
             return null;
         }
         foreach ($this->MyCMS->typeToTableMapping as $type => $table) {
             $output[] = $this->prepareTableSelect($token, $type, $table);
         }
         return $this->MyCMS->fetchSingle(implode(' UNION ', $output));
-    }    
-    
+    }
+
     /**
      * Project specific function that SHOULD be overidden in child class
      * Returns Friendly Url string for type=id URL if it is available or it returns type=id

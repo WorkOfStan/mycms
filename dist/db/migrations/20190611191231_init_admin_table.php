@@ -7,7 +7,7 @@ class InitAdminTable extends AbstractMigration
 
     /**
      * Creates MyCMS administrators table with one default admin
-     * 
+     *
      * Change Method.
      *
      * Write your reversible migrations using this method.
@@ -30,7 +30,6 @@ class InitAdminTable extends AbstractMigration
      */
     public function change()
     {
-
         $admin = $this->table('admin');
         $admin
             ->addColumn('admin', 'string', ['limit' => 50, 'comment' => 'Admin username', 'null' => false])
