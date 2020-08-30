@@ -101,13 +101,13 @@ $WEBSITE = [
         'navigation-title' => 'MYCMSPROJECTSPECIFIC Website name',
         'slogan' => 'MYCMSPROJECTSPECIFIC Website claim',
         'intro' => 'MYCMSPROJECTSPECIFIC Website description',
-        //populates the default English menu, key means URL
+        //populates the default English menu: 'activeTabTemplate' => template triggering active tab, 'menuItemLabel' => displayed label, 'relativeUrl' => url after language folder
         'menu' => [
-            'item-1' => 'Item 1',
-            'item-B' => 'Item 2',
-            'item-gama' => 'Item 3',
-            'item-4' => 'Item 4',
-            '?category=1' => 'Category 1',
+            ['activeTabTemplate' => 'item-1', 'menuItemLabel' => 'Item 1', 'relativeUrl' => 'item-1'],
+            ['activeTabTemplate' => 'item-B', 'menuItemLabel' => 'Item 2', 'relativeUrl' => 'item-B'],
+            ['activeTabTemplate' => 'item-gama', 'menuItemLabel' => 'Item 3', 'relativeUrl' => 'item-gama'],
+            ['activeTabTemplate' => 'item-4', 'menuItemLabel' => 'Item 4', 'relativeUrl' => 'item-4'],
+            ['activeTabTemplate' => 'category', 'menuItemLabel' => 'Category 1', 'relativeUrl' => '?category=1'],
         ],
     //TODO populate pageTitle automatically from menu ? maybe within prepareAll use something like context[pageTitle]=isset(website[menu][ref])?website[menu][ref]:context[pageTitle]
     ],
@@ -116,13 +116,13 @@ $WEBSITE = [
         'navigation-title' => 'MYCMSPROJECTSPECIFIC Website name',
         'slogan' => 'MYCMSPROJECTSPECIFIC Website claim',
         'intro' => 'MYCMSPROJECTSPECIFIC Website description',
-        //populates the default Czech menu, key means URL
+        //populates the default Czech menu: 'activeTabTemplate' => template triggering active tab, 'menuItemLabel' => displayed label, 'relativeUrl' => url after language folder
         'menu' => [
-            'item-1' => 'Položka 1',
-            'item-B' => 'Položka 2',
-            'item-gama' => 'Položka 3',
-            'item-4' => 'Položka 4',
-            '?category=1' => 'Kategorie 1',
+            ['activeTabTemplate' => 'item-1', 'menuItemLabel' => 'Položka 1', 'relativeUrl' => 'item-1'],
+            ['activeTabTemplate' => 'item-B', 'menuItemLabel' => 'Položka 2', 'relativeUrl' => 'item-B'],
+            ['activeTabTemplate' => 'item-gama', 'menuItemLabel' => 'Položka 3', 'relativeUrl' => 'item-gama'],
+            ['activeTabTemplate' => 'item-4', 'menuItemLabel' => 'Položka 4', 'relativeUrl' => 'item-4'],
+            ['activeTabTemplate' => 'category', 'menuItemLabel' => 'Kategorie 1', 'relativeUrl' => '?category=1'],
         ],
     ],
     'de' => [
@@ -130,13 +130,13 @@ $WEBSITE = [
         'navigation-title' => 'MYCMSPROJECTSPECIFIC Webseiten-Name',
         'slogan' => 'MYCMSPROJECTSPECIFIC Website-Slogan',
         'intro' => 'MYCMSPROJECTSPECIFIC Webseitenbeschreibung',
-        //populates the default German menu, key means URL
+        //populates the default German menu: 'activeTabTemplate' => template triggering active tab, 'menuItemLabel' => displayed label, 'relativeUrl' => url after language folder
         'menu' => [
-            'item-1' => 'Artikel 1',
-            'item-B' => 'Artikel 2',
-            'item-gama' => 'Artikel 3',
-            'item-4' => 'Artikel 4',
-            '?category=1' => 'Kategorie 1',
+            ['activeTabTemplate' => 'item-1', 'menuItemLabel' => 'Artikel 1', 'relativeUrl' => 'item-1'],
+            ['activeTabTemplate' => 'item-B', 'menuItemLabel' => 'Artikel 2', 'relativeUrl' => 'item-B'],
+            ['activeTabTemplate' => 'item-gama', 'menuItemLabel' => 'Artikel 3', 'relativeUrl' => 'item-gama'],
+            ['activeTabTemplate' => 'item-4', 'menuItemLabel' => 'Artikel 4', 'relativeUrl' => 'item-4'],
+            ['activeTabTemplate' => 'category', 'menuItemLabel' => 'Kategorie 1', 'relativeUrl' => '?category=1'],
         ],
     ],
     'fr' => [
@@ -144,13 +144,13 @@ $WEBSITE = [
         'navigation-title' => 'MYCMSPROJECTSPECIFIC Nom du site Web',
         'slogan' => 'MYCMSPROJECTSPECIFIC Slogan du site Web',
         'intro' => 'MYCMSPROJECTSPECIFIC Description du site',
-        //populates the default French menu, key means URL
+        //populates the default French menu: 'activeTabTemplate' => template triggering active tab, 'menuItemLabel' => displayed label, 'relativeUrl' => url after language folder
         'menu' => [
-            'item-1' => 'Article 1',
-            'item-B' => 'Article 2',
-            'item-gama' => 'Article 3',
-            'item-4' => 'Article 4',
-            '?category=1' => 'Categorie 1',
+            ['activeTabTemplate' => 'item-1', 'menuItemLabel' => 'Article 1', 'relativeUrl' => 'item-1'],
+            ['activeTabTemplate' => 'item-B', 'menuItemLabel' => 'Article 2', 'relativeUrl' => 'item-B'],
+            ['activeTabTemplate' => 'item-gama', 'menuItemLabel' => 'Article 3', 'relativeUrl' => 'item-gama'],
+            ['activeTabTemplate' => 'item-4', 'menuItemLabel' => 'Article 4', 'relativeUrl' => 'item-4'],
+            ['activeTabTemplate' => 'category', 'menuItemLabel' => 'Categorie 1', 'relativeUrl' => '?category=1'],
         ],
     ],
 ];

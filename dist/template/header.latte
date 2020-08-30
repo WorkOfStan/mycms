@@ -2,20 +2,18 @@
 <header class="header">
     <div class="container">
         <h1>
-            <a href="{$applicationDir}" title="{="Na úvodní stranu"|translate}">MYCMSPROJECTSPECIFIC homepage link</a>
+            <a href="{$applicationDirLanguage}" title="{="Na úvodní stranu"|translate}">MYCMSPROJECTSPECIFIC homepage link</a>
         </h1>
 
         <span class="hamburger"><i class="fa fa-bars"></i><i class="fa fa-times"></i></span>
         <ul class="menu">
-        {* TODO: expect TAB_PREFIX_category table to be populated *}
-        {*foreach $categories as $key => $value}
-            <li {if $key == $line || ($ref == 'product' && isset($product['category_id']) && $product['category_id'] == $key)} class="active"{/if}><a href="?line={$key}">{$value}</a></li>
-        {/foreach*}
+            {* example of a permanent menu item *}
+            <li{if $ref == 'home'} class="active"{/if}><a href="{$applicationDirLanguage}">{="Dashboard"|translate}</a></li>            
         {* populated from config.php *}
         {foreach $WEBSITE['menu'] as $key => $value}
-            <li{if $ref == $key} class="active"{/if}><a href="{$applicationDirLanguage}{$key}">{$value}</a></li>
+            {* Note: modify condition for active tab as needed *}
+            <li{if $ref == $value['activeTabTemplate']} class="active"{/if}><a href="{$applicationDirLanguage}{$value['relativeUrl']}">{$value['menuItemLabel']}</a></li>
         {/foreach}
-            <li{if $ref == 'home'} class="active"{/if}><a href="{$applicationDirLanguage}?id=5">Item 5</a></li>
         </ul>
 
         <ul class="right-bar">
