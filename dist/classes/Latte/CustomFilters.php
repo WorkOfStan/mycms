@@ -22,7 +22,7 @@ class CustomFilters
 //    private $projectSpecific;
 
     /**
-     * 
+     *
      * @param \GodsDev\MyCMS\MyCMS $MyCMS
      */
     public function __construct(MyCMS $MyCMS)

@@ -15,7 +15,7 @@ class BarPanelTemplate implements IBarPanel
     protected $panelDetails;
 
     /**
-     * 
+     *
      * @param string $tabTitle
      * @param array $panelDetails
      */
@@ -49,14 +49,13 @@ class BarPanelTemplate implements IBarPanel
 
 
         foreach ($this->panelDetails as $id => $detail) {
-
             $cntTable .= "<tr><td>{$id}</td><td> ";
             if (is_array($detail)) {
                 $cntTable .= '<table>';
                 foreach ($detail as $k => $v) {
                     $cntTable .= "<tr><td>{$k}</td><td title='"
-                            . strip_tags(print_r($v, true))
-                            . "'>" . substr(strip_tags(print_r($v, true)), 0, 240) . "</td></tr>";
+                        . strip_tags(print_r($v, true))
+                        . "'>" . substr(strip_tags(print_r($v, true)), 0, 240) . "</td></tr>";
                 }
                 $cntTable .= '</table>';
             } else {
@@ -66,8 +65,8 @@ class BarPanelTemplate implements IBarPanel
         }
 
         $content = '<div class=\"tracy-inner tracy-InfoPanel\"><table><tbody>' .
-                $cntTable .
-                '</tbody></table>* Hover over field to see its full content.</div>';
+            $cntTable .
+            '</tbody></table>* Hover over field to see its full content.</div>';
 
         return $title . $warning . $content;
     }

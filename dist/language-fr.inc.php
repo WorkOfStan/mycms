@@ -1,4 +1,5 @@
 <?php
+
 $translation = [
     'Contact us' => 'Contacter nous',
     'language:en' => 'English',
@@ -12,5 +13,5 @@ $translation = [
     'Hledáte' => 'Vous recherchez',
     'Zadaný e-mail již existuje.' => "L'email existe déjà.",
     'Váš e-mail se nepodařilo přidat k odběru.' => "Erreur lors de l'ajout de votre e-mail à la newsletter.",
-    'Pravidla pro užívání portálu' => 'Termes et conditions',    
+    'Pravidla pro užívání portálu' => 'Termes et conditions',
 ];

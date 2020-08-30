@@ -24,15 +24,15 @@ if (isset($_POST['language'], $MyCMS->TRANSLATIONS[$_POST['language']])) {
     exit(json_encode(array('success' => true)));
 }
 if ($_POST['newsletter']) {
-    if ($result = $MyCMS->dbms->query('INSERT INTO ' . TAB_PREFIX . 'subscriber SET email="' . $MyCMS->escapeSQL($_POST['newsletter']) . '", info="' . $_SERVER['REMOTE_ADDR'] . '"')) { 
+    if ($result = $MyCMS->dbms->query('INSERT INTO ' . TAB_PREFIX . 'subscriber SET email="' . $MyCMS->escapeSQL($_POST['newsletter']) . '", info="' . $_SERVER['REMOTE_ADDR'] . '"')) {
         Tools::addMessage('success', $MyCMS->translate('Váš e-mail byl přidán k odběru.'));
-        $MyCMS->logger->info("Odběratel {$_POST['newsletter']} přidán k odběru."); 
+        $MyCMS->logger->info("Odběratel {$_POST['newsletter']} přidán k odběru.");
     } elseif ($MyCMS->dbms->errno == 1062) { //duplicate entry = subscriber's e-mail address already exists
         Tools::addMessage('info', $MyCMS->translate('Zadaný e-mail již existuje.'));
-        $MyCMS->logger->warning("Odběratel {$_POST['newsletter']} nepřidán k odběru, protože již existuje."); 
+        $MyCMS->logger->warning("Odběratel {$_POST['newsletter']} nepřidán k odběru, protože již existuje.");
     } else {
         Tools::addMessage('error', $MyCMS->translate('Váš e-mail se nepodařilo přidat k odběru.'));
-        $MyCMS->logger->error("Odběratele {$_POST['newsletter']} se nepodařilo přidat k odběru."); 
+        $MyCMS->logger->error("Odběratele {$_POST['newsletter']} se nepodařilo přidat k odběru.");
     }
     Tools::redir();
 }

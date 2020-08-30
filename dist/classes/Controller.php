@@ -139,7 +139,6 @@ class Controller extends MyController
                 }
                 // TODO add perex for categories and products from content
                 $this->verboseBarDump($categoryId, 'categoryId');
-//obsolete//                $this->MyCMS->context['content']['context'] = json_decode($this->MyCMS->context['content']['context'], true); //decodes json so that category context may be used within template                
                 $this->MyCMS->context['limit'] = PAGINATION_LIMIT;
                 $this->MyCMS->context['list'] = $this->MyCMS->dbms->queryArray(
                     is_null($categoryId) ?
@@ -177,7 +176,6 @@ class Controller extends MyController
                 if (is_null($this->MyCMS->context['product'])) {
                     $this->MyCMS->template = self::TEMPLATE_NOT_FOUND;
                 } else {
-//obsolete//                    $this->MyCMS->context['product']['context'] = json_decode($this->MyCMS->context['product']['context'], true); //decodes json so that product context may be used within template
                     $this->MyCMS->context['pageTitle'] = $this->MyCMS->context['product']['title'];
                 }
                 return true;

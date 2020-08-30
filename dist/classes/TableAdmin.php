@@ -8,12 +8,12 @@ class TableAdmin extends \GodsDev\MyCMS\MyTableAdmin
 {
 
     /**
-     * 
+     *
      * @param \mysqli $dbms database management system (e.g. new mysqli())
      * @param string $table table name
      * @param array $options
      */
-    function __construct(\mysqli $dbms, $table, array $options = [])
+    public function __construct(\mysqli $dbms, $table, array $options = [])
     {
         parent::__construct($dbms, $table, $options);
         // TODO uses all example languages
@@ -341,17 +341,17 @@ class TableAdmin extends \GodsDev\MyCMS\MyTableAdmin
      *
      * @return boolean - true = method was applied so don't proceed with the default, false = method wasn't applied
      */
-    function customSave()
+    public function customSave()
     {
         if (!isset($_POST['record-save']) || !$this->authorized()) {
             return false;
         }
-        // category.path - if admin changes the parent category (or picks it for a new record)  
+        // category.path - if admin changes the parent category (or picks it for a new record)
         // @todo insert this into TableAdmin.php
         if (isset($_POST['table'], $_POST['path-original'], $_POST['path-parent'], $_POST['fields']['id']) &&
             $_POST['table'] == TAB_PREFIX . 'category' && (!Tools::begins($_POST['path-original'], $_POST['path-parent']) || Tools::set($_POST['fields-null']['path']))) {
             $length = [strlen($_POST['path-parent']), strlen($_POST['path-original'])];
-            if ($_POST['path-original'] && $_POST['fields']['id'] != '') { // existing record whose parent category changed - we need to shift its sibblings that follow after it to fill the gap 
+            if ($_POST['path-original'] && $_POST['fields']['id'] != '') { // existing record whose parent category changed - we need to shift its sibblings that follow after it to fill the gap
                 $this->dbms->query('LOCK TABLES ' . Tools::escapeDbIdentifier($_POST['table']) . ' WRITE'); // we can't allow for other admin to write into categories during this op
                 $this->dbms->query($sql = 'UPDATE ' . Tools::escapeDbIdentifier($_POST['table']) . ' SET path = NULL WHERE id=' . (int) $_POST['fields']['id'] . ' LIMIT 1'); //category.path is a unique key so to allow for the following change we need to set this path to NULL
                 if (Tools::set($_POST['fields-null']['path'])) {
@@ -386,7 +386,7 @@ class TableAdmin extends \GodsDev\MyCMS\MyTableAdmin
      *
      * @return boolean - true = method was applied so don't proceed with the default, false = method wasn't applied
      */
-    function customDelete()
+    public function customDelete()
     {
         if (!isset($_POST['record-delete']) || !$this->authorized()) {
             return false;
@@ -394,7 +394,7 @@ class TableAdmin extends \GodsDev\MyCMS\MyTableAdmin
         if (!$this->recordDelete()) {
             return true;
         }
-        // After a category is deleted, shift categories after it accordingly. 
+        // After a category is deleted, shift categories after it accordingly.
         if ($_POST['table'] == TAB_PREFIX . 'category' && isset($_POST['path-original']) && $_POST['path-original']) {
             $length = strlen($_POST['path-original']);
             $update = $this->dbms->fetchAndReindex($sql = 'SELECT id, CONCAT(LEFT(path, ' . ($length - PATH_MODULE) . '), 
@@ -420,7 +420,7 @@ class TableAdmin extends \GodsDev\MyCMS\MyTableAdmin
      *
      * @return void
      */
-    function customSearch()
+    public function customSearch()
     {
         
     }
@@ -430,7 +430,7 @@ class TableAdmin extends \GodsDev\MyCMS\MyTableAdmin
      *
      * @return void
      */
-    function customCondition()
+    public function customCondition()
     {
         
     }
@@ -442,7 +442,7 @@ class TableAdmin extends \GodsDev\MyCMS\MyTableAdmin
      * @param array $row
      * @return mixed
      */
-    function customValue($column, array $row)
+    public function customValue($column, array $row)
     {
         return $row[$column];
     }

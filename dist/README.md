@@ -360,6 +360,4 @@ When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in
 * 200712: remove unnecessary `sql =` constructs
 * 200802: test with 2 categories
 * 200802: image for product and category in assets
-* 200802: zkusit category a product pro další jazyky než cs
-* 200826: home v header.latte dát něčemu jinému než obsoleted id=5, což?
 * 200828: content_XX HTML field (for article) doesn't automatically uncheck null checkbox, therefore the UX is that you fill-in new text and it is not saved
