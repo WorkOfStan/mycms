@@ -20,7 +20,7 @@ class MyCMSTest extends \PHPUnit_Framework_TestCase
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
-     * 
+     *
      * @global type $backyardConf
      */
     protected function setUp()
@@ -52,7 +52,7 @@ class MyCMSTest extends \PHPUnit_Framework_TestCase
     public function testGetSessionLanguageBasic()
     {
         $this->assertEquals('en', $this->object->getSessionLanguage(['language' => 'en'], ['language' => 'en'], false), 'Fail for both languages are same en');
-        $this->assertEquals('en', $this->object->getSessionLanguage(['language' => 'xx'], ['language' => 'xx'], false), 'Fail unknown language is return');
+        $this->assertEquals(DEFAULT_LANGUAGE, $this->object->getSessionLanguage(['language' => 'xx'], ['language' => 'xx'], false), 'Fail unknown language is return');
         $this->assertEquals('en', $this->object->getSessionLanguage(['language' => 'en'], ['language' => 'cn'], false), 'get language should prevail');
         $this->assertEquals('cn', $this->object->getSessionLanguage(['language' => 'cn'], ['language' => 'en'], false), 'get language should prevail');
     }
@@ -64,8 +64,8 @@ class MyCMSTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals('cn', $this->object->getSessionLanguage([], ['language' => 'cn'], false), 'Solo session prevails');
         $this->assertEquals('cn', $this->object->getSessionLanguage(['language' => 'cn'], [], false), 'Solo get is used');
-        $this->assertEquals('en', $this->object->getSessionLanguage([], ['language' => 'xx'], false), 'Solo wrong session is ignored');
-        $this->assertEquals('en', $this->object->getSessionLanguage(['language' => 'xx'], [], false), 'Solo wrong get is ignored');
+        $this->assertEquals(DEFAULT_LANGUAGE, $this->object->getSessionLanguage([], ['language' => 'xx'], false), 'Solo wrong session is ignored');
+        $this->assertEquals(DEFAULT_LANGUAGE, $this->object->getSessionLanguage(['language' => 'xx'], [], false), 'Solo wrong get is ignored');
         $this->assertEquals('cn', $this->object->getSessionLanguage(['language' => 'xx'], ['language' => 'cn'], false), 'get language should prevail only if correct');
         $this->assertEquals('en', $this->object->getSessionLanguage(['language' => 'xx'], ['language' => 'en'], false), 'get language should prevail only if correct');
     }

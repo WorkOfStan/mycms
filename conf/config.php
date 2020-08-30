@@ -6,7 +6,7 @@
 ini_set('display_errors', 0); //errors only in the log
 ini_set('session.use_strict_mode', 1);
 
-define('DEFAULT_LANGUAGE', 'en');  //necessary for PHPUnit tests
+define('DEFAULT_LANGUAGE', 'cs'); // named constant 'DEFAULT_LANGUAGE' necessary for PHPUnit tests
 
 $backyardConf = array(
     'logging_level' => 3,
