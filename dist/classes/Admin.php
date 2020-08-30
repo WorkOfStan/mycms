@@ -24,7 +24,7 @@ class Admin extends MyAdmin
     ];
 
     /**
-     * 
+     *
      * @param \GodsDev\MyCMS\MyCMS $MyCMS
      * @param array $options overrides default values of properties
      */
@@ -38,7 +38,7 @@ class Admin extends MyAdmin
     /**
      * As vendor folder has usually denied access from browser,
      * the content of the standard admin.css MUST be available through this method
-     * 
+     *
      * @return string
      */
     public function getAdminCss()

@@ -5,7 +5,7 @@ namespace GodsDev\MyCMS;
 use GodsDev\Tools\Tools;
 
 /**
- * Class that can list rows of a database table, with editable search/filter 
+ * Class that can list rows of a database table, with editable search/filter
  * functionality, links to edit each particular row, multi-row action, etc.
  * dependencies: GodsDev\Tools, MySQL/MariaDB (it uses INFORMATION_SHEMA)
  */
@@ -83,12 +83,12 @@ class MyTableLister
 
     /**
      * Constructor - stores passed parameters to object's attributes
-     * 
+     *
      * @param \mysqli database management system already connected to wanted database
      * @param string table to view
      * @param array options
      */
-    function __construct(\mysqli $dbms, $table, array $options = [])
+    public function __construct(\mysqli $dbms, $table, array $options = [])
     {
         $this->dbms = $dbms;
         $this->options = $options;
@@ -195,7 +195,7 @@ class MyTableLister
     }
 
     /**
-     * Compose a SELECT SQL statement with given columns and _GET variables 
+     * Compose a SELECT SQL statement with given columns and _GET variables
      *
      * @param array $columns
      * @param array &$vars variables used to filter records
@@ -219,7 +219,7 @@ class MyTableLister
                 $result['join'] .= ' LEFT JOIN ' . $this->fields[$key]['foreign_table']
                     . ' ON ' . $this->escapeDbIdentifier($this->table) . '.' . $this->escapeDbIdentifier($key)
                     . '=' . $this->escapeDbIdentifier($this->fields[$key]['foreign_table']) . '.' . $this->escapeDbIdentifier($this->fields[$key]['foreign_column']);
-                // try if column of the same name as the table exists (as a replacement for foreign table); use the first field in the table if it doesn't exist 
+                // try if column of the same name as the table exists (as a replacement for foreign table); use the first field in the table if it doesn't exist
                 $tmp = $this->dbms->query('SHOW FIELDS FROM ' . $this->escapeDbIdentifier($this->fields[$key]['foreign_table']))->fetch_all();
                 foreach ($tmp as $k => $v) {
                     $tmp[$v[0]] = $v[0];
@@ -376,13 +376,13 @@ class MyTableLister
      *
      * @param options configuration array
      *   $options['form-action']=send.php - instead of <form action="">
-     *   $options['read-only']=non-zero - no links to admin 
-     *   $options['no-sort']=non-zero - don't offer 'sorting' option  
-     *   $options['no-search']=non-zero - don't offer 'search' option  
-     *   $options['no-display-options']=non-zero - don't offer 'display' option  
+     *   $options['read-only']=non-zero - no links to admin
+     *   $options['no-sort']=non-zero - don't offer 'sorting' option
+     *   $options['no-search']=non-zero - don't offer 'search' option
+     *   $options['no-display-options']=non-zero - don't offer 'display' option
      *   $options['no-multi-options']=non-zero - disallow to change values via so called quick column
      *   $options['no-selected-rows-operations'] - disallow to change selected rows in bulk
-     *   $options['include']=array - columns to include 
+     *   $options['include']=array - columns to include
      *   $options['exclude']=array - columns to exclude
      *   $options['columns']=array - special treatment of columns
      *   $options['return-output']=non-zero - return output (instead of echo)
@@ -504,7 +504,7 @@ class MyTableLister
 
     /**
      * Part of the view() method to output the content of selected table
-     * 
+     *
      * @param object mysqli query
      * @param array columns selected columns
      * @param array options as in view()
@@ -554,6 +554,7 @@ class MyTableLister
                             case 'integer':
                             case 'rational':
                                 $class [] = 'text-right';
+                            // no break
                             case 'text':
                             default:
                                 $tmp = Tools::h(mb_substr($value, 0, $this->DEFAULTS['TEXTSIZE']));
@@ -586,7 +587,7 @@ class MyTableLister
 
     /**
      * Output HTML link for one page. Only used in ->pagination(), thus is private
-     * 
+     *
      * @param int $page which page
      * @param int $currentPage current page
      * @param int $rowsPerPage rows per page
@@ -659,7 +660,7 @@ class MyTableLister
 
     /**
      * Return fields which are keys (indexes) of given type
-     * 
+     *
      * @param string key type, either "PRI", "MUL", "UNI" or ""
      * @return array key names
      */
@@ -727,7 +728,7 @@ class MyTableLister
      * @param string message in case of an error
      * @param mixed optional message in case of no affected change
      *   false = use $successMessage
-     * 
+     *
      * @return mixed true for success, false for failure of the query; if the query is empty return null (with no messages)
      */
     public function resolveSQL($sql, $successMessage, $errorMessage, $noChangeMessage = false)
@@ -754,7 +755,7 @@ class MyTableLister
      * If the text differs only by case of the first letter, return its translation and change the case of its first letter.
      * @example: TRANSLATION['List'] = 'Seznam'; $this->translate('List') --> "Seznam", $this->translate('list') --> "seznam"
      * @example: TRANSLATION['list'] = 'seznam'; $this->translate('list') --> "seznam", $this->translate('List') --> "Seznam"
-     * 
+     *
      * @param string $text
      * @param bool $escape escape for HTML? true by default
      * @param int $changeCase - 0 = no change, 1 = first upper, -1 = first lower, 2 = all caps, -2 = all lower
@@ -811,7 +812,7 @@ class MyTableLister
 
     /**
      * Custom HTML instead of standard field's input
-     * 
+     *
      * @param string $field
      * @param mixed $value field's value
      * @param array $record
@@ -861,7 +862,7 @@ class MyTableLister
 
     /**
      * Custom HTML to be show after standard action buttons of the detail's form
-     * 
+     *
      * @param array $record
      * @return string
      */
@@ -872,7 +873,7 @@ class MyTableLister
 
     /**
      * Custom saving of a record
-     * 
+     *
      * @return boolean - true = method was applied so don't proceed with the default, false = method wasn't applied
      */
     public function customSave()
@@ -892,7 +893,7 @@ class MyTableLister
 
     /**
      * Custom operation with table records. Called after the $table listing
-     * 
+     *
      * @return boolean - true = method was applied so don't proceed with the default, false = method wasn't applied
      */
     public function customOperation()
@@ -902,7 +903,7 @@ class MyTableLister
 
     /**
      * Custom search. Called to optionally fill the search select
-     * 
+     *
      * @return void
      */
     public function customSearch()
@@ -920,8 +921,8 @@ class MyTableLister
     }
 
     /**
-     * User-defined manipulating with column value of given table  
-     *  
+     * User-defined manipulating with column value of given table
+     *
      * @param string $column
      * @param array $row
      * @return mixed original or manipulated data
@@ -933,7 +934,7 @@ class MyTableLister
 
     /**
      * Display a break-down of records in given table (default "content") by given column (default "type")
-     * 
+     *
      * @param array $options OPTIONAL
      * @return string
      */
@@ -978,7 +979,7 @@ class MyTableLister
      * Return keys to current table of a specified type(s)
      *
      * @param array $types type(s) - possible items: PRI, UNI, MUL (database specific)
-     * @return array filtered keys, e.g. ['id'=>'PRI', 'division'=>'MUL', 'document_id'=>'UNI'] 
+     * @return array filtered keys, e.g. ['id'=>'PRI', 'division'=>'MUL', 'document_id'=>'UNI']
      */
     public function filterKeys($types)
     {

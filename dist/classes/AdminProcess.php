@@ -4,7 +4,7 @@ namespace GodsDev\mycmsprojectnamespace;
 
 /**
  * process for TableAdmin agendas
- * dependencies: 
+ * dependencies:
  * * TableAdmin.php
  */
 use GodsDev\MyCMS\MyCMS;
@@ -24,7 +24,7 @@ class AdminProcess extends MyAdminProcess
     protected $agendas;
 
     /**
-     * 
+     *
      * @param \GodsDev\MyCMS\MyCMS $MyCMS
      * @param array $options overrides default values of properties
      */
@@ -38,9 +38,9 @@ class AdminProcess extends MyAdminProcess
      * Commands with all required variables cause page redirection.
      * $_SESSION is manipulated by this function - mainly [messages] get added
      *
-     * @param mixed[] &$post $_POST variables 
+     * @param mixed[] &$post $_POST variables
      * @todo refactor, so that $this->endAdmin(); is called automatically
-     * 
+     *
      * @return void
      */
     public function adminProcess(&$post)
@@ -70,7 +70,7 @@ class AdminProcess extends MyAdminProcess
         $this->processSubfolder($post);
         // return a webalized string
         if (isset($post['webalize']) && is_string($post['webalize'])) {
-            // @todo $post['table'] and $post['id'] can also be sent - check uniqueness then 
+            // @todo $post['table'] and $post['id'] can also be sent - check uniqueness then
             $result = array(
                 'data' => Tools::webalize($post['webalize']),
                 'success' => true
@@ -195,7 +195,7 @@ class AdminProcess extends MyAdminProcess
 
     /**
      * It is public for PHPUnit test
-     * 
+     *
      * @param string $agenda
      * @return array
      */

@@ -15,6 +15,7 @@ use Tracy\Debugger;
 
 class MyAdminProcess extends MyCommon
 {
+
     /** @const int general limit of selected rows and repeated fields in export */
     const PROCESS_LIMIT = 100;
 
@@ -73,7 +74,7 @@ class MyAdminProcess extends MyCommon
                     $condition[1] = is_null($condition[1]) ? ' IS NULL' : (is_numeric($condition[1]) ? ' = ' . $condition[1] : ' = "' . $this->tableAdmin->escapeSQL($condition[1]) . '"');
                     $partial .= ' AND ' . $this->tableAdmin->escapeDbIdentifier(substr($condition[0], 5, -1)) . $condition[1];
                 } else {
-                    $errors []= $condition[0];
+                    $errors [] = $condition[0];
                     $partial = '';
                     break;
                 }
@@ -106,7 +107,7 @@ class MyAdminProcess extends MyCommon
                     if (isset($tab['table'], $tab['id'], $tab['token'], $tab['time'])) {
                         if ($tab['table'] == $post['table'] && $tab['id'] == $post['id']) { //same record
                             if ($admin['admin'] != $_SESSION['user']) { // edited by different admin
-                                $coeditors []= $admin['admin'];
+                                $coeditors [] = $admin['admin'];
                             } elseif ($tab['token'] == $post['token']) { // same tab - update access time
                                 $new = false;
                                 $tabs[$tabIndex]['time'] = time();
@@ -120,12 +121,12 @@ class MyAdminProcess extends MyCommon
                 $tabs = array_values($tabs);
                 if ($admin['admin'] == $_SESSION['user']) {
                     if ($new) {
-                        $tabs []= ['table' => $post['table'], 'id' => (int)$post['id'], 'token' => $post['token'], 'time' => time()];
+                        $tabs [] = ['table' => $post['table'], 'id' => (int) $post['id'], 'token' => $post['token'], 'time' => time()];
                     }
                 } elseif ($tabs) {
                     $online += $admin['admin'];
                 }
-                $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'admin SET activity = "' . $this->MyCMS->escapeSQL(json_encode($tabs ?: [])) . '" WHERE id = ' . (int)$admin['id']);
+                $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'admin SET activity = "' . $this->MyCMS->escapeSQL(json_encode($tabs ?: [])) . '" WHERE id = ' . (int) $admin['id']);
             }
             $this->exitJson(['success' => true, 'coeditors' => $coeditors, 'online' => $online]);
         }
@@ -144,10 +145,12 @@ class MyAdminProcess extends MyCommon
                 if (Tools::set($post['total-rows'])) {
                     $columns = $this->tableAdmin->getColumns([]);
                     $sql = $this->tableAdmin->selectSQL($columns, $_GET);
-                    Tools::dump($sql,$post);exit; //@todo
+                    Tools::dump($sql, $post);
+                    exit; //@todo
                 } else {
                     $sql = $this->filterChecks($post['check'], $errors);
-                    Tools::dump($post, $sql);exit; //@todo
+                    Tools::dump($post, $sql);
+                    exit; //@todo
                 }
                 if ($sql) {
                     $this->MyCMS->dbms->query('SELECT ');
@@ -195,11 +198,10 @@ class MyAdminProcess extends MyCommon
                     $duplicateKey = '';
                     for ($i = 0; $row = $query->fetch_assoc(); $i++) {
                         if ($i % self::PROCESS_LIMIT == 0) {
-                            $output = ($i ? substr($output, 0, -2) . ($duplicateKey = "\nON DUPLICATE KEY UPDATE " . $this->MyCMS->dbms->values($row, '%column% = VALUES(%column%)')) . ";\n" : $output) 
+                            $output = ($i ? substr($output, 0, -2) . ($duplicateKey = "\nON DUPLICATE KEY UPDATE " . $this->MyCMS->dbms->values($row, '%column% = VALUES(%column%)')) . ";\n" : $output)
                                 . "INSERT INTO " . $post['database-table'] . '(' . $this->MyCMS->dbms->values($row, 'fields') . ") VALUES\n";
                         }
                         $output .= '(' . $this->MyCMS->dbms->values($row, 'values') . "),\n";
-
                     }
                     $output = substr($output, 0, -2) . ($i ? $duplicateKey : '') . ";\n";
                     // we got output
@@ -296,7 +298,7 @@ class MyAdminProcess extends MyCommon
      * $post indexes [old_name], [file_rename], [subfolder] and [new_folder] are required.
      * If [new_folder] <> [subfolder] then file will be moved, otherwise just renamed.
      * If the new file exists then the operation is aborted.
-     * New file name must keep the same extension and consist only of letters, digits or ( ) . _ 
+     * New file name must keep the same extension and consist only of letters, digits or ( ) . _
      *
      * @param array &$post
      * @return void and output array JSON array containing indexes: "success" (bool), "messages" (string) and "data" (string) of renamed file, if successful
@@ -364,8 +366,7 @@ class MyAdminProcess extends MyCommon
                     // extract it to the path we determined above
                     $result['success'] = $ZipArchive->extractTo(DIR_ASSETS . $post['new_folder'] . '/');
                     $result['processed-files'] = $ZipArchive->numFiles;
-                    $result['messages'] = $result['success'] ? $this->tableAdmin->translate('Archive unpacked.') . ' ' . $this->tableAdmin->translate('Affected files: ') . $ZipArchive->numFiles . '.'
-                        : $this->tableAdmin->translate('Error occured unpacking the archive.');
+                    $result['messages'] = $result['success'] ? $this->tableAdmin->translate('Archive unpacked.') . ' ' . $this->tableAdmin->translate('Affected files: ') . $ZipArchive->numFiles . '.' : $this->tableAdmin->translate('Error occured unpacking the archive.');
                     Tools::addMessage($result['success'], $result['message']);
                     $ZipArchive->close();
                 } else {
@@ -562,8 +563,7 @@ class MyAdminProcess extends MyCommon
                     if ($row['active'] == '1' && $row['password_hashed'] == sha1($post['old-password'] . $row['salt'])) {
                         Tools::resolve($this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'admin
                     SET password_hashed="' . $this->MyCMS->escapeSQL(sha1($post['new-password'] . $row['salt'])) . '"
-                    WHERE admin="' . $this->MyCMS->escapeSQL($_SESSION['user']) . '"'), $this->tableAdmin->translate('Password was changed.'), $this->tableAdmin->translate('Error occured changing password.')
-                        , true, false); //this statement MUST NOT be logged by LogMysqli mechanism
+                    WHERE admin="' . $this->MyCMS->escapeSQL($_SESSION['user']) . '"'), $this->tableAdmin->translate('Password was changed.'), $this->tableAdmin->translate('Error occured changing password.'), true, false); // this statement MUST NOT be logged by LogMysqli mechanism
                         $this->redir();
                     }
                 }
@@ -601,7 +601,8 @@ class MyAdminProcess extends MyCommon
     public function processUserDelete(&$post)
     {
         if (isset($post['delete-user'])) {
-            Tools::resolve($this->MyCMS->dbms->query('DELETE FROM ' . TAB_PREFIX . 'admin WHERE admin="' . $this->MyCMS->escapeSQL($post['delete-user']) . '" LIMIT 1'),
+            Tools::resolve(
+                $this->MyCMS->dbms->query('DELETE FROM ' . TAB_PREFIX . 'admin WHERE admin="' . $this->MyCMS->escapeSQL($post['delete-user']) . '" LIMIT 1'),
                 $this->tableAdmin->translate('User deleted.'),
                 $this->tableAdmin->translate('Error occured deleting the user.')
             );

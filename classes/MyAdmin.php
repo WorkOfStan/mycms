@@ -1,4 +1,5 @@
 <?php
+
 namespace GodsDev\MyCMS;
 
 use GodsDev\Tools\Tools;
@@ -29,9 +30,8 @@ class MyAdmin extends MyCommon
             'styles/bootstrap-datetimepicker.css',
             'styles/summernote.css',
             'styles/admin.css?v=' . PAGE_RESOURCE_VERSION,
-            ],
+        ],
     ];
-    
     public $HTMLHeaders = [
         'viewport' => 'width=device-width, initial-scale=1',
         'X-XSS-Protection' => '0',
@@ -188,7 +188,7 @@ class MyAdmin extends MyCommon
                     <legend>' . $TableAdmin->translate('Upload') . '</legend>
                     <label for="subfolder">' . $TableAdmin->translate('Folder') . ':</label>
                     <select name="subfolder" id="subfolder" class="form-control">'
-                    . Tools::htmlOption('', DIR_ASSETS);
+            . Tools::htmlOption('', DIR_ASSETS);
         Tools::setifnull($_SESSION['assetsSubfolder'], '');
         if (!is_dir(DIR_ASSETS . $_SESSION['assetsSubfolder'])) {
             $_SESSION['assetsSubfolder'] = '';
@@ -211,8 +211,8 @@ class MyAdmin extends MyCommon
                 <button class="btn btn-secondary" title="' . $TableAdmin->translate('Delete') . '" id="delete-media-files"><i class="fa fa-check-square"></i> <i class="fa fa-trash"></i></button>
                 <fieldset class="d-inline-block position-relative" id="rename-fieldset">
                     <div class="input-group input-group-sm">
-                        <div class="input-group-prepend"><button class="btn btn-secondary disabled" type="button" title="' . $TableAdmin->translate('filename') . '" disabled><i class="fa fa-dot-circle"></i></button></div>' 
-                        . Tools::htmlInput('', '', '', ['class' => 'form-control form-control-sm', 'id' => 'media-file-name']) . '
+                        <div class="input-group-prepend"><button class="btn btn-secondary disabled" type="button" title="' . $TableAdmin->translate('filename') . '" disabled><i class="fa fa-dot-circle"></i></button></div>'
+            . Tools::htmlInput('', '', '', ['class' => 'form-control form-control-sm', 'id' => 'media-file-name']) . '
                     </div>
                 </fieldset>
                 <fieldset class="d-inline-block position-relative">
@@ -287,11 +287,11 @@ class MyAdmin extends MyCommon
                 foreach ($users as $user) {
                     $result .= '<li class="list-group-item">
                         <form action="" method="post" class="form-inline d-inline-block delete-user-form' . ($user['active'] == 1 ? '' : ' inactive-item') . '" onsubmit="return confirm(\'' . $TableAdmin->translate('Really delete?') . '\')">'
-                            . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden')
-                            . '<button type="submit" name="delete-user" value="' . Tools::h($user['admin']) . '"' . ($user['admin'] == $_SESSION['user'] ? ' disabled' : '') . ' class="btn btn-primary" title="' . $TableAdmin->translate('Delete user') . '?">'
-                            . '<i class="fa fa-user-times"></i></button> '
-                            . Tools::htmlInput('', '', $user['id'], ['type' => 'checkbox', 'checked' => ($user['active'] ? 1 : null), 'class' => 'user-activate', 'title' => $TableAdmin->translate('Activate/deactivate')]) . ' '
-                            . '<tt>' . Tools::h($user['admin']) . '</tt>
+                        . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden')
+                        . '<button type="submit" name="delete-user" value="' . Tools::h($user['admin']) . '"' . ($user['admin'] == $_SESSION['user'] ? ' disabled' : '') . ' class="btn btn-primary" title="' . $TableAdmin->translate('Delete user') . '?">'
+                        . '<i class="fa fa-user-times"></i></button> '
+                        . Tools::htmlInput('', '', $user['id'], ['type' => 'checkbox', 'checked' => ($user['active'] ? 1 : null), 'class' => 'user-activate', 'title' => $TableAdmin->translate('Activate/deactivate')]) . ' '
+                        . '<tt>' . Tools::h($user['admin']) . '</tt>
                         </form>
                         </li>' . PHP_EOL;
                 }
@@ -398,8 +398,7 @@ class MyAdmin extends MyCommon
     protected function outputBodyEnd()
     {
         $TableAdmin = $this->TableAdmin;
-        $result =
-            Tools::arrayListed(Tools::set($this->clientSideResources['js'], []), 0, '', '<script type="text/javascript" src="', '"></script>' . PHP_EOL)
+        $result = Tools::arrayListed(Tools::set($this->clientSideResources['js'], []), 0, '', '<script type="text/javascript" src="', '"></script>' . PHP_EOL)
 //            . (empty($this->javascripts) ? '' : ('<script type="text/javascript" src="' . implode('"></script><script type="text/javascript" src="', $this->javascripts) . '"></script>' ))
 //            <script type="text/javascript" src="scripts/bootstrap-datetimepicker.js"></script>
             . '<script type="text/javascript" src="scripts/jquery.sha1.js"></script>'
@@ -408,8 +407,8 @@ class MyAdmin extends MyCommon
             . '<script type="text/javascript" src="scripts/admin-specific.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
             . '<script type="text/javascript">' . PHP_EOL;
         $tmp = array_flip(explode('|', 'descending|Really delete?|New record|Passwords don\'t match!|Please, fill necessary data.|'
-            . 'Select at least one file and try again.|Select at least one record and try again.|No files|Edit|'
-            . 'variable|value|name|size|modified|Select|No records found.|Please, choose a new name.|Wrong input'));
+                . 'Select at least one file and try again.|Select at least one record and try again.|No files|Edit|'
+                . 'variable|value|name|size|modified|Select|No records found.|Please, choose a new name.|Wrong input'));
         foreach ($tmp as $key => $value) {
             $tmp[$key] = $TableAdmin->translate($key, false);
         }
@@ -426,7 +425,7 @@ class MyAdmin extends MyCommon
             . '    $("h2 .AdminRecordName").text(AdminRecordName.replaceAll(/<\/?[a-z][^>]*>/i, "").substr(0, 50));' . PHP_EOL
             . '}' . PHP_EOL
             . '});' . PHP_EOL
-            .' </script>';
+            . ' </script>';
         return $result;
     }
 
@@ -497,7 +496,7 @@ class MyAdmin extends MyCommon
             // table listing
             $result .= '<h2 class="sub-header">' . $TableAdmin->translate('Listing') . '</h2>'
                 . $this->outputTableBeforeListing()
-                . $TableAdmin->view(['return-output'=>1])
+                . $TableAdmin->view(['return-output' => 1])
                 . $this->outputTableAfterListing();
         }
         return $result;
@@ -588,7 +587,7 @@ class MyAdmin extends MyCommon
         foreach ($this->searchColumns as $key => $value) {
             $id = array_shift($value);
             $sql = 'SELECT ' . $this->TableAdmin->escapeDbIdentifier($id) . ','
-                . $this->TableAdmin->escapeDbIdentifier(strtr(reset($value), ['_#' => '_' . $_SESSION['language']])) 
+                . $this->TableAdmin->escapeDbIdentifier(strtr(reset($value), ['_#' => '_' . $_SESSION['language']]))
                 . ' FROM ' . $this->TableAdmin->escapeDbIdentifier(TAB_PREFIX . $key);
             $where = '';
             foreach ($value as $item) {
@@ -606,8 +605,7 @@ class MyAdmin extends MyCommon
                     for ($i = 1; $i < count($row); $i++) {
                         $row[$i] = strip_tags($row[$i]);
                         if (($p = stripos($row[$i], $keyword)) !== false) {
-                            $row[$i] = 
-                            preg_replace('~(' . preg_quote($keyword) . ')~six', '<b>${1}</b>', $row[$i]);
+                            $row[$i] = preg_replace('~(' . preg_quote($keyword) . ')~six', '<b>${1}</b>', $row[$i]);
                             $where .= '<li>…' . mb_substr($row[$i], max($p - 50, 0), strlen($keyword) + 100) . '…</li>' . PHP_EOL;
                         }
                     }
@@ -631,49 +629,53 @@ class MyAdmin extends MyCommon
     {
         Tools::setifnull($_POST['check'], []);
         $result = '<form action="" method="post" enctype="multipart/form-data" class="selected-records-form">'
-            . '<p class="lead">' . $this->TableAdmin->translate($clone ? 'Clone' : 'Edit selected') . ' (' . (isset($_POST['total-rows']) ? $_POST['total-rows'] : count($_POST['check'])) . ')</p>' 
-            . Tools::htmlInput('database-table', '' , $_POST['database-table'], 'hidden')
-            . Tools::htmlInput('token', '' , $_POST['token'], 'hidden')
-            . Tools::htmlInput('total-rows', '' , Tools::ifset($_POST['total-rows']), 'hidden')
+            . '<p class="lead">' . $this->TableAdmin->translate($clone ? 'Clone' : 'Edit selected') . ' (' . (isset($_POST['total-rows']) ? $_POST['total-rows'] : count($_POST['check'])) . ')</p>'
+            . Tools::htmlInput('database-table', '', $_POST['database-table'], 'hidden')
+            . Tools::htmlInput('token', '', $_POST['token'], 'hidden')
+            . Tools::htmlInput('total-rows', '', Tools::ifset($_POST['total-rows']), 'hidden')
             . '<table class="table table-striped table-edit-selected">';
         foreach ($this->TableAdmin->fields as $key => $value) {
             $result .= '<tr><th>' . $this->TableAdmin->translateColumn($key) . '</th>' . PHP_EOL
                 . '<td class="w-initial">';
-            $op = ['original' => $this->TableAdmin->translate('original'), 
-                        'value' => '=' //$this->TableAdmin->translate('value')
+            $op = ['original' => $this->TableAdmin->translate('original'),
+                'value' => '=' //$this->TableAdmin->translate('value')
                 ] + ($value['null'] ? ['null' => 'NULL'] : []);
             $opOptions = [
-                'class' => 'form-control w-initial p-1', 
-                'data-type' => $value['type'], 
+                'class' => 'form-control w-initial p-1',
+                'data-type' => $value['type'],
                 'data-for' => $key
             ];
             switch ($value['basictype']) {
                 case 'integer': case 'rational':
-                    $result .= Tools::htmlSelect("op[$key]", 
-                        $op + ['+' => '+', '-' => '-', '*' => '*', 'random' => 'random', 'uuid_short' => 'uuid_short'],
-                        '', $opOptions
-                    ) . '</td><td>' . Tools::htmlInput("fields[$key]", '', '', ['type' => 'number', 'class' => 'form-control edit-selected text-right w-initial', 'data-size' => $value['size']]) . '</td>';
+                    $result .= Tools::htmlSelect(
+                            "op[$key]",
+                            $op + ['+' => '+', '-' => '-', '*' => '*', 'random' => 'random', 'uuid_short' => 'uuid_short'],
+                            '',
+                            $opOptions
+                        ) . '</td><td>' . Tools::htmlInput("fields[$key]", '', '', ['type' => 'number', 'class' => 'form-control edit-selected text-right w-initial', 'data-size' => $value['size']]) . '</td>';
                     break;
                 case 'text': case 'binary':
                     if (Tools::among($value['type'], 'date', 'datetime', 'time', 'timestamp')) {
-                        $result .= Tools::htmlSelect("op[$key]", 
-                            $op
-                            + ['now' => 'now']
-                            + (Tools::among($value['type'], 'date', 'datetime') ? ['+interval' => '+interval', '-interval' => '-interval'] : []) 
-                            + (Tools::among($value['type'], 'datetime', 'time', 'timestamp') ? ['addtime' => 'addtime', 'subtime' => 'subtime'] : []),
-                            '', $opOptions
+                        $result .= Tools::htmlSelect(
+                                "op[$key]",
+                                $op + ['now' => 'now'] + (Tools::among($value['type'], 'date', 'datetime') ? ['+interval' => '+interval', '-interval' => '-interval'] : []) + (Tools::among($value['type'], 'datetime', 'time', 'timestamp') ? ['addtime' => 'addtime', 'subtime' => 'subtime'] : []),
+                                '',
+                                $opOptions
                         );
                     } else {
-                        $result .= Tools::htmlSelect("op[$key]", 
-                            $op + [
-                                'prepend' => $this->TableAdmin->translate('prepend'), 
-                                'append' => $this->TableAdmin->translate('append'), 
-                                'md5' => 'md5', 
-                                'sha1' => 'sha1', 
-                                'password' => 'password', 
+                        $result .= Tools::htmlSelect(
+                                "op[$key]",
+                                $op + [
+                                'prepend' => $this->TableAdmin->translate('prepend'),
+                                'append' => $this->TableAdmin->translate('append'),
+                                'md5' => 'md5',
+                                'sha1' => 'sha1',
+                                'password' => 'password',
                                 'uuid' => 'uuid',
                                 'uuid_short' => 'uuid_short'
-                            ], '', $opOptions
+                                ],
+                                '',
+                                $opOptions
                         );
                     }
                     $result .= '</td><td>';
@@ -686,24 +688,35 @@ class MyAdmin extends MyCommon
                 case 'choice':
                     $matches = $this->TableAdmin->decodeChoiceOptions($this->TableAdmin->fields[$key]['size']);
                     if ($value['type'] == 'set') {
-                        $result .= Tools::htmlSelect("op[$key]", 
-                            $op + [
-                                'add' => $this->TableAdmin->translate('add options'), 
-                                'remove' => $this->TableAdmin->translate('remove options'), 
-                            ], '', $opOptions
+                        $result .= Tools::htmlSelect(
+                                "op[$key]",
+                                $op + [
+                                'add' => $this->TableAdmin->translate('add options'),
+                                'remove' => $this->TableAdmin->translate('remove options'),
+                                ],
+                                '',
+                                $opOptions
                         );
                         $result .= '</td><td>' . Tools::htmlInput("fields[$key]", '', 1, 'hidden');
                         foreach ($matches as $matchKey => $match) {
-                            $result .= Tools::htmlInput("fields[$key][]", ($tmp = strtr($match, ["''" => "'", "\\\\" => "\\"])) === '' ? '<i>' . $this->TableAdmin->translate('nothing') . '</i>' : $tmp, 1 << $matchKey, 
-                                ['type' => 'checkbox', 'label-after' => true, 'class' => 'edit-selected', 'label-class' => 'ml-1 mr-2', 'random-id' => true, 'label-html' => $tmp === '']);
+                            $result .= Tools::htmlInput(
+                                    "fields[$key][]",
+                                    ($tmp = strtr($match, ["''" => "'", "\\\\" => "\\"])) === '' ? '<i>' . $this->TableAdmin->translate('nothing') . '</i>' : $tmp,
+                                    1 << $matchKey,
+                                    ['type' => 'checkbox', 'label-after' => true, 'class' => 'edit-selected', 'label-class' => 'ml-1 mr-2', 'random-id' => true, 'label-html' => $tmp === '']
+                            );
                         }
                     } else { //enum
-                        $result .= Tools::htmlSelect("op[$key]", $op, '', $opOptions) 
-                            . '</td><td>' 
+                        $result .= Tools::htmlSelect("op[$key]", $op, '', $opOptions)
+                            . '</td><td>'
                             . '<i>' . Tools::htmlInput("fields[$key]", $this->TableAdmin->translate('empty'), 0, ['type' => 'radio', 'class' => 'edit-selected', 'label-after' => true, 'label-class' => 'mr-2', 'random-id' => true]) . '</i>';
                         foreach ($matches as $matchKey => $match) {
-                            $result .= Tools::htmlInput("fields[$key]", ($tmp = strtr($match, ["''" => "'", "\\\\" => "\\"])) === '' ? '<i>' . $this->TableAdmin->translate('nothing') . '</i>' : $tmp, $matchKey + 1, 
-                                ['type' => 'radio', 'label-after' => true, 'class' => 'edit-selected', 'label-class' => 'ml-1 mr-2', 'random-id' => true, 'label-html' => $tmp === '']);
+                            $result .= Tools::htmlInput(
+                                    "fields[$key]",
+                                    ($tmp = strtr($match, ["''" => "'", "\\\\" => "\\"])) === '' ? '<i>' . $this->TableAdmin->translate('nothing') . '</i>' : $tmp,
+                                    $matchKey + 1,
+                                    ['type' => 'radio', 'label-after' => true, 'class' => 'edit-selected', 'label-class' => 'ml-1 mr-2', 'random-id' => true, 'label-html' => $tmp === '']
+                            );
                         }
                     }
                     $result .= '</td>' . PHP_EOL;
@@ -785,14 +798,13 @@ class MyAdmin extends MyCommon
         $output .= '<main class="ml-3 ml-sm-auto col-md-9 pt-3" role="main" id="admin-main">'
             . Tools::showMessages(false);
         foreach (glob(DIR_ASSETS . '*', GLOB_ONLYDIR) as $value) {
-            $this->ASSETS_SUBFOLDERS []= substr($value, strlen(DIR_ASSETS));
+            $this->ASSETS_SUBFOLDERS [] = substr($value, strlen(DIR_ASSETS));
         }
         // user not logged in - show a login form
-        if(!isset($_SESSION['user'])) {
+        if (!isset($_SESSION['user'])) {
             $output .= $this->outputLogin();
-        } else
-        // search results
-        if (isset($_SESSION['user']) && Tools::set($_GET['search'])) {
+        } elseif // search results
+        (isset($_SESSION['user']) && Tools::set($_GET['search'])) {
             $output .= $this->outputSearchResults($_GET['search']);
         }
         // table listing/editing
@@ -822,7 +834,7 @@ class MyAdmin extends MyCommon
             $output .= $this->outputImageSelector();
         }
         $output .= $this->outputBodyEnd()
-            . '</body>' . PHP_EOL .'</html>';
+            . '</body>' . PHP_EOL . '</html>';
         return $output;
     }
 
@@ -834,11 +846,14 @@ class MyAdmin extends MyCommon
         if (!isset($_SESSION['user'])) {
             $_GET['table'] = $_GET['media'] = $_GET['user'] = null;
         }
-        return mb_substr(Tools::set($_GET['table']), mb_strlen(TAB_PREFIX)) ?: 
-            (isset($_GET['user']) ? $this->TableAdmin->translate('User') : 
-                (isset($_GET['media']) ? $this->TableAdmin->translate('Media') : 
-                    (isset($_GET['search']) ? $this->TableAdmin->translate('Search') : '')
-                )
+        return mb_substr(Tools::set($_GET['table']), mb_strlen(TAB_PREFIX)) ?:
+            (
+            isset($_GET['user']) ? $this->TableAdmin->translate('User') :
+            (
+            isset($_GET['media']) ? $this->TableAdmin->translate('Media') :
+            (isset($_GET['search']) ? $this->TableAdmin->translate('Search') : '')
+            )
             );
     }
+
 }

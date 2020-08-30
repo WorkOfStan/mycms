@@ -76,7 +76,7 @@ class Mail extends MyCommon
     }
 
     /**
-     * 
+     *
      * @param string $to
      * @param string $subject
      * @param string $messageTxt
