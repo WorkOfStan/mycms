@@ -192,8 +192,10 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 * 200314: administrace FriendlyURL je v F4T/classes/Admin::outputSpecialMenuLinks() a ::sectionUrls() .. zobecnit do MyCMS a zapnout pokud FRIENDLY_URL == true
 * 200526: CMS: * 200526: If Texy is used (see only in MyTableAdmin `($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : '')` then describe it. Otherwise remove it from composer.json, Latte\CustomFilters\, ProjectCommon, dist\index.php.
 * 200526: update jquery 3.2.1 -> 3.5.1 and describe dependencies; and also other js libraries (maybe only in dist??)
-* 200529: Minimum of PHP 7.2 required now: PHPUnit latest + Phinx latest https://github.com/cakephp/phinx/releases .. planned for release 0.5.0
+* 200529: Minimum of PHP 7.2 required now: PHPUnit latest + Phinx latest <https://github.com/cakephp/phinx/releases> .. planned for release 0.5.0
 * 200608: replace all `array(` by `[`
 * 200622: once FriendlyUrl incl tests is part of develop - add github actions lint
 * 200819: refactor FORCE_301, FRIENDLY_URL and REDIRECTOR_ENABLED to a variable, so that all scenarios can be PHPUnit tested
 * 200819: consider REQUEST_URI query vs _GET - shouldn't just one source of truth be used?
+* 181228 <https://symfony.com/doc/current/components/yaml.html> -- pro načítání db spojení rovnou z yml namísto duplicitního zadávání do private.conf.php
+* 200314 v Admin.php mít příslušnou editační sekci FriendlyURL (dle F4T) .. pokud lze opravdu zobecnit

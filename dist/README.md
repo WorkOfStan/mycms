@@ -34,9 +34,9 @@ in the `/etc/apache2/apache2.conf`, there has to be this setting:
 
 # Web analytics
 
-Gtag version may be used only after https://github.com/googleanalytics/autotrack is updated to work with it.
+Gtag version may be used only after <https://github.com/googleanalytics/autotrack> is updated to work with it.
 I.e. probably when it will be out of beta.
-script/autotrack.V.V.V.js and script/autotrack.V.V.V.js.map are manually taken from current (v2.4.1) https://github.com/googleanalytics/autotrack repository.
+script/autotrack.V.V.V.js and script/autotrack.V.V.V.js.map are manually taken from current (v2.4.1) <https://github.com/googleanalytics/autotrack> repository.
 
 @todo - as GA events
 
@@ -352,12 +352,13 @@ When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in
 * 190611: add article and search page types including controller tests
 * 190611: Make SASS to CSS conversion automatic (e.g. gulp)
 * 200609: admin table (with salt etc.) SHOULD NOT be available through admin.php
-* 200712: migrate popper https://popper.js.org/docs/v2/migration-guide/ incl. map --> admin.php expects section
-* 200712: update bootstrap https://getbootstrap.com/ incl. map --> admin.php expects section
-* 200712: update jquery https://jquery.com/ incl. map --> admin.php expects section
+* 200712: migrate popper <https://popper.js.org/docs/v2/migration-guide/> incl. map --> admin.php expects section
+* 200712: update bootstrap <https://getbootstrap.com/> incl. map --> admin.php expects section
+* 200712: update jquery <https://jquery.com/> incl. map --> admin.php expects section
 * 200712: update fontawesome --> admin.php expects section
 * 200712: when adding new Content automatically uncheck the NULL checkbox so that something is saved!
 * 200712: remove unnecessary `sql =` constructs
 * 200802: test with 2 categories
 * 200802: image for product and category in assets
 * 200828: content_XX HTML field (for article) doesn't automatically uncheck null checkbox, therefore the UX is that you fill-in new text and it is not saved
+* 200826: <http://localhost:8080/godsdev/mycms/dist/admin.php?language=fr> nastaví jazyk položek do fr, ale v Settings se to nedá: ať se dá
