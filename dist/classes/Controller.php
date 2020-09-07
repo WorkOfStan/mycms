@@ -65,7 +65,6 @@ class Controller extends MyController
         parent::__construct($MyCMS, array_merge($options, [
             'friendlyUrl' => new FriendlyUrl($MyCMS, $options), //$this->friendlyUrl instantiated
         ]));
-        $this->projectSpecific = new ProjectSpecific($this->MyCMS, ['language' => $this->language]);
         //Note: $this->featureFlags is populated
     }
 
@@ -93,14 +92,22 @@ class Controller extends MyController
      */
     protected function prepareTemplate(array $options = [])
     {
-        $this->verboseBarDump($this->MyCMS->template, 'template used to prepareTemplate switch');
+        $this->verboseBarDump(['template' => $this->MyCMS->template, 'language' => $this->language], 'template used to prepareTemplate switch');
         Assert::inArray($this->httpMethod, ['GET', 'POST',], 'Unauthorized HTTP method %s');
         Debugger::barDump($requestMethod = $this->httpMethod, 'REQUEST_METHOD');
+        $this->projectSpecific = new ProjectSpecific($this->MyCMS, ['language' => $this->language]); // language is already properly set
         switch ($this->MyCMS->template) {
             case self::TEMPLATE_DEFAULT: return true;
             case self::TEMPLATE_NOT_FOUND: return true;
             case 'article':
-                Assert::integer((int) $this->get['id'], 'product MUST be identified by id');
+                if (array_key_exists('id', $this->get)) {
+                    Assert::integer($this->get['id'], 'article MUST be identified by id');
+                    $articleIdentifier = ' id=' . intval((int) $this->get['id']);
+                } else {
+                    Assert::keyExists($this->get, 'code', 'without id article MUST be identified by code');
+                    Assert::string($this->get['code'], 'article code MUST be string');
+                    $articleIdentifier = ' code LIKE "' . $this->MyCMS->escapeSQL($this->get['code']) . '"';
+                }
                 $this->MyCMS->context['article'] = $this->MyCMS->fetchSingle(
                     'SELECT id,'
                     . 'context,'
@@ -112,8 +119,13 @@ class Controller extends MyController
                     . ' FROM ' . TAB_PREFIX . 'content WHERE active="1" AND'
                     . ' type LIKE "article" AND'
 //                . ' name_' . $this->language . ' NOT LIKE "" AND' // hide product language variants with empty title
-                    . ' id=' . intval((int) $this->get['id']) . ' LIMIT 1'
+                    . $articleIdentifier
+                    . ' LIMIT 1'
                 );
+                if (is_null($this->MyCMS->context['article'])) {
+                    $this->MyCMS->template = self::TEMPLATE_NOT_FOUND;
+                    return true;
+                }
                 $this->MyCMS->context['article']['context'] = json_decode($this->MyCMS->context['article']['context'], true); //decodes json so that article context may be used within template
                 $this->MyCMS->context['pageTitle'] = $this->MyCMS->context['article']['title'];
                 $this->MyCMS->context['article']['image'] = array_key_exists('image', $this->MyCMS->context['article']['context']) ? (string) $this->MyCMS->context['article']['context']['image'] : '';
@@ -172,6 +184,7 @@ class Controller extends MyController
                 $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 4';
                 return true;
             case 'product':
+                Assert::keyExists($this->get, 'id', 'product MUST be identified by id');
                 $this->MyCMS->context['product'] = $this->projectSpecific->getProduct((int) $this->get['id']);
                 if (is_null($this->MyCMS->context['product'])) {
                     $this->MyCMS->template = self::TEMPLATE_NOT_FOUND;

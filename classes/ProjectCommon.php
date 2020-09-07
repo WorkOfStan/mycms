@@ -18,6 +18,9 @@ class ProjectCommon extends MyCommon
     /** @var string */
     protected $language;
 
+    /** @var string */
+    protected $requestUri = ''; //default is homepage
+
     /**
      * Shortcut for echo'<pre>'; var_dump(); and exit;
      * @param mixed variable(s) or expression to display

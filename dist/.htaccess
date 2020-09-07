@@ -15,7 +15,7 @@ RewriteRule ^(de|en|fr|sk|zh)/(styles|assets|fonts|images|scripts|api|favicon.ic
 # to index.php and set the language parameter
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(de|en|fr|sk|zh)?/?(.*)$ index.php?language=$1&$2 [L,QSA]
+RewriteRule ^(de/|en/|fr/|sk/|zh/)?(.*)$ index.php?language=$1&$2 [L,QSA]
 
 # Friendly share URL
 RewriteRule ^admin\.php(\?.*)?$ admin.php [L,QSA]

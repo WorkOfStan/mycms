@@ -15,8 +15,9 @@
         <link rel="stylesheet" href="{$applicationDir}styles/index.css?v={$pageResourceVersion}">
         {include 'favicon.latte'}
         <script>
-            GA_UID = {$gauid};
-            TOKEN = {$token};
+            var GA_UID = {$gauid};
+            var TOKEN = {$token};
+            var FEATURE_FLAGS = {$featureFlags};
         </script>
         {* Google Analytics Autotrack *}
         <script n:syntax="off">
@@ -53,12 +54,16 @@
         {block content}{/block}
         {include 'footer.latte'}
 
+        {if $featureFlags['offline_dev']}
+        <script src="{$applicationDir}scripts/jquery.js" crossorigin="anonymous"></script>
+        {else}
         <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+        {/if}
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
         <script src="{$applicationDir}scripts/lib/owlcarousel/owl.carousel.min.js"></script>
         <script src="https://cdn.rawgit.com/michalsnik/aos/2.1.1/dist/aos.js"></script>
+        {block script}{/block} {* Note: block script MUST use <script></script>. Script might include change of variables expected in index.js below. *}
         <script src="{$applicationDir}scripts/index.js?v={$pageResourceVersion}"></script>
-        {block script}{/block}
     </body>
 </html>

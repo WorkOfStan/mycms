@@ -22,5 +22,5 @@ $myCmsConf['dbms'] = new \GodsDev\MyCMS\LogMysqli(DB_HOST . ":" . DB_PORT, DB_US
 $MyCMS = new \GodsDev\mycmsprojectnamespace\MyCMSProject($myCmsConf);
 //set a known language
 $_SESSION['language'] = $MyCMS->getSessionLanguage($_GET, $_SESSION, false); //set also in PHPUnit test (do not set TRANSLATION by include, as language may be redetermined)
-$MyCMS->WEBSITE = $WEBSITE[$_SESSION['language']];
+//language might change later//$MyCMS->WEBSITE = $WEBSITE[$_SESSION['language']];
 define('PATH_CATEGORY', $MyCMS->SETTINGS['PATH_CATEGORY']);

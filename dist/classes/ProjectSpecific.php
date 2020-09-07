@@ -19,7 +19,7 @@ class ProjectSpecific extends ProjectCommon
      */
 
     /** @var string */
-    protected $requestUri = ''; //default is homepage
+//    protected $requestUri = ''; //default is homepage
 
     /**
      * Search for specified text in the database, return results

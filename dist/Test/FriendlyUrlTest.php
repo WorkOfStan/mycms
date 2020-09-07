@@ -517,6 +517,13 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
 //                'contains_text' => '',
                 'is_json' => false
             ],
+            [
+                'relative_url' => '?article&code=contacts',
+                'http_status' => 200,
+                'allow_redirect' => true,
+                'contains_text' => 'Adresa:',
+                'is_json' => false
+            ],
         ];
         $urlsToBeCheckedFriendlyUrlFalseForce301False = [
             [
@@ -646,7 +653,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             $result = $this->backyard->Http->getData($url, 'PHPUnit/' . \PHPUnit_Runner_Version::id() . ' ' . __FUNCTION__);
 //            var_dump("first RESULT for {$url}", $result);
             if (isset($singleUrl['redirect_contains']) && isset($result['REDIRECT_URL'])) {
-                $this->assertContains($singleUrl['redirect_contains'], $result['REDIRECT_URL'], 'Needle is not in the haystack.');
+                $this->assertContains($singleUrl['redirect_contains'], $result['REDIRECT_URL'], "Redirect '{$singleUrl['redirect_contains']}' needle is not in the haystack {$url}");
             }
             if (isset($singleUrl['allow_redirect']) && $singleUrl['allow_redirect'] && isset($result['REDIRECT_URL'])) {//fixes e.g. http to https 301 redirect
                 $result = $this->backyard->Http->getData($this->apiBaseDomain . $result['REDIRECT_URL'], 'PHPUnit/' . \PHPUnit_Runner_Version::id() . ' ' . __FUNCTION__);
@@ -659,7 +666,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             }
             $this->assertArrayHasKey('message_body', $result, "URL {$url} nevraci obsah.");
             if (isset($singleUrl['contains_text'])) {
-                $this->assertContains($singleUrl['contains_text'], $result['message_body'], 'Needle is not in the haystack.');
+                $this->assertContains($singleUrl['contains_text'], $result['message_body'], "Needle '{$singleUrl['contains_text']}' is not in the haystack {$url}");
             }
             if (isset($singleUrl['is_json']) && $singleUrl['is_json']) {
                 $jsonArr = json_decode($result['message_body'], true);

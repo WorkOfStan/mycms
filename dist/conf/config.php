@@ -155,7 +155,6 @@ $WEBSITE = [
     ],
 ];
 
-
 include_once __DIR__ . '/config.local.php'; // use config.local.dist.php as specimen
 // constants not set in config.local.php
 foreach (
@@ -190,8 +189,8 @@ if (isset($backyardConf['mail_for_admin_enabled']) && $backyardConf['mail_for_ad
 // default values for feature flags (use keys without spaces to avoid problems in javascript)
 $featureFlags = array_merge(
     [
-        'offline_dev' => false,
         'console_log_list_values' => false,
+        'offline_dev' => false,
     ],
     isset($featureFlags) ? $featureFlags : []
 ); // use default featureFlags even though nothing is set in `config.local.php`

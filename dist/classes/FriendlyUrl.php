@@ -50,6 +50,20 @@ class FriendlyUrl extends MyFriendlyUrl
     }
 
     /**
+     * SQL statement searching for $token in url_LL column of table(s) with content pieces addressed by FriendlyURL tokens
+     * The UNION on tables, where type is stored in a dedicated table of the same name, otherwise a column type within the table is expected is just the simplest way,
+     * but SQL statement may be adapted in any way so this method MAY be overidden in this child class
+     *
+     * @param string $token
+     * @return mixed null on empty result, false on database failure or one-dimensional array [id, type] on success
+     */
+//    protected function findFriendlyUrlToken($token)
+//    {
+//        Debugger::barDump(['token' => $token, 'typeToTableMapping' => $this->MyCMS->typeToTableMapping], 'findFriendlyUrlToken started');
+//        return $this->MyCMS->fetchSingle('SQL statement to retrieve `id` of `type` that matches the token');
+//    }
+
+    /**
      * Returns Friendly Url string for type=id URL if it is available or it returns type=id
      *
      * @param string $outputKey `type`
@@ -92,7 +106,6 @@ class FriendlyUrl extends MyFriendlyUrl
             default:
                 Debugger::log("switchParametric: undefined friendlyfyUrl for {$outputKey} => {$outputValue}", ILogger::ERROR);
         }
-
         return null;
     }
 
