@@ -66,8 +66,9 @@ class MyCMS extends MyCMSMonoLingual
      */
     public function getSessionLanguage(array $getArray, array $sessionArray, $makeInclude = true)
     {
-        $resultLanguage = (isset($getArray['language']) && isset($this->TRANSLATIONS[$getArray['language']])) ?
-            $getArray['language'] :
+        // rtrim($string, '/\\'); //strip both forward and back slashes to normalize both xx and xx/ to xx
+        $resultLanguage = (isset($getArray['language']) && isset($this->TRANSLATIONS[rtrim($getArray['language'], '/\\')])) ?
+            rtrim($getArray['language'], '/\\') :
             ((isset($sessionArray['language']) && isset($this->TRANSLATIONS[$sessionArray['language']])) ? $sessionArray['language'] : DEFAULT_LANGUAGE);
         if ($makeInclude) {
             $languageFile = DIR_TEMPLATE . '/../language-' . $resultLanguage . '.inc.php';
