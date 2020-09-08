@@ -90,8 +90,6 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             'get' => [
                 'about' => '',
             ],
-//            'session' => $_SESSION,
-            'sectionStyles' => ['red'],
         ]);
         $controller = $this->object->controller();
         $this->assertArrayHasKey('template', $controller);
@@ -99,8 +97,6 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('home', $controller['template']);
         $this->assertArrayHasKey('context', $controller);
         $this->assertInternalType('array', $controller['context']);
-//        $this->assertInternalType('array', $controller['context']['items']);
-//        $this->assertEquals(6, count($controller['context']['items']));
     }
 
     /**
@@ -112,7 +108,6 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         $options = [
             'get' => ['v1' => 'getSth'],
             'session' => ['v1' => 'getSth'],
-//            'sectionStyles' => ['red', 'blue',],
         ];
         $this->object = new Controller($this->myCms, $options);
         $this->assertEquals($options, $this->object->getVars());

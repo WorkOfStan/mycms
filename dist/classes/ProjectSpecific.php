@@ -18,9 +18,6 @@ class ProjectSpecific extends ProjectCommon
      * accepted attributes:
      */
 
-    /** @var string */
-//    protected $requestUri = ''; //default is homepage
-
     /**
      * Search for specified text in the database, return results
      * TODO: make this method useful for dist project as a demonstration
@@ -32,7 +29,7 @@ class ProjectSpecific extends ProjectCommon
      */
     public function searchResults($text, $offset = 0, &$totalRows = null)
     {
-        $result = array();
+        $result = [];
         $q = preg_quote($text);
         $query = $this->MyCMS->dbms->query('SELECT CONCAT("?article&id=", id) AS link,content_' . $this->language . ' AS title,LEFT(description_' . $this->language . ',1000) AS description
             FROM ' . TAB_PREFIX . 'content WHERE active="1" AND type IN ("page", "news") AND (content_' . $this->language . ' LIKE "%' . $q . '%" OR description_' . $this->language . ' LIKE "%' . $q . '%")
