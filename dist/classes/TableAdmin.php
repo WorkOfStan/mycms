@@ -6,6 +6,7 @@ use GodsDev\Tools\Tools;
 
 class TableAdmin extends \GodsDev\MyCMS\MyTableAdmin
 {
+    use \Nette\SmartObject;
 
     /**
      *
@@ -446,5 +447,4 @@ class TableAdmin extends \GodsDev\MyCMS\MyTableAdmin
     {
         return $row[$column];
     }
-
 }

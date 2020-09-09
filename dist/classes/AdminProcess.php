@@ -16,6 +16,8 @@ define('PROCESS_LIMIT', 100);
 
 class AdminProcess extends MyAdminProcess
 {
+    use \Nette\SmartObject;
+
     /**
      * accepted attributes:
      */
@@ -237,5 +239,4 @@ class AdminProcess extends MyAdminProcess
         }
         return $result;
     }
-
 }
