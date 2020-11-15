@@ -106,7 +106,7 @@ class MyFriendlyUrl extends MyCommon
      * ]
      * matchResult = (1=pattern matches `PARSE_PATH_PATTERN`, 0=it does not, or FALSE=error)
      *
-     * @param array $options
+     * @param array $options ['REQUEST_URI']
      * @return array|true `bool (true)` when `TEMPLATE_NOT_FOUND` || `array` with redir string field
      *     || `array` with token string field and matches array field (see above)
      */
@@ -322,6 +322,7 @@ class MyFriendlyUrl extends MyCommon
 
         //FRIENDLY URL & Redirect variables
         $friendlyUrlRedirectVariables = $this->friendlyIdentifyRedirect($options);
+Debugger::barDump( $this->friendlyIdentifyRedirect(['REDIRECT_URL' => $options['REDIRECT_URL'] . '?lang=fr'], 'fr');
         if (is_bool($friendlyUrlRedirectVariables) || isset($friendlyUrlRedirectVariables['redir'])) {
             return $friendlyUrlRedirectVariables;
         }
