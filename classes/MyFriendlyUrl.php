@@ -322,7 +322,15 @@ class MyFriendlyUrl extends MyCommon
 
         //FRIENDLY URL & Redirect variables
         $friendlyUrlRedirectVariables = $this->friendlyIdentifyRedirect($options);
-Debugger::barDump( $this->friendlyIdentifyRedirect(['REDIRECT_URL' => $options['REDIRECT_URL'] . '?lang=fr'], 'fr');
+
+        $tempLang = $tempLang2 = [];
+//        Debugger::barDump($this->MyCMS->TRANSLATIONS, 'TRANSLATIONS');
+        foreach ($this->MyCMS->TRANSLATIONS as $k => $v) {
+            $tempLang[$k] = $options['REQUEST_URI'] . '?language=' . $k;
+            $tempLang2[$k] = $this->friendlyIdentifyRedirect(['REQUEST_URI' => $tempLang[$k]]);
+        }
+//        Debugger::barDump($this->friendlyIdentifyRedirect(['REQUEST_URI' => $options['REQUEST_URI'] . '?language=fr']), 'fr');
+        Debugger::barDump(['langRedirUrl' => $tempLang, 'resultUrl' => $tempLang2], 'LANG REDIR TEST');
         if (is_bool($friendlyUrlRedirectVariables) || isset($friendlyUrlRedirectVariables['redir'])) {
             return $friendlyUrlRedirectVariables;
         }
