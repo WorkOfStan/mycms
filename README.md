@@ -61,6 +61,8 @@ before first running build
 or adapt the database content after running build
 or run build, see for yourself how it works, then adapt migrations, drop tables and run build again.
 
+The table with users and hashed passwords is named `TAB_PREFIX . 'admin'`.
+
 It is recommanded to adapt classes Contoller.php, FriendlyUrl.php and ProjectSpecific.php to your needs following the recommendations in comments.
 For deployment look also to [Deployment chapter](dist/README.md#deployment) and [Language management](dist/README.md#language-management) in dist/README.md.
 

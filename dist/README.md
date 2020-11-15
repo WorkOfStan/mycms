@@ -365,7 +365,7 @@ When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in
 
 
 ### TODO security
-* 200609: admin table (with salt etc.) SHOULD NOT be available through admin.php
+
 
 ### TODO other
 * 190611: add article and search page types including controller tests
@@ -378,4 +378,4 @@ When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in
 * 200802: test with 2 categories
 * 200802: image for product and category in assets
 * 200826: <http://localhost:8080/godsdev/mycms/dist/admin.php?language=fr> nastaví jazyk položek do fr, ale v Settings se to nedá: ať se dá
-* 200921: (MyCMS) properly fix         message: '#Parameter #2 $newvalue of function ini_set expects string, true given.#'    path: /github/workspace/set-environment.php
+* 200921: (MyCMS) properly fix message: '#Parameter #2 $newvalue of function ini_set expects string, true given.#'    path: /github/workspace/set-environment.php

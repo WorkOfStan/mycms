@@ -105,10 +105,12 @@ class MyTableLister
     public function getTables()
     {
         $this->tables = [];
-        //@todo database-specific
         $query = $this->dbms->query('SELECT TABLE_NAME, TABLE_COMMENT FROM information_schema.TABLES '
             . 'WHERE TABLE_SCHEMA = "' . $this->escapeSQL($this->database) . '"');
         while ($row = $query->fetch_row()) {
+            if ($row[0] === TAB_PREFIX . 'admin') {
+                continue; // admin table (or its rows) MUST NOT be accessed through admin.php
+            }
             $this->tables[$row[0]] = $row[1];
         }
     }
