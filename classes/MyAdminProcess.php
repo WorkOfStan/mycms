@@ -5,6 +5,7 @@ namespace GodsDev\MyCMS;
 use GodsDev\Tools\Tools;
 use GodsDev\MyCMS\MyCommon;
 use Tracy\Debugger;
+use Tracy\ILogger;
 
 /**
  * Class to process standard operations in MyCMS
@@ -572,14 +573,19 @@ class MyAdminProcess extends MyCommon
                     if ($row['active'] == '1' && $row['password_hashed'] == sha1($post['old-password'] . $row['salt'])) {
                         // TODO ask CRS2 Static method GodsDev\Tools\Tools::resolve() invoked with 5 parameters, 3 required.
                         Tools::resolve(
-                            $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'admin
+                            $this->MyCMS->dbms->query(
+                                'UPDATE ' . TAB_PREFIX . 'admin
                     SET password_hashed="' . $this->MyCMS->escapeSQL(sha1($post['new-password'] . $row['salt'])) . '"
-                    WHERE admin="' . $this->MyCMS->escapeSQL($_SESSION['user']) . '"'),
+                    WHERE admin="' . $this->MyCMS->escapeSQL($_SESSION['user']) . '"',
+                                1,
+                                false
+                            ),
                             $this->tableAdmin->translate('Password was changed.'),
                             $this->tableAdmin->translate('Error occured changing password.'),
                             true,
                             false
-                        ); // this statement MUST NOT be logged by LogMysqli mechanism
+                        );
+                        Debugger::log("User '{$_SESSION['user']}' changed password.", ILogger::INFO);
                         $this->redir();
                     }
                 }
@@ -600,10 +606,15 @@ class MyAdminProcess extends MyCommon
         if (isset($post['create-user'], $post['user'], $post['password'], $post['retype-password']) && $post['user'] && $post['password'] && $post['retype-password']) {
             $salt = mt_rand((int) 1e8, (int) 1e9);
             Tools::resolve(
-                $this->MyCMS->dbms->query('INSERT INTO ' . TAB_PREFIX . 'admin SET admin="' . $this->MyCMS->escapeSQL($post['user']) . '", password_hashed="' . $this->MyCMS->escapeSQL(sha1($post['password'] . $salt)) . '", salt=' . $salt . ', rights=2'),
+                $this->MyCMS->dbms->query(
+                    'INSERT INTO ' . TAB_PREFIX . 'admin SET admin="' . $this->MyCMS->escapeSQL($post['user']) . '", password_hashed="' . $this->MyCMS->escapeSQL(sha1($post['password'] . $salt)) . '", salt=' . $salt . ', rights=2',
+                    1,
+                    false
+                ),
                 $this->tableAdmin->translate('User added.'),
                 $this->tableAdmin->translate($this->MyCMS->dbms->errorDuplicateEntry() ? 'User already exists.' : 'Error occured adding the user.')
             );
+            Debugger::log("User '{$post['user']}' was created by '{$_SESSION['user']}'.", ILogger::INFO);
             $this->redir();
         }
     }

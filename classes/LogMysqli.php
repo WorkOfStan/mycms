@@ -65,7 +65,7 @@ class LogMysqli extends BackyardMysqli
     public function query($sql, $errorLogOutput = 1, $logQuery = true)
     {
         if ($logQuery && !preg_match('/^SELECT |^SET |^SHOW /i', $sql)) {
-            //mb_eregi_replace does not destroy e.g. character Š
+            //mb_eregi_replace does not destroy multi-byte characters such as character Š
             error_log(
                 trim(mb_eregi_replace('/\s+/', ' ', $sql)) . '; -- [' . date("d-M-Y H:i:s") . ']'
                 . (isset($_SESSION['user']) ? " by ({$_SESSION['user']})" : '') . PHP_EOL,

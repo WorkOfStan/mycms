@@ -194,7 +194,7 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 ### TODO Administration
 * 200314: administrace FriendlyURL je v F4T/classes/Admin::outputSpecialMenuLinks() a ::sectionUrls() .. zobecnit do MyCMS a zapnout pokud FRIENDLY_URL == true
 * 200314 v Admin.php mít příslušnou editační sekci FriendlyURL (dle F4T) .. pokud lze opravdu zobecnit
-* 200526: CMS: * 200526: If Texy is used (see only in MyTableAdmin `($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : '')` then describe it. Otherwise remove it from composer.json, Latte\CustomFilters\, ProjectCommon, dist\index.php.
+* 200526: CMS: If Texy is used (see only in MyTableAdmin `($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : '')` then describe it. Otherwise remove it from composer.json, Latte\CustomFilters\, ProjectCommon, dist\index.php.
 
 ### TODO Governance
 * 190705: v classes\LogMysqli.php probíhá logování `'log/sql' . date("Y-m-d") . '.log.sql');` do aktuálního adresáře volajícího skriptu - což u API není výhodné. Jak vycházet z APP_ROOT?
@@ -208,6 +208,3 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 
 ### TODO SECURITY
 * 190723: pokud jsou v té samé doméně dvě různé instance MyCMS, tak přihlášením do jednoho admin.php jsem přihlášen do všech, i když ten uživatel tam ani neexistuje
-* TO BE CHECKED 190723: nastavování hesla by se nemělo do log.sql ukládat - volat instanci BackyardMysqli namísto LogMysqli??
-@crs2: Řešilo by to přidání parametru (do query() v LogMysqli.php), který by volání error_log() potlačil? A poté u změny hesla volání tohoto parametru? + Ještě mě napadá řešení
-na úrovni samotného sloupce tabulky, tj. definování (v LogMysqli.php), které sloupce které tabulky obsahují citlivé údaje pro logování. Ale to by vyžadovalo parsing SQL.
