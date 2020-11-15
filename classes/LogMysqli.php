@@ -10,7 +10,6 @@ use GodsDev\Backyard\BackyardMysqli;
  */
 class LogMysqli extends BackyardMysqli
 {
-
     use \Nette\SmartObject;
 
     /** @var array keywords in current DBMS */
@@ -56,19 +55,26 @@ class LogMysqli extends BackyardMysqli
      * Logs SQL statement not starting with SELECT or SET
      *
      * @param string $sql SQL to execute
-     * @param bool $ERROR_LOG_OUTPUT optional
-     * @param bool $logQuery optional default logging of database changing statement can be (for security reasons) turned off by value false
-     * @return \mysqli_result Object|false
-     * @throws DBQueryException
+     * @param int $errorLogOutput optional default=1 turn-off=0
+     *   It is int in order to be compatible with
+     *   parameter $resultmode (int) of method mysqli::query()
+     * @param bool $logQuery optional default logging of database changing statement can be (for security reasons)
+     *     turned off by value false
+     * @return mixed \mysqli_result|false
      */
-    public function query($sql, $ERROR_LOG_OUTPUT = true, $logQuery = true)
+    public function query($sql, $errorLogOutput = 1, $logQuery = true)
     {
         if ($logQuery && !preg_match('/^SELECT |^SET |^SHOW /i', $sql)) {
             //mb_eregi_replace does not destroy e.g. character Š
-            error_log(trim(mb_eregi_replace('/\s+/', ' ', $sql)) . '; -- [' . date("d-M-Y H:i:s") . ']' . (isset($_SESSION['user']) ? " by ({$_SESSION['user']})" : '') . PHP_EOL, 3, 'log/sql' . date("Y-m-d") . '.log.sql');
+            error_log(
+                trim(mb_eregi_replace('/\s+/', ' ', $sql)) . '; -- [' . date("d-M-Y H:i:s") . ']'
+                . (isset($_SESSION['user']) ? " by ({$_SESSION['user']})" : '') . PHP_EOL,
+                3,
+                'log/sql' . date("Y-m-d") . '.log.sql'
+            );
         }
         $this->sqlStatementsArray[] = $sql;
-        return parent::query($sql, $ERROR_LOG_OUTPUT);
+        return parent::query($sql, $errorLogOutput);
     }
 
     public function getStatementsArray()
@@ -105,11 +111,13 @@ class LogMysqli extends BackyardMysqli
     /**
      * Decode options in 'set' and 'enum' columns - specific to MySQL/MariaDb
      *
-     * @param string $list list of options (e.g. "enum('single','married','divorced')" or just "'single','married','divorced'")
+     * @param string $list list of options (e.g. "enum('single','married','divorced')"
+     *     or just "'single','married','divorced'")
      * @return array
      */
     public function decodeChoiceOptions($list)
-    { //e.g. value: '0','a''b','c"d','e\\f','','g`h' should be ['0', "a'b", 'c"d', 'e\f', '', 'g`h'
+    {
+        //e.g. value: '0','a''b','c"d','e\\f','','g`h' should be ['0', "a'b", 'c"d', 'e\f', '', 'g`h'
         if (($result = substr($list, 0, 5) == 'enum(') || substr($list, 0, 4) == 'set(') {
             $list = substr($list, $result ? 5 : 4, -1);
         }
@@ -141,7 +149,8 @@ class LogMysqli extends BackyardMysqli
     }
 
     /**
-     * Check wheter given interval matches the format for expression used after MySQL's keyword 'INTERVAL' - specific to MySQL/MariaDb
+     * Check wheter given interval matches the format for expression used after MySQL's keyword 'INTERVAL'
+     * - specific to MySQL/MariaDb
      *
      * @param string $interval
      * @result int 1=yes, 0=no, false=error
@@ -150,6 +159,7 @@ class LogMysqli extends BackyardMysqli
     {
         $first = '\s*\-?\d+\s*';
         $int = '\s*\d+\s*';
+        // phpcs:ignore
         return preg_match("~^\s*((?:\-?\s*(?:\d*\.?\d+|\d+\.?\d*)(?:e[\+\-]?\d+)?)\s+(MICROSECOND|SECOND|MINUTE|HOUR|DAY|WEEK|MONTH|QUARTER|YEAR)"
             . "|\'$first.$int\'\s*(SECOND|MINUTE|HOUR|DAY)_MICROSECOND"
             . "|\'$first:$int\'\s*(MINUTE_SECOND|HOUR_SECOND)"
@@ -174,7 +184,10 @@ class LogMysqli extends BackyardMysqli
         foreach ($columns as $column) {
             $result .= ',';
             $escColumn = $this->escapeDbIdentifier($column);
-            if (isset($fields[$column]['type']) && ($fields[$column]['type'] == 'set' || $fields[$column]['type'] == 'enum')) {
+            if (
+                isset($fields[$column]['type']) &&
+                ($fields[$column]['type'] == 'set' || $fields[$column]['type'] == 'enum')
+            ) {
                 $result .= "$escColumn - 0 AS $escColumn"; //NULLs will persist
             } else {
                 $result .= $escColumn;
@@ -245,10 +258,11 @@ class LogMysqli extends BackyardMysqli
      * Example: 'SELECT id,name,surname FROM employees' --> [3=>[name=>"John", surname=>"Smith"], [...]]
      * If the first column is non-unique, results are joined into an array.
      * Example: 'SELECT department_id,name FROM employees' --> [1=>['John', 'Mary'], 2=>['Joe','Pete','Sally']]
-     * Example: 'SELECT division_id,name,surname FROM employees' --> [1=>[[name=>'John',surname=>'Doe'], [name=>'Mary',surname=>'Saint']], 2=>[...]]
+     * Example: 'SELECT division_id,name,surname FROM employees' -->
+     *     [1=>[[name=>'John',surname=>'Doe'], [name=>'Mary',surname=>'Saint']], 2=>[...]]
      *
      * @param string $sql SQL to be executed
-     * @return mixed - either associative array, empty array on empty SELECT, or false on error
+     * @return array|false - either associative array, empty array on empty SELECT, or false on error
      */
     public function fetchAndReindex($sql)
     {
@@ -282,11 +296,12 @@ class LogMysqli extends BackyardMysqli
     /**
      * Extract data from an array and present it as values, field names, or pairs.
      * @example: $data = ['id'=>5, 'name'=>'John', 'surname'=>'Doe'];
-     * $sql = 'INSERT INTO employees (' . $this->values($data, 'fields') . ') VALUES (' . $this->values($data, 'values') . ')';
+     * $sql = 'INSERT INTO employees (' . $this->values($data, 'fields')
+     *     . ') VALUES (' . $this->values($data, 'values') . ')';
      * $sql = 'UPDATE employees SET ' . $this->values($data, 'pairs') . ' WHERE id=5';
      *
      * @param array $data
-     * @param string format either "values" (default), "fields" or "pairs"
+     * @param string $format either "values" (default), "fields" or "pairs"
      *      or anything containing %value% for value and %column% for column name that gets replaced
      * @return string
      */
@@ -313,5 +328,4 @@ class LogMysqli extends BackyardMysqli
         }
         return substr($result, 2 /* length of the initial ", " */);
     }
-
 }

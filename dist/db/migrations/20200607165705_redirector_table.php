@@ -39,5 +39,4 @@ class RedirectorTable extends AbstractMigration
             ->addColumn('active', 'boolean', ['comment' => '0=inactive, 1=active', 'default' => 1])
             ->create();
     }
-
 }

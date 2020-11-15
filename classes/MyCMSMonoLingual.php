@@ -17,7 +17,6 @@ use Tracy\Debugger;
  */
 class MyCMSMonoLingual
 {
-
     use \Nette\SmartObject;
 
     /**
@@ -57,7 +56,10 @@ class MyCMSMonoLingual
             }
         }
         // Logger is obligatory
-        if (!is_object($this->logger) || !($this->logger instanceof LoggerInterface)) {
+        if (
+//            !is_object($this->logger) ||
+            !($this->logger instanceof LoggerInterface)
+        ) {
             error_log("Error: MyCMS constructed without logger. (" . get_class($this->logger) . ")");
             die('Fatal error - project is not configured.'); //@todo nicely formatted error page
         }
@@ -79,7 +81,7 @@ class MyCMSMonoLingual
             $_SESSION['token'] = [];
         }
         if (!$checkOnly || !count($_SESSION['token'])) {
-            $_SESSION['token'] [] = rand(1e8, 1e9);
+            $_SESSION['token'] [] = rand((int) 1e8, (int) 1e9);
         }
     }
 
@@ -90,7 +92,8 @@ class MyCMSMonoLingual
      */
     public function csrfCheck($token)
     {
-        return isset($token, $_SESSION['token']) && is_array($_SESSION['token']) && in_array($token, $_SESSION['token']);
+        // Variable $token always exists and is not nullable.
+        return isset($_SESSION['token']) && is_array($_SESSION['token']) && in_array($token, $_SESSION['token']);
     }
 
     /**
@@ -107,7 +110,8 @@ class MyCMSMonoLingual
     /**
      *
      * @param string $sql
-     * @return mixed first selected row (or its first column if only one column is selected), null on empty SELECT, or false on error
+     * @return mixed first selected row (or its first column if only one column is selected),
+     *     null on empty SELECT, or false on error
      */
     public function fetchSingle($sql)
     {
@@ -119,6 +123,11 @@ class MyCMSMonoLingual
         return $this->dbms->fetchAll($sql);
     }
 
+    /**
+     *
+     * @param string $sql SQL to be executed
+     * @return array|false - either associative array, empty array on empty SELECT, or false on error
+     */
     public function fetchAndReindex($sql)
     {
         return $this->dbms->fetchAndReindex($sql);
@@ -133,11 +142,15 @@ class MyCMSMonoLingual
      */
     public function renderLatte($dirTemplateCache, $customFilters, array $params)
     {
-        Debugger::getBar()->addPanel(new \GodsDev\MyCMS\Tracy\BarPanelTemplate('Template: ' . $this->template, $this->context));
+        Debugger::getBar()->addPanel(
+            new \GodsDev\MyCMS\Tracy\BarPanelTemplate('Template: ' . $this->template, $this->context)
+        );
         if (isset($_SESSION['user'])) {
-            Debugger::getBar()->addPanel(new \GodsDev\MyCMS\Tracy\BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION));
+            Debugger::getBar()->addPanel(
+                new \GodsDev\MyCMS\Tracy\BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION)
+            );
         }
-        $Latte = new \Latte\Engine;
+        $Latte = new \Latte\Engine();
         $Latte->setTempDirectory($dirTemplateCache);
         $Latte->addFilter(null, $customFilters);
         Debugger::barDump($params, 'Params');
@@ -145,8 +158,12 @@ class MyCMSMonoLingual
         $Latte->render('template/' . $this->template . '.latte', $params); //@todo make it configurable
         unset($_SESSION['messages']);
         if (!empty($this->dbms->getStatementsArray())) {
-            Debugger::getBar()->addPanel(new \GodsDev\MyCMS\Tracy\BarPanelTemplate('SQL: ' . count($this->dbms->getStatementsArray()), $this->dbms->getStatementsArray()));
+            Debugger::getBar()->addPanel(
+                new \GodsDev\MyCMS\Tracy\BarPanelTemplate(
+                    'SQL: ' . count($this->dbms->getStatementsArray()),
+                    $this->dbms->getStatementsArray()
+                )
+            );
         }
     }
-
 }

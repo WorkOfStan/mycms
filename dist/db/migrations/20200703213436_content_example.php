@@ -178,5 +178,4 @@ final class ContentExample extends AbstractMigration
             ->insert($redirectorSample)
             ->update();
     }
-
 }

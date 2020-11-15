@@ -1,0 +1,5 @@
+parameters:
+    level: 5
+    bootstrapFiles:
+      - config.php
+      #- ../.github/linters/conf/constants.php # uncomment if needed

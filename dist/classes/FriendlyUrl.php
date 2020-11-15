@@ -5,13 +5,11 @@ namespace GodsDev\mycmsprojectnamespace;
 use GodsDev\MyCMS\MyCMS;
 use GodsDev\MyCMS\MyFriendlyUrl;
 use GodsDev\mycmsprojectnamespace\ProjectSpecific;
-//use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use Tracy\ILogger;
 
 class FriendlyUrl extends MyFriendlyUrl
 {
-
     use \Nette\SmartObject;
 
     /**
@@ -22,13 +20,13 @@ class FriendlyUrl extends MyFriendlyUrl
     protected $get;
 
     /** @var string */
-    protected $requestUri = ''; //default is homepage
+    protected $requestUri = ''; // default is homepage
 
-    /** @var \GodsDev\mycmsprojectnamespace\ProjectSpecific */
+    /** @var ProjectSpecific */
     private $projectSpecific;
 
     /** @var string */
-    protected $language = DEFAULT_LANGUAGE; //default is Czech
+    protected $language = DEFAULT_LANGUAGE; // default is Czech
 
     /** @var string */
     protected $userAgent = '';
@@ -41,17 +39,20 @@ class FriendlyUrl extends MyFriendlyUrl
     {
         parent::__construct($MyCMS, $options);
         // construct a regexp rule from array_keys($MyCMS->TRANSLATIONS) without DEFAULT_LANGUAGE
-        $this->parsePathPattern = '~/(' . implode('/|', array_diff(array_keys($MyCMS->TRANSLATIONS), [DEFAULT_LANGUAGE])) . '/)?(.*/)?.*?~';
-        //TODO consider injecting projectSpecific from Controller instead of creating new instance
+        $this->parsePathPattern = '~/(' . implode(
+            '/|',
+            array_diff(array_keys($MyCMS->TRANSLATIONS), [DEFAULT_LANGUAGE])
+        ) . '/)?(.*/)?.*?~';
+        // TODO consider injecting projectSpecific from Controller instead of creating new instance
         $this->projectSpecific = new ProjectSpecific($this->MyCMS, [
             'language' => $this->language,
             'requestUri' => $this->requestUri,
         ]);
     }
-
     /**
-     * SQL statement searching for $token in url_LL column of table(s) with content pieces addressed by FriendlyURL tokens
-     * The UNION on tables, where type is stored in a dedicated table of the same name, otherwise a column type within the table is expected is just the simplest way,
+     * SQL statement to find $token in url_LL column of table(s) with content pieces addressed by FriendlyURL tokens
+     * The UNION on tables, where type is stored in a dedicated table of the same name, otherwise a column type within
+     * the table is expected is just the simplest way,
      * but SQL statement may be adapted in any way so this method MAY be overidden in this child class
      *
      * @param string $token
@@ -59,7 +60,10 @@ class FriendlyUrl extends MyFriendlyUrl
      */
 //    protected function findFriendlyUrlToken($token)
 //    {
-//        Debugger::barDump(['token' => $token, 'typeToTableMapping' => $this->MyCMS->typeToTableMapping], 'findFriendlyUrlToken started');
+//        Debugger::barDump(
+//            ['token' => $token, 'typeToTableMapping' => $this->MyCMS->typeToTableMapping],
+//            'findFriendlyUrlToken started'
+//        );
 //        return $this->MyCMS->fetchSingle('SQL statement to retrieve `id` of `type` that matches the token');
 //    }
 
@@ -68,7 +72,7 @@ class FriendlyUrl extends MyFriendlyUrl
      *
      * @param string $outputKey `type`
      * @param string $outputValue `id`
-     * @return mixed null (do not change the output) or string (URL - friendly or parametric)
+     * @return string|null null (do not change the output) or string (URL - friendly or parametric)
      */
     protected function switchParametric($outputKey, $outputValue)
     {
@@ -83,10 +87,12 @@ class FriendlyUrl extends MyFriendlyUrl
                     'SELECT id, name_' . $this->language . ' AS name,'
                     . $this->projectSpecific->getLinkSql("?article&id=", $this->language)
                     . ' FROM ' . TAB_PREFIX . 'content WHERE active = 1 AND '
-                    . (is_numeric($outputValue) ? ' id = "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"' : ' code LIKE "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"')
+                    . (is_numeric($outputValue) ? ' id = "' . $this->MyCMS->dbms->escapeSQL(
+                        $outputValue
+                    ) . '"' : ' code LIKE "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"')
                 );
                 Debugger::barDump($content, 'content piece');
-                return is_null($content) ? (self::PAGE_NOT_FOUND) : $content['link'];
+                return is_null($content) ? self::PAGE_NOT_FOUND : $content['link'];
             case 'category':
                 if (empty($outputValue)) {
                     return isset($this->get['offset']) ? "?category&offset=" . (int) $this->get['offset'] : "?category";
@@ -96,17 +102,19 @@ class FriendlyUrl extends MyFriendlyUrl
                     . ' FROM ' . TAB_PREFIX . 'category WHERE active = 1 '
                     . ' AND id = "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"');
                 Debugger::barDump($content, 'category');
-                return is_null($content) ? (self::PAGE_NOT_FOUND) : $content['link'];
+                return is_null($content) ? self::PAGE_NOT_FOUND : $content['link'];
             case 'language':
                 return null; // i.e. do not change the output or return "?{$outputKey}={$outputValue}";
             case 'product':
                 $content = $this->projectSpecific->getProduct((int) $outputValue);
                 Debugger::barDump($content, 'product');
-                return is_null($content) ? (self::PAGE_NOT_FOUND) : $content['link'];
+                return is_null($content) ? self::PAGE_NOT_FOUND : $content['link'];
             default:
-                Debugger::log("switchParametric: undefined friendlyfyUrl for {$outputKey} => {$outputValue}", ILogger::ERROR);
+                Debugger::log(
+                    "switchParametric: undefined friendlyfyUrl for {$outputKey} => {$outputValue}",
+                    ILogger::ERROR
+                );
         }
         return null;
     }
-
 }

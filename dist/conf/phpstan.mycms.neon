@@ -1,0 +1,20 @@
+includes:
+      - phpstan.common.neon
+
+parameters:
+    ignoreErrors:
+      -
+        message: '#Reflection error: PHPUnit_Framework_TestCase not found.#'
+        path: ../Test/*.php
+      -
+        message: '#Reflection error: Phinx\\Migration\\AbstractMigration not found.#'
+        path: ../db/migrations/*.php
+      -
+        message: '#Call to static method addMessage\(\) on an unknown class GodsDev\\Tools\\Tools.#'
+        path: ../process.php
+      -
+        message: '#Reflection error: Nette\\SmartObject not found\.#'
+        path: ../classes/Latte/CustomFilters.php
+      -
+        message: '#Call to static method redir\(\) on an unknown class GodsDev\\Tools\\Tools.#'
+        path: ../process.php

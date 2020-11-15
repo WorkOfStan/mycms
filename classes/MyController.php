@@ -26,9 +26,15 @@ class MyController extends MyCommon
     /**
      * HTTP request parameters
      *
-     * @var type
+     * @var array
      */
     protected $get;
+
+    /** @var string */
+    protected $language = DEFAULT_LANGUAGE;
+
+    /** @var string */
+    protected $requestUri = ''; //default is homepage
 
     /** @var array */
     protected $session;
@@ -59,7 +65,10 @@ class MyController extends MyCommon
             if (substr($this->friendlyUrl->applicationDir, -1) === '/') {
                 throw new \Exception('applicationDir MUST NOT end with slash');
             }
-            $this->result['context']['applicationDir'] = $this->friendlyUrl->applicationDir . '/'; // so that URL relative to root may be constructed in latte (e.g. language selector) $this->friendlyUrl->applicationDir never ends with / . Latte may use URL relative to domain root. $this->MyCMS->context['applicationDir'] always ends with /
+            // so that URL relative to root may be constructed in latte (e.g. language selector)
+            // $this->friendlyUrl->applicationDir never ends with / . Latte may use URL relative to domain root.
+            // $this->MyCMS->context['applicationDir'] always ends with /
+            $this->result['context']['applicationDir'] = $this->friendlyUrl->applicationDir . '/';
         }
     }
 
@@ -134,18 +143,25 @@ class MyController extends MyCommon
             Debugger::getBar()->addPanel(new BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION));
         }
         if (!empty($this->MyCMS->dbms->getStatementsArray())) {
-            Debugger::getBar()->addPanel(new BarPanelTemplate('SQL: ' . count($this->MyCMS->dbms->getStatementsArray()), $this->MyCMS->dbms->getStatementsArray()));
+            Debugger::getBar()->addPanel(
+                new BarPanelTemplate(
+                    'SQL: ' . count($this->MyCMS->dbms->getStatementsArray()),
+                    $this->MyCMS->dbms->getStatementsArray()
+                )
+            );
         }
         $this->MyCMS->logger->info("Redir to {$redir} with SESSION[language]={$_SESSION['language']}");
         header("Location: {$redir}", true, $httpCode); // Note: for SEO 301 is much better than 303
         header('Connection: close');
-        die('<script type="text/javascript">window.location=' . json_encode($redir) . ";</script>\n"
+        die(
+            '<script type="text/javascript">window.location=' . json_encode($redir) . ";</script>\n"
             . '<a href=' . urlencode($redir) . '>&rarr;</a>'
         );
     }
 
     /**
-     * Determines template, set Session language, runs prepareTemplate for single template and prepareAllTemplates for general transformations
+     * Determines template, set Session language, runs prepareTemplate for single template and prepareAllTemplates
+     * for general transformations
      * Outputs changed $MyCMS->template and $MyCMS->context as fields of an array
      *
      * @return array
@@ -159,16 +175,29 @@ class MyController extends MyCommon
         $options = ['REQUEST_URI' => $this->requestUri,];
 
         // prepare variables and set templates for each kind of request
-        $templateDetermined = $this->friendlyUrl->determineTemplate($options); // Note: $this->MyCMS->template = 'home'; already set in MyControler
-        $this->get = $this->friendlyUrl->getGet(); // so that the FriendlyURL translation to parametric URL is taken into account
+        // Note: $this->MyCMS->template = 'home'; already set in MyControler
+        $templateDetermined = $this->friendlyUrl->determineTemplate($options);
+        // so that the FriendlyURL translation to parametric URL is taken into account
+        $this->get = $this->friendlyUrl->getGet();
         // Note: $_SESSION['language'] je potřeba, protože to nastavuje stav jazyka pro browser
-        // Note: $this->session je potřeba, protože je ekvivalentní proměnné $_SESSION, která je vstupem MyCMS->getSessionLanguage
+        // Note: $this->session je potřeba, protože je ekvivalentní proměnné $_SESSION,
+        // která je vstupem MyCMS->getSessionLanguage
         // Note: $this->language je potřeba, protože nastavuje jazyk v rámci instance Controller
         $this->session['language'] = $this->language = $this->friendlyUrl->getLanguage();
-        $_SESSION['language'] = $this->MyCMS->getSessionLanguage(Tools::ifset($this->get, []), Tools::ifset($this->session, []), true); // Language is finally determined, therefore make the include creating TRANSLATION
-        $this->MyCMS->context['applicationDirLanguage'] = $this->MyCMS->context['applicationDir'] . (($_SESSION['language'] === DEFAULT_LANGUAGE) ? '' : ($_SESSION['language'] . '/'));
-        $this->MyCMS->logger->info("After determineTemplate: this->language={$this->language}, this->session['language']={$this->session['language']}, _SESSION['language']={$_SESSION['language']} this->get[language]=" . (isset($this->get['language']) ? $this->get['language'] : 'n/a'));
-        $this->verboseBarDump(['get' => $this->get, 'templateDetermined' => $templateDetermined, 'friendlyUrl->get' => $this->friendlyUrl->getGet()], 'get in controller after determineTemplate');
+        $_SESSION['language'] = $this->MyCMS->getSessionLanguage(
+            Tools::ifset($this->get, []),
+            Tools::ifset($this->session, []),
+            true // Language is finally determined, therefore make the include creating TRANSLATION
+        );
+        $this->MyCMS->context['applicationDirLanguage'] = $this->MyCMS->context['applicationDir']
+            . (($_SESSION['language'] === DEFAULT_LANGUAGE) ? '' : ($_SESSION['language'] . '/'));
+        $this->MyCMS->logger->info("After determineTemplate: this->language={$this->language}, "
+            . "this->session['language']={$this->session['language']}, _SESSION['language']={$_SESSION['language']} "
+            . "this->get[language]=" . (isset($this->get['language']) ? $this->get['language'] : 'n/a'));
+        $this->verboseBarDump([
+            'get' => $this->get,
+            'templateDetermined' => $templateDetermined, 'friendlyUrl->get' => $this->friendlyUrl->getGet()
+            ], 'get in controller after determineTemplate');
         if (is_string($templateDetermined)) {
             $this->MyCMS->template = $templateDetermined;
         } elseif (is_array($templateDetermined) && isset($templateDetermined['redir'])) {
@@ -190,5 +219,4 @@ class MyController extends MyCommon
             'context' => $this->MyCMS->context,
         ];
     }
-
 }

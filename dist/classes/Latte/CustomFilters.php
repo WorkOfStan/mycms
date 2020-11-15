@@ -12,7 +12,6 @@ use GodsDev\MyCMS\MyCMS;
  */
 class CustomFilters
 {
-
     use \Nette\SmartObject;
 
     /** @var \GodsDev\MyCMS\MyCMS */
@@ -37,7 +36,8 @@ class CustomFilters
         array_shift($args);
         /* if (strtolower($filter) == 'showmessages') {
           return ProjectSpecific::$filter();
-          } else */if (method_exists(__CLASS__, $filter)) {
+          } else */
+        if (method_exists(__CLASS__, $filter)) {
             return call_user_func_array([__CLASS__, $filter], $args);
         }
     }
@@ -52,7 +52,7 @@ class CustomFilters
         return mb_strtolower(mb_substr($s, 0, 1)) . mb_substr($s, 1);
     }
 
-    public static function webalize_($s)
+    public static function webalize($s)
     {
         return Tools::webalize($s);
     }
@@ -92,5 +92,4 @@ class CustomFilters
         }
         return $parameter;
     }
-
 }

@@ -2,19 +2,19 @@
 
 namespace GodsDev\MyCMS;
 
+use GodsDev\Tools\Tools;
+use GodsDev\MyCMS\MyCommon;
+use Tracy\Debugger;
+
 /**
  * Class to process standard operations in MyCMS
  * dependencies:
  *   ZipArchive
  *   TableAdmin.php
  */
-use GodsDev\Tools\Tools;
-//use GodsDev\MyCMS\MyCMS;
-use GodsDev\MyCMS\MyCommon;
-use Tracy\Debugger;
-
 class MyAdminProcess extends MyCommon
 {
+    use \Nette\SmartObject;
 
     /** @const int general limit of selected rows and repeated fields in export */
     const PROCESS_LIMIT = 100;
@@ -22,7 +22,7 @@ class MyAdminProcess extends MyCommon
     /** @var int how many seconds may pass before admin's record-editing tab is considered closed */
     protected $ACTIVITY_TIME_LIMIT = 180;
 
-    /** @var \GodsDev\MyCMS\TableAdmin */
+    /** @var \GodsDev\MyCMS\MyTableAdmin */
     protected $tableAdmin;
 
     /**
@@ -59,10 +59,10 @@ class MyAdminProcess extends MyCommon
      * Convert variables confining records of a table into a WHERE clause of a SQL statement.
      *
      * @param array $checks array of conditions, e.g. ["where[id]=4", "where[id]=5"]
-     * @param array &$errors this variable is filled with
+     * @param array $errors &$errors this variable is filled with
      * @return string SQL WHERE clause
      */
-    protected function filterChecks($checks, &$errors)
+    protected function filterChecks(array $checks, array &$errors)
     {
         $errors = [];
         $result = '';
@@ -71,6 +71,7 @@ class MyAdminProcess extends MyCommon
             foreach (explode('&', $check) as $condition) {
                 $condition = explode('=', $condition, 2);
                 if (Tools::begins($condition[0], 'where[') && Tools::ends($condition[0], ']')) { //@todo doesn't work for nulls
+                    // TODO fix: Call to function is_null() with string will always evaluate to false.
                     $condition[1] = is_null($condition[1]) ? ' IS NULL' : (is_numeric($condition[1]) ? ' = ' . $condition[1] : ' = "' . $this->tableAdmin->escapeSQL($condition[1]) . '"');
                     $partial .= ' AND ' . $this->tableAdmin->escapeDbIdentifier(substr($condition[0], 5, -1)) . $condition[1];
                 } else {
@@ -89,7 +90,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "activity" action - update activity column of all admins, delete old tabs.
      *
-     * @param array &$post $_POST
+     * @param array $post $_POST by reference
      * @return void and output JSON
      */
     public function processActivity(&$post)
@@ -121,7 +122,12 @@ class MyAdminProcess extends MyCommon
                 $tabs = array_values($tabs);
                 if ($admin['admin'] == $_SESSION['user']) {
                     if ($new) {
-                        $tabs [] = ['table' => $post['table'], 'id' => (int) $post['id'], 'token' => $post['token'], 'time' => time()];
+                        $tabs [] = [
+                            'table' => $post['table'],
+                            'id' => (int) $post['id'],
+                            'token' => $post['token'],
+                            'time' => time()
+                        ];
                     }
                 } elseif ($tabs) {
                     $online += $admin['admin'];
@@ -135,7 +141,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "clone" action.
      *
-     * @param array &$post $_POST
+     * @param array $post $_POST by reference
      * @return void
      */
     public function processClone(&$post)
@@ -152,6 +158,7 @@ class MyAdminProcess extends MyCommon
                     Tools::dump($post, $sql);
                     exit; //@todo
                 }
+                // TODO nedosažitelný kód - ask CRS2
                 if ($sql) {
                     $this->MyCMS->dbms->query('SELECT ');
                 } else {
@@ -166,7 +173,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "export" action. If $post[download] is non-zero prompt the output as a download attachment.
      *
-     * @param array &$post $_POST
+     * @param array $post $_POST by reference
      * @param array $get
      * @return void
      */
@@ -179,6 +186,7 @@ class MyAdminProcess extends MyCommon
                     $sql = $this->tableAdmin->selectSQL($columns, $_GET);
                     $sql = $sql['select'];
                 } else { //export only checked rows
+                    // TODO ask CRS2 - filterToSql doesn't exists. $errors isn't defined. $sql isn't defined.
                     $this->filterToSQL($get, $sql, $errors);
                     if ($errors) {
                         Tools::addMessage('warning', $this->tableAdmin->translate('Wrong input parameter') . ': ' . implode(', ', $errors));
@@ -224,7 +232,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "file delete" action.
      *
-     * @param array &$post $_POST
+     * @param array $post $_POST by reference
      * @return void and output array JSON array containing indexes: "success" (bool), "messages" (string), "processed-files" (int)
      */
     public function processFileDelete(&$post)
@@ -238,7 +246,7 @@ class MyAdminProcess extends MyCommon
             if (is_dir(DIR_ASSETS . $post['subfolder']) && is_array($post['delete-files'])) {
                 foreach ($post['delete-files'] as $value) {
                     if (unlink(DIR_ASSETS . $post['subfolder'] . "/$value")) {
-                        $result['processed-files'] ++;
+                        $result['processed-files']++;
                     }
                 }
                 Tools::addMessage('info', $result['message'] = $this->tableAdmin->translate('Total of deleted files: ') . $result['processed-files'] . '.');
@@ -253,7 +261,7 @@ class MyAdminProcess extends MyCommon
      * Files are added into the archive from the current directory and stored without directory.
      * The ZipArchive->addFile() method is used. Standard file/error handling is used.
      *
-     * @param array &$post $_POST
+     * @param array $post $_POST by reference
      * @return void and output array JSON array containing indexes: "success" (bool), "messages" (string), "processed-files" (int)
      */
     public function processFilePack(&$post)
@@ -270,7 +278,7 @@ class MyAdminProcess extends MyCommon
                 $result['messages'] = $this->tableAdmin->translate('This function is not supported.');
             } elseif (is_dir(DIR_ASSETS . $post['subfolder']) && is_array($post['pack-files']) && count($post['pack-files'])) {
                 $path = DIR_ASSETS . $post['subfolder'] . '/';
-                $ZipArchive = new \ZipArchive;
+                $ZipArchive = new \ZipArchive();
                 if ($open = $ZipArchive->open($path . $post['archive'], \ZipArchive::CREATE) === true) {
                     foreach ($post['pack-files'] as $file) {
                         if (file_exists($path . $file)) {
@@ -300,7 +308,7 @@ class MyAdminProcess extends MyCommon
      * If the new file exists then the operation is aborted.
      * New file name must keep the same extension and consist only of letters, digits or ( ) . _
      *
-     * @param array &$post
+     * @param array $post $_POST by reference
      * @return void and output array JSON array containing indexes: "success" (bool), "messages" (string) and "data" (string) of renamed file, if successful
      */
     public function processFileRename(&$post)
@@ -347,7 +355,7 @@ class MyAdminProcess extends MyCommon
      * 1) white list of file extentions
      * 2) file size limitation
      *
-     * @param array &$post $_POST
+     * @param array $post $_POST by reference
      * @return void and output array JSON array containing indexes: "success" (bool), "messages" (string), "processed-files" (int)
      */
     public function processFileUnpack(&$post)
@@ -361,13 +369,13 @@ class MyAdminProcess extends MyCommon
             if (class_exists('\ZipArchive')) {
                 $post['file_unpack'] = pathinfo($post['file_unpack'], PATHINFO_BASENAME);
                 $path = DIR_ASSETS . $post['subfolder'] . '/';
-                $ZipArchive = new \ZipArchive;
+                $ZipArchive = new \ZipArchive();
                 if ($ZipArchive->open($path . $post['file_unpack']) === true) {
                     // extract it to the path we determined above
                     $result['success'] = $ZipArchive->extractTo(DIR_ASSETS . $post['new_folder'] . '/');
                     $result['processed-files'] = $ZipArchive->numFiles;
                     $result['messages'] = $result['success'] ? $this->tableAdmin->translate('Archive unpacked.') . ' ' . $this->tableAdmin->translate('Affected files: ') . $ZipArchive->numFiles . '.' : $this->tableAdmin->translate('Error occured unpacking the archive.');
-                    Tools::addMessage($result['success'], $result['message']);
+                    Tools::addMessage($result['success'], $result['messages']);
                     $ZipArchive->close();
                 } else {
                     $result['messages'] = $this->tableAdmin->translate('Error occured unpacking the archive.');
@@ -383,7 +391,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "files upload" action.
      *
-     * @param array &$post $_POST
+     * @param array $post $_POST by reference
      * @return void and on success reload the page
      * @todo change to return bool success. Or add $post[redir] as an option
      */
@@ -421,7 +429,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "login" action.
      *
-     * @param array &$post $_POST
+     * @param array $post $_POST by reference
      * @return void
      */
     public function processLogin(&$post)
@@ -455,7 +463,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "logout" action.
      *
-     * @param array &$post $_POST
+     * @param array $post $_POST by reference
      * @return void
      */
     public function processLogout(&$post)
@@ -472,7 +480,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Return files in /assets or its subfolder
      *
-     * @param array &$post $_POST
+     * @param array $post $_POST by reference
      * @return void
      */
     public function processSubfolder(&$post)
@@ -490,6 +498,7 @@ class MyAdminProcess extends MyCommon
                 Tools::setifnotset($post['info'], null);
                 if ($post['info'] && class_exists('\ZipArchive')) {
                     $ZipArchive = new \ZipArchive();
+                    // todo ask CRS2 if this block should encapsulate also the following foreach or if otherwise it should fail with exception
                 }
                 foreach (glob(DIR_ASSETS . $post['subfolder'] . '/' . (isset($post['wildcard']) ? $post['wildcard'] : '*.*'), isset($post['wildcard']) ? GLOB_BRACE : 0) as $file) {
                     if (is_file($file)) {
@@ -531,7 +540,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "user change activation" action.
      *
-     * @param array &$post $_POST
+     * @param array $post $_POST by reference
      * @return void and output array JSON array containing indexes: "success" (bool), "data" (string) admin name
      */
     public function processUserActivation(&$post)
@@ -550,7 +559,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "user change password" action.
      *
-     * @param array &$post $_POST
+     * @param array $post $_POST by reference
      * @return void
      */
     public function processUserChangePassword(&$post)
@@ -561,9 +570,16 @@ class MyAdminProcess extends MyCommon
             } else {
                 if ($row = $this->MyCMS->fetchSingle('SELECT * FROM ' . TAB_PREFIX . 'admin WHERE admin="' . $this->MyCMS->escapeSQL($_SESSION['user']) . '"')) {
                     if ($row['active'] == '1' && $row['password_hashed'] == sha1($post['old-password'] . $row['salt'])) {
-                        Tools::resolve($this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'admin
+                        // TODO ask CRS2 Static method GodsDev\Tools\Tools::resolve() invoked with 5 parameters, 3 required.
+                        Tools::resolve(
+                            $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'admin
                     SET password_hashed="' . $this->MyCMS->escapeSQL(sha1($post['new-password'] . $row['salt'])) . '"
-                    WHERE admin="' . $this->MyCMS->escapeSQL($_SESSION['user']) . '"'), $this->tableAdmin->translate('Password was changed.'), $this->tableAdmin->translate('Error occured changing password.'), true, false); // this statement MUST NOT be logged by LogMysqli mechanism
+                    WHERE admin="' . $this->MyCMS->escapeSQL($_SESSION['user']) . '"'),
+                            $this->tableAdmin->translate('Password was changed.'),
+                            $this->tableAdmin->translate('Error occured changing password.'),
+                            true,
+                            false
+                        ); // this statement MUST NOT be logged by LogMysqli mechanism
                         $this->redir();
                     }
                 }
@@ -576,13 +592,13 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "user create" action.
      *
-     * @param array &$post $_POST
+     * @param array $post $_POST by reference
      * @return void
      */
     public function processUserCreate(&$post)
     {
         if (isset($post['create-user'], $post['user'], $post['password'], $post['retype-password']) && $post['user'] && $post['password'] && $post['retype-password']) {
-            $salt = mt_rand(1e8, 1e9);
+            $salt = mt_rand((int) 1e8, (int) 1e9);
             Tools::resolve(
                 $this->MyCMS->dbms->query('INSERT INTO ' . TAB_PREFIX . 'admin SET admin="' . $this->MyCMS->escapeSQL($post['user']) . '", password_hashed="' . $this->MyCMS->escapeSQL(sha1($post['password'] . $salt)) . '", salt=' . $salt . ', rights=2'),
                 $this->tableAdmin->translate('User added.'),
@@ -595,7 +611,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "user delete" action.
      *
-     * @param array &$post $_POST
+     * @param array $post $_POST by reference
      * @return void
      */
     public function processUserDelete(&$post)
@@ -621,5 +637,4 @@ class MyAdminProcess extends MyCommon
         $this->endAdmin();
         Tools::redir($url);
     }
-
 }

@@ -52,5 +52,4 @@ class InitAdminTable extends AbstractMigration
         $admin->insert($singleRow);
         $admin->saveData();
     }
-
 }

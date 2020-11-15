@@ -1,0 +1,24 @@
+parameters:
+    level: 5
+    bootstrapFiles:
+      - config.php
+      #- config.local.dist.php # comment as debugging
+      #- ../.github/linters/conf/constants.php # uncomment if needed
+    scanDirectories:
+      - ../classes
+    ignoreErrors:
+      # These variables are responsibility of the including/included script
+      -
+        message: '#Variable \$MyCMS might not be defined.#'
+        path: ../process.php
+      # The exceptions concerning always false/true compensate for environment dependent variables.
+      -
+        message: '#Right side of && is always false.#'
+        path: config.php
+      # Compensate for PHPUnit where $_POST may not be defined
+      -
+        message: '#Result of \|\| is always false.#'
+        path: ../process.php
+      -
+        message: '#Variable \$_POST in isset\(\) always exists and is not nullable#'
+        path: ../process.php

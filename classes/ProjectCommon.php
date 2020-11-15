@@ -2,13 +2,8 @@
 
 namespace GodsDev\MyCMS;
 
-use Tracy\Debugger;
-
 class ProjectCommon extends MyCommon
 {
-
-    //TODO: order methods alphabetically
-
     use \Nette\SmartObject;
 
     /**
@@ -21,9 +16,11 @@ class ProjectCommon extends MyCommon
     /** @var string */
     protected $requestUri = ''; //default is homepage
 
+    //TODO: order methods alphabetically
+
     /**
      * Shortcut for echo'<pre>'; var_dump(); and exit;
-     * @param mixed variable(s) or expression to display
+     * @param mixed $var variable(s) or expression to display
      */
     public static function dump($var)
     {
@@ -40,20 +37,28 @@ class ProjectCommon extends MyCommon
      * @param string $idPrefix e.g. ?article=
      * @param string $language
      * @param string $fieldName OPTIONAL field name with URL of the resulting array - default is 'link'
-     * @param string $sourceTable OPTIONAL name of the source table where default is null, i.e. there is no risk of ambiguous column url_XX
-     * @param string $sourceField OPTIONAL name of the source field where default is 'id', i.e. use where 'code' is needed
+     * @param string $sourceTable OPTIONAL name of the source table where default is null,
+     *     i.e. there is no risk of ambiguous column url_XX
+     * @param string $sourceField OPTIONAL name of the source field where default is 'id',
+     *     i.e. use where 'code' is needed
      * @return string
      */
     public function getLinkSql($idPrefix, $language, $fieldName = 'link', $sourceTable = null, $sourceField = 'id')
     {
         $addLanguageDirectory = ($language != DEFAULT_LANGUAGE) // other than default language should have its directory
             && !preg_match("~/$language/~", $this->requestUri); // unless the page already has it
-        $this->verboseBarDump($addLanguageDirectory, 'addLanguageDirectory getLinkSql - other then default and page does not have it');
-        return ' IF(' . (FRIENDLY_URL ? 1 : 0) . ',' . ' if(' . (is_null($sourceTable) ? '' : $sourceTable . '.') . '`url_' . $language . "` <> '', "
+        $this->verboseBarDump(
+            $addLanguageDirectory,
+            'addLanguageDirectory getLinkSql - other then default and page does not have it'
+        );
+        return ' IF(' . (FRIENDLY_URL ? 1 : 0) . ','
+            . ' if(' . (is_null($sourceTable) ? '' : $sourceTable . '.') . '`url_' . $language . "` <> '', "
             . ($addLanguageDirectory ? "CONCAT(\"{$language}/\", " : '')
             . (is_null($sourceTable) ? '' : $sourceTable . '.') . "`url_" . $language . '`'
             . ($addLanguageDirectory ? ')' : '')
-            . ', CONCAT("' . $idPrefix . '", ' . (is_null($sourceTable) ? '' : $sourceTable . '.') . $sourceField . ')) ' . ',CONCAT("' . $idPrefix . '",' . (is_null($sourceTable) ? '' : $sourceTable . '.') . $sourceField . '))'
+            . ', CONCAT("' . $idPrefix . '", '
+            . (is_null($sourceTable) ? '' : $sourceTable . '.') . $sourceField . ')) '
+            . ',CONCAT("' . $idPrefix . '",' . (is_null($sourceTable) ? '' : $sourceTable . '.') . $sourceField . '))'
             . " AS {$fieldName} ";
     }
 
@@ -93,7 +98,8 @@ class ProjectCommon extends MyCommon
     public static function localDate($stringOfTime, $language)
     {
         switch ($language) {
-            case 'cs': return date('j.n.Y', strtotime($stringOfTime));
+            case 'cs':
+                return date('j.n.Y', strtotime($stringOfTime));
         }
         //en
         return date('D, j M Y', strtotime($stringOfTime));
@@ -126,5 +132,4 @@ class ProjectCommon extends MyCommon
             ], $addReplacePatterns);
         return preg_replace(array_keys($replacePatterns), array_values($replacePatterns), $text);
     }
-
 }

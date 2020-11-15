@@ -4,7 +4,7 @@ Stay tuned while the new owner sorts through some stuff. (Oh, hi, I'm [David](ht
 
 ## Owl Carousel 2
 
-Touch enabled [jQuery](https://jquery.com/) plugin that lets you create a beautiful, responsive carousel slider. **To get started, check out https://owlcarousel2.github.io/OwlCarousel2/.**
+Touch enabled [jQuery](https://jquery.com/) plugin that lets you create a beautiful, responsive carousel slider. **To get started, check out <https://owlcarousel2.github.io/OwlCarousel2/>.**
 
 ## Quick start
 
@@ -84,16 +84,16 @@ $(document).ready(function(){
 
 ## Documentation
 
-The documentation, included in this repo in the root directory, is built with [Assemble](http://assemble.io/) and publicly available at https://owlcarousel2.github.io/OwlCarousel2/. The documentation may also be run locally.
+The documentation, included in this repo in the root directory, is built with [Assemble](http://assemble.io/) and publicly available at <https://owlcarousel2.github.io/OwlCarousel2/>. The documentation may also be run locally.
 
 ## Building
 
 This package comes with [Grunt](http://gruntjs.com/) and [Bower](http://bower.io/). The following tasks are available:
 
-  * `default` compiles the CSS and JS into `/dist` and builds the doc.
-  * `dist` compiles the CSS and JS into `/dist` only.
-  * `watch` watches source files and builds them automatically whenever you save.
-  * `test` runs [JSHint](http://www.jshint.com/) and [QUnit](http://qunitjs.com/) tests headlessly in [PhantomJS](http://phantomjs.org/).
+* `default` compiles the CSS and JS into `/dist` and builds the doc.
+* `dist` compiles the CSS and JS into `/dist` only.
+* `watch` watches source files and builds them automatically whenever you save.
+* `test` runs [JSHint](http://www.jshint.com/) and [QUnit](http://qunitjs.com/) tests headlessly in [PhantomJS](http://phantomjs.org/).
 
 To define which plugins are build into the distribution just edit `/_config.json` to fit your needs.
 

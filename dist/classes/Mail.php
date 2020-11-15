@@ -2,14 +2,13 @@
 
 namespace GodsDev\mycmsprojectnamespace;
 
-//TODO check if beberlei/assert was successfully replaced by Webmozart, check 2 Assert::email below
-use Webmozart\Assert\Assert;
 use GodsDev\MyCMS\MyCMS;
 use GodsDev\MyCMS\MyCommon;
+//TODO check if beberlei/assert was successfully replaced by Webmozart, check 2 Assert::email below
+use Webmozart\Assert\Assert;
 
 class Mail extends MyCommon
 {
-
     use \Nette\SmartObject;
 
     /**
@@ -25,7 +24,7 @@ class Mail extends MyCommon
     private $mailer = null;
 
     /**
-     * @param \GodsDev\MyCMS\MyCMS $MyCMS
+     * @param MyCMS $MyCMS
      * @param array $options overrides default values of properties
      */
     public function __construct(MyCMS $MyCMS, array $options = [])
@@ -81,7 +80,7 @@ class Mail extends MyCommon
      * @param string $subject
      * @param string $messageTxt
      * @param array $options
-     * @return mixed false or int
+     * @return int|false
      */
     public function sendMail($to, $subject, $messageTxt, array $options = [])
     {
@@ -106,7 +105,7 @@ class Mail extends MyCommon
             ->setBody(
 //                        file_get_contents($filenameTxt)
 //                "Test sender at {$timestamp} "
-            $messageTxt
+                $messageTxt
             )
         // And optionally an alternative body
         //              ->addPart(file_get_contents($filename), 'text/html')
@@ -119,5 +118,4 @@ class Mail extends MyCommon
         $this->logger->info("SENT {$to}/{$subject}/{$message} | count of recipients: [{$successfulRecipientCount}]");
         return $successfulRecipientCount;
     }
-
 }

@@ -117,5 +117,4 @@ class ContentTable extends AbstractMigration
             ->addIndex(['active'])
             ->update();
     }
-
 }

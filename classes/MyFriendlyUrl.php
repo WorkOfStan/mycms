@@ -7,13 +7,13 @@ use Tracy\Debugger;
 
 class MyFriendlyUrl extends MyCommon
 {
+    use \Nette\SmartObject;
 
     const PAGE_NOT_FOUND = '404';
 
-    use \Nette\SmartObject;
-
     /**
-     * interestingPath pattern to match `language subpattern` and the `rest of the path` in the method friendlyIdentifyRedirect
+     * interestingPath pattern to match `language subpattern` and the `rest of the path`
+     * in the method friendlyIdentifyRedirect
      * It SHOULD be changed by the child class FriendlyUrl to use the languages used in the MyCMS application
      *
      * @var string
@@ -65,13 +65,17 @@ class MyFriendlyUrl extends MyCommon
     {
         parent::__construct($MyCMS, $options);
         Debugger::barDump($options, 'friendlyUrl instantiated');
-        $this->verboseBarDump($this->applicationDir = (pathinfo($_SERVER["SCRIPT_NAME"], PATHINFO_DIRNAME) === '/' ? '' : pathinfo($_SERVER["SCRIPT_NAME"], PATHINFO_DIRNAME)), 'applicationDir'); // so that URL relative to root may be constructed in latte (e.g. language selector) It never ends with `/'
+        // so that URL relative to root may be constructed in latte (e.g. language selector) It never ends with `/'
+        $this->applicationDir = pathinfo($_SERVER["SCRIPT_NAME"], PATHINFO_DIRNAME) === '/'
+            ? '' : pathinfo($_SERVER["SCRIPT_NAME"], PATHINFO_DIRNAME);
+        $this->verboseBarDump($this->applicationDir, 'applicationDir');
     }
 
     /**
      * Wrapper for creating redir response
      *
-     * TODO: consider creating object redirWrapper that would be chacked as instanceof instead of checking for presence of field 'redir'. Only question is how to Debugger::getBar()->addPanel as done in MyController::redir
+     * TODO: consider creating object redirWrapper that would be checked as instanceof instead of checking for presence
+     * of field 'redir'. Only question is how to Debugger::getBar()->addPanel as done in MyController::redir
      *
      * @param string $url
      * @param string $barDumpTitle
@@ -80,7 +84,12 @@ class MyFriendlyUrl extends MyCommon
      */
     protected function redirWrapper($url, $barDumpTitle, $httpCode = 301)
     {
-        return ['redir' => $this->verboseBarDump($this->applicationDir . $url, 'redir identified: ' . $barDumpTitle), 'httpCode' => $httpCode];
+        return [
+            'redir' => $this->verboseBarDump(
+                $this->applicationDir . $url,
+                'redir identified: ' . $barDumpTitle
+            ), 'httpCode' => $httpCode
+        ];
     }
 
     /**
@@ -98,57 +107,132 @@ class MyFriendlyUrl extends MyCommon
      * matchResult = (1=pattern matches `PARSE_PATH_PATTERN`, 0=it does not, or FALSE=error)
      *
      * @param array $options
-     * @return mixed `bool (true)` when `TEMPLATE_NOT_FOUND` || `array` with redir string field || `array` with token string field and matches array field (see above)
+     * @return array|true `bool (true)` when `TEMPLATE_NOT_FOUND` || `array` with redir string field
+     *     || `array` with token string field and matches array field (see above)
      */
     protected function friendlyIdentifyRedirect(array $options = [])
     {
         $this->verboseBarDump($url = parse_url($options['REQUEST_URI']), 'friendlyIdentifyRedirect: parse_url');
-        $this->verboseBarDump($token = $this->MyCMS->escapeSQL(pathinfo($url['path'], PATHINFO_FILENAME)), 'friendlyIdentifyRedirect: token');
+        $this->verboseBarDump($token = $this->MyCMS->escapeSQL(
+            pathinfo(
+                $url['path'],
+                PATHINFO_FILENAME
+            )
+        ), 'friendlyIdentifyRedirect: token');
         //PAGE NOT FOUND
         if ($token === self::PAGE_NOT_FOUND) {
             $this->MyCMS->template = self::TEMPLATE_NOT_FOUND;
             return true;
         }
-        $this->verboseBarDump(['FORCE_301' => FORCE_301, 'FRIENDLY_URL' => FRIENDLY_URL, 'REDIRECTOR_ENABLED' => REDIRECTOR_ENABLED,], 'Constants');
+        $this->verboseBarDump(
+            ['FORCE_301' => FORCE_301, 'FRIENDLY_URL' => FRIENDLY_URL, 'REDIRECTOR_ENABLED' => REDIRECTOR_ENABLED,],
+            'Constants'
+        );
         //part of PATH beyond applicationDir
-        $this->verboseBarDump($interestingPath = (substr($url['path'], 0, strlen($this->applicationDir)) === $this->applicationDir) ? (substr($url['path'], strlen($this->applicationDir))) : $url['path'], 'friendlyIdentifyRedirect: interestingPath');
+        $this->verboseBarDump($interestingPath = (substr(
+            $url['path'],
+            0,
+            strlen(
+                $this->applicationDir
+            )
+        ) === $this->applicationDir) ? (substr(
+            $url['path'],
+            strlen($this->applicationDir)
+        )) : $url['path'], 'friendlyIdentifyRedirect: interestingPath');
 
-        //if FORCE_301 set as true and it is possible, redir to Friendly URLs (if FRIENDLY_URL and set) to Friendly URLs or to simple parametric URLs (type=id) //TODO: explain better
-        if (FORCE_301 && !empty($this->verboseBarDump($friendlyUrl = $this->friendlyfyUrl(isset($url['query']) ? '?' . $url['query'] : ''), 'friendlyIdentifyRedirect: friendlyUrl'))) {
+        //if FORCE_301 set as true and it is possible, redir to Friendly URLs (if FRIENDLY_URL and set)
+        //to Friendly URLs or to simple parametric URLs (type=id) //TODO: explain better
+        if (
+            FORCE_301 && !empty($this->verboseBarDump(
+                $friendlyUrl = $this->friendlyfyUrl(isset($url['query']) ? '?' . $url['query'] : ''),
+                'friendlyIdentifyRedirect: friendlyUrl'
+            ))
+        ) {
             if (($friendlyUrl != ('?' . $url['query']))) {
-                $this->verboseBarDump($addLanguageDirectory = ($this->language != DEFAULT_LANGUAGE) // other than default language should have its directory
-                    && !preg_match("~^{$this->language}/~", $friendlyUrl), 'friendlyIdentifyRedirect: addLanguageDirectory 301 friendly'); // unless the friendlyURL already has it
-                return $this->redirWrapper(($addLanguageDirectory ? '/' . $this->language : '') . '/' . $friendlyUrl, 'SEO Force 301 friendly');
-            } elseif ($interestingPath != '/' && $interestingPath != "/{$this->language}/"
-            ) {
-                $this->verboseBarDump($addLanguageDirectory = ($this->language != DEFAULT_LANGUAGE) // other than default language should have its directory
-                    && !preg_match("~^language={$this->language}~", $friendlyUrl), 'friendlyIdentifyRedirect: addLanguageDirectory 301 parametric'); // unless the friendlyURL already has it
-                return $this->redirWrapper('/' . $friendlyUrl . ($addLanguageDirectory ? "&language={$this->language}" : ''), 'SEO Force 301 parametric');
+                // other than default language should have its directory
+                $this->verboseBarDump(
+                    $addLanguageDirectory = ($this->language != DEFAULT_LANGUAGE)
+                    // unless the friendlyURL already has it
+                    && !preg_match("~^{$this->language}/~", $friendlyUrl),
+                    'friendlyIdentifyRedirect: addLanguageDirectory 301 friendly'
+                );
+                return $this->redirWrapper(
+                    ($addLanguageDirectory ? '/' . $this->language : '') . '/' . $friendlyUrl,
+                    'SEO Force 301 friendly'
+                );
+            } elseif ($interestingPath != '/' && $interestingPath != "/{$this->language}/") {
+                // other than default language should have its directory
+                $this->verboseBarDump(
+                    $addLanguageDirectory = ($this->language != DEFAULT_LANGUAGE)
+                    // unless the friendlyURL already has it
+                    && !preg_match("~^language={$this->language}~", $friendlyUrl),
+                    'friendlyIdentifyRedirect: addLanguageDirectory 301 parametric'
+                );
+                return $this->redirWrapper(
+                    '/' . $friendlyUrl . ($addLanguageDirectory ? "&language={$this->language}" : ''),
+                    'SEO Force 301 parametric'
+                );
             }
         }
 
         $matches = [];
         $matchResult = preg_match($this->parsePathPattern, $interestingPath, $matches);
-        $this->verboseBarDump(['parsePathPattern' => $this->parsePathPattern, 'folderInPath matches' => $matches, 'match result' => $matchResult], 'match result (1=pattern matches given subject, 0=it does not, or FALSE=error)');
+        $this->verboseBarDump([
+            'parsePathPattern' => $this->parsePathPattern,
+            'folderInPath matches' => $matches,
+            'match result' => $matchResult
+            ], 'match result (1=pattern matches given subject, 0=it does not, or FALSE=error)');
         //language reset if path requires it
-        if (isset($matches[1]) && !(substr($interestingPath, 0, strlen('/assets/')) === '/assets/')) { // non-existent page resources SHOULD NOT change the web language to the default
+        if (isset($matches[1]) && !(substr($interestingPath, 0, strlen('/assets/')) === '/assets/')) {
+            // non-existent page resources SHOULD NOT change the web language to the default
             // transforms 'en/' to 'en' //$makeInclude=false as $this->MyCMS->TRANSLATION is already set.
-            $this->verboseBarDump($this->language = $this->MyCMS->getSessionLanguage(['language' => substr($matches[1], 0, 2)], $this->session, false), 'friendlyIdentifyRedirect: Language reset according to path');
-        } elseif (!isset($matches[1]) && FORCE_301 && ($this->language != DEFAULT_LANGUAGE) && (!isset($this->get['language']))
+            $this->verboseBarDump(
+                $this->language = $this->MyCMS->getSessionLanguage(
+                    ['language' => substr($matches[1], 0, 2)],
+                    $this->session,
+                    false
+                ),
+                'friendlyIdentifyRedirect: Language reset according to path'
+            );
+        } elseif (
+            !isset($matches[1]) && FORCE_301 && ($this->language != DEFAULT_LANGUAGE)
+            && (!isset($this->get['language']))
         ) {
-            return $this->redirWrapper($interestingPath . '?' . http_build_query(array_merge(['language' => DEFAULT_LANGUAGE], $this->get)), 'SEO Force 302 language folder', 302);
+            return $this->redirWrapper(
+                $interestingPath . '?' . http_build_query(array_merge(['language' => DEFAULT_LANGUAGE], $this->get)),
+                'SEO Force 302 language folder',
+                302
+            );
         }
         // If there is a redirect specified
-        if (REDIRECTOR_ENABLED && $this->verboseBarDump(($found = $this->MyCMS->fetchSingle('SELECT `new_url` FROM ' . TAB_PREFIX . 'redirector WHERE `old_url`="' . $interestingPath . '" AND `active` = "1"')), 'friendlyIdentifyRedirect: found redirect')) {
-            // Multiple directories, such as /spolecnost/tiskove-centrum/logo-ke-stazeni.html -> /index.php?category&id=14
+        if (
+            REDIRECTOR_ENABLED && $this->verboseBarDump(
+                (
+                    $found = $this->MyCMS->fetchSingle(
+                        'SELECT `new_url` FROM ' . TAB_PREFIX . 'redirector WHERE `old_url`="' . $interestingPath
+                        . '" AND `active` = "1"'
+                    )
+                ),
+                'friendlyIdentifyRedirect: found redirect'
+            )
+        ) {
+            // Multiple directories,
+            // such as /spolecnost/tiskove-centrum/logo-ke-stazeni.html -> /index.php?category&id=14
             return $this->redirWrapper($found, 'old to new redirector');
         }
 
-        // If there are more (non language) folders, the base of relative URLs would be incorrect, therefore either redirect to a base URL with query parameters or to a 404 Page not found.
+        // If there are more (non language) folders, the base of relative URLs would be incorrect, therefore either
+        // redirect to a base URL with query parameters or to a 404 Page not found.
         if ($this->verboseBarDump(isset($matches[2]), 'friendlyIdentifyRedirect: folderInPath')) {
-            $this->verboseBarDump($addLanguageDirectory = FRIENDLY_URL && $this->language != DEFAULT_LANGUAGE // other than default language should have its directory
-                && !preg_match("~/{$this->language}/~", $this->requestUri), 'friendlyIdentifyRedirect: addLanguageDirectory many folders'); // unless the page already has it
-            return isset($url['query']) ? $this->redirWrapper('/?' . $url['query'], 'complex URL with params') : $this->redirWrapper(($addLanguageDirectory ? "/{$this->language}/" : '/') . self::PAGE_NOT_FOUND . '?url=' . $interestingPath, '404 for complex unknown URL');
+            $this->verboseBarDump(
+                $addLanguageDirectory = FRIENDLY_URL && $this->language != DEFAULT_LANGUAGE
+                // other than default language should have its directory
+                && !preg_match("~/{$this->language}/~", $this->requestUri),
+                'friendlyIdentifyRedirect: addLanguageDirectory many folders'
+            ); // unless the page already has it
+            return isset($url['query']) ? $this->redirWrapper('/?' . $url['query'], 'complex URL with params')
+                : $this->redirWrapper(($addLanguageDirectory ? "/{$this->language}/" : '/')
+                    . self::PAGE_NOT_FOUND . '?url=' . $interestingPath, '404 for complex unknown URL');
         }
         return $this->verboseBarDump(compact('token', 'matches'), 'friendlyIdentifyRedirect: return [token, matches]');
     }
@@ -156,7 +240,7 @@ class MyFriendlyUrl extends MyCommon
     /**
      * Checks rules against current get parameters
      *
-     * @return mixed string template name on success, null on necessity to continue
+     * @return string|null string template name on success, null on necessity to continue
      */
     private function parametricRuleToTemplate()
     {
@@ -165,20 +249,42 @@ class MyFriendlyUrl extends MyCommon
             if (!isset($this->get[$getParam])) { // skip irrelevant rules
                 continue;
             }
-            $this->MyCMS->logger->info(print_r($this->verboseBarDump($assignement, 'determineTemplate: assignement loop'), true));
-            $this->MyCMS->logger->info($this->verboseBarDump("{$getParam} may lead to '{$assignement['template']}' template", 'determineTemplate: template assignement'));
+            $this->MyCMS->logger->info(print_r(
+                $this->verboseBarDump(
+                    $assignement,
+                    'determineTemplate: assignement loop'
+                ),
+                true
+            ));
+            $this->MyCMS->logger->info($this->verboseBarDump(
+                "{$getParam} may lead to '{$assignement['template']}' template",
+                'determineTemplate: template assignement'
+            ));
             if (!isset($assignement['idcode']) || $assignement['idcode'] === false) {
-                return $this->verboseBarDump($assignement['template'], 'determineTemplate: assignement established from get parameter name');
+                return $this->verboseBarDump(
+                    $assignement['template'],
+                    'determineTemplate: assignement established from get parameter name'
+                );
             }
             if (isset($this->get['id']) || isset($this->get['code'])) {
                 if (isset($this->get['id'])) {
-                    $this->get['id'] = filter_var($tempGetId = $this->get['id'], FILTER_VALIDATE_INT, array('default' => 0, 'min_range' => 0, 'max_range' => 1e9));
+                    $this->get['id'] = filter_var(
+                        $tempGetId = $this->get['id'],
+                        FILTER_VALIDATE_INT,
+                        ['default' => 0, 'min_range' => 0, 'max_range' => 1e9]
+                    );
                     if (!$this->get['id']) {
-                        $this->MyCMS->logger->error($this->verboseBarDump("this->get['id'] {$tempGetId} did not pass number filter", "get id did not pass filter"));
+                        $this->MyCMS->logger->error($this->verboseBarDump(
+                            "this->get['id'] {$tempGetId} did not pass number filter",
+                            "get id did not pass filter"
+                        ));
                         return self::TEMPLATE_NOT_FOUND;
                     }
                 }
-                return $this->verboseBarDump($assignement['template'], 'determineTemplate: assignement established from id or code parameter');
+                return $this->verboseBarDump(
+                    $assignement['template'],
+                    'determineTemplate: assignement established from id or code parameter'
+                );
             }
         }
         return null;
@@ -188,30 +294,39 @@ class MyFriendlyUrl extends MyCommon
      * Determines which template will be used (or redirect should be performed)
      *
      * How does it work:
-     * If the URL matches redirector/old_url, then ['redir' => redirector/new_url] is returned so that 301 redirect may be performed.
+     * If the URL matches redirector/old_url, then ['redir' => redirector/new_url] is returned
+     * so that 301 redirect may be performed.
      * First match of parametes returns flow back to self::controller().
-     * If friendly URL is matched, then get parameters are set and this method is called recursively (to find match of parameters.)
+     * If friendly URL is matched, then get parameters are set and this method is called recursively
+     * (to find match of parameters.)
      *
      * Note:
      * The default template already set in MyControler as `$this->MyCMS->template = 'home';
-     * $this->MyCMS->templateAssignementParametricRules is array where key is get parameter and value is array of 'template' => template-name and optionally (bool)'idcode' if value is not in $_GET[key] but either in (int)id or (string)code GET parameters
+     * $this->MyCMS->templateAssignementParametricRules is array where key is get parameter and value is array
+     * of 'template' => template-name and optionally (bool)'idcode' if value is not in $_GET[key]
+     * but either in (int)id or (string)code GET parameters
      *
-     * TODO: simplify management of TEMPLATE_NOT_FOUND result as currently it is indicated as self::TEMPLATE_NOT_FOUND || null || true
-     * TODO: refactor this method as a single return with conditions
+     * TODO: simplify management of TEMPLATE_NOT_FOUND result as currently it is indicated
+     * as self::TEMPLATE_NOT_FOUND || null || true
      *
      * @param array $options OPTIONAL verbose==true bleeds info to standard output
-     * @return mixed `string` with name of the template when template determined || `array` with redir field when redirect || `bool (true)` when template set to `TEMPLATE_NOT_FOUND`
+     * @return mixed `string` with name of the template when template determined
+     *     || `array` with redir field when redirect || `bool (true)` when template set to `TEMPLATE_NOT_FOUND`
      */
     public function determineTemplate(array $options = [])
     {
-        $this->verboseBarDump(['options' => $options, 'get' => $this->get], 'FriendlyURL: determineTemplate options and HTTP request parameters');
+        $this->verboseBarDump(
+            ['options' => $options, 'get' => $this->get],
+            'FriendlyURL: determineTemplate options and HTTP request parameters'
+        );
 
         //FRIENDLY URL & Redirect variables
         $friendlyUrlRedirectVariables = $this->friendlyIdentifyRedirect($options);
         if (is_bool($friendlyUrlRedirectVariables) || isset($friendlyUrlRedirectVariables['redir'])) {
             return $friendlyUrlRedirectVariables;
         }
-        //$token, $matches - will be expected below for FRIENDLY URL & Redirect calculation (see friendlyIdentifyRedirect PHPDoc for explanation)
+        //$token, $matches - will be expected below for FRIENDLY URL & Redirect calculation
+        //(see friendlyIdentifyRedirect PHPDoc for explanation)
         $token = $friendlyUrlRedirectVariables['token'];
         $matches = $friendlyUrlRedirectVariables['matches'];
 
@@ -239,12 +354,14 @@ class MyFriendlyUrl extends MyCommon
      * @param array $options for recursive determineTemplate call
      * @param string $token calculated by friendlyIdentifyRedirect
      * @param array $matches calculated by friendlyIdentifyRedirect
-     * @return mixed `null` leads to self::TEMPLATE_NOT_FOUND || `string` with name of the template when template determined || `array` with redir field when redirect || `bool (true)` when template set to `TEMPLATE_NOT_FOUND`
+     * @return mixed `null` leads to self::TEMPLATE_NOT_FOUND
+     *    || `string` with name of the template when template determined
+     *    || `array` with redir field when redirect || `bool (true)` when template set to `TEMPLATE_NOT_FOUND`
      */
     private function pureFriendlyUrl(array $options, $token, array $matches)
     {
         //default scripts and language directories all result into the default template
-        if (in_array($token, array_merge(array(HOME_TOKEN, '', 'index'), array_keys($this->MyCMS->TRANSLATIONS)))) {
+        if (in_array($token, array_merge([HOME_TOKEN, '', 'index'], array_keys($this->MyCMS->TRANSLATIONS)))) {
             return $this->verboseBarDump(self::TEMPLATE_DEFAULT, 'pureFriendlyUrl return default');
         }
 
@@ -253,17 +370,22 @@ class MyFriendlyUrl extends MyCommon
             $this->language = DEFAULT_LANGUAGE;
             $this->verboseBarDump($this->language, 'pureFriendlyUrl: Language reset to DEFAULT');
         }
-        // If there is a pure friendly URL, i.e. the token exactly matches a record in content database, decode it internally to type=id
+        // If there is a pure friendly URL, i.e. the token exactly matches a record in content database,
+        // decode it internally to type=id
         $found = $this->findFriendlyUrlToken($token);
         $this->verboseBarDump($found, 'pureFriendlyUrl: found');
         if ($found) {
             $this->verboseBarDump($found, 'pureFriendlyUrl: found friendly URL');
             $this->get[$found['type']] = $this->get['id'] = $found['id'];
             $this->verboseBarDump($this->get, 'pureFriendlyUrl: this->get within pureFriendlyUrl');
-//            return $this->verboseBarDump($this->determineTemplate($options), 'pureFriendlyUrl return determineTemplate()'); //TODO maybe only the loop of 'templateAssignementParametricRules' is relevant for recursion??
-            return $this->verboseBarDump($this->parametricRuleToTemplate(), 'pureFriendlyUrl return parametricRuleToTemplate()'); //TODO if this works, change the description as recursion is limited here
+            //TODO change the description as recursion is limited here
+            return $this->verboseBarDump(
+                $this->parametricRuleToTemplate(),
+                'pureFriendlyUrl return parametricRuleToTemplate()'
+            );
         }
-        return $this->verboseBarDump(null, 'pureFriendlyUrl return null leads to self::TEMPLATE_NOT_FOUND'); //null leads to self::TEMPLATE_NOT_FOUND
+        //null leads to self::TEMPLATE_NOT_FOUND
+        return $this->verboseBarDump(null, 'pureFriendlyUrl return null leads to self::TEMPLATE_NOT_FOUND');
     }
 
     /**
@@ -277,13 +399,16 @@ class MyFriendlyUrl extends MyCommon
     private function prepareTableSelect($token, $type, $table)
     {
         return 'SELECT id,"' . $type . '" AS type FROM ' . TAB_PREFIX . $table . ' WHERE active=1 AND '
-            . ($type === $table ? '' : 'type like "' . $type . '" AND ') // usually type is stored in a dedicated table of the same name, otherwise a column type within the table is expected
+            // usually type is stored in a dedicated table of the same name,
+            // otherwise a column type within the table is expected
+            . ($type === $table ? '' : 'type like "' . $type . '" AND ')
             . 'url_' . $this->language . '="' . $token . '"';
     }
 
     /**
-     * SQL statement searching for $token in url_LL column of table(s) with content pieces addressed by FriendlyURL tokens
-     * The UNION on tables, where type is stored in a dedicated table of the same name, otherwise a column type within the table is expected is just the simplest way,
+     * SQL statement finds $token in url_LL column of table(s) with content pieces addressed by FriendlyURL tokens
+     * The UNION on tables, where type is stored in a dedicated table of the same name, otherwise a column type within
+     * the table is expected is just the simplest way,
      * but SQL statement may be adapted in any way so this method MAY be overidden in child class
      *
      * @param string $token
@@ -291,7 +416,10 @@ class MyFriendlyUrl extends MyCommon
      */
     protected function findFriendlyUrlToken($token)
     {
-        Debugger::barDump(['token' => $token, 'typeToTableMapping' => $this->MyCMS->typeToTableMapping], 'findFriendlyUrlToken started');
+        Debugger::barDump(
+            ['token' => $token, 'typeToTableMapping' => $this->MyCMS->typeToTableMapping],
+            'findFriendlyUrlToken started'
+        );
         if (empty($this->MyCMS->typeToTableMapping)) {
             return null;
         }
@@ -307,7 +435,7 @@ class MyFriendlyUrl extends MyCommon
      *
      * @param string $outputKey `type`
      * @param string $outputValue `id`
-     * @return mixed null (do not change the output) or string (URL - friendly or parametric)
+     * @return string|null null (do not change the output) or string (URL - friendly or parametric)
      */
     protected function switchParametric($outputKey, $outputValue)
     {
@@ -315,9 +443,11 @@ class MyFriendlyUrl extends MyCommon
     }
 
     /**
-     * Returns URL according to FRIENDLY_URL and url_XX settings based on $this->MyCMS->templateAssignementParametricRules
+     * Returns URL according to FRIENDLY_URL and url_XX settings
+     * based on $this->MyCMS->templateAssignementParametricRules
      * Handles not only param=value but also param&id=value or param&code=value
-     * (int) id or (string) code are taken into account only if 'idcode' subfield of templateAssignementParametricRules is equal to `true`
+     * (int) id or (string) code are taken into account only if 'idcode' subfield
+     * of templateAssignementParametricRules is equal to `true`
      *
      * @param string $params query key of parse_url, e.g  var1=12&var2=b
      * @return string query key of parse_url, e.g  var1=12&var2=b
@@ -328,15 +458,22 @@ class MyFriendlyUrl extends MyCommon
         if (!FRIENDLY_URL || empty($params)) {
             return $params;
         }
-        parse_str((substr($params, 0, 1) === '?') ? substr($params, 1) : $params, $output); // array $output contains all parameters
-        $output2 = array_slice($output, 0, 1); // $output2 contains only the first parameter
+        parse_str((substr($params, 0, 1) === '?') ? substr($params, 1) : $params, $output);
+        // array $output now contains all parameters
+        $output2 = array_slice($output, 0, 1);
+        // $output2 contains only the first parameter
         $output2Array = array_keys($output2);
         $outputKey = reset($output2Array);
-        $outputValue = (isset($this->MyCMS->templateAssignementParametricRules[$outputKey]) && isset($this->MyCMS->templateAssignementParametricRules[$outputKey]['idcode']) && $this->MyCMS->templateAssignementParametricRules[$outputKey]['idcode']) ?
-            (isset($output['id']) ? (int) ($output['id']) : (string) Tools::ifset($output['code'], '')) : $output2[$outputKey];
+        $outputValue = (isset($this->MyCMS->templateAssignementParametricRules[$outputKey])
+            && isset($this->MyCMS->templateAssignementParametricRules[$outputKey]['idcode'])
+            && $this->MyCMS->templateAssignementParametricRules[$outputKey]['idcode'])
+            ? (isset($output['id']) ? (int) ($output['id'])
+            : (string) Tools::ifset($output['code'], '')) : $output2[$outputKey];
 
         $result = $this->switchParametric($outputKey, $outputValue);
-        $this->MyCMS->logger->info($this->verboseBarDump("{$params} friendlyfyUrl to " . print_r($result, true), 'friendlyfyUrl result'));
+        $this->MyCMS->logger->info(
+            $this->verboseBarDump("{$params} friendlyfyUrl to " . print_r($result, true), 'friendlyfyUrl result')
+        );
         return is_null($result) ? $params : $result;
     }
 
@@ -359,5 +496,4 @@ class MyFriendlyUrl extends MyCommon
     {
         return $this->language;
     }
-
 }

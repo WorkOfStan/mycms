@@ -1,3 +1,5 @@
+/* global $, TOKEN */
+
 /**
  * JavaScript client-side of MyCMS admin
  * dependent JS: jquery.js, jquery.sha1.js

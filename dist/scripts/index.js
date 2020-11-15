@@ -1,3 +1,5 @@
+/* global $, AOS, FEATURE_FLAGS, ga, TOKEN */
+
 // scroll effects
 FEATURE_FLAGS['offline_dev'] || AOS.init();
 
@@ -12,7 +14,7 @@ $(document).ready(function () {
     });
 
     // menu
-    $('.hamburger').click(function (e) {
+    $('.hamburger').click(function () {
         $('.header').toggleClass('header--opened');
     });
 

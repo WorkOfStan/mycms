@@ -15,7 +15,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
-     * @var MyCMS
+     * @var MyCMSProject
      */
     protected $myCms;
 
@@ -30,39 +30,54 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
+     *
+     * @global array $backyardConf
+     * @return void
      */
     protected function setUp()
     {
         global $backyardConf;
+        error_reporting(E_ALL); // incl E_NOTICE
         Debugger::enable(Debugger::DEVELOPMENT, __DIR__ . '/../log');
         $backyard = new \GodsDev\Backyard\Backyard($backyardConf);
         $mycmsOptions = [
             'TRANSLATIONS' => [
                 'en' => 'English',
-                'cn' => '中文'
+                'zh' => '中文',
             ],
             'logger' => $backyard->BackyardError,
-            'dbms' => new \GodsDev\MyCMS\LogMysqli(DB_HOST . ':' . DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE, $backyard->BackyardError), //@todo - use test db instead. Or use other TAB_PREFIX !
+            'dbms' => new \GodsDev\MyCMS\LogMysqli(
+                DB_HOST . ':' . DB_PORT,
+                DB_USERNAME,
+                DB_PASSWORD,
+                DB_DATABASE,
+                $backyard->BackyardError
+            ), //@todo - use test db instead. Or use other TAB_PREFIX !
         ];
         $this->myCms = new MyCMSProject($mycmsOptions);
 
         $_SESSION = []; //because $_SESSION is not defined in the PHPUnit mode
         $this->language = $this->myCms->getSessionLanguage([], $_SESSION, false);
 
-        //according to what you test, change $this->myCms->context before invoking $this->object = new Controller; within Test methods
+        //according to what you test, change $this->myCms->context before invoking
+        //$this->object = new Controller; within Test methods
     }
 
     /**
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
+     *
+     * @return void
      */
     protected function tearDown()
     {
-        
+        // no action
     }
 
     /**
      * @covers GodsDev\mycmsprojectnamespace\Controller::controller
+     *
+     * @return void
      */
     public function testControllerNoContext()
     {
@@ -73,16 +88,23 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers GodsDev\mycmsprojectnamespace\Controller::controller
+     *
+     * @return void
      */
     public function testControllerContext()
     {
         $this->myCms->context = ['1' => '2', '3' => '4', 'c'];
         $this->object = new Controller($this->myCms);
-        $this->assertArraySubset(['template' => 'home', 'context' => $this->myCms->context], $this->object->controller());
+        $this->assertArraySubset(
+            ['template' => 'home', 'context' => $this->myCms->context],
+            $this->object->controller()
+        );
     }
 
     /**
      * @covers GodsDev\mycmsprojectnamespace\Controller::controller
+     *
+     * @return void
      */
     public function testControllerAbout()
     {
@@ -101,6 +123,8 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers GodsDev\mycmsprojectnamespace\Controller::getVars
+     *
+     * @return void
      */
     public function testGetVars()
     {
@@ -112,5 +136,4 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         $this->object = new Controller($this->myCms, $options);
         $this->assertEquals($options, $this->object->getVars());
     }
-
 }

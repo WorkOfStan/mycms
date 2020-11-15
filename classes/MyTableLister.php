@@ -11,10 +11,9 @@ use GodsDev\Tools\Tools;
  */
 class MyTableLister
 {
-
     use \Nette\SmartObject;
 
-    /** @var \mysqli database management system */
+    /** @var LogMysqli database management system */
     protected $dbms;
 
     /** @var string current database */
@@ -84,18 +83,18 @@ class MyTableLister
     /**
      * Constructor - stores passed parameters to object's attributes
      *
-     * @param \mysqli database management system already connected to wanted database
-     * @param string table to view
-     * @param array options
+     * @param LogMysqli $dbms database management system already connected to wanted database
+     * @param string $table to view
+     * @param array $options
      */
-    public function __construct(\mysqli $dbms, $table, array $options = [])
+    public function __construct(LogMysqli $dbms, $table, array $options = [])
     {
         $this->dbms = $dbms;
         $this->options = $options;
         $this->database = $this->dbms->fetchSingle('SELECT DATABASE()');
         $this->getTables();
         $this->setTable($table);
-        $this->rand = rand(1e5, 1e6 - 1);
+        $this->rand = rand((int) 1e5, (int) (1e6 - 1));
     }
 
     /**
@@ -106,7 +105,8 @@ class MyTableLister
     public function getTables()
     {
         $this->tables = [];
-        $query = $this->dbms->query('SELECT TABLE_NAME, TABLE_COMMENT FROM information_schema.TABLES ' //@todo database-specific
+        //@todo database-specific
+        $query = $this->dbms->query('SELECT TABLE_NAME, TABLE_COMMENT FROM information_schema.TABLES '
             . 'WHERE TABLE_SCHEMA = "' . $this->escapeSQL($this->database) . '"');
         while ($row = $query->fetch_row()) {
             $this->tables[$row[0]] = $row[1];
@@ -117,8 +117,9 @@ class MyTableLister
      * Set (or change) serviced table, get its fields.
      *
      * @param string $table table name
-     * @param bool $force do force reload if the current and desired table names are the same
+     * @param bool $forceReload do force reload if the current and desired table names are the same
      * @return void
+     * @throws \RunTimeException
      */
     public function setTable($table, $forceReload = false)
     {
@@ -179,12 +180,15 @@ class MyTableLister
             }
             $this->fields = $result;
         } else {
-            throw RunTimeException('Could not get columns from table ' . $this->table . '.');
+            throw new \RunTimeException('Could not get columns from table ' . $this->table . '.');
         }
-        if ($query = $this->dbms->query('SELECT COLUMN_NAME,REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME 
-            FROM information_schema.KEY_COLUMN_USAGE WHERE CONSTRAINT_NAME != "PRIMARY" AND CONSTRAINT_CATALOG = "def" 
-            AND TABLE_SCHEMA = "' . $this->escapeSQL($this->database) . '" 
-            AND TABLE_NAME = "' . $this->escapeSQL($this->table) . '"')) {
+        $query = $this->dbms->query(
+            'SELECT COLUMN_NAME,REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME
+            FROM information_schema.KEY_COLUMN_USAGE WHERE CONSTRAINT_NAME != "PRIMARY" AND CONSTRAINT_CATALOG = "def"
+            AND TABLE_SCHEMA = "' . $this->escapeSQL($this->database) . '"
+            AND TABLE_NAME = "' . $this->escapeSQL($this->table) . '"'
+        );
+        if ($query) {
             while ($row = $query->fetch_assoc()) {
                 $this->fields[$row['COLUMN_NAME']]['foreign_table'] = $row['REFERENCED_TABLE_NAME'];
                 $this->fields[$row['COLUMN_NAME']]['foreign_column'] = $row['REFERENCED_COLUMN_NAME'];
@@ -198,7 +202,7 @@ class MyTableLister
      * Compose a SELECT SQL statement with given columns and _GET variables
      *
      * @param array $columns
-     * @param array &$vars variables used to filter records
+     * @param array $vars &$vars variables used to filter records
      * @return array with these indexes: [join], [where], [sort], [sql]
      */
     public function selectSQL($columns, &$vars)
@@ -301,7 +305,7 @@ class MyTableLister
      * Operation `original` means "leave the column as is" (i.e. don't use it in this SQL statement)
      * And for any other (=unknown) operation is the column ignored, i.e. is not used in this SQL statement.
      *
-     * @param array &$vars variables used to filter records
+     * @param array $vars &$vars variables used to filter records
      * @return string
      */
     public function bulkUpdateSQL(&$vars)
@@ -312,13 +316,16 @@ class MyTableLister
                 case 'value':
                     $result .= ', ' . $this->escapeDbIdentifier($field) . ' = "' . $this->escapeSQL($value) . '"';
                     break;
-                case '+': case '-': case '*':
+                case '+':
+                case '-':
+                case '*':
                     $result .= ', ' . $this->escapeDbIdentifier($field) . ' = ' . $this->escapeDbIdentifier($field) . $vars['op'][$field] . ' ' . ($vars['op'][$field] == '*' ? (double) $value : (int) $value);
                     break;
                 case 'random':
                     $result .= ', ' . $this->escapeDbIdentifier($field) . ' = RAND() * ' . ($value == 0 ? 1 : (double) $value);
                     break;
-                case 'now': case 'uuid':
+                case 'now':
+                case 'uuid':
                     $result .= ', ' . $this->escapeDbIdentifier($field) . ' = ' . $vars['op'][$field] . '()';
                     break;
                 case 'append':
@@ -327,7 +334,8 @@ class MyTableLister
                 case 'prepend':
                     $result .= ', CONCAT("' . $this->escapeSQL($value) . '", ' . $this->escapeDbIdentifier($field) . ')';
                     break;
-                case 'addtime': case 'subtime':
+                case 'addtime':
+                case 'subtime':
                     $result .= ', ' . $vars['op'][$field] . '(' . $this->escapeDbIdentifier($field) . ', "' . $this->escapeSQL($value) . '")';
                     break;
 //                case 'original':
@@ -338,6 +346,7 @@ class MyTableLister
                     break;
             }
         }
+        // todo fix Method GodsDev\MyCMS\MyTableLister::bulkUpdateSQL() should return string but return statement is missing.
     }
 
     /**
@@ -374,7 +383,7 @@ class MyTableLister
     /**
      * Output a customizable table to browse, search, page and pick its items for editing
      *
-     * @param options configuration array
+     * @param array $options configuration array
      *   $options['form-action']=send.php - instead of <form action="">
      *   $options['read-only']=non-zero - no links to admin
      *   $options['no-sort']=non-zero - don't offer 'sorting' option
@@ -386,7 +395,7 @@ class MyTableLister
      *   $options['exclude']=array - columns to exclude
      *   $options['columns']=array - special treatment of columns
      *   $options['return-output']=non-zero - return output (instead of echo)
-     * @return void or string (for $options['return-output'])
+     * @return mixed void||string (for $options['return-output'])
      */
     public function view(array $options = [])
     {
@@ -423,13 +432,13 @@ class MyTableLister
     /**
      * Part of the view() method to output the controls.
      *
-     * @param array options as in view()
-     * @return void or string (for $options['return-output'])
+     * @param array $options as in view()
+     * @return mixed void||string (for $options['return-output'])
      */
     protected function viewInputs($options)
     {
         $output = '<form action="" method="get" class="table-controls" data-rand="' . $this->rand . '">' . PHP_EOL;
-        if (!Tools::set($option['no-toggle'])) {
+        if (!Tools::set($options['no-toggle'])) {
             $output .= '<fieldset><legend><a href="javascript:;" onclick="$(\'#toggle-div' . $this->rand . '\').toggle()">
                 <span class="glyphicon glyphicon-search fa fa-list-alt"></span> ' . $this->translate('Columns') . '</a></legend>
                 <div class="toggle-div" id="toggle-div' . $this->rand . '" data-rand="' . $this->rand . '">
@@ -441,12 +450,12 @@ class MyTableLister
             }
             $output .= '</div></div></fieldset>' . PHP_EOL;
         }
-        if (!Tools::set($option['no-search'])) {
+        if (!Tools::set($options['no-search'])) {
             $output .= '<fieldset><legend><a href="javascript:;" onclick="$(\'#search-div' . $this->rand . '\').toggle()">
                 <span class="glyphicon glyphicon-search fa fa-search"></span> ' . $this->translate('Search') . '</a></legend>
                 <div class="search-div" id="search-div' . $this->rand . '"></div></fieldset>' . PHP_EOL;
         }
-        if (!Tools::set($option['no-sort'])) {
+        if (!Tools::set($options['no-sort'])) {
             $output .= '<fieldset><legend><a href="javascript:;" onclick="$(\'#sort-div' . $this->rand . '\').toggle()">
                 <span class="glyphicon glyphicon-sort fa fa-sort mx-1"></span> ' . $this->translate('Sort') . '</a></legend>
                 <div class="sort-div" id="sort-div' . $this->rand . '"></div></fieldset>' . PHP_EOL;
@@ -464,7 +473,7 @@ class MyTableLister
                 <span class="glyphicon glyphicon-list-alt fa fa-list-alt"></span>
             </button>
             </fieldset></form>
-            <script type="text/javascript"> 
+            <script type="text/javascript">
             LISTED_FIELDS=[' . Tools::arrayListed(array_keys($this->fields), 4, ',', '"', '"') . '];' . PHP_EOL;
         if (isset($_GET['col'], $_GET['op']) && is_array($_GET['col'])) {
             foreach ($_GET['col'] as $key => $value) {
@@ -505,12 +514,12 @@ class MyTableLister
     /**
      * Part of the view() method to output the content of selected table
      *
-     * @param object mysqli query
-     * @param array columns selected columns
-     * @param array options as in view()
-     * @return void or string (for $options['return-output'])
+     * @param \mysqli_result $query
+     * @param array $columns selected columns
+     * @param array $options as in view()
+     * @return mixed void or string (for $options['return-output'])
      */
-    protected function viewTable($query, array $columns, array $options)
+    protected function viewTable(\mysqli_result $query, array $columns, array $options)
     {
         Tools::setifnull($_GET['sort']);
         $output = '<form action="" method="post" enctype="multipart/form-data" data-rand="' . $this->rand . '">' . PHP_EOL
@@ -569,7 +578,7 @@ class MyTableLister
         }
         $output .= '</tbody></table>' . PHP_EOL;
         if (!isset($options['no-selected-rows-operations'])) {
-            $output .= '<div class="selected-rows mb-2"><i class="fa fa-check-square"></i>=<span class="listed">0</span> 
+            $output .= '<div class="selected-rows mb-2"><i class="fa fa-check-square"></i>=<span class="listed">0</span>
                 <label class="btn btn-sm btn-light mx-1 mt-2">' . Tools::htmlInput('total-rows', '', $options['total-rows'], ['type' => 'checkbox', 'class' => 'total-rows']) . ' ' . $this->translate('Whole resultset') . '</label>
                 <button name="table-export" value="1" class="btn btn-sm ml-1" disabled="disabled"><i class="fa fa-download"></i> ' . $this->translate('Export') . '</button>
                 <button name="edit-selected" value="1" class="btn btn-sm ml-1" disabled="disabled"><i class="fa fa-edit"></i> ' . $this->translate('Edit') . '</button>
@@ -609,7 +618,7 @@ class MyTableLister
      * @param int $totalRows
      * @param int $offset
      * @param array $options as in view()
-     * @return void or string (for $options['return-output'])
+     * @return mixed void or string (for $options['return-output'])
      */
     public function pagination($rowsPerPage, $totalRows, $offset = null, $options = [])
     {
@@ -619,7 +628,7 @@ class MyTableLister
         }
         $rowsPerPage = max($rowsPerPage, 1);
         $pages = ceil($totalRows / $rowsPerPage);
-        $currentPage = floor($offset / $rowsPerPage) + 1;
+        $currentPage = (int) floor($offset / $rowsPerPage) + 1;
         if ($pages <= 1) {
             return;
         }
@@ -629,6 +638,7 @@ class MyTableLister
                 $output .= $this->addPage($currentPage - 1, $currentPage, $rowsPerPage, $this->translate('Previous'), $title);
             }
             for ($page = 1; $page <= $pages; $page++) {
+                // TODO ask CRS2 Method GodsDev\MyCMS\MyTableLister::addPage() invoked with 6 parameters, 3-5 required.
                 $output .= $this->addPage($page, $currentPage, $rowsPerPage, null, $this->translate('Go to page'), $title);
             }
             if ($currentPage < $pages) {
@@ -661,7 +671,7 @@ class MyTableLister
     /**
      * Return fields which are keys (indexes) of given type
      *
-     * @param string key type, either "PRI", "MUL", "UNI" or ""
+     * @param string $filterType key type, either "PRI", "MUL", "UNI" or ""
      * @return array key names
      */
     public function fieldKeys($filterType)
@@ -723,13 +733,14 @@ class MyTableLister
     /**
      * Resolve an SQL query and add given message for success or error
      *
-     * @param string SQL to execute
-     * @param string message in case of success
-     * @param string message in case of an error
-     * @param mixed optional message in case of no affected change
+     * @param string $sql SQL to execute
+     * @param string $successMessage message in case of success
+     * @param string $errorMessage message in case of an error
+     * @param mixed $noChangeMessage optional message in case of no affected change
      *   false = use $successMessage
      *
-     * @return mixed true for success, false for failure of the query; if the query is empty return null (with no messages)
+     * @return bool|null true for success, false for failure of the query;
+     *   if the query is empty return null (with no messages)
      */
     public function resolveSQL($sql, $successMessage, $errorMessage, $noChangeMessage = false)
     {
@@ -807,7 +818,6 @@ class MyTableLister
         $result = $this->translate("column:$column");
         return $result == "column:$column" ? $column : $result;
     }
-
     /** custom methods - meant to be rewritten in the class' children */
 
     /**
@@ -816,7 +826,7 @@ class MyTableLister
      * @param string $field
      * @param mixed $value field's value
      * @param array $record
-     * @return boolean - true = method was applied so don't proceed with the default, false = method wasn't applied
+     * @return bool - true = method was applied so don't proceed with the default, false = method wasn't applied
      */
     public function customInput($field, $value, array $record = [])
     {
@@ -852,7 +862,7 @@ class MyTableLister
     /**
      * Custom HTML to be show after detail's edit form but before action buttons
      *
-     * @param array @record
+     * @param array $record
      * @return string
      */
     public function customRecordDetail($record)
@@ -874,7 +884,7 @@ class MyTableLister
     /**
      * Custom saving of a record
      *
-     * @return boolean - true = method was applied so don't proceed with the default, false = method wasn't applied
+     * @return bool - true = method was applied so don't proceed with the default, false = method wasn't applied
      */
     public function customSave()
     {
@@ -884,7 +894,7 @@ class MyTableLister
     /**
      * Custom event after deleting of a record
      *
-     * @return boolean success
+     * @return bool success
      */
     public function customAfterDelete()
     {
@@ -894,7 +904,7 @@ class MyTableLister
     /**
      * Custom operation with table records. Called after the $table listing
      *
-     * @return boolean - true = method was applied so don't proceed with the default, false = method wasn't applied
+     * @return bool - true = method was applied so don't proceed with the default, false = method wasn't applied
      */
     public function customOperation()
     {
@@ -908,7 +918,7 @@ class MyTableLister
      */
     public function customSearch()
     {
-        
+        // no action
     }
 
     /**
@@ -917,7 +927,7 @@ class MyTableLister
      */
     public function customCondition()
     {
-        
+        // no action
     }
 
     /**
@@ -946,6 +956,7 @@ class MyTableLister
             . ' FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $options['table'])
             . ' GROUP BY ' . Tools::escapeDbIdentifier($options['type']) . ' WITH ROLLUP LIMIT 100');
         if (!$query) {
+            // TODO fix Method GodsDev\MyCMS\MyTableLister::contentByType() should return string but empty return statement found.
             return;
         }
         $typeIndex = 0;
@@ -968,6 +979,7 @@ class MyTableLister
             return $output;
         }
         echo $output;
+        // TODO fix Method GodsDev\MyCMS\MyTableLister::contentByType() should return string but return statement is missing.
     }
 
     public function decodeChoiceOptions($list)
@@ -1007,8 +1019,10 @@ class MyTableLister
     public function rowLink($row)
     {
         $result = [];
+        // todo fix Parameter #1 $types of method GodsDev\MyCMS\MyTableLister::filterKeys() expects array, string given.
         if ($keys = $this->filterKeys('PRI')) {
             $result [] = 'where[' . urlencode(array_keys($keys)[0]) . ']=' . urlencode(Tools::set($row[array_keys($keys)[0]]));
+        // todo fix Parameter #1 $types of method GodsDev\MyCMS\MyTableLister::filterKeys() expects array, string given.
         } elseif ($keys = $this->filterKeys('UNI')) {
             foreach ($keys as $key => $value) {
                 if (isset($row[$key]) && $row[$key] !== null) {
@@ -1024,6 +1038,7 @@ class MyTableLister
                 if (!isset($row[$key])) {
                     continue;
                 }
+                // todo fix Strict comparison using === between mixed and null will always evaluate to false.
                 if ($row[$key] === null) {
                     $result [] = 'null[' . urlencode($key) . ']=';
                 } else {
@@ -1033,5 +1048,4 @@ class MyTableLister
         }
         return $result;
     }
-
 }

@@ -32,11 +32,12 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         global $backyardConf;
+        error_reporting(E_ALL); // incl E_NOTICE
         $backyard = new \GodsDev\Backyard\Backyard($backyardConf);
         $mycmsOptions = [
             'TRANSLATIONS' => [
                 'en' => 'English',
-                'cn' => '中文'
+                'zh' => '中文',
             ],
             'logger' => $backyard->BackyardError,
         ];
@@ -50,7 +51,7 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        
+        // no action
     }
 
     /**
@@ -88,5 +89,4 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
         $this->object = new MyController($this->myCms, $options);
         $this->assertEquals($options, $this->object->getVars());
     }
-
 }

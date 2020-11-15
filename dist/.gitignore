@@ -6,6 +6,9 @@
 log/*
 cache/*
 !/log/.htaccess
+!/cache/.htaccess
+.sass-cache/
+/.php_cs.cache
 
 #disable private local files
 *.local.php
@@ -28,4 +31,3 @@ adminer*.php
 #disable image win/mac auxiliary files
 thumbs.db
 __MACOSX/
-.sass-cache/

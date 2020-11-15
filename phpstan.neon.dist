@@ -1,0 +1,10 @@
+includes:
+      - conf/phpstan.common.neon
+      - dist/phpstan.neon.dist
+
+parameters:
+    ignoreErrors:
+      # getimagesize is false in case of error
+      -
+        message: '#Ternary operator condition is always true.#'
+        path: classes/MyAdminProcess.php

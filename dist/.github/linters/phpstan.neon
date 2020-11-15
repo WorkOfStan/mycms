@@ -1,0 +1,31 @@
+includes:
+      - ../../conf/phpstan.mycms.neon
+
+parameters:
+    ignoreErrors:
+      -
+        message: '#Reflection error: GodsDev\\MyCMS\\MyAdmin not found\.#'
+        path: ../../classes/Admin.php
+      -
+        message: '#Reflection error: GodsDev\\MyCMS\\MyAdminProcess not found.#'
+        path: ../../classes/AdminProcess.php
+      -
+        message: '#Reflection error: GodsDev\\MyCMS\\MyFriendlyUrl not found.#'
+        path: ../../classes/FriendlyUrl.php
+      -
+        message: '#Reflection error: GodsDev\\MyCMS\\MyCommon not found.#'
+        path: ../../classes/Mail.php
+      -
+        message: '#Reflection error: GodsDev\\MyCMS\\MyCMS not found.#'
+        paths:
+          - ../../classes/MyCMSProject.php
+          - ../../prepare.php
+      -
+        message: '#Reflection error: GodsDev\\MyCMS\\ProjectCommon not found.#'
+        path: ../../classes/ProjectSpecific.php
+      -
+        message: '#Reflection error: GodsDev\\MyCMS\\MyTableAdmin not found\.#'
+        paths:
+          - ../../admin.php
+          - ../../classes/TableAdmin.php
+      - '#Reflection error: GodsDev\\MyCMS\\MyController not found.#'

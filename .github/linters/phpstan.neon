@@ -1,0 +1,20 @@
+includes:
+      - ../../conf/phpstan.common.neon
+      - ../../dist/conf/phpstan.mycms.neon
+
+parameters:
+    scanDirectories:
+      - ../../classes
+    ignoreErrors:
+      -
+        message: '#Reflection error: Tracy\\IBarPanel not found.#'
+        path: ../../classes/Tracy/BarPanelTemplate.php
+      - 
+        message: '#Reflection error: PHPUnit_Framework_TestCase not found.#'
+        path: ../../Test/*.php
+      -
+        message: '#Reflection error: GodsDev\\Backyard\\BackyardMysqli not found.#'
+        paths:
+          - ../../classes/LogMysqli.php
+          - ../../dist/prepare.php
+      - '#Reflection error: Nette\\SmartObject not found\.#'

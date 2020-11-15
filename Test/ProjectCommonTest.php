@@ -35,18 +35,18 @@ class ProjectCommonTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         global $backyardConf;
+        error_reporting(E_ALL); // incl E_NOTICE
         Debugger::enable(Debugger::DEVELOPMENT, __DIR__ . '/../log');
         $backyard = new Backyard($backyardConf);
         $mycmsOptions = [
             'TRANSLATIONS' => [
                 'en' => 'English',
-                'cn' => '中文'
+                'zh' => '中文',
             ],
             'logger' => $backyard->BackyardError,
-            'dbms' => null, //new LogMysqli(DB_HOST . ":" . DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE, $backyard->BackyardError), //@todo - use test db instead. Or use other TAB_PREFIX !
+            'dbms' => null,
         ];
         $this->myCms = new MyCMS($mycmsOptions);
-//        $_SESSION = array(); //because $_SESSION is not defined in the PHPUnit mode
         $this->language = $this->myCms->getSessionLanguage([], [], false);
 
         $this->object = new ProjectCommon($this->myCms, ['language' => $this->language]);
@@ -58,7 +58,7 @@ class ProjectCommonTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        
+        // no action
     }
 
     /**
@@ -105,8 +105,10 @@ class ProjectCommonTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('alfa a beta', $this->object->correctLineBreak('alfa a beta'));
         $this->assertEquals('alfa a&nbsp;beta', $this->object->correctLineBreak('alfa a&nbsp;beta'));
         $this->assertEquals('alfa Industry 4.0 beta', $this->object->correctLineBreak('alfa Industry 4.0 beta'));
-        $this->assertEquals('alfa Industry&nbsp;4.0 beta', $this->object->correctLineBreak('alfa Industry&nbsp;4.0 beta'));
+        $this->assertEquals(
+            'alfa Industry&nbsp;4.0 beta',
+            $this->object->correctLineBreak('alfa Industry&nbsp;4.0 beta')
+        );
         $this->assertEquals('alfa 3 % beta', $this->object->correctLineBreak('alfa 3 % beta'));
     }
-
 }

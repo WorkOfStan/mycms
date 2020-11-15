@@ -10,11 +10,13 @@ use Tracy\Debugger;
  */
 class MyCommon
 {
-
-    const TEMPLATE_NOT_FOUND = 'error404'; // MUST be the same both for Controller extends MyController extends MyCommon and MyFriendlyUrl extends MyCommon
-    const TEMPLATE_DEFAULT = 'home'; // MUST be the same both for Controller extends MyController extends MyCommon and MyFriendlyUrl extends MyCommon
-
     use \Nette\SmartObject;
+
+    // MUST be the same both for Controller extends MyController extends MyCommon and MyFriendlyUrl extends MyCommon
+    const TEMPLATE_NOT_FOUND = 'error404';
+
+    // MUST be the same both for Controller extends MyController extends MyCommon and MyFriendlyUrl extends MyCommon
+    const TEMPLATE_DEFAULT = 'home';
 
     /** @var \GodsDev\MyCMS\MyCMS */
     protected $MyCMS;
@@ -29,7 +31,7 @@ class MyCommon
 
     /**
      *
-     * @param \GodsDev\MyCMS\MyCMS $MyCMS
+     * @param MyCMS $MyCMS
      * @param array $options overrides default values of declared properties
      */
     public function __construct(MyCMS $MyCMS, array $options = [])
@@ -54,5 +56,4 @@ class MyCommon
     {
         return ($this->verbose == true) ? Debugger::barDump($var, $title, $options) : $var;
     }
-
 }

@@ -9,20 +9,7 @@ use GodsDev\Tools\Tools;
  */
 class MyTableAdmin extends MyTableLister
 {
-
     use \Nette\SmartObject;
-
-    /**
-     * Constructor
-     *
-     * @param \mysqli $dbms database management system (e.g. new mysqli())
-     * @param string $table table name
-     * @param array $options
-     */
-    public function __construct(\mysqli $dbms, $table, array $options = [])
-    {
-        parent::__construct($dbms, $table, $options);
-    }
 
     /**
      * Output HTML form to edit specific row in the table
@@ -40,7 +27,8 @@ class MyTableAdmin extends MyTableLister
      *      [original] - keep original values (to update only changed fields)
      *      [tabs] - divide fields into Bootstrap tabs, e.g. [null, 'English'=>'/^.+_en$/i', 'Chinese'=>'/^.+_cn$/i']
      *      [return-output] - non-zero: return output (instead of echo $output)
-     * @return void or string if $option[return-output] is non-zero
+     * @return mixed void or string if $option[return-output] is non-zero
+     *      TODO can't be void|string, as it wouldn't be possible to make string operations on void result
      */
     public function outputForm($where, array $options = [])
     {
@@ -117,6 +105,7 @@ class MyTableAdmin extends MyTableLister
                     . Tools::htmlInput('after', '', '', 'hidden') . PHP_EOL
                     . Tools::htmlInput('referer', '', base64_encode(Tools::xorCipher(isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '?table=' . TAB_PREFIX . $_GET['table'], end($_SESSION['token']))), 'hidden') . PHP_EOL;
             }
+            // TODO will be fixed in next Tools version: fix Tools::htmlSelect .. default is mixed not string!
             $output .= '<label><i class="fa fa-location-arrow"></i> ' . Tools::htmlSelect('after', [$this->translate('stay here'), $this->translate('go back')], false, ['class' => 'form-control form-control-sm w-initial d-inline-block']) . '</label></div>';
         }
         $output .= (isset($options['exclude-form']) && $options['exclude-form'] ? '' : '</fieldset></form>') . PHP_EOL;
@@ -190,7 +179,8 @@ class MyTableAdmin extends MyTableLister
             }
             $input .= '</select>';
             if (Tools::nonzero($comment['display-own'])) {
-                $input .= ' ' . Tools::htmlInput(
+                $input .= ' '
+                    . Tools::htmlInput(
                         "fields-own[$key]",
                         $this->translate('Own value:'),
                         $ownValue,
@@ -220,7 +210,8 @@ class MyTableAdmin extends MyTableLister
                 }
                 $output .= '</table>';
             } else {
-                $output .= Tools::htmlTextarea("fields[$key]", $value, false, false, [
+                // TODO ask CRS2 if replacing #3 $cols and #4 $rows false,false by 60,5 as int is expected is the right correction
+                $output .= Tools::htmlTextarea("fields[$key]", $value, 60, 5, [
                         'id' => $key . $this->rand, 'data-maxlength' => $field['size'],
                         'class' => 'form-control type-' . Tools::webalize($field['type']) . ($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : '')
                     ])
@@ -241,7 +232,13 @@ class MyTableAdmin extends MyTableLister
             $field['type'] = null;
         }
         switch ($field['type']) {
-            case 'tinyint': case 'smallint': case 'int': case 'mediumint': case 'bigint': case 'year':
+            case 'tinyint':
+            case 'smallint':
+            case 'int':
+            case 'mediumint':
+            case 'bigint':
+            case 'year':
+                // TODO fix Binary operation "+=" between arrays results in an error.
                 $input += ['type' => 'number', 'step' => 1, 'class' => 'form-control'];
                 if ($field['key'] == 'PRI') {
                     $input['readonly'] = 'readonly';
@@ -250,24 +247,32 @@ class MyTableAdmin extends MyTableLister
                 }
                 break;
             case 'date':
+                // TODO fix Binary operation "+=" between arrays results in an error.
                 $input += [/* 'type' => 'date', */ 'class' => 'form-control input-date'];
                 break;
             case 'time':
+                // TODO fix Binary operation "+=" between arrays results in an error.
                 $input += [/* 'type' => 'time', */ 'step' => 1, 'class' => 'form-control input-time'];
                 break;
-            case 'decimal': case 'float': case 'double':
+            case 'decimal':
+            case 'float':
+            case 'double':
                 $value = +$value;
+                // TODO fix Binary operation "+=" between arrays results in an error.
                 $input += ['class' => 'form-control text-right'];
                 break;
-            case 'datetime': case 'timestamp':
+            case 'datetime':
+            case 'timestamp':
                 if (isset($value[10]) && $value[10] == ' ') {
                     $value[10] = 'T';
                 }
+                // TODO fix Binary operation "+=" between arrays results in an error.
                 $input += ['type' => 'datetime-local', 'step' => 1, 'class' => 'form-control input-datetime'];
                 $input = '<div class="input-group">' . Tools::htmlInput("fields[$key]", false, $value, $input)
                     . '<span class="input-group-btn"><button class="btn btn-secondary btn-fill-now" type="button" title="' . $this->translate('Now') . '"><i class="glyphicon glyphicon-time fa fa-clock-o fa-clock" aria-hidden="true"></i></button></span></div>';
                 break;
             case 'bit':
+                // TODO fix Binary operation "+=" between arrays results in an error.
                 $input += ['type' => 'checkbox', 'step' => 1, 'checked' => ($value ? 'checked' : null)];
                 break;
             case 'enum':
@@ -299,6 +304,7 @@ class MyTableAdmin extends MyTableLister
                 foreach ($choices as $k => $v) {
                     $tmp[$k] = Tools::htmlInput("fields[$key][$k]", $v === '' ? '<i>' . $this->translate('nothing') . '</i>' : $v, 1 << $k, [
                             'type' => 'checkbox',
+                            // todo ask CRS2 is_array($value) seeems to be always true, so Else branch is unreachable because ternary operator condition is always true.
                             'checked' => ((1 << $k) & (int) (is_array($value) ? reset($value) : $value)) ? 'checked' : null,
                             'id' => "$key-$k-$this->rand",
                             'label-html' => $v === '',
@@ -307,7 +313,11 @@ class MyTableAdmin extends MyTableLister
                 }
                 $input = implode(', ', $tmp) . '<br>';
                 break;
-            case 'tinyblob': case 'mediumblob': case 'blob': case 'longblob': case 'binary':
+            case 'tinyblob':
+            case 'mediumblob':
+            case 'blob':
+            case 'longblob':
+            case 'binary':
                 if (preg_match('~(^\pC)*~i', $value)) {
                     $input = '<tt>' . Tools::ifempty(Tools::shortify($value, 100), '<i class="insipid">' . $this->translate('empty') . '</i>') . '</tt><br />'; //@todo constant --> parameter
                 } else {
@@ -321,11 +331,13 @@ class MyTableAdmin extends MyTableLister
                 if (Tools::among($field['type'], 'char', 'varchar') && ($field['size'] < 256 || Tools::set($comment['edit'], false) == 'input') && Tools::set($comment['edit'], false) != 'textarea') {
                     break;
                 }
-                $input = '<div class="TableAdminTextarea">' . Tools::htmlTextarea(
+                $input = '<div class="TableAdminTextarea">'
+                    // TODO ask CRS2 if replacing #3 $cols and #4 $rows false,false by 60,5 as int is expected is the right correction
+                    . Tools::htmlTextarea(
                         "fields[$key]",
                         $value,
-                        false,
-                        false,
+                        60,
+                        5,
                         ['id' => $key . $this->rand, 'data-maxlength' => $field['size'],
                             'class' => 'form-control type-' . Tools::webalize($field['type']) . ($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : '')
                         ]
@@ -356,10 +368,11 @@ class MyTableAdmin extends MyTableLister
      */
     public function outputSelectPath($name, $path_id = null, $options = [])
     {
+        // TODO what does this construction mean? Call to function is_array() with string will always evaluate to false.
         if (!is_array($name)) {
             $name = ['table' => $name, 'column' => $name];
         }
-        if ($module = $this->dbms->query($sql = 'SHOW FULL COLUMNS FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name['table']) . ' WHERE FIELD="' . $this->escapeSQL($name['column']) . '"')) {
+        if ($module = $this->dbms->query('SHOW FULL COLUMNS FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name['table']) . ' WHERE FIELD="' . $this->escapeSQL($name['column']) . '"')) {
             $module = json_decode($module->fetch_assoc()['Comment'], true);
             $module = isset($module['module']) && $module['module'] ? $module['module'] : 10;
         } else {
@@ -369,7 +382,7 @@ class MyTableAdmin extends MyTableLister
             . '" class="' . Tools::h(isset($options['class']) ? $options['class'] : '')
             . '" id="' . Tools::h(isset($options['id']) ? $options['id'] : '') . '">'
             . Tools::htmlOption('', $this->translate('--choose--'));
-        $query = $this->dbms->query($sql = 'SELECT id,path,' . Tools::escapeDbIdentifier($name['column']) . ' AS category_
+        $query = $this->dbms->query('SELECT id,path,' . Tools::escapeDbIdentifier($name['column']) . ' AS category_
             FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name['table']) . ' ORDER BY path');
         if (!$query) {
             return $result . '</select>';
@@ -474,6 +487,7 @@ class MyTableAdmin extends MyTableLister
                 }
             }
             foreach ($this->fields as $key => $field) {
+                // todo ask CRS2 - Variable $value might not be defined.
                 if (Tools::set($_POST['fields-null'][$key]) || (Tools::set($field['foreign_table']) && $value === '')) {
                     $_POST['fields'][$key] = null;
                 } elseif (Tools::set($_POST['fields-own'][$key])) {
@@ -496,7 +510,9 @@ class MyTableAdmin extends MyTableLister
                     continue;
                 }
                 switch ($field['basictype']) {
-                    case 'integer': case 'rational': case 'choice':
+                    case 'integer':
+                    case 'rational':
+                    case 'choice':
                         if (Tools::among($field['key'], 'PRI', 'UNI') && $original === $value && $value === '') {
                             $value = null;
                         }
@@ -509,6 +525,7 @@ class MyTableAdmin extends MyTableLister
                 }
             }
             $command = 'UPDATE';
+            // todo fix Parameter #1 $types of method GodsDev\MyCMS\MyTableLister::filterKeys() expects array, string given.
             $unique = ($this->filterKeys('PRI') ?: $this->filterKeys('UNI')) ?: array_flip(array_keys($this->fields));
             foreach (array_keys($unique) as $key) {
                 $field = $this->fields[$key];
@@ -516,6 +533,7 @@ class MyTableAdmin extends MyTableLister
                 if ($field['key'] == 'PRI' && Tools::among($value, '', null)) {
                     $command = 'INSERT INTO';
                 } else {
+                    // todo ask CRS2 Variable $original might not be defined.
                     $where .= ' AND ' . (is_null($original) ? Tools::escapeDbIdentifier($key) . ' IS NULL' : ($original . '' === '' ? 'IFNULL(' . Tools::escapeDbIdentifier($key) . ', "")' : Tools::escapeDbIdentifier($key)) . ' = "' . $this->escapeSQL($_POST['original'][$key]) . '"');
                 }
             }
@@ -531,6 +549,7 @@ class MyTableAdmin extends MyTableLister
             }
         } else {
             Tools::addMessage('info', $this->translate('Nothing to save.'));
+            // todo ask CRS2  Method GodsDev\MyCMS\MyTableAdmin::recordSave() should return bool but returns int.
             return 0;
         }
     }
@@ -566,7 +585,6 @@ class MyTableAdmin extends MyTableLister
     {
         $this->contentByType($options);
     }
-
 }
 
 // @todo nekde v cyklu prevest "0" a 0 na string/integer/double podle typu?

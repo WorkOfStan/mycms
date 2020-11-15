@@ -21,7 +21,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
     protected $myCms;
 
     /**
-     * @var Controller
+     * @var FriendlyUrl
      */
     protected $object;
 
@@ -42,23 +42,42 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
+     *
+     * @global array $backyardConf
+     * @return void
      */
     protected function setUp()
     {
         global $backyardConf,
         $myCmsConf;
+        error_reporting(E_ALL); // incl E_NOTICE
         Debugger::enable(Debugger::DEVELOPMENT, __DIR__ . '/../log');
         $this->backyard = new \GodsDev\Backyard\Backyard($backyardConf);
         $myCmsConf['logger'] = $this->backyard->BackyardError;
-        $myCmsConf['dbms'] = new \GodsDev\MyCMS\LogMysqli(DB_HOST . ':' . DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE, $myCmsConf['logger']); //@todo - use test db instead. Or use other TAB_PREFIX !
+        $myCmsConf['dbms'] = new \GodsDev\MyCMS\LogMysqli(
+            DB_HOST . ':' . DB_PORT,
+            DB_USERNAME,
+            DB_PASSWORD,
+            DB_DATABASE,
+            $myCmsConf['logger']
+        ); //@todo - use test db instead. Or use other TAB_PREFIX !
 
         $this->myCms = new MyCMSProject($myCmsConf);
 
         $_SESSION = []; //because $_SESSION is not defined in the PHPUnit mode
         $this->language = $this->myCms->getSessionLanguage([], [], false);
-        //according to what is tested, change $this->myCms->context before invoking $this->object = new FriendlyUrl; within Test methods
-        $this->assertArrayHasKey('web_domain', $backyardConf, '$backyardConf[\'web_domain\'] MUST be configured in config.local.php');
-        $this->assertArrayHasKey('web_path', $backyardConf, '$backyardConf[\'web_path\'] MUST be configured in config.local.php');
+        //according to what is tested, change $this->myCms->context before
+        //invoking $this->object = new FriendlyUrl; within Test methods
+        $this->assertArrayHasKey(
+            'web_domain',
+            $backyardConf,
+            '$backyardConf[\'web_domain\'] MUST be configured in config.local.php'
+        );
+        $this->assertArrayHasKey(
+            'web_path',
+            $backyardConf,
+            '$backyardConf[\'web_path\'] MUST be configured in config.local.php'
+        );
         $this->apiBaseDomain = $backyardConf['web_domain'];
         $this->apiBaseUrl = $backyardConf['web_domain'] . $backyardConf['web_path'];
     }
@@ -66,14 +85,18 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
     /**
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
+     *
+     * @return void
      */
     protected function tearDown()
     {
-        
+        // no action
     }
 
     /**
      * @covers GodsDev\mycmsprojectnamespace\Controller::controller
+     *
+     * @return void
      */
     public function testDetermineTemplateParametric()
     {
@@ -84,11 +107,24 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         ];
         $this->object = new FriendlyUrl($this->myCms, $friendlyUrlOptions);
         $templateDetermined = $this->object->determineTemplate($determineTemplateOptions);
-        $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI'] . (Tools::nonempty($friendlyUrlOptions['get']) ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '') . (Tools::nonempty($friendlyUrlOptions['session']) ? (' session:' . http_build_query($friendlyUrlOptions['session'])) : '') . ' templateDetermined: ' . print_r($templateDetermined, true);
+        $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI']
+            . (Tools::nonempty($friendlyUrlOptions['get']) ?
+            (' get:' . http_build_query($friendlyUrlOptions['get'])) : '')
+            //. (Tools::nonempty($friendlyUrlOptions['session']) ?
+            //(' session:' . http_build_query($friendlyUrlOptions['session'])) : '')
+            . ' templateDetermined: ' . print_r($templateDetermined, true);
         if (FORCE_301 && FRIENDLY_URL) {
-            $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+            $this->assertInternalType(
+                'array',
+                $templateDetermined,
+                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+            );
             $this->assertArrayHasKey('httpCode', $templateDetermined, 'Determine template ' . $message);
-            $this->assertEquals(301, $templateDetermined['httpCode'], 'non-301 httpCode field in ' . print_r($templateDetermined, true));
+            $this->assertEquals(
+                301,
+                $templateDetermined['httpCode'],
+                'non-301 httpCode field in ' . print_r($templateDetermined, true)
+            );
             $this->assertArrayHasKey('redir', $templateDetermined, 'Determine template ' . $message);
             $this->assertStringEndsWith('/alfa', $templateDetermined['redir'], 'redir field MUST end with /alfa');
         } else {
@@ -102,11 +138,24 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         ];
         $this->object = new FriendlyUrl($this->myCms, $friendlyUrlOptions);
         $templateDetermined = $this->object->determineTemplate($determineTemplateOptions);
-        $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI'] . (Tools::nonempty($friendlyUrlOptions['get']) ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '') . (Tools::nonempty($friendlyUrlOptions['session']) ? (' session:' . http_build_query($friendlyUrlOptions['session'])) : '') . ' templateDetermined: ' . print_r($templateDetermined, true);
+        $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI']
+            . (Tools::nonempty($friendlyUrlOptions['get'])
+            ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '')
+            //. (Tools::nonempty($friendlyUrlOptions['session'])
+            // ? (' session:' . http_build_query($friendlyUrlOptions['session'])) : '')
+            . ' templateDetermined: ' . print_r($templateDetermined, true);
         if (FORCE_301 && FRIENDLY_URL) {
-            $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+            $this->assertInternalType(
+                'array',
+                $templateDetermined,
+                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+            );
             $this->assertArrayHasKey('httpCode', $templateDetermined, 'Determine template ' . $message);
-            $this->assertEquals(301, $templateDetermined['httpCode'], 'non-301 httpCode field in ' . print_r($templateDetermined, true));
+            $this->assertEquals(
+                301,
+                $templateDetermined['httpCode'],
+                'non-301 httpCode field in ' . print_r($templateDetermined, true)
+            );
             $this->assertArrayHasKey('redir', $templateDetermined, 'Determine template ' . $message);
             $this->assertStringEndsWith('/beta', $templateDetermined['redir'], 'redir field MUST end with /beta');
         } else {
@@ -120,7 +169,12 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         ];
         $this->object = new FriendlyUrl($this->myCms, $friendlyUrlOptions);
         $templateDetermined = $this->object->determineTemplate($determineTemplateOptions);
-        $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI'] . (Tools::nonempty($friendlyUrlOptions['get']) ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '') . (Tools::nonempty($friendlyUrlOptions['session']) ? (' session:' . http_build_query($friendlyUrlOptions['session'])) : '') . ' templateDetermined: ' . print_r($templateDetermined, true);
+        $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI']
+            . (Tools::nonempty($friendlyUrlOptions['get'])
+            ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '')
+            //. (Tools::nonempty($friendlyUrlOptions['session'])
+            //? (' session:' . http_build_query($friendlyUrlOptions['session'])) : '')
+            . ' templateDetermined: ' . print_r($templateDetermined, true);
         $this->assertEquals('product', $templateDetermined, $message);
 
         // non-existent product
@@ -131,15 +185,29 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         ];
         $this->object = new FriendlyUrl($this->myCms, $friendlyUrlOptions);
         $templateDetermined = $this->object->determineTemplate($determineTemplateOptions);
-        $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI'] . (Tools::nonempty($friendlyUrlOptions['get']) ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '') . (Tools::nonempty($friendlyUrlOptions['session']) ? (' session:' . http_build_query($friendlyUrlOptions['session'])) : '') . ' templateDetermined: ' . print_r($templateDetermined, true);
+        $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI']
+            . (Tools::nonempty($friendlyUrlOptions['get'])
+            ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '')
+            //. (Tools::nonempty($friendlyUrlOptions['session']) ?
+            //(' session:' . http_build_query($friendlyUrlOptions['session'])) : '')
+            . ' templateDetermined: ' . print_r($templateDetermined, true);
         if (FORCE_301 && FRIENDLY_URL) {
-            $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+            $this->assertInternalType(
+                'array',
+                $templateDetermined,
+                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+            );
             $this->assertArrayHasKey('httpCode', $templateDetermined, 'Determine template ' . $message);
-            $this->assertEquals(301, $templateDetermined['httpCode'], 'non-301 httpCode field in ' . print_r($templateDetermined, true));
+            $this->assertEquals(
+                301,
+                $templateDetermined['httpCode'],
+                'non-301 httpCode field in ' . print_r($templateDetermined, true)
+            );
             $this->assertArrayHasKey('redir', $templateDetermined, 'Determine template ' . $message);
             $this->assertStringEndsWith('/404', $templateDetermined['redir'], 'redir field MUST end with /404');
         } else {
-            $this->assertEquals('product', $templateDetermined, $message); // as to error404 it will change in Controller::prepareTemplate
+            $this->assertEquals('product', $templateDetermined, $message);
+            // Note: to error404 it will change in Controller::prepareTemplate
         }
 
         $determineTemplateOptions = ['REQUEST_URI' => '/?category=1'];
@@ -149,13 +217,30 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         ];
         $this->object = new FriendlyUrl($this->myCms, $friendlyUrlOptions);
         $templateDetermined = $this->object->determineTemplate($determineTemplateOptions);
-        $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI'] . (Tools::nonempty($friendlyUrlOptions['get']) ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '') . (Tools::nonempty($friendlyUrlOptions['session']) ? (' session:' . http_build_query($friendlyUrlOptions['session'])) : '') . ' templateDetermined: ' . print_r($templateDetermined, true);
+        $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI']
+            . (Tools::nonempty($friendlyUrlOptions['get'])
+            ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '')
+            //. (Tools::nonempty($friendlyUrlOptions['session']) ?
+            //(' session:' . http_build_query($friendlyUrlOptions['session'])) : '')
+            . ' templateDetermined: ' . print_r($templateDetermined, true);
         if (FORCE_301 && FRIENDLY_URL) {
-            $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+            $this->assertInternalType(
+                'array',
+                $templateDetermined,
+                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+            );
             $this->assertArrayHasKey('httpCode', $templateDetermined, 'Determine template ' . $message);
-            $this->assertEquals(301, $templateDetermined['httpCode'], 'non-301 httpCode field in ' . print_r($templateDetermined, true));
+            $this->assertEquals(
+                301,
+                $templateDetermined['httpCode'],
+                'non-301 httpCode field in ' . print_r($templateDetermined, true)
+            );
             $this->assertArrayHasKey('redir', $templateDetermined, 'Determine template ' . $message);
-            $this->assertStringEndsWith('/default-category-cs', $templateDetermined['redir'], 'redir field MUST end with /default-category-cs');
+            $this->assertStringEndsWith(
+                '/default-category-cs',
+                $templateDetermined['redir'],
+                'redir field MUST end with /default-category-cs'
+            );
         } else {
             $this->assertEquals('category', $templateDetermined, $message);
         }
@@ -167,7 +252,12 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         ];
         $this->object = new FriendlyUrl($this->myCms, $friendlyUrlOptions);
         $templateDetermined = $this->object->determineTemplate($determineTemplateOptions);
-        $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI'] . (Tools::nonempty($friendlyUrlOptions['get']) ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '') . (Tools::nonempty($friendlyUrlOptions['session']) ? (' session:' . http_build_query($friendlyUrlOptions['session'])) : '') . ' templateDetermined: ' . print_r($templateDetermined, true);
+        $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI']
+            . (Tools::nonempty($friendlyUrlOptions['get'])
+            ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '')
+            //. (Tools::nonempty($friendlyUrlOptions['session']) ?
+            //(' session:' . http_build_query($friendlyUrlOptions['session'])) : '')
+            . ' templateDetermined: ' . print_r($templateDetermined, true);
         $this->assertEquals('category', $templateDetermined, $message);
 
         $determineTemplateOptions = ['REQUEST_URI' => '/?category'];
@@ -177,7 +267,12 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         ];
         $this->object = new FriendlyUrl($this->myCms, $friendlyUrlOptions);
         $templateDetermined = $this->object->determineTemplate($determineTemplateOptions);
-        $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI'] . (Tools::nonempty($friendlyUrlOptions['get']) ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '') . (Tools::nonempty($friendlyUrlOptions['session']) ? (' session:' . http_build_query($friendlyUrlOptions['session'])) : '') . ' templateDetermined: ' . print_r($templateDetermined, true);
+        $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI']
+            . (Tools::nonempty($friendlyUrlOptions['get'])
+            ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '')
+            //. (Tools::nonempty($friendlyUrlOptions['session']) ?
+            // (' session:' . http_build_query($friendlyUrlOptions['session'])) : '')
+            . ' templateDetermined: ' . print_r($templateDetermined, true);
         $this->assertEquals('category', $templateDetermined, $message);
 
         // non-existent category
@@ -188,20 +283,37 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         ];
         $this->object = new FriendlyUrl($this->myCms, $friendlyUrlOptions);
         $templateDetermined = $this->object->determineTemplate($determineTemplateOptions);
-        $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI'] . (Tools::nonempty($friendlyUrlOptions['get']) ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '') . (Tools::nonempty($friendlyUrlOptions['session']) ? (' session:' . http_build_query($friendlyUrlOptions['session'])) : '') . ' templateDetermined: ' . print_r($templateDetermined, true);
+        $message = 'Failed for request URI ' . $determineTemplateOptions['REQUEST_URI']
+            . (Tools::nonempty($friendlyUrlOptions['get'])
+            ? (' get:' . http_build_query($friendlyUrlOptions['get'])) : '')
+            //. (Tools::nonempty($friendlyUrlOptions['session']) ?
+            //(' session:' . http_build_query($friendlyUrlOptions['session'])) : '')
+            . ' templateDetermined: ' . print_r($templateDetermined, true);
         if (FORCE_301 && FRIENDLY_URL) {
-            $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+            $this->assertInternalType(
+                'array',
+                $templateDetermined,
+                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+            );
             $this->assertArrayHasKey('httpCode', $templateDetermined, 'Determine template ' . $message);
-            $this->assertEquals(301, $templateDetermined['httpCode'], 'non-301 httpCode field in ' . print_r($templateDetermined, true));
+            $this->assertEquals(
+                301,
+                $templateDetermined['httpCode'],
+                'non-301 httpCode field in ' . print_r($templateDetermined, true)
+            );
             $this->assertArrayHasKey('redir', $templateDetermined, 'Determine template ' . $message);
             $this->assertStringEndsWith('/404', $templateDetermined['redir'], 'redir field MUST end with /404');
         } else {
-            $this->assertEquals('category', $templateDetermined, $message); // Note: result of determineTemplate is 'category'; in Controller::prepareTemplate it will change to 'error404'
+            $this->assertEquals('category', $templateDetermined, $message);
+            // Note: result of determineTemplate is 'category';
+            // in Controller::prepareTemplate it will change to 'error404'
         }
     }
 
     /**
      * @covers GodsDev\mycmsprojectnamespace\Controller::controller
+     *
+     * @return void
      */
     public function testControllerRedirectorVsFriendlyURL()
     {
@@ -249,9 +361,20 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             'REQUEST_URI' => $requestUri
         ]);
         $applicationDir = pathinfo($_SERVER["SCRIPT_NAME"], PATHINFO_DIRNAME);
-        $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+        $this->assertInternalType(
+            'array',
+            $templateDetermined,
+            'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+        );
         $this->assertArrayHasKey('redir', $templateDetermined, 'Determine template ' . $message);
-        $this->assertEquals(['redir' => $applicationDir . ((FRIENDLY_URL && FORCE_301) ? '/beta' : '/?product&id=2'), 'httpCode' => 301], $templateDetermined, 'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+        $this->assertEquals(
+            [
+            'redir' => $applicationDir . ((FRIENDLY_URL && FORCE_301) ? '/beta' : '/?product&id=2'),
+            'httpCode' => 301
+            ],
+            $templateDetermined,
+            'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template
+        );
 
         $requestUri = '/takovy-adresar-neni/odpovednost';
         $message = "For request URI " . $requestUri;
@@ -265,9 +388,17 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             'PATH_HOME' => '0000000001',
             'REQUEST_URI' => $requestUri
         ]);
-        $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+        $this->assertInternalType(
+            'array',
+            $templateDetermined,
+            'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+        );
         $this->assertArrayHasKey('redir', $templateDetermined, 'Determine template ' . $message);
-        $this->assertEquals(['redir' => $applicationDir . '/404?url=' . $requestUri, 'httpCode' => 301], $templateDetermined, 'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+        $this->assertEquals(
+            ['redir' => $applicationDir . '/404?url=' . $requestUri, 'httpCode' => 301],
+            $templateDetermined,
+            'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template
+        );
 
         $requestUri = '/data-centers/dadas/dadsads';
         $message = "For request URI " . $requestUri;
@@ -281,9 +412,17 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             'PATH_HOME' => '0000000001',
             'REQUEST_URI' => $requestUri
         ]);
-        $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+        $this->assertInternalType(
+            'array',
+            $templateDetermined,
+            'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+        );
         $this->assertArrayHasKey('redir', $templateDetermined, 'Determine template ' . $message);
-        $this->assertEquals(['redir' => $applicationDir . '/404?url=' . $requestUri, 'httpCode' => 301], $templateDetermined, 'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+        $this->assertEquals(
+            ['redir' => $applicationDir . '/404?url=' . $requestUri, 'httpCode' => 301],
+            $templateDetermined,
+            'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template
+        );
 
         $requestUri = '/xx/data-centers';
         $message = "For request URI " . $requestUri;
@@ -297,9 +436,17 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             'PATH_HOME' => '0000000001',
             'REQUEST_URI' => $requestUri
         ]);
-        $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+        $this->assertInternalType(
+            'array',
+            $templateDetermined,
+            'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+        );
         $this->assertArrayHasKey('redir', $templateDetermined, 'Determine template ' . $message);
-        $this->assertEquals(['redir' => $applicationDir . '/404?url=' . $requestUri, 'httpCode' => 301], $templateDetermined, 'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+        $this->assertEquals(
+            ['redir' => $applicationDir . '/404?url=' . $requestUri, 'httpCode' => 301],
+            $templateDetermined,
+            'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template
+        );
 
         $requestUri = '/en/contacts'; // Note: url_en=contacts MUST be set
         $message = "For request URI " . $requestUri;
@@ -317,7 +464,9 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('article', $templateDetermined, 'Determine template ' . $message);
 
         // Test below is for redirector
-        $requestUri = '/adresa'; //Note: to properly test /spolecnost/odpovednost (which MUST be defined in redirector table) the /odpovednost MUST be tested first.
+        $requestUri = '/adresa';
+        //Note: to properly test e.g. /spolecnost/odpovednost (which MUST be defined in redirector table)
+        //the /odpovednost MUST be tested first.
         $message = "For request URI " . $requestUri;
         $this->object = new FriendlyUrl($this->myCms, array(
             "get" => [],
@@ -330,15 +479,29 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             'REQUEST_URI' => $requestUri
         ]);
         if (REDIRECTOR_ENABLED) {
-            $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+            $this->assertInternalType(
+                'array',
+                $templateDetermined,
+                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+            );
             $this->assertArrayHasKey('redir', $templateDetermined, $message);
-            $this->assertEquals(['redir' => $applicationDir . '/kontakty', 'httpCode' => 301], $templateDetermined, 'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+            $this->assertEquals(
+                ['redir' => $applicationDir . '/kontakty', 'httpCode' => 301],
+                $templateDetermined,
+                'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template
+            );
         } else {
-            $this->assertEquals('error404', $templateDetermined, 'Determine template ' . $message . ' but result is ' . print_r($templateDetermined, true));
+            $this->assertEquals(
+                'error404',
+                $templateDetermined,
+                'Determine template ' . $message . ' but result is ' . print_r($templateDetermined, true)
+            );
         }
 
         // Test below is for redirector
-        $requestUri = '/firma/adresa'; //Note: to properly test /firma/adresa (which MUST be defined in redirector table) the /adresa redirect MUST be tested first.
+        $requestUri = '/firma/adresa';
+        //Note: to properly test e.g. /firma/adresa (which MUST be defined in redirector table)
+        //the /adresa redirect MUST be tested first.
         $message = "For request URI " . $requestUri;
         $this->object = new FriendlyUrl($this->myCms, array(
             "get" => [],
@@ -351,13 +514,29 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             'REQUEST_URI' => $requestUri
         ]);
         if (REDIRECTOR_ENABLED) {
-            $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+            $this->assertInternalType(
+                'array',
+                $templateDetermined,
+                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+            );
             $this->assertArrayHasKey('redir', $templateDetermined, $message);
-            $this->assertEquals(['redir' => $applicationDir . '/kontakty', 'httpCode' => 301], $templateDetermined, 'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+            $this->assertEquals(
+                ['redir' => $applicationDir . '/kontakty', 'httpCode' => 301],
+                $templateDetermined,
+                'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template
+            );
         } else {
-            $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+            $this->assertInternalType(
+                'array',
+                $templateDetermined,
+                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+            );
             $this->assertArrayHasKey('redir', $templateDetermined, 'Determine template ' . $message);
-            $this->assertEquals(['redir' => $applicationDir . '/404?url=' . $requestUri, 'httpCode' => 301], $templateDetermined, 'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+            $this->assertEquals(
+                ['redir' => $applicationDir . '/404?url=' . $requestUri, 'httpCode' => 301],
+                $templateDetermined,
+                'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template
+            );
         }
 
         // Test below is for redirector
@@ -374,13 +553,29 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             'REQUEST_URI' => $requestUri
         ]);
         if (REDIRECTOR_ENABLED) {
-            $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+            $this->assertInternalType(
+                'array',
+                $templateDetermined,
+                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+            );
             $this->assertArrayHasKey('redir', $templateDetermined, $message);
-            $this->assertEquals(['redir' => $applicationDir . '/kontakty', 'httpCode' => 301], $templateDetermined, 'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+            $this->assertEquals(
+                ['redir' => $applicationDir . '/kontakty', 'httpCode' => 301],
+                $templateDetermined,
+                'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template
+            );
         } else {
-            $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+            $this->assertInternalType(
+                'array',
+                $templateDetermined,
+                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+            );
             $this->assertArrayHasKey('redir', $templateDetermined, 'Determine template ' . $message);
-            $this->assertEquals(['redir' => $applicationDir . '/404?url=' . $requestUri, 'httpCode' => 301], $templateDetermined, 'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+            $this->assertEquals(
+                ['redir' => $applicationDir . '/404?url=' . $requestUri, 'httpCode' => 301],
+                $templateDetermined,
+                'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template
+            );
         }
 
         $requestUri = '/en/beta?product&id=1';
@@ -399,14 +594,31 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             'PATH_HOME' => '0000000001',
             'REQUEST_URI' => $requestUri
         ]);
-        if (FORCE_301
+        if (
+            FORCE_301
 //            && FRIENDLY_URL
         ) {
-            $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template "' . print_r($templateDetermined, true) . '" ' . $message . ' but template=' . print_r($this->myCms->template, true));
+            $this->assertInternalType(
+                'array',
+                $templateDetermined,
+                'MUST return array: Determine template "' . print_r($templateDetermined, true)
+                . '" ' . $message . ' but template=' . print_r($this->myCms->template, true)
+            );
             $this->assertArrayHasKey('redir', $templateDetermined, $message);
-            $this->assertEquals(['redir' => $applicationDir . (FRIENDLY_URL ? '/en/alfa' : '/?product&id=1&language=en'), 'httpCode' => 301], $templateDetermined, 'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+            $this->assertEquals(
+                [
+                'redir' => $applicationDir . (FRIENDLY_URL ? '/en/alfa' : '/?product&id=1&language=en'),
+                'httpCode' => 301
+                ],
+                $templateDetermined,
+                'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template
+            );
         } else {
-            $this->assertEquals('product', $templateDetermined, $message . ' template=' . print_r($templateDetermined, true));
+            $this->assertEquals(
+                'product',
+                $templateDetermined,
+                $message . ' template=' . print_r($templateDetermined, true)
+            );
         }
 
 
@@ -426,14 +638,27 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             'PATH_HOME' => '0000000001',
             'REQUEST_URI' => $requestUri
         ]);
-        if (FORCE_301
+        if (
+            FORCE_301
 //            && FRIENDLY_URL
         ) {
-            $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+            $this->assertInternalType(
+                'array',
+                $templateDetermined,
+                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+            );
             $this->assertArrayHasKey('redir', $templateDetermined, $message);
-            $this->assertEquals(['redir' => $applicationDir . '/?product&id=4&language=en', 'httpCode' => 301], $templateDetermined, 'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+            $this->assertEquals(
+                ['redir' => $applicationDir . '/?product&id=4&language=en', 'httpCode' => 301],
+                $templateDetermined,
+                'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template
+            );
         } else {
-            $this->assertEquals('product', $templateDetermined, $message . ' template=' . print_r($templateDetermined, true));
+            $this->assertEquals(
+                'product',
+                $templateDetermined,
+                $message . ' template=' . print_r($templateDetermined, true)
+            );
         }
 
         // follow-up from previous test
@@ -455,10 +680,18 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             'REQUEST_URI' => $requestUri
         ]);
         if (FORCE_301 && FRIENDLY_URL) {
-            $this->assertInternalType('array', $templateDetermined, 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+            $this->assertInternalType(
+                'array',
+                $templateDetermined,
+                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+            );
             $this->assertArrayHasKey('redir', $templateDetermined, $message);
             $resultRedir = $applicationDir . '/en/?product&id=4';
-            $this->assertEquals(['redir' => $resultRedir, 'httpCode' => 301], $templateDetermined, 'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template);
+            $this->assertEquals(
+                ['redir' => $resultRedir, 'httpCode' => 301],
+                $templateDetermined,
+                'MUST return redirect array: Determine template ' . $message . ' but template=' . $this->myCms->template
+            );
         } else {
             $this->assertEquals('product', $templateDetermined, $message);
         }
@@ -466,6 +699,8 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers GodsDev\mycmsprojectnamespace\FriendlyUrl::friendlyfyUrl
+     *
+     * @return void
      */
     public function testFriendlyfyUrl()
     {
@@ -473,7 +708,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             $this->markTestIncomplete(
                 'This test may be performed only with FRIENDLY_URL === true.'
             );
-            return null;
+            return;
         }
         $this->object = new FriendlyUrl($this->myCms, []);
 
@@ -485,6 +720,8 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
 
     /**
      * This PHPUnit test is meant just for MyCMS development. It is recommended to remove it from real applications.
+     *
+     * @return void
      */
     public function testPageStatusOverHttp()
     {
@@ -646,33 +883,64 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             ],
         ];
 
-        $urlsToBeChecked = array_merge($urlsToBeCheckedAny, FRIENDLY_URL ? (FORCE_301 ? $urlsToBeCheckedFriendlyUrlTrueForce301True : $urlsToBeCheckedFriendlyUrlTrueForce301False) : (FORCE_301 ? $urlsToBeCheckedFriendlyUrlFalseForce301True : $urlsToBeCheckedFriendlyUrlFalseForce301False));
+        $urlsToBeChecked = array_merge(
+            $urlsToBeCheckedAny,
+            FRIENDLY_URL ?
+            (FORCE_301 ? $urlsToBeCheckedFriendlyUrlTrueForce301True : $urlsToBeCheckedFriendlyUrlTrueForce301False)
+            : (FORCE_301 ? $urlsToBeCheckedFriendlyUrlFalseForce301True : $urlsToBeCheckedFriendlyUrlFalseForce301False)
+        );
 
         foreach ($urlsToBeChecked as $singleUrl) {
             $url = $this->apiBaseUrl . $singleUrl['relative_url'];
-            $result = $this->backyard->Http->getData($url, 'PHPUnit/' . \PHPUnit_Runner_Version::id() . ' ' . __FUNCTION__);
-//            var_dump("first RESULT for {$url}", $result);
+            $result = $this->backyard->Http->getData(
+                $url,
+                'PHPUnit/' . \PHPUnit_Runner_Version::id() . ' ' . __FUNCTION__
+            );
+            // var_dump("first RESULT for {$url}", $result);
             if (isset($singleUrl['redirect_contains']) && isset($result['REDIRECT_URL'])) {
-                $this->assertContains($singleUrl['redirect_contains'], $result['REDIRECT_URL'], "Redirect '{$singleUrl['redirect_contains']}' needle is not in the haystack {$url}");
+                $this->assertContains(
+                    $singleUrl['redirect_contains'],
+                    $result['REDIRECT_URL'],
+                    "Redirect '{$singleUrl['redirect_contains']}' needle is not in the haystack {$url}"
+                );
             }
-            if (isset($singleUrl['allow_redirect']) && $singleUrl['allow_redirect'] && isset($result['REDIRECT_URL'])) {//fixes e.g. http to https 301 redirect
-                $result = $this->backyard->Http->getData($this->apiBaseDomain . $result['REDIRECT_URL'], 'PHPUnit/' . \PHPUnit_Runner_Version::id() . ' ' . __FUNCTION__);
-//                var_dump('2nd RESULT', $result);
+            if (
+                isset($singleUrl['allow_redirect']) && $singleUrl['allow_redirect'] && isset($result['REDIRECT_URL'])
+            ) {//fixes e.g. http to https 301 redirect
+                $result = $this->backyard->Http->getData(
+                    $this->apiBaseDomain . $result['REDIRECT_URL'],
+                    'PHPUnit/' . \PHPUnit_Runner_Version::id() . ' ' . __FUNCTION__
+                );
+                // var_dump('2nd RESULT', $result);
             }
-            $this->assertNotFalse($result, "cURL failed on {$url}");
-            $this->assertFalse(($result['HTTP_CODE'] === 0), "URL {$url} is not available. (Is \$backyardConf['web_address'] properly configured?)");
+            $this->assertNotFalse(is_array($result), "cURL failed on {$url} with result=" . print_r($result, true));
+            $this->assertFalse(
+                ($result['HTTP_CODE'] === 0),
+                "URL {$url} is not available. (Is \$backyardConf['web_address'] properly configured?)"
+            );
             if (isset($singleUrl['http_status']) && $singleUrl['http_status']) {
-                $this->assertEquals($singleUrl['http_status'], $result['HTTP_CODE'], "URL {$url} returns other HTTP code. Test parameters: " . print_r($singleUrl, true));
+                $this->assertEquals(
+                    $singleUrl['http_status'],
+                    $result['HTTP_CODE'],
+                    "URL {$url} returns other HTTP code. (HOME_TOKEN is set?) Test parameters: "
+                    . print_r($singleUrl, true)
+                );
             }
             $this->assertArrayHasKey('message_body', $result, "URL {$url} nevraci obsah.");
             if (isset($singleUrl['contains_text'])) {
-                $this->assertContains($singleUrl['contains_text'], $result['message_body'], "Needle '{$singleUrl['contains_text']}' is not in the haystack {$url}");
+                $this->assertContains(
+                    $singleUrl['contains_text'],
+                    $result['message_body'],
+                    "Needle '{$singleUrl['contains_text']}' is not in the haystack {$url}"
+                );
             }
             if (isset($singleUrl['is_json']) && $singleUrl['is_json']) {
                 $jsonArr = json_decode($result['message_body'], true);
-                $this->assertTrue(is_array($jsonArr), "Vysledek neni pole, tedy vstup na URL {$url} nebyl JSON: " . substr($result['message_body'], 0, 20));
+                $this->assertTrue(
+                    is_array($jsonArr),
+                    "Vysledek neni pole, tedy vstup na URL {$url} nebyl JSON: " . substr($result['message_body'], 0, 20)
+                );
             }
         }
     }
-
 }
