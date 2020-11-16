@@ -291,6 +291,15 @@ class MyFriendlyUrl extends MyCommon
     }
 
     /**
+     * Temp function
+     *
+     * @param array $options
+     */
+    private function calcLangSelectorUrl(array $options)
+    {
+    }
+
+    /**
      * Determines which template will be used (or redirect should be performed)
      *
      * How does it work:
@@ -331,6 +340,7 @@ class MyFriendlyUrl extends MyCommon
         }
 //        Debugger::barDump($this->friendlyIdentifyRedirect(['REQUEST_URI' => $options['REQUEST_URI'] . '?language=fr']), 'fr');
         Debugger::barDump(['langRedirUrl' => $tempLang, 'resultUrl' => $tempLang2], 'LANG REDIR TEST');
+
         if (is_bool($friendlyUrlRedirectVariables) || isset($friendlyUrlRedirectVariables['redir'])) {
             return $friendlyUrlRedirectVariables;
         }
@@ -347,6 +357,16 @@ class MyFriendlyUrl extends MyCommon
         //FRIENDLY URL & Redirect calculation where $token, $matches are expected from above
         $pureFriendlyUrl = $this->pureFriendlyUrl($options, $token, $matches);
         if (!is_null($pureFriendlyUrl)) {
+            //
+//            var_dump($pureFriendlyUrl);
+//            exit;
+//            $tempLang = $tempLang2 = [];
+//            foreach ($this->MyCMS->TRANSLATIONS as $k => $v) {
+//                $tempLang[$k] = "/?type={$pureFriendlyUrl['type']}&id={$pureFriendlyUrl['id']}&language=" . $k;
+//                $tempLang2[$k] = $this->friendlyIdentifyRedirect(['REQUEST_URI' => $tempLang[$k]]);
+//            }
+//            Debugger::barDump(['langRedirUrl' => $tempLang, 'resultUrl' => $tempLang2], 'LANG REDIR TEST 2');
+
             $this->verboseBarDump($this->get, 'determineTemplate this->get before return pureFriendlyUrl');
             return $this->verboseBarDump($pureFriendlyUrl, 'determineTemplate return pureFriendlyUrl');
         }
@@ -387,6 +407,14 @@ class MyFriendlyUrl extends MyCommon
             $this->verboseBarDump($found, 'pureFriendlyUrl: found friendly URL');
             $this->get[$found['type']] = $this->get['id'] = $found['id'];
             $this->verboseBarDump($this->get, 'pureFriendlyUrl: this->get within pureFriendlyUrl');
+            //
+            $tempLang = $tempLang2 = [];
+            foreach ($this->MyCMS->TRANSLATIONS as $k => $v) {
+                $tempLang[$k] = "/?type={$found['type']}&id={$found['id']}&language=" . $k;
+                $tempLang2[$k] = $this->friendlyIdentifyRedirect(['REQUEST_URI' => $tempLang[$k]]);
+            }
+            Debugger::barDump(['langRedirUrl' => $tempLang, 'resultUrl' => $tempLang2], 'LANG REDIR TEST 2');
+            //
             //TODO change the description as recursion is limited here
             return $this->verboseBarDump(
                 $this->parametricRuleToTemplate(),
