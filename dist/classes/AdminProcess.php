@@ -180,21 +180,21 @@ class AdminProcess extends MyAdminProcess
                     $this->redir('?' . Tools::urlChange(array('where' => array($where => $id))));
                 } else {
                     Debugger::barDump($post['fields']['id'], 'record-save update only');
-                    // project-specific: products 13 and 67 SHOULD have identical description
-                    if (in_array($post['fields']['id'], ['13', '67'])) {
-                        if ($post['fields']['id'] === '13') {
-                            $post['fields'] = ['id' => '67', 'description_en' => $post['fields']['description_en'],
-                                'description_cs' => $post['fields']['description_cs']];
-                            $post['original'] = ['id' => '67', 'description_en' => $post['original']['description_en'],
-                                'description_cs' => $post['original']['description_cs']];
-                        } else {
-                            $post['fields'] = ['id' => '13', 'description_en' => $post['fields']['description_en'],
-                                'description_cs' => $post['fields']['description_cs']];
-                            $post['original'] = ['id' => '13', 'description_en' => $post['original']['description_en'],
-                                'description_cs' => $post['original']['description_cs']];
-                        }
-                        $this->tableAdmin->recordSave();
-                    }
+//                  // project-specific: products 13 and 67 SHOULD have identical description
+//                  if (in_array($post['fields']['id'], ['13', '67'])) {
+//                      if ($post['fields']['id'] === '13') {
+//                          $post['fields'] = ['id' => '67', 'description_en' => $post['fields']['description_en'],
+//                              'description_cs' => $post['fields']['description_cs']];
+//                          $post['original'] = ['id' => '67', 'description_en' => $post['original']['description_en'],
+//                              'description_cs' => $post['original']['description_cs']];
+//                      } else {
+//                          $post['fields'] = ['id' => '13', 'description_en' => $post['fields']['description_en'],
+//                              'description_cs' => $post['fields']['description_cs']];
+//                          $post['original'] = ['id' => '13', 'description_en' => $post['original']['description_en'],
+//                              'description_cs' => $post['original']['description_cs']];
+//                      }
+//                      $this->tableAdmin->recordSave();
+//                 }
                 }
             }
             if (isset($post['after'], $post['referer']) && $post['after']) {

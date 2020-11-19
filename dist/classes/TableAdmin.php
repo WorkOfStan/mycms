@@ -382,13 +382,13 @@ class TableAdmin extends MyTableAdmin
                 }
                 $_POST['original']['path'] = null;
                 $update = $this->dbms->fetchAndReindex('SELECT id, CONCAT(LEFT(path, '
-                    . ($length[1] - PATH_MODULE) . '), 
+                    . ($length[1] - PATH_MODULE) . '),
                         LPAD(MID(path, ' . ($length[1] - PATH_MODULE + 1) . ', ' . PATH_MODULE . ') - 1, '
-                    . PATH_MODULE . ', "0"), 
+                    . PATH_MODULE . ', "0"),
                         MID(path, ' . ($length[1] + PATH_MODULE + 1) . '))
                     FROM ' . Tools::escapeDbIdentifier($_POST['table']) . '
                     WHERE LEFT(path, ' . ($length[1] - PATH_MODULE) . ') = "'
-                    . $this->dbms->escapeSQL(substr($_POST['path-original'], 0, -PATH_MODULE)) . '" 
+                    . $this->dbms->escapeSQL(substr($_POST['path-original'], 0, -PATH_MODULE)) . '"
                     AND LENGTH(path) >= ' . $length[1] . ' AND path > "'
                     . $this->dbms->escapeSQL($_POST['path-original']) . '"');
                 if ($update) {
@@ -430,13 +430,13 @@ class TableAdmin extends MyTableAdmin
         // After a category is deleted, shift categories after it accordingly.
         if ($_POST['table'] == TAB_PREFIX . 'category' && isset($_POST['path-original']) && $_POST['path-original']) {
             $length = strlen($_POST['path-original']);
-            $update = $this->dbms->fetchAndReindex('SELECT id, CONCAT(LEFT(path, ' . ($length - PATH_MODULE) . '), 
+            $update = $this->dbms->fetchAndReindex('SELECT id, CONCAT(LEFT(path, ' . ($length - PATH_MODULE) . '),
                     LPAD(MID(path, ' . ($length - PATH_MODULE + 1) . ', ' . PATH_MODULE . ') - 1, '
-                . PATH_MODULE . ', "0"), 
+                . PATH_MODULE . ', "0"),
                     MID(path, ' . ($length + PATH_MODULE + 1) . '))
                 FROM ' . Tools::escapeDbIdentifier($_POST['table']) . '
                 WHERE LEFT(path, ' . ($length - PATH_MODULE) . ') = "'
-                . $this->dbms->escapeSQL(substr($_POST['path-original'], 0, -PATH_MODULE)) . '" 
+                . $this->dbms->escapeSQL(substr($_POST['path-original'], 0, -PATH_MODULE)) . '"
                 AND LENGTH(path) >= ' . $length . ' AND path > "'
                 . $this->dbms->escapeSQL($_POST['path-original']) . '"');
             if ($update) {

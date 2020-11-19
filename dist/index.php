@@ -2,6 +2,8 @@
 
 require './set-environment.php';
 
+// TODO move class path to header as use statement for easy replacement in a project
+
 // Under construction section
 if (
     UNDER_CONSTRUCTION && !(

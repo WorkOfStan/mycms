@@ -107,7 +107,6 @@ class AdminProcessTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetAgenda()
     {
-
         //$adminAgendaCategoryArray = $this->object->getAgenda('category');
         //$this->assertEquals(['id' => '10', 'name' => 'MYCMSPROJECTSPECIFIC',
         //'path' => '0000000001'], $adminAgendaCategoryArray[0]);

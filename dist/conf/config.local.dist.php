@@ -54,7 +54,7 @@ define('RECAPTCHA_SECRET', '...');
  * Development
  */
 //define('USE_CAPTCHA', false); // to turn off CAPTCHA for your dev environment.
-//(Never turn it off however for environment available over internet.)
+//(Never turn USE_CAPTCHA off however for environment available over internet.)
 //feature flags (use keys without spaces to avoid problems in javascript)
 $featureFlags = [
 //    'offline_dev' => true,
