@@ -8,7 +8,6 @@
 
 namespace GodsDev\mycmsprojectnamespace;
 
-use GodsDev\MyCMS\MyCMS;
 use GodsDev\MyCMS\MyAdminProcess;
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
@@ -51,12 +50,12 @@ class AdminProcess extends MyAdminProcess
         }
         // return given agenda
         if (isset($post['agenda'], $this->agendas[$post['agenda']])) {
-            $result = array(
+            $result = [
                 'data' => $this->getAgenda($post['agenda']),
                 'success' => true,
                 'agenda' => $post['agenda'],
                 'subagenda' => Tools::setifnull($this->agendas[$post['agenda']]['join']['table'])
-            );
+            ];
             $this->exitJson($result);
         }
         // return files in /assets (sub)folder
@@ -64,10 +63,10 @@ class AdminProcess extends MyAdminProcess
         // return a webalized string
         if (isset($post['webalize']) && is_string($post['webalize'])) {
             // @todo $post['table'] and $post['id'] can also be sent - check uniqueness then
-            $result = array(
+            $result = [
                 'data' => Tools::webalize($post['webalize']),
                 'success' => true
-            );
+            ];
             $this->exitJson($result);
         }
         // further commands require token
@@ -139,18 +138,17 @@ class AdminProcess extends MyAdminProcess
         if (
             isset($post['product-switch'], $post['id']) &&
             ($product = $this->MyCMS->dbms->query(
-                // TODO 3x Expected at least 1 space after "+"; 0 found ask CRS2
-                'SELECT category_id,sort FROM ' . TAB_PREFIX . 'product WHERE id=' . +$post['id']
+                'SELECT category_id,sort FROM ' . TAB_PREFIX . 'product WHERE id=' . (int) $post['id']
             )->fetch_assoc())
         ) {
             $id = $this->MyCMS->fetchSingle('SELECT id FROM ' . TAB_PREFIX . 'product WHERE category_id='
-                . +$product['category_id'] . ' AND sort' . ($post['product-switch'] == 1 ? '>' : '<')
+                . (int) $product['category_id'] . ' AND sort' . ($post['product-switch'] == 1 ? '>' : '<')
                 . $product['sort'] . ' ORDER BY sort' . ($post['product-switch'] == 1 ? '' : ' DESC') . ' LIMIT 1');
             if ($id) {
                 $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'product SET sort='
                     . $product['sort'] . ' WHERE id=' . $id);
                 $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'product SET sort='
-                    . ($product['sort'] + $post['product-switch']) . ' WHERE id=' . +$post['id']);
+                    . ($product['sort'] + $post['product-switch']) . ' WHERE id=' . (int) $post['id']);
                 Tools::addMessage('info', $this->tableAdmin->translate('Order change processed.'));
                 die(json_encode(['success' => 1, 'errors' => '']));
             } else {

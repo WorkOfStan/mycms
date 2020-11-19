@@ -549,7 +549,7 @@ class MyAdminProcess extends MyCommon
         if (isset($post['activate-user'], $post['active']) && is_numeric($post['activate-user'])) {
             $result = [
                 'data' => ['id' => $post['activate-user']],
-                'success' => $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'admin SET active="' . ($post['active'] ? 1 : 0) . '" WHERE id=' . +$post['activate-user'] . ' AND admin<>"' . $this->MyCMS->escapeSQL($_SESSION['user']) . '"') && $this->MyCMS->dbms->affected_rows,
+                'success' => $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'admin SET active="' . ($post['active'] ? 1 : 0) . '" WHERE id=' . (int) $post['activate-user'] . ' AND admin<>"' . $this->MyCMS->escapeSQL($_SESSION['user']) . '"') && $this->MyCMS->dbms->affected_rows,
             ];
             $result['messages'] = $result['success'] ? ($post['active'] ? 'User activated.' : 'User deactivated.') : ($post['active'] ? 'Error activating the user.' : 'Error deactivating the user.');
             $result['messages'] = $this->tableAdmin->translate($result['messages']);

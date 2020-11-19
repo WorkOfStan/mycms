@@ -47,7 +47,7 @@ class ProjectSpecific extends ProjectCommon
             FROM ' . TAB_PREFIX . 'product WHERE product_' . $this->language
             // TODO Expected at least 1 space after "+"; 0 found ask CRS2
             . ' LIKE "%' . $q . '%" OR description_' . $this->language . ' LIKE "%' . $q . '%"
-            LIMIT 10 OFFSET ' . +$offset);
+            LIMIT 10 OFFSET ' . (int) $offset);
         $totalRows = $this->MyCMS->fetchSingle('SELECT FOUND_ROWS()');
         if ($query) {
             while ($row = $query->fetch_assoc()) {
