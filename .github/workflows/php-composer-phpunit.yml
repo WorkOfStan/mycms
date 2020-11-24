@@ -1,0 +1,35 @@
+name: PHP Composer + PHPUnit
+
+on: [push, pull_request]
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate
+
+    - name: Install no-dev dependencies
+      run: composer update --no-dev --prefer-dist --no-progress
+
+    - name: Install dependencies
+      run: composer update --prefer-dist --no-progress
+
+    - name: PHPUnit (php-actions)
+      uses: php-actions/phpunit@v5
+      with:
+        # PHP included in ubuntu-latest does not support iconv //TRANSLIT flag as iconv implementation is unknown
+        # https://github.com/actions/virtual-environments/blob/ubuntu18/20201026.1/images/linux/Ubuntu1804-README.md
+        # therefore PHPUnit group iconvtranslit should be excluded.
+        # Also doesn't make sense to test MySQLi related tests until MySQLi environment is ready.
+        # Also HTTP requests to self can't work in CLI only environment.
+        configuration: phpunit-github-actions.xml
+
+    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
+    # Docs: https://getcomposer.org/doc/articles/scripts.md
+
+    # - name: Run test suite
+    #   run: composer run-script test
