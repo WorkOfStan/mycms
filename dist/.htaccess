@@ -6,6 +6,9 @@
 # Friendly URL
 RewriteEngine on
 
+# Favicons in subfolder
+RewriteRule ^(android-icon-[0-9x]*\.png|apple-icon.*\.png|browserconfig.xml|favicon\.ico|favicon-[0-9x]*\.png|manifest\.json|ms-icon-[0-9x]*\.png) images/favicon/$1 [L,QSA]
+
 # redirect all requests to /en/assets* and /de/assets* to /assets*
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
