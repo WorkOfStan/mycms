@@ -238,8 +238,9 @@ class MyTableAdmin extends MyTableLister
             case 'mediumint':
             case 'bigint':
             case 'year':
-                // TODO fix Binary operation "+=" between arrays results in an error.
-                $input += ['type' => 'number', 'step' => 1, 'class' => 'form-control'];
+                $input['type'] = 'number';
+                $input['step'] = 1;
+                $input['class'] = 'form-control';
                 if ($field['key'] == 'PRI') {
                     $input['readonly'] = 'readonly';
                     $input = '<div class="input-group">' . Tools::htmlInput("fields[$key]", false, $value, $input)
@@ -247,33 +248,33 @@ class MyTableAdmin extends MyTableLister
                 }
                 break;
             case 'date':
-                // TODO fix Binary operation "+=" between arrays results in an error.
-                $input += [/* 'type' => 'date', */ 'class' => 'form-control input-date'];
+                $input['class'] = 'form-control input-date';
                 break;
             case 'time':
-                // TODO fix Binary operation "+=" between arrays results in an error.
-                $input += [/* 'type' => 'time', */ 'step' => 1, 'class' => 'form-control input-time'];
+                $input['step'] = 1;
+                $input['class'] = 'form-control input-time';
                 break;
             case 'decimal':
             case 'float':
             case 'double':
                 $value = +$value;
-                // TODO fix Binary operation "+=" between arrays results in an error.
-                $input += ['class' => 'form-control text-right'];
+                $input['class'] = 'form-control text-right';
                 break;
             case 'datetime':
             case 'timestamp':
                 if (isset($value[10]) && $value[10] == ' ') {
                     $value[10] = 'T';
                 }
-                // TODO fix Binary operation "+=" between arrays results in an error.
-                $input += ['type' => 'datetime-local', 'step' => 1, 'class' => 'form-control input-datetime'];
+                $input['type'] = 'datetime-local';
+                $input['step'] = 1;
+                $input['class'] = 'form-control input-datetime';
                 $input = '<div class="input-group">' . Tools::htmlInput("fields[$key]", false, $value, $input)
                     . '<span class="input-group-btn"><button class="btn btn-secondary btn-fill-now" type="button" title="' . $this->translate('Now') . '"><i class="glyphicon glyphicon-time fa fa-clock-o fa-clock" aria-hidden="true"></i></button></span></div>';
                 break;
             case 'bit':
-                // TODO fix Binary operation "+=" between arrays results in an error.
-                $input += ['type' => 'checkbox', 'step' => 1, 'checked' => ($value ? 'checked' : null)];
+                $input['type'] = 'checkbox';
+                $input['step'] = 1;
+                $input['checked'] = ($value ? 'checked' : null);
                 break;
             case 'enum':
                 $choices = $this->dbms->decodeChoiceOptions($field['size']);
@@ -469,7 +470,17 @@ class MyTableAdmin extends MyTableLister
      *
      * @param bool $messageSuccess
      * @param bool $messageError
-     * @return bool
+     * @return bool|int
+     *     true = record saved sucessfully,
+     *     false = error occured saving the record,
+     *     0 = no records to save (e.g. in case no checkboxes checked in a form)
+     *
+     * TODO: pro případ, kdy SQL proběhlo v pořádku,
+     * ale nic nebylo změněno (tj. byla správně uložena data tak, jak již byla v databázi).
+     * tj.přidat do recordSave()
+     * 3. parametr - &$affectedRows (s nějakou defaultní hodnotou, null třeba),
+     * do které se uloží ::$affected_rows (od třídy mysqli nebo potomka) v případě, že dojde až na vykonávání příkazu.
+     *
      */
     public function recordSave($messageSuccess = false, $messageError = false)
     {
@@ -477,7 +488,7 @@ class MyTableAdmin extends MyTableLister
             return false;
         }
         $sql = $where = '';
-        if (is_array($this->fields)) {
+        if (is_array($this->fields) && count($this->fields) > 0) { // $this->fields should be an array with at least one element
             foreach ($_POST as $key => $value) {
                 if (Tools::begins($key, EXPAND_INFIX) && !Tools::begins($key, EXPAND_INFIX . EXPAND_INFIX)) {
                     $_POST['fields'][$key = substr($key, strlen(EXPAND_INFIX))] = array_combine($_POST[EXPAND_INFIX . $key], $_POST[EXPAND_INFIX . EXPAND_INFIX . $key]);
@@ -486,9 +497,9 @@ class MyTableAdmin extends MyTableLister
                     unset($_POST[$key], $_POST[EXPAND_INFIX . $key]);
                 }
             }
+            $original = null;
             foreach ($this->fields as $key => $field) {
-                // todo ask CRS2 - Variable $value might not be defined.
-                if (Tools::set($_POST['fields-null'][$key]) || (Tools::set($field['foreign_table']) && $value === '')) {
+                if (Tools::set($_POST['fields-null'][$key]) || (Tools::set($field['foreign_table']) && $field === '')) {
                     $_POST['fields'][$key] = null;
                 } elseif (Tools::set($_POST['fields-own'][$key])) {
                     $_POST['fields'][$key] = $_POST['fields-own'][$key];
@@ -538,7 +549,7 @@ class MyTableAdmin extends MyTableLister
                 }
             }
         }
-        if ($sql) {
+        if ($sql && isset($command)) {
             $sql = $command . ' ' . Tools::escapeDbIdentifier($this->table) . ' SET ' . mb_substr($sql, 1) . Tools::wrap($command == 'UPDATE' ? mb_substr($where, 5) : '', ' WHERE ') . ($command == 'UPDATE' ? ' LIMIT 1' : '');
             //@todo add message when UPDATE didn't change anything
             if ($this->resolveSQL($sql, $messageSuccess ?: $this->translate('Record saved.'), $messageError ?: $this->translate('Could not save the record.') . ' #%errno%: %error%')) {

@@ -629,7 +629,7 @@ class MyTableLister
             $offset = max(isset($_GET['offset']) ? (int) $_GET['offset'] : 0, 0);
         }
         $rowsPerPage = max($rowsPerPage, 1);
-        $pages = ceil($totalRows / $rowsPerPage);
+        $pages = (int) ceil($totalRows / $rowsPerPage);
         $currentPage = (int) floor($offset / $rowsPerPage) + 1;
         if ($pages <= 1) {
             return;
@@ -640,8 +640,7 @@ class MyTableLister
                 $output .= $this->addPage($currentPage - 1, $currentPage, $rowsPerPage, $this->translate('Previous'), $title);
             }
             for ($page = 1; $page <= $pages; $page++) {
-                // TODO ask CRS2 Method GodsDev\MyCMS\MyTableLister::addPage() invoked with 6 parameters, 3-5 required.
-                $output .= $this->addPage($page, $currentPage, $rowsPerPage, null, $this->translate('Go to page'), $title);
+                $output .= $this->addPage($page, $currentPage, $rowsPerPage, null, $title);
             }
             if ($currentPage < $pages) {
                 $output .= $this->addPage($currentPage + 1, $currentPage, $rowsPerPage, $this->translate('Next'), $title);

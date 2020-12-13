@@ -9,14 +9,19 @@
 namespace GodsDev\mycmsprojectnamespace;
 
 use GodsDev\MyCMS\MyAdminProcess;
+use GodsDev\mycmsprojectnamespace\TableAdmin;
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
+use Webmozart\Assert\Assert;
 
 define('PROCESS_LIMIT', 100);
 
 class AdminProcess extends MyAdminProcess
 {
     use \Nette\SmartObject;
+
+    /** @var TableAdmin */
+    protected $tableAdmin;
 
     /**
      * accepted attributes:
@@ -106,11 +111,17 @@ class AdminProcess extends MyAdminProcess
             $strlen = strlen($path);
             $neighbour = substr($path, 0, -PATH_MODULE)
                 . str_pad(substr($path, -PATH_MODULE) + $post['category-switch'], PATH_MODULE, '0', STR_PAD_LEFT);
-            $edits = $this->MyCMS->fetchAndReindex('SELECT id,path FROM ' . TAB_PREFIX . 'category WHERE LEFT(path, '
-                . strlen($path) . ') IN ("' . $this->MyCMS->escapeSQL($neighbour) . '")');
-            if ($edits) {
-                $edits += $this->MyCMS->fetchAndReindex('SELECT id,path FROM ' . TAB_PREFIX
-                    . 'category WHERE LEFT(path, ' . strlen($path) . ') IN ("' . $this->MyCMS->escapeSQL($path) . '")');
+            $edits = $this->MyCMS->fetchAndReindex(
+                'SELECT id,path FROM ' . TAB_PREFIX . 'category WHERE LEFT(path, ' . strlen($path) . ') IN ("'
+                . $this->MyCMS->escapeSQL($neighbour) . '")'
+            );
+            if (is_array($edits) && $edits) {
+                $editsPath = $this->MyCMS->fetchAndReindex(
+                    'SELECT id,path FROM ' . TAB_PREFIX . 'category WHERE LEFT(path, ' . strlen($path) . ') IN ("'
+                    . $this->MyCMS->escapeSQL($path) . '")'
+                );
+                Assert::isArray($editsPath);
+                $edits += (array) $editsPath;
                 $this->MyCMS->dbms->query('LOCK TABLES ' . TAB_PREFIX . 'category WRITE');
                 $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'category SET path=NULL WHERE id IN ('
                     . Tools::arrayListed(array_keys($edits), 8) . ')');
@@ -206,7 +217,6 @@ class AdminProcess extends MyAdminProcess
         }
         // delete a table record
         if (isset($post['record-delete'])) {
-            // TODO nemá náhodou být ->customAfterDelete namísto customDelete? Ask crs2
             if (!$this->tableAdmin->customDelete()) {
                 $this->tableAdmin->recordDelete();
             }

@@ -431,9 +431,8 @@ class MyAdmin extends MyCommon
             . 'TAB_PREFIX = "' . TAB_PREFIX . '";' . PHP_EOL
             . 'EXPAND_INFIX = "' . EXPAND_INFIX . '";' . PHP_EOL
             . 'TOKEN = ' . end($_SESSION['token']) . ';' . PHP_EOL
-            // todo CRS2 fix Parameter #2 $options of function json_encode expects int, true given.
-            . 'ASSETS_SUBFOLDERS = ' . json_encode($this->ASSETS_SUBFOLDERS, true) . ';' . PHP_EOL
-            . 'DIR_ASSETS = ' . json_encode(DIR_ASSETS, true) . ';' . PHP_EOL
+            . 'ASSETS_SUBFOLDERS = ' . json_encode($this->ASSETS_SUBFOLDERS) . ';' . PHP_EOL
+            . 'DIR_ASSETS = ' . json_encode(DIR_ASSETS) . ';' . PHP_EOL
             . '$(document).ready(function(){' . PHP_EOL
             . $this->tableAdmin->script . PHP_EOL
             . 'if (typeof(AdminRecordName) != "undefined") {' . PHP_EOL
