@@ -544,7 +544,6 @@ class MyTableAdmin extends MyTableLister
                 if ($field['key'] == 'PRI' && Tools::among($value, '', null)) {
                     $command = 'INSERT INTO';
                 } else {
-                    // todo ask CRS2 Variable $original might not be defined.
                     $where .= ' AND ' . (is_null($original) ? Tools::escapeDbIdentifier($key) . ' IS NULL' : ($original . '' === '' ? 'IFNULL(' . Tools::escapeDbIdentifier($key) . ', "")' : Tools::escapeDbIdentifier($key)) . ' = "' . $this->escapeSQL($_POST['original'][$key]) . '"');
                 }
             }

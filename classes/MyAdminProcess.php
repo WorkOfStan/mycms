@@ -419,11 +419,13 @@ class MyAdminProcess extends MyCommon
                     Debugger::log("Upload error {$error} for '{$_FILES['files']['name'][$key]}'", \Tracy\ILogger::WARNING);
                 }
             }
-            if (!$i) {
-                Tools::addMessage('info', $this->tableAdmin->translate('No files selected.') . ' ' . $this->tableAdmin->translate("Aren't they too big?"));
-            } else {
-                Tools::addMessage('info', $this->tableAdmin->translate('Total of processed files: ') . $i . '.');
-            }
+            Tools::addMessage(
+                'info',
+                !$i ?
+                    $this->tableAdmin->translate('No files selected.') . ' '
+                    . $this->tableAdmin->translate("Aren't they too big?")  // fail
+                    : $this->tableAdmin->translate('Total of processed files: ') . $i . '.' // ok
+            );
             $this->redir();
         }
     }

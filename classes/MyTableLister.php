@@ -866,7 +866,7 @@ class MyTableLister
      * @param array $record
      * @return string
      */
-    public function customRecordDetail($record)
+    public function customRecordDetail(array $record)
     {
         return '';
     }
@@ -877,7 +877,7 @@ class MyTableLister
      * @param array $record
      * @return string
      */
-    public function customRecordActions($record)
+    public function customRecordActions(array $record)
     {
         return '';
     }
@@ -1039,12 +1039,7 @@ class MyTableLister
                 if (!isset($row[$key])) {
                     continue;
                 }
-                // todo fix Strict comparison using === between mixed and null will always evaluate to false.
-                if ($row[$key] === null) {
-                    $result [] = 'null[' . urlencode($key) . ']=';
-                } else {
-                    $result [] = 'where[' . urlencode($key) . ']=' . urlencode($row[$key]);
-                }
+                $result [] = is_null($row[$key]) ? 'null[' . urlencode($key) . ']=' : 'where[' . urlencode($key) . ']=' . urlencode($row[$key]);
             }
         }
         return $result;
