@@ -62,6 +62,6 @@ jobs:
         #composer require --dev phpstan/phpstan:^0.12
         #vendor/bin/phpstan analyse --no-interaction --no-progress .
         phpstan -V
-        #phpstan analyse --no-interaction --no-progress .
+        phpstan analyse --no-interaction --no-progress .
         # If removal needed:
         # composer remove --dev phpstan/phpstan
