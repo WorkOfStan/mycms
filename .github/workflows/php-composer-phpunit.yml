@@ -62,7 +62,7 @@ jobs:
       if: ${{ matrix.php-version >= '7.1' }}
       run: |
         composer require --dev phpstan/phpstan:^0.12
-        vendor/bin/phpstan analyse --no-interaction --no-progress .
+        vendor/bin/phpstan analyse .
         #phpstan -V
         #phpstan analyse --no-interaction --no-progress .
         # If removal needed:
