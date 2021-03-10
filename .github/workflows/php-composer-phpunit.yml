@@ -20,10 +20,11 @@ jobs:
       with:
         php-version: "${{ matrix.php-version }}"
         tools: composer:v2, phpstan
+        # tool phpstan fails for PHP/5.6
         # tools: composer:v2, phpunit
 
-    - name: PHPStan version
-      run: phpstan -V
+    #- name: PHPStan version
+    #  run: phpstan -V
 
     - name: Validate composer.json and composer.lock
       run: composer validate
@@ -55,10 +56,11 @@ jobs:
 
     # PHPStan works for PHP/7.1+ so it can't even be in composer.json
     - name: "PHPStan"
-      if: ${{ matrix.php-version != '5.3' && matrix.php-version != '5.6' }}
-      # alternative syntax # if: ${{ matrix.php-version >= '7.1' }}
+      # alternative syntax # if: ${{ matrix.php-version != '5.3' && matrix.php-version != '5.6' }}
+      if: ${{ matrix.php-version >= '7.1' }}
       run: |
-        composer require --dev phpstan/phpstan:^0.12
-        vendor/bin/phpstan analyse --no-interaction --no-progress .
+        #composer require --dev phpstan/phpstan:^0.12
+        #vendor/bin/phpstan analyse --no-interaction --no-progress .
+        phpstan analyse --no-interaction --no-progress .
         # If removal needed:
         # composer remove --dev phpstan/phpstan
