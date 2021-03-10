@@ -1,6 +1,6 @@
 {
     "name": "godsdev/mycms",
-    "description": "MyCMS",
+    "description": "MyCMS - Brief MVC framework for interactive websites including general administration.",
     "type": "library",
     "require": {
         "php": "^5.6 || ^7.0",
