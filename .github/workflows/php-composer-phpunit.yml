@@ -22,6 +22,9 @@ jobs:
         tools: composer:v2, phpstan
         # tools: composer:v2, phpunit
 
+    - name: PHPStan version
+      run: phpstan -V
+
     - name: Validate composer.json and composer.lock
       run: composer validate
 
