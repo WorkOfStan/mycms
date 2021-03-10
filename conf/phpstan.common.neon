@@ -1,5 +1,9 @@
 parameters:
     level: 5
+    excludePaths:
+        analyse:
+          - ../vendor
+     #   analyseAndScananalyseAndScaanalyseAndScanalyseAndSanalyseAndanalyseAn
     bootstrapFiles:
       - config.php
       #- ../.github/linters/conf/constants.php # uncomment if needed
