@@ -2,8 +2,9 @@ includes:
       - conf/phpstan.common.neon
 
 parameters:
-    excludes_analyse:
-      - cache/*
+    excludePaths:
+        analyseAndScan:
+            - cache/*
     dynamicConstantNames:
       - FORCE_301
       - FRIENDLY_URL

@@ -16,6 +16,8 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    # Limit the running time
+    timeout-minutes: 10
 
     steps:
     - uses: actions/checkout@v2
@@ -34,3 +36,5 @@ jobs:
 
     # - name: Run test suite
     #   run: composer run-script test
+
+    # TODO: add matrix strategy + PHPUnit + PHPStan
