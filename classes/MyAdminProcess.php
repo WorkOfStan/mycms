@@ -142,6 +142,7 @@ class MyAdminProcess extends MyCommon
 
     /**
      * Process the "clone" action.
+     * TODO check if this code is working as expected by AdminProcess call // clone table rows and fix unreachable code below accordingly (No CRS2 guidance)
      *
      * @param array $post $_POST by reference
      * @return void
@@ -151,8 +152,7 @@ class MyAdminProcess extends MyCommon
         if (isset($post['clone'], $post['database-table'])) {
             if ((isset($post['check']) && count($post['check'])) || Tools::set($post['total-rows'])) {
                 if (Tools::set($post['total-rows'])) {
-                    $columns = $this->tableAdmin->getColumns([]);
-                    $sql = $this->tableAdmin->selectSQL($columns, $_GET);
+                    $sql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $_GET);
                     Tools::dump($sql, $post);
                     exit; //@todo
                 } else {
@@ -174,6 +174,7 @@ class MyAdminProcess extends MyCommon
 
     /**
      * Process the "export" action. If $post[download] is non-zero prompt the output as a download attachment.
+     * TODO check if this code does what it should, as ... Metoda filterToSql neexistuje. $errors ani $sql nejsou definovány. (No CRS2 guidance)
      *
      * @param array $post $_POST by reference
      * @param array $get
@@ -184,8 +185,7 @@ class MyAdminProcess extends MyCommon
         if (isset($post['table-export'], $post['database-table'])) {
             if ((isset($post['check']) && count($post['check'])) || Tools::set($post['total-rows'])) {
                 if (Tools::set($post['total-rows'])) { //export whole resultset (regard possible $get limitations)
-                    $columns = $this->tableAdmin->getColumns([]);
-                    $sql = $this->tableAdmin->selectSQL($columns, $_GET);
+                    $sql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $_GET);
                     $sql = $sql['select'];
                 } else { //export only checked rows
                     // TODO ask CRS2 - filterToSql doesn't exists. $errors isn't defined. $sql isn't defined.
