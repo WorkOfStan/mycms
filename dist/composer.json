@@ -2,9 +2,15 @@
     "name": "godsdev/mycmsprojectnamespace",
     "description": "MYCMSPROJECTSPECIFIC xyz website 202x",
     "type": "project",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/workofstan/mycms"
+        }
+    ],
     "require": {
         "php": "^5.6 || ^7.0",
-        "godsdev/mycms": "dev-feature/FriendlyUrlDist-patch1",
+        "godsdev/mycms": "dev-feature/phpstan-various",
         "robmorgan/phinx": "^0.10.6|^0.12.3",
         "swiftmailer/swiftmailer": "^5.4",
         "webmozart/assert": "^1.9.1"

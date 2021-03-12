@@ -74,18 +74,16 @@ class MyCMS extends MyCMSMonoLingual
             $sessionArray['language'] : DEFAULT_LANGUAGE);
         if ($makeInclude) {
             $languageFile = DIR_TEMPLATE . '/../language-' . $resultLanguage . '.inc.php';
-            if (file_exists($languageFile)) {
-                include_once $languageFile; //MUST contain $translation = [...];
-                // TODO fix Result of && is always false. && Variable $translation in isset() is never defined.
-                // TODO fix it by yaml vs exception
-                if (isset($translation) && is_array($translation)) {
-                    $this->TRANSLATION = $translation;
-                } else {
-                    $this->logger->error("Missing expected translation {$languageFile}");
-                }
-            } else {
-                $this->logger->error("Missing expected language file {$languageFile}");
+            if (!file_exists($languageFile)) {
+                throw new \Exception("Missing expected language file {$languageFile}");
             }
+            include_once $languageFile; //MUST contain $translation = [...];
+            // TODO instead of PHP file with array $translation, let's put localized texts into yaml.
+            if (!(isset($translation) && is_array($translation))) {
+                throw new \Exception("Missing expected translation {$languageFile}");
+            }
+            /** @phpstan-ignore-next-line */
+            $this->TRANSLATION = $translation;
         }
         return $resultLanguage;
     }
