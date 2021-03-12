@@ -1,5 +1,8 @@
 parameters:
     level: 5
+    excludePaths:
+        analyse:
+          - ../vendor
     bootstrapFiles:
       - config.php
       #- config.local.dist.php # comment as debugging
