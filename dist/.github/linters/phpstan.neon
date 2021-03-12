@@ -1,3 +1,4 @@
+# Invoked by GitHub super-linter PHPStan of dist
 includes:
       - ../../conf/phpstan.mycms.neon
 

@@ -1,3 +1,4 @@
+# Invoked by GitHub super-linter PHPStan of library
 includes:
       - ../../conf/phpstan.common.neon
       - ../../dist/conf/phpstan.mycms.neon

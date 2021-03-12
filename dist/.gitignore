@@ -15,10 +15,12 @@ cache/*
 /phinx.yml
 *.local.yml
 
-#disable composer-managed libraries
+#disable npm & composer-managed libraries
 /vendor/
+/node_modules/*
 #disable composer lock file
 /composer.lock
+/package-lock.json
 
 #disable IDE files
 /nbproject/private/

@@ -42,7 +42,7 @@ define('RECAPTCHA_SECRET', '...');
  */
 //define('DEFAULT_LANGUAGE', 'en'); // change the default language for a particular instance of the application
 //define('FORCE_301', false); // true=enforce 301 redirect to the most friendly URL available
-//define('FRIENDLY_URL', false); // show friendly URL
+//define('FRIENDLY_URL', true); // show friendly URL
 //define('GA_UID', 'UA-39642385-1'); // if you want other than default test GA UID
 //define('HOME_TOKEN', 'parent-directory'); // set if the web doesn't run in the root of the domain,
 //then the default token `PATHINFO_FILENAME` is an empty string; if the web does not run in the root directory,
@@ -61,6 +61,8 @@ $featureFlags = [
 //    'console_log_list_values' => true,
 ];
 //$debugIpArray[] = '192.168.1.145'; // add other IP addresses to see full errors
+
+// Example below for app entry page https://localhost:9090/mycmsprojectnamespace/
 // 'web_domain' for GodsDev\mycmsprojectnamespace\Test\FriendlyUrlTest::testPageStatusOverHttp without trailing `/`
 $backyardConf['web_domain'] = 'https://localhost:9090';
 // 'web_path' for GodsDev\mycmsprojectnamespace\Test\FriendlyUrlTest::testPageStatusOverHttp including trailing `/`

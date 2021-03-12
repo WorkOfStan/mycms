@@ -5,6 +5,8 @@
 
 # Friendly URL
 RewriteEngine on
+# In rare ocassion, when The original request, and the substitution, are underneath an Alias, see https://httpd.apache.org/docs/current/mod/mod_rewrite.html#rewritebase
+RewriteBase "/gh1/mycms/dist/"
 
 # Favicons in subfolder
 RewriteRule ^(android-icon-[0-9x]*\.png|apple-icon.*\.png|browserconfig.xml|favicon\.ico|favicon-[0-9x]*\.png|manifest\.json|ms-icon-[0-9x]*\.png) images/favicon/$1 [L,QSA]
@@ -20,11 +22,12 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(de/|en/|fr/|sk/|zh/)?(.*)$ index.php?language=$1&$2 [L,QSA]
 
+# TODO - compare stockpiler and check with MyCMS/dist that this part is relevant or it is eaten above
 # Friendly share URL
-RewriteRule ^admin\.php(\?.*)?$ admin.php [L,QSA]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php/$1 [L,QSA]
+#RewriteRule ^admin\.php(\?.*)?$ admin.php [L,QSA]
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteRule ^(.*)$ index.php/$1 [L,QSA]
 
 # Hide composer, logs
 # If mod_alias is not enabled, the Apache should fail to show anything in order to always hide the files in the section below

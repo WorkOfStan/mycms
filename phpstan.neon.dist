@@ -1,3 +1,4 @@
+# Invoked by locally installed PHPStan of library
 includes:
       - conf/phpstan.common.neon
       - dist/phpstan.neon.dist

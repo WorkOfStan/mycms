@@ -13,8 +13,8 @@ if (!isset($_POST) || !is_array($_POST)) {
 }
 if (!isset($_POST['token'], $_SESSION['token'])) {
     return;
-} elseif ($_POST['token'] != $_SESSION['token']) {
-    $MyCMS->logger->error("CSRF token mismatch {$_POST['token']}!={$_SESSION['token']}");
+} elseif (!in_array($_POST['token'], $_SESSION['token'])) {
+    $MyCMS->logger->error("CSRF token mismatch {$_POST['token']} not in _SESSION['token']");
     return;
 }
 if (!isset($MyCMS) && isset($GLOBALS['MyCMS'])) {
@@ -22,9 +22,9 @@ if (!isset($MyCMS) && isset($GLOBALS['MyCMS'])) {
 }
 if (isset($_POST['language'], $MyCMS->TRANSLATIONS[$_POST['language']])) {
     header('Content-type: application/json');
-    exit(json_encode(array('success' => true)));
+    exit(json_encode(['success' => true]));
 }
-if ($_POST['newsletter']) {
+if (isset($_POST['newsletter']) && $_POST['newsletter']) {
     if (
         $MyCMS->dbms->query('INSERT INTO ' . TAB_PREFIX . 'subscriber SET email="'
             . $MyCMS->escapeSQL($_POST['newsletter']) . '", info="' . $_SERVER['REMOTE_ADDR'] . '"')

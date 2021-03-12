@@ -92,6 +92,7 @@ vendor/bin/phinx migrate -e development # or production or testing
 4. `sass styles/index.sass styles/index.css` to keep order in the generated css
 
 Note: To work on low performing environments, the script accepts number of seconds as parameter to be used as a waiting time between steps.
+Note2: PHPUnit test of FaviconTest may uncover a need for RewriteBase configuration in .htaccess
 
 ### reCAPTCHA
 

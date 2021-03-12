@@ -109,7 +109,7 @@ class FaviconTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals(
                 200,
                 $result['HTTP_CODE'],
-                "URL {$url} returns other HTTP code. (HOME_TOKEN is set?) Test parameters: "
+                "URL {$url} returns other HTTP code. (HOME_TOKEN is set? or RewriteBase issue?) Test parameters: "
                 . print_r($singleUrl, true)
             );
         }

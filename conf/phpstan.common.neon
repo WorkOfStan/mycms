@@ -1,5 +1,6 @@
+# Invoked by GitHub super-linter PHPStan of library
+# Invoked by locally installed PHPStan of library
 parameters:
-    level: 5
     excludePaths:
         analyse:
           - ../vendor

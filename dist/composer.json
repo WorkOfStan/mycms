@@ -10,9 +10,9 @@
     ],
     "require": {
         "php": "^5.6 || ^7.0",
-        "godsdev/mycms": "dev-feature/phpstan-various",
+        "godsdev/mycms": "dev-feature/FriendlyUrlDist-patch1",
         "robmorgan/phinx": "^0.10.6|^0.12.3",
-        "swiftmailer/swiftmailer": "^5.4",
+        "swiftmailer/swiftmailer": "^5.4|^6.2",
         "webmozart/assert": "^1.9.1"
     },
     "require-dev": {
@@ -29,6 +29,11 @@
             "email": "rejthar@stanislavrejthar.com"
         }
     ],
+    "support": {
+        "email": "rejthar@stanislavrejthar.com",
+        "issues": "https://github.com/WorkOfStan/mycms/issues",
+        "source": "https://github.com/WorkOfStan/mycms"
+    },
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {

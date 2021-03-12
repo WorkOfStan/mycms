@@ -1,3 +1,5 @@
+# Invoked by GitHub super-linter PHPStan of dist
+# Invoked by GitHub super-linter PHPStan of library
 includes:
       - phpstan.common.neon
 

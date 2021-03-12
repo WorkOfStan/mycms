@@ -4,7 +4,7 @@ namespace GodsDev\mycmsprojectnamespace\Latte;
 
 use GodsDev\Tools\Tools;
 //use GodsDev\mycmsprojectnamespace\ProjectSpecific;
-use GodsDev\mycmsprojectnamespace\Template;
+//use GodsDev\mycmsprojectnamespace\Template;
 use GodsDev\MyCMS\MyCMS;
 
 /**
@@ -85,8 +85,9 @@ class CustomFilters
 //                return 1; //$MyCMS->pageFavorites();
 //            case 'compare':
 //                return ProjectSpecific::itemComparison();
-            case 'footer':
-                return Template::templateTranslate($Texy->process($this->MyCMS->WEBSITE['footer']));
+//            ALSO UNUSED:
+//            case 'footer':
+//                return Template::templateTranslate($Texy->process($this->MyCMS->WEBSITE['footer']));
             default:
                 $this->MyCMS->logger->warning("CustomFilter section called with undefined parameter: {$parameter}");
         }

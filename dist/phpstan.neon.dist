@@ -1,3 +1,5 @@
+# Invoked by locally installed PHPStan of dist
+# Invoked by locally installed PHPStan of library
 includes:
       - conf/phpstan.common.neon
 
