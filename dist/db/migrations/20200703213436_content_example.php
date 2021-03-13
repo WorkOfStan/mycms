@@ -16,6 +16,7 @@ final class ContentExample extends AbstractMigration
      *
      * Change Method.
      *
+     * @return void
      */
     public function change() //: void
     {

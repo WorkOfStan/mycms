@@ -12,6 +12,7 @@ parameters:
           - ../vendor/cakephp
           - ../vendor/composer
           - ../vendor/doctrine
+          - ../vendor/egulias
           - ../vendor/godsdev/backyard
           - ../vendor/godsdev/mycms/dist
           - ../vendor/godsdev/tools
@@ -29,6 +30,9 @@ parameters:
           - ../vendor/texy
           - ../vendor/tracy
           - ../vendor/webmozart
+    dynamicConstantNames:
+      - UNDER_CONSTRUCTION
+      #- DEBUG_VERBOSE
     bootstrapFiles:
       - config.php
       #- config.local.dist.php # comment as debugging
@@ -37,6 +41,17 @@ parameters:
       - ../classes
     ignoreErrors:
       # These variables are responsibility of the including/included script
+      -
+        message: '#Variable \$backyard might not be defined.#'
+        path: ../api/action/index.php
+      -
+        message: '#Variable \$debugIpArray might not be defined.#'
+        path: ../api/action/index.php
+      -
+        message: '#Variable \$MyCMS might not be defined.#'
+        paths:
+          - ../process.php
+          - ../api/action/index.php
       -
         message: '#Variable \$MyCMS might not be defined.#'
         path: ../process.php

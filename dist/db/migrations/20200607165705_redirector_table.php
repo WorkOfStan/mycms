@@ -27,6 +27,8 @@ class RedirectorTable extends AbstractMigration
      *
      * Remember to call "create()" or "update()" and NOT "save()" when working
      * with the Table class.
+     *
+     * @return void
      */
     public function change()
     {

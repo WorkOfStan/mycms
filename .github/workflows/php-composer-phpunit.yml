@@ -58,6 +58,8 @@ jobs:
       # alternative syntax # if: ${{ matrix.php-version != '5.3' && matrix.php-version != '5.6' }}
       if: ${{ matrix.php-version >= '7.1' }}
       run: |
+        #to fix `Constant DB_USERNAME not found.` etc
+        cp -p dist/conf/config.local.dist.php dist/conf/config.local.php
         #composer require --dev phpstan/phpstan:^0.12
         #vendor/bin/phpstan analyse --debug .
         # If removal needed:
