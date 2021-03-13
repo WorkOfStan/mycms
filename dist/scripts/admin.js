@@ -1,4 +1,4 @@
-/* global $, TOKEN */
+/* global $, ASSETS_SUBFOLDERS, DIR_ASSETS, LISTED_FIELDS, TAB_PREFIX, TOKEN, TRANSLATE, WHERE_OPS  */
 
 /**
  * JavaScript client-side of MyCMS admin
@@ -6,14 +6,14 @@
  * dependent variables: TOKEN, LISTED_FIELDS, ASSETS_SUBFOLDERS, WHERE_OPS
  */
 
-sortIndex = 0;
-searchIndex = 0;
-imageSelectorTarget = '';
+let sortIndex = 0;
+let searchIndex = 0;
+let imageSelectorTarget = '';
 
 function prepareDatetimepicker(date, time) {
-    timeformat = (date ? 'dd-MM-yyyy' : '') + (date && time ? ' ' : '') + (time ? 'hh:mm:ss' : '');
+    let timeformat = (date ? 'dd-MM-yyyy' : '') + (date && time ? ' ' : '') + (time ? 'hh:mm:ss' : '');
     $('input.input-' + (date ? 'date' : '') + (time ? 'time' : '')).each(function () {
-        div = $('<div class="input-append date">' + $(this).attr('data-format', timeformat)[0].outerHTML
+        let div = $('<div class="input-append date">' + $(this).attr('data-format', timeformat)[0].outerHTML
                 + '<span class="add-on"><i data-time-icon="icon-time" data-date-icon="icon-calendar" class="icon-' + (date ? 'calendar' : 'time') + '"></i></span></div>');
         $(this).hide();
         div.insertAfter($(this));
@@ -32,7 +32,7 @@ function addSortRow(target, field, descending)
     if (field < 0 || field > LISTED_FIELDS.length) {
         return false;
     }
-    html = '<div><select name="sort[' + sortIndex + ']" class="select-sort" title="' + TRANSLATE['Select'] + '" onchange="if(!$(this).parent().next().length){addSortRow($(this).parent().parent(), null, false);}">\n<option />\n';
+    let html = '<div><select name="sort[' + sortIndex + ']" class="select-sort" title="' + TRANSLATE['Select'] + '" onchange="if(!$(this).parent().next().length){addSortRow($(this).parent().parent(), null, false);}">\n<option />\n';
     for (i in LISTED_FIELDS) {
         html += '<option value="' + (i - 0 + 1) + '"' + ((i - 0 + 1) == field ? ' selected="selected"' : '') + '>' + LISTED_FIELDS[i] + '</option>\n';
     }
@@ -65,8 +65,8 @@ function addSearchRow(target, field, op, value)
 }
 
 function urlChange(changes) {
-    pairs = location.search.substr(1).split('&');
-    tmp = {};
+    let pairs = location.search.substr(1).split('&');
+    let tmp = {};
     for (i in pairs) {
         pair = pairs[i].split('=');
         if (Object.keys(changes).indexOf(pair[0]) == -1) {
@@ -80,7 +80,7 @@ function urlChange(changes) {
             tmp[i] = changes[i];
         }
     }
-    result = '';
+    let result = '';
     for (i in tmp) {
         result += '&' + i + '=' + tmp[i];
     }
@@ -115,7 +115,8 @@ function getAgenda(agenda, options) {
 }
 
 function fillAgenda(data, options) {
-    html = prefill = '';
+    let prefill = '';
+    let html = '';
     for (i in data.data) {
         html += agendaRow(data, i, options);
     }
@@ -129,7 +130,7 @@ function fillAgenda(data, options) {
 }
 
 function agendaRow(data, index, options) {
-    row = data.data[index];
+    let row = data.data[index];
     result = '<div class="m-1" data-id="' + row.id + '" data-table="' + data.agenda + '">\n'
             + '<a href="?table=' + TAB_PREFIX + (options['table'] || data.agenda) + '&amp;where[id]=' + row.id + '"'
             + ' class="btn btn-link btn-xs" title="edit"><i class="fa fa-pencil-alt" aria-hidden="true"></i></a>\n';
@@ -205,16 +206,16 @@ function fillAssetsSubfolders(element) {
 }
 
 function jsonExpandedTableAddRow(table) {
-    html = '<tr><td class="first w-25"><input class="form-control form-control-sm" type="text" name="' + EXPAND_INFIX + 'context[]" onblur="jsonExpandedOnBlur(this)" placeholder="' + TRANSLATE['variable'] + '"></td>'
+    let html = '<tr><td class="first w-25"><input class="form-control form-control-sm" type="text" name="' + EXPAND_INFIX + 'context[]" onblur="jsonExpandedOnBlur(this)" placeholder="' + TRANSLATE['variable'] + '"></td>'
             + '<td class="second w-75"><input class="form-control form-control-sm" type="text" name="' + EXPAND_INFIX + EXPAND_INFIX + 'context[]" onblur="jsonExpandedOnBlur(this)" placeholder="' + TRANSLATE['value'] + '"></td></tr>';
     $(html).appendTo(table);
 }
 
 function jsonExpandedOnBlur(element) {
-    tr = $(element).parent().parent();
-    first = tr.find('.first input');
-    second = tr.find('.second input');
-    lastRow = tr.index() + 1 == tr.parent().find('tr').length;
+    let tr = $(element).parent().parent();
+    let first = tr.find('.first input');
+    let second = tr.find('.second input');
+    let lastRow = tr.index() + 1 == tr.parent().find('tr').length;
     if (first.val() == '' && second.val() == '') {
         if (!lastRow) {
             tr.remove();
@@ -233,8 +234,8 @@ function pad0(input, len) {
 }
 
 function moveCategory(element, up) {
-    prefix = $(element).data('prefix');
-    siblings = $(element).parent().find('details[data-prefix=' + prefix + ']');
+    let prefix = $(element).data('prefix');
+    let siblings = $(element).parent().find('details[data-prefix=' + prefix + ']');
     for (i in siblings) {
         if ($(siblings[i])[0] == $(element)[0]) {
             if (up) {
@@ -251,7 +252,7 @@ function standardDocumentReady() {
     String.prototype.replaceAll = function (target, replacement) {
         return this.split(target).join(replacement);
     };
-    agendas = localStorage.getItem("agendas"); //array of elements that were expanded
+    let agendas = localStorage.getItem("agendas"); //array of elements that were expanded
     if (agendas) {
         agendas = agendas.split(' ');
     } else {
@@ -260,13 +261,13 @@ function standardDocumentReady() {
 
     $('[data-toggle="tooltip"]').tooltip();
     $('input[data-order]').on('click', function (event) {
-        checkboxOrder = $(this).closest('table').data('order');
+        let checkboxOrder = $(this).closest('table').data('order');
         if (event.shiftKey) {
             if (checkboxOrder != null) {
-                b = $(this).data('order');
-                checked = $('input[data-order=' + checkboxOrder + ']').prop('checked');
+                let b = $(this).data('order');
+                let checked = $('input[data-order=' + checkboxOrder + ']').prop('checked');
                 $.each($(this).closest('table').find('input[data-order]'), function (key, value) {
-                    o = $(this).data('order');
+                    let o = $(this).data('order');
                     checkboxOrder = $(this).closest('table').data('order');
                     if (o >= Math.min(b, checkboxOrder) && o <= Math.max(b, checkboxOrder)) {
                         $(this).prop('checked', checked);
@@ -277,7 +278,7 @@ function standardDocumentReady() {
         $(this).closest('table').data('order', $(this).data('order'));
     });
     $('#go-to-page').on('click', function () {
-        page = prompt('Stránka:');
+        let page = prompt('Stránka:');
         if (!isNaN(page) && page > 0 && page < $(this).data('pages')) {
             console.log('@todo go to page: ' + page);//...
         }
@@ -313,46 +314,46 @@ function standardDocumentReady() {
     });
     // media - show files on subfolder change
     $('#subfolder').on('change',
-            function () {
-                $.ajax({
-                    url: '?keep-token',
-                    dataType: 'json',
-                    data: {
-                        'subfolder': $(this).val(),
-                        'media-files': 1,
-                        'token': TOKEN
-                    },
-                    type: 'POST',
-                    success: function (data) {
-                        if (data.success) {
-                            path = $('#subfolder option:first-child').text() + $('#subfolder').val() + '/';
-                            html = '';
-                            for (i in data.data) {
-                                filename = data.data[i]['name'] + data.data[i]['extension'];
-                                src = data.subfolder + '/' + filename;
-                                html += '<tr><td class="multi-options"><input type="radio" name="file" value="' + filename + '"> <input type="checkbox" name="files[]" value="' + filename + '" id="file-' + i + '"></td>'
-                                        + '<td><a href="' + path + filename + '" target="_blank"><i class="fa fa-external-link" aria-hidden="true"></i></a></td>'
-                                        + '<td><tt><label for="file-' + i + '">' + data.data[i]['name'] + '</label></tt></td>'
-                                        + '<td><tt><label for="file-' + i + '">' + data.data[i]['extension'] + '</label></tt></td>'
-                                        + '<td class="text-right pl-2"><tt><label for="file-' + i + '">' + data.data[i]['size'] + '</label></tt></td>'
-                                        + '<td class="pl-2"><tt><label for="file-' + i + '">' + data.data[i]['modified'] + '</label></tt></td></tr>\n';
-                            }
-                            $('#media-files').html(html ? '<table class="subfolder-files"><thead>'
-                                    + '<tr><th class="multi-options"><input type="radio" name="file" value=""></th><th />'
-                                    + '<th colspan="2">' + TRANSLATE['name'] + '</th>'
-                                    + '<th class="text-right">' + TRANSLATE['size'] + '</th>'
-                                    + '<th class="text-right">' + TRANSLATE['modified'] + '</th></tr></thead>'
-                                    + html + '</table>'
-                                    : '<i>' + TRANSLATE['No files'] + '</i>'
-                                    );
-                            $('#delete-media-files,#rename-fieldset').toggle(data.data.length > 0);
-                            $('#media-files .subfolder-files .multi-options input[type=radio][name=file]').on('change', function (event) {
-                                $('#media-file-name').val($(this).val()).attr('title', $(this).val());
-                            });
+        function() {
+            $.ajax({
+                url: '?keep-token',
+                dataType: 'json',
+                data: {
+                    'subfolder': $(this).val(),
+                    'media-files': 1,
+                    'token': TOKEN
+                },
+                type: 'POST',
+                success: function(data) {
+                    if (data.success) {
+                        let path = $('#subfolder option:first-child').text() + $('#subfolder').val() + '/';
+                        let html = '';
+                        for (i in data.data) {
+                            let filename = data.data[i]['name'] + data.data[i]['extension'];
+                            let src = data.subfolder + '/' + filename;
+                            html += '<tr><td class="multi-options"><input type="radio" name="file" value="' + filename + '"> <input type="checkbox" name="files[]" value="' + filename + '" id="file-' + i + '"></td>'
+                                + '<td><a href="' + path + filename + '" target="_blank"><i class="fa fa-external-link" aria-hidden="true"></i></a></td>'
+                                + '<td><tt><label for="file-' + i + '">' + data.data[i]['name'] + '</label></tt></td>'
+                                + '<td><tt><label for="file-' + i + '">' + data.data[i]['extension'] + '</label></tt></td>'
+                                + '<td class="text-right pl-2"><tt><label for="file-' + i + '">' + data.data[i]['size'] + '</label></tt></td>'
+                                + '<td class="pl-2"><tt><label for="file-' + i + '">' + data.data[i]['modified'] + '</label></tt></td></tr>\n';
                         }
+                        $('#media-files').html(html ? '<table class="subfolder-files"><thead>'
+                            + '<tr><th class="multi-options"><input type="radio" name="file" value=""></th><th />'
+                            + '<th colspan="2">' + TRANSLATE['name'] + '</th>'
+                            + '<th class="text-right">' + TRANSLATE['size'] + '</th>'
+                            + '<th class="text-right">' + TRANSLATE['modified'] + '</th></tr></thead>'
+                            + html + '</table>'
+                            : '<i>' + TRANSLATE['No files'] + '</i>'
+                        );
+                        $('#delete-media-files,#rename-fieldset').toggle(data.data.length > 0);
+                        $('#media-files .subfolder-files .multi-options input[type=radio][name=file]').on('change', function(event) {
+                            $('#media-file-name').val($(this).val()).attr('title', $(this).val());
+                        });
                     }
-                });
-            }
+                }
+            });
+        }
     );
     $('#rename-media-file').on('click', function (event) {
         $('#file-rename-feedback').hide();
@@ -382,7 +383,7 @@ function standardDocumentReady() {
         });
     });
     $('#delete-media-files').on('click', function (event) {
-        files = [];
+        let files = [];
         $.each($('#media-files > table.subfolder-files input[type=checkbox]:checked'), function (index, value) {
             files.push($(value).val());
         });
@@ -435,7 +436,7 @@ function standardDocumentReady() {
                 return false;
             }
             if ($('#create-password').val() != $('#create-retype-password').val()) {
-                alert(TRANSLATE["Passwords don't match!"]);
+                alert(TRANSLATE['Passwords don\'t match!']);
                 return false;
             }
             $('#create-password').val($.sha1($('#create-password').val()));
@@ -483,8 +484,8 @@ function standardDocumentReady() {
     });
     $('button.btn-webalize').on('click', function (event) {
         event.preventDefault();
-        url = $(this).data('url');
-        name = $(this).data('name');
+        let url = $(this).data('url');
+        let name = $(this).data('name');
         $.ajax({
             url: '?keep-token',
             dataType: 'json',
@@ -511,7 +512,7 @@ function standardDocumentReady() {
     });
     $('.json-reset').on('click', function (event) {
         event.preventDefault();
-        field = $(this).data('field');
+        let field = $(this).data('field');
         $(this).parent().find('textarea[name=fields\\[' + field + '\\]]').replaceWith(table = $('<table class="w-100 json-expanded" data-field="' + field + '"></table>'));
         jsonExpandedTableAddRow(table);
         $(this).replaceWith('');
@@ -519,18 +520,18 @@ function standardDocumentReady() {
     });
     $('.btn-fill-now').on('click', function (event) {
         event.preventDefault();
-        d = new Date();
-        now = d.getFullYear() + '-' + pad0(d.getMonth() + 1, 2) + '-' + pad0(d.getDate(), 2) + 'T' + pad0(d.getHours(), 2) + ':' + pad0(d.getMinutes(), 2) + ':' + pad0(d.getSeconds(), 2);
+        let d = new Date();
+        let now = d.getFullYear() + '-' + pad0(d.getMonth() + 1, 2) + '-' + pad0(d.getDate(), 2) + 'T' + pad0(d.getHours(), 2) + ':' + pad0(d.getMinutes(), 2) + ':' + pad0(d.getSeconds(), 2);
         $(this).parent().parent().find('input').val(now);
     });
     $('.btn-id-unlock').on('click', function (event) {
         event.preventDefault();
-        input = $(this).parent().parent().find('input');
+        let input = $(this).parent().parent().find('input');
         input.prop('readonly', input.prop('readonly') ? false : 'readonly');
     });
     $('.user-activate').on('change', function (event) {
         event.preventDefault();
-        checkbox = $(this);
+        let checkbox = $(this);
         $.ajax({
             url: '?keep-token',
             dataType: 'json',
@@ -551,26 +552,27 @@ function standardDocumentReady() {
     $('.note-codable').on('blur', function () {
         $(this).closest('.TableAdminTextarea').find('textarea:first-child').val($(this).val());
     });
+    // toggle sidebar from top menu (TODO: enable in MyAdmin::outputNavigation)
     $('#toggle-nav').on('click', function (event) {
         event.preventDefault();
         $('#admin-sidebar').toggle();
         if ($('#admin-sidebar').is(':visible')) {
-            $('#admin-main').addClass('col-md-9');
+            $('#admin-main').addClass('col-md-9').addClass('ml-sm-auto');
             $(this).find('i').removeClass('fa-caret-right').addClass('fa-caret-left');
         } else {
-            $('#admin-main').removeClass('col-md-9')
+            $('#admin-main').removeClass('col-md-9').removeClass('ml-sm-auto');
             $(this).find('i').removeClass('fa-caret-left').addClass('fa-caret-right');
         }
     });
     // show/hide table columns
     $('.toggle-div input[type=checkbox]').on('change', function (event) {
-        rand = $(this).closest('.toggle-div').data('rand');
+        let rand = $(this).closest('.toggle-div').data('rand');
         toggleTableColumn($('#table-admin' + rand), $(this).data('column'), $(this).prop('checked'));
     });
     $('.database .form-control').on('change', function (event) {
         $('#null-' + $(this).attr('id')).prop('checked', false);
     });
-    $('#agenda-translations form table input.translation').on('change', function(event) {
+    $('#agenda-translations form table input.translation').on('change', function (event) {
         $('#old_name,#new_name').val($(this).val());
     });
 }

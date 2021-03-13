@@ -165,7 +165,9 @@ class MyAdmin extends MyCommon
             $result .= '<a class="dropdown-item' . ($key == $_SESSION['language'] ? ' active' : '') . '" href="?' . Tools::urlChange(['language' => $key]) . '"><i class="fa fa-language mr-1"></i> ' . Tools::h($value) . '</a>' . PHP_EOL;
         }
         if (isset($_SESSION['user'])) {
-            $result .= //'<div class="dropdown-divider"></div><a class="dropdown-item" href="" id="toggle-nav" title="' . Tools::h($this->tableAdmin->translate('Toggle sidebar')) . '"><i class="fa fa-columns mr-1"></i> ' . $this->tableAdmin->translate('Sidebar') . '</a>' .
+            $result .=
+                //TODO fix following code, that hides sidebar but leaves the vertical line and narrows the content view
+                //<div class="dropdown-divider"></div><a class="dropdown-item" href="" id="toggle-nav" title="' . Tools::h($this->tableAdmin->translate('Toggle sidebar')) . '"><i class="fa fa-columns mr-1"></i> ' . $this->tableAdmin->translate('Sidebar') . '</a>' .
                 $this->outputSpecialSettingsLinks();
         }
         $result .= '</div></li></ul></div>';

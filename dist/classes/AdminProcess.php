@@ -14,7 +14,7 @@ use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use Webmozart\Assert\Assert;
 
-define('PROCESS_LIMIT', 100);
+define('PROCESS_LIMIT', 100); // used in self::getAgenda
 
 class AdminProcess extends MyAdminProcess
 {
