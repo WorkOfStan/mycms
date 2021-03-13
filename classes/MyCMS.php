@@ -19,35 +19,35 @@ class MyCMS extends MyCMSMonoLingual
     /**
      * Selected locale strings
      *
-     * @var array
+     * @var array<string>
      */
     public $TRANSLATION;
 
     /**
      * Available languages
      *
-     * @var array
+     * @var array<string>
      */
     public $TRANSLATIONS;
 
     /**
      * PARAMETRIC URL into TEMPLATE conditions (for FriendlyURL functionality)
      *
-     * @var array
+     * @var array<array>
      */
     public $templateAssignementParametricRules;
 
     /**
      * Type into database table mapping (for MyFriendlyUrl::findFriendlyUrlToken)
      *
-     * @var array
+     * @var array<string>
      */
     public $typeToTableMapping;
 
     /**
      * Constructor
      *
-     * @param array $myCmsConf
+     * @param array<mixed> $myCmsConf
      */
     public function __construct(array $myCmsConf = [])
     {
@@ -56,8 +56,8 @@ class MyCMS extends MyCMSMonoLingual
 
     /**
      *
-     * @param array $getArray $_GET or its equivalent
-     * @param array $sessionArray $_SESSION or its equivalent
+     * @param array<string> $getArray $_GET or its equivalent
+     * @param array<string> $sessionArray $_SESSION or its equivalent
      * @param bool $makeInclude for testing may be set to false as mycms itself doesn't contain the language-XX.inc.php
      * @return string to be used as $_SESSION['language']
      *
@@ -79,6 +79,7 @@ class MyCMS extends MyCMSMonoLingual
             }
             include_once $languageFile; //MUST contain $translation = [...];
             // TODO instead of PHP file with array $translation, let's put localized texts into yaml.
+            /** @phpstan-ignore-next-line */
             if (!(isset($translation) && is_array($translation))) {
                 throw new \Exception("Missing expected translation {$languageFile}");
             }

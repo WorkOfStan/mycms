@@ -22,7 +22,7 @@ class MyAdmin extends MyCommon
     /** @var array */
     protected $ASSETS_SUBFOLDERS = [];
 
-    /** @var array client-side resources - css, js, fonts etc. */
+    /** @var array<array> client-side resources - css, js, fonts etc. */
     protected $clientSideResources = [
         'js' => [
             'scripts/jquery.js',
@@ -40,6 +40,7 @@ class MyAdmin extends MyCommon
         ],
     ];
 
+    /** @var array<string> */
     public $HTMLHeaders = [
         'viewport' => 'width=device-width, initial-scale=1',
         'X-XSS-Protection' => '0',
@@ -61,7 +62,9 @@ class MyAdmin extends MyCommon
     /**
      *
      * @param MyCMS $MyCMS
-     * @param array $options that overrides default values within constructor
+     * @param array<mixed> $options that overrides default values within constructor
+     *
+     * @return void
      */
     public function __construct(MyCMS $MyCMS, array $options = [])
     {
@@ -77,6 +80,8 @@ class MyAdmin extends MyCommon
 
     /**
      * Ends Admin rendering with TracyPanels
+     *
+     * @return void
      */
     public function endAdmin()
     {
@@ -104,7 +109,7 @@ class MyAdmin extends MyCommon
      * Output (in HTML) the <head> section of admin
      *
      * @param string $title used in <title>
-     * @result string
+     * @return string
      */
     protected function outputHead($title)
     {
@@ -127,7 +132,7 @@ class MyAdmin extends MyCommon
     /**
      * Output (in HTML) the navigation section of admin
      *
-     * @result string
+     * @return string
      */
     protected function outputNavigation()
     {
@@ -177,7 +182,7 @@ class MyAdmin extends MyCommon
     /**
      * Output (in HTML) the project-specific links in the navigation section of admin
      *
-     * @result string
+     * @return string
      */
     protected function outputSpecialMenuLinks()
     {
@@ -187,7 +192,7 @@ class MyAdmin extends MyCommon
     /**
      * Output (in HTML) the project-specific links in the settings section of admin
      *
-     * @result string
+     * @return string
      */
     protected function outputSpecialSettingsLinks()
     {
@@ -197,7 +202,7 @@ class MyAdmin extends MyCommon
     /**
      * Output (in HTML) the media section of admin
      *
-     * @result string
+     * @return string
      */
     protected function outputMedia()
     {
@@ -251,7 +256,7 @@ class MyAdmin extends MyCommon
     /**
      * Output (in HTML) the user section of admin
      *
-     * @result string
+     * @return string
      */
     protected function outputUser()
     {
@@ -324,7 +329,7 @@ class MyAdmin extends MyCommon
     /**
      * Output (in HTML) the login section of admin
      *
-     * @result string
+     * @return string
      */
     protected function outputLogin()
     {
@@ -349,7 +354,7 @@ class MyAdmin extends MyCommon
     /**
      * Output (in HTML) the dashboard section of admin.
      *
-     * @result string
+     * @return string
      */
     protected function outputDashboard()
     {
@@ -375,7 +380,7 @@ class MyAdmin extends MyCommon
      * Output (in HTML) the agendas section of admin.
      * This method also modifies $this->script.
      *
-     * @result string
+     * @return string
      */
     protected function outputAgendas()
     {
@@ -408,7 +413,7 @@ class MyAdmin extends MyCommon
      * Output (in HTML) the end part of administration page.
      * This method also modifies $this->script.
      *
-     * @result string
+     * @return string
      */
     protected function outputBodyEnd()
     {
@@ -446,7 +451,7 @@ class MyAdmin extends MyCommon
     /**
      * Output (in HTML) the Bootstrap dialog for ImageSelector
      *
-     * @result string
+     * @return string
      */
     protected function outputImageSelector()
     {
@@ -476,7 +481,7 @@ class MyAdmin extends MyCommon
     /**
      * Output (in HTML) the listing or editing section of a table (selected in $_GET['table'])
      *
-     * @result string
+     * @return string
      */
     protected function outputTable()
     {
@@ -517,7 +522,7 @@ class MyAdmin extends MyCommon
     /**
      * Output (in HTML) the admin's layout footer
      *
-     * @result string
+     * @return string
      */
     protected function outputFooter()
     {
@@ -537,7 +542,7 @@ class MyAdmin extends MyCommon
     /**
      * Output (in HTML) the project-specific sections
      *
-     * @result string
+     * @return string
      */
     protected function projectSpecificSections()
     {
@@ -547,7 +552,7 @@ class MyAdmin extends MyCommon
     /**
      * Output (in HTML) project-specific code before listing of selected table
      *
-     * @result string
+     * @return string
      */
     protected function outputTableBeforeListing()
     {
@@ -557,7 +562,7 @@ class MyAdmin extends MyCommon
     /**
      * Output (in HTML) project-specific code after listing of selected table
      *
-     * @result string
+     * @return string
      */
     protected function outputTableAfterListing()
     {
@@ -567,7 +572,7 @@ class MyAdmin extends MyCommon
     /**
      * Output (in HTML) project-specific code before editing a record from selected table
      *
-     * @result string
+     * @return string
      */
     protected function outputTableBeforeEdit()
     {
@@ -577,7 +582,7 @@ class MyAdmin extends MyCommon
     /**
      * Output (in HTML) project-specific code after editing a record from selected table
      *
-     * @result string
+     * @return string
      */
     protected function outputTableAfterEdit()
     {
@@ -590,7 +595,7 @@ class MyAdmin extends MyCommon
      * defined in $this->searchColumns.
      *
      * @param string $keyword
-     * @result string
+     * @return string
      */
     protected function outputSearchResults($keyword)
     {
@@ -635,7 +640,7 @@ class MyAdmin extends MyCommon
      * Output (in HTML) a form to edit multiple selected rows of a table
      *
      * @param bool $clone
-     * @result string
+     * @return string
      */
     protected function outputTableEditSelected($clone = false)
     {

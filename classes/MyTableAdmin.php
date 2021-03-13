@@ -106,7 +106,12 @@ class MyTableAdmin extends MyTableLister
                     . Tools::htmlInput('referer', '', base64_encode(Tools::xorCipher(isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '?table=' . TAB_PREFIX . $_GET['table'], end($_SESSION['token']))), 'hidden') . PHP_EOL;
             }
             // TODO will be fixed in next Tools version: fix Tools::htmlSelect .. default is mixed not string!
-            $output .= '<label><i class="fa fa-location-arrow"></i> ' . Tools::htmlSelect('after', [$this->translate('stay here'), $this->translate('go back')], false, ['class' => 'form-control form-control-sm w-initial d-inline-block']) . '</label></div>';
+            $output .= '<label><i class="fa fa-location-arrow"></i> ' . Tools::htmlSelect(
+                'after',
+                [$this->translate('stay here'), $this->translate('go back')],
+                false,
+                ['class' => 'form-control form-control-sm w-initial d-inline-block']
+            ) . '</label></div>';
         }
         $output .= (isset($options['exclude-form']) && $options['exclude-form'] ? '' : '</fieldset></form>') . PHP_EOL;
         if (isset($options['return-output']) && $options['return-output']) {
@@ -537,7 +542,7 @@ class MyTableAdmin extends MyTableLister
             }
             $command = 'UPDATE';
             // todo fix Parameter #1 $types of method GodsDev\MyCMS\MyTableLister::filterKeys() expects array, string given.
-            $unique = ($this->filterKeys('PRI') ?: $this->filterKeys('UNI')) ?: array_flip(array_keys($this->fields));
+            $unique = ($this->filterKeys(['PRI']) ?: $this->filterKeys(['UNI'])) ?: array_flip(array_keys($this->fields));
             foreach (array_keys($unique) as $key) {
                 $field = $this->fields[$key];
                 $value = $_POST['fields'][$key];

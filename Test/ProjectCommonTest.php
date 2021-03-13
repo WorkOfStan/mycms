@@ -25,6 +25,8 @@ class ProjectCommonTest extends \PHPUnit_Framework_TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      *
+     * @return void
+     *
      * @global array $backyardConf
      */
     protected function setUp()
@@ -50,6 +52,8 @@ class ProjectCommonTest extends \PHPUnit_Framework_TestCase
     /**
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
+     *
+     * @return void
      */
     protected function tearDown()
     {
@@ -59,6 +63,8 @@ class ProjectCommonTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers GodsDev\MyCMS\ProjectCommon::dump
      * @todo   Implement testDump().
+     *
+     * @return void
      */
     public function testDump()
     {
@@ -71,6 +77,8 @@ class ProjectCommonTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers GodsDev\MyCMS\ProjectCommon::prepareTexy
      * @todo   Implement testPrepareTexy().
+     *
+     * @return void
      */
     public function testPrepareTexy()
     {
@@ -83,6 +91,8 @@ class ProjectCommonTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers GodsDev\MyCMS\ProjectCommon::localDate
      * @todo   Implement testLocalDate().
+     *
+     * @return void
      */
     public function testLocalDate()
     {
@@ -94,6 +104,8 @@ class ProjectCommonTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers GodsDev\MyCMS\ProjectCommon::correctLineBreak
+     *
+     * @return void
      */
     public function testCorrectLineBreak()
     {

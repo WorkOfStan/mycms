@@ -39,14 +39,14 @@ class MyCMSMonoLingual
 
     /**
      * Logger SHOULD by available to the application using mycms
-     * @var \Psr\Log\LoggerInterface
+     * @var LoggerInterface
      */
     public $logger;
 
     /**
      * Constructor
      *
-     * @param array $myCmsConf
+     * @param array<array> $myCmsConf
      */
     public function __construct(array $myCmsConf = [])
     {

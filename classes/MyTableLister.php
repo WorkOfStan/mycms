@@ -37,7 +37,7 @@ class MyTableLister
     /** @var int random item used in HTML */
     public $rand;
 
-    /** @var array arithmetical and logical operations for searching */
+    /** @var array<string> arithmetical and logical operations for searching */
     public $WHERE_OPS = [
         '=',
         '<',
@@ -59,7 +59,7 @@ class MyTableLister
         'NOT BIT'
     ];
 
-    /** @var array factory setting defaults */
+    /** @var array<int|string> factory setting defaults */
     protected $DEFAULTS = [
         'PAGESIZE' => 100,
         'MAXPAGESIZE' => 10000,
@@ -69,10 +69,10 @@ class MyTableLister
         'FOREIGNLINK' => '-link' //suffix added to POST variables for links
     ];
 
-    /** @var array Selected locale strings */
+    /** @var array<string> Selected locale strings */
     public $TRANSLATION = [];
 
-    /** @var array Available languages for MyCMS */
+    /** @var array<string> Available languages for MyCMS */
     public $TRANSLATIONS = [
         'en' => 'English'
     ];
@@ -991,14 +991,14 @@ class MyTableLister
     /**
      * Return keys to current table of a specified type(s)
      *
-     * @param array $types type(s) - possible items: PRI, UNI, MUL (database specific)
+     * @param array<string> $types type(s) - possible items: PRI, UNI, MUL (database specific)
      * @return array filtered keys, e.g. ['id'=>'PRI', 'division'=>'MUL', 'document_id'=>'UNI']
      */
-    public function filterKeys($types)
+    public function filterKeys(array $types)
     {
-        if (!is_array($types) || func_num_args() > 1) {
-            $types = func_get_args();
-        }
+//        if (!is_array($types) || func_num_args() > 1) {
+//            $types = func_get_args();
+//        }
         $result = [];
         foreach ($types as $type) {
             foreach ($this->fields as $key => $field) {
@@ -1021,10 +1021,10 @@ class MyTableLister
     {
         $result = [];
         // todo fix Parameter #1 $types of method GodsDev\MyCMS\MyTableLister::filterKeys() expects array, string given.
-        if ($keys = $this->filterKeys('PRI')) {
+        if ($keys = $this->filterKeys(['PRI'])) {
             $result [] = 'where[' . urlencode(array_keys($keys)[0]) . ']=' . urlencode(Tools::set($row[array_keys($keys)[0]]));
         // todo fix Parameter #1 $types of method GodsDev\MyCMS\MyTableLister::filterKeys() expects array, string given.
-        } elseif ($keys = $this->filterKeys('UNI')) {
+        } elseif ($keys = $this->filterKeys(['UNI'])) {
             foreach ($keys as $key => $value) {
                 if (isset($row[$key]) && $row[$key] !== null) {
                     $result [] = 'where[' . urlencode($key) . ']=' . urlencode($value);

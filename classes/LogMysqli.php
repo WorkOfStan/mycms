@@ -12,7 +12,7 @@ class LogMysqli extends BackyardMysqli
 {
     use \Nette\SmartObject;
 
-    /** @var array keywords in current DBMS */
+    /** @var array<string> keywords in current DBMS */
     protected $KEYWORDS = [
         'ACCESSIBLE', 'ADD', 'ALL', 'ALTER', 'ANALYZE', 'AND', 'AS', 'ASC', 'ASENSITIVE',
         'BEFORE', 'BETWEEN', 'BIGINT', 'BINARY', 'BLOB', 'BOTH', 'BY', 'CALL', 'CASCADE',
@@ -48,7 +48,7 @@ class LogMysqli extends BackyardMysqli
         'ZEROFILL'
     ];
 
-    /** @var array */
+    /** @var array<string> */
     protected $sqlStatementsArray = [];
 
     /**
@@ -60,7 +60,7 @@ class LogMysqli extends BackyardMysqli
      *   parameter $resultmode (int) of method mysqli::query()
      * @param bool $logQuery optional default logging of database changing statement can be (for security reasons)
      *     turned off by value false
-     * @return mixed \mysqli_result|false
+     * @return \mysqli_result|false
      */
     public function query($sql, $errorLogOutput = 1, $logQuery = true)
     {
@@ -77,6 +77,10 @@ class LogMysqli extends BackyardMysqli
         return parent::query($sql, $errorLogOutput);
     }
 
+    /**
+     *
+     * @return array<string>
+     */
     public function getStatementsArray()
     {
         return $this->sqlStatementsArray;
@@ -178,7 +182,7 @@ class LogMysqli extends BackyardMysqli
      * @param array $fields info about the columns like in MyTableLister->fields (optional)
      * @return string
      */
-    public function listColumns($columns, $fields = [])
+    public function listColumns(array $columns, array $fields = [])
     {
         $result = '';
         foreach ($columns as $column) {

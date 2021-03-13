@@ -18,7 +18,7 @@ class MyCommon
     // MUST be the same both for Controller extends MyController extends MyCommon and MyFriendlyUrl extends MyCommon
     const TEMPLATE_DEFAULT = 'home';
 
-    /** @var \GodsDev\MyCMS\MyCMS */
+    /** @var MyCMS */
     protected $MyCMS;
 
     /**

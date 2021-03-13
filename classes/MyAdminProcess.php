@@ -517,6 +517,7 @@ class MyAdminProcess extends MyCommon
                         if ($post['info']) {
                             if (in_array($pathinfo['extension'], $IMAGE_EXTENSIONS)) {
                                 if ($size = getimagesize($file)) {
+                                    // TODO: check whether following ternary operator condition is always true, as otherwise it wouldn't end up in this branch
                                     $entry['info'] .= $size ? Tools::wrap(Tools::set($IMAGE_TYPE[$size[2]], ''), '', ' ') . $size[0] . '×' . $size[1] : '';
                                 } elseif ($exif = exif_read_data($file)) {
                                     $entry['info'] .= Tools::wrap(Tools::set($IMAGE_TYPE[$exif['FILE']['FileType']]), ' ') . Tools::set($exif['COMPUTED']['Width']) . '×' . Tools::set($exif['COMPUTED']['Height']);
