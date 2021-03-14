@@ -502,7 +502,6 @@ class MyAdminProcess extends MyCommon
                 Tools::setifnotset($post['info'], null);
                 if ($post['info'] && class_exists('\ZipArchive')) {
                     $ZipArchive = new \ZipArchive();
-                    // todo ask CRS2 if this block should encapsulate also the following foreach or if otherwise it should fail with exception
                 }
                 foreach (glob(DIR_ASSETS . $post['subfolder'] . '/' . (isset($post['wildcard']) ? $post['wildcard'] : '*.*'), isset($post['wildcard']) ? GLOB_BRACE : 0) as $file) {
                     if (is_file($file)) {
@@ -522,7 +521,12 @@ class MyAdminProcess extends MyCommon
                                 } elseif ($exif = exif_read_data($file)) {
                                     $entry['info'] .= Tools::wrap(Tools::set($IMAGE_TYPE[$exif['FILE']['FileType']]), ' ') . Tools::set($exif['COMPUTED']['Width']) . '×' . Tools::set($exif['COMPUTED']['Height']);
                                 }
-                            } elseif (substr($file, -4) == '.zip' && class_exists('\ZipArchive')) {
+                            } /**
+                             * @phpstan-ignore-next-line
+                             * $ZipArchive is created within condition ($post['info'] && class_exists('\ZipArchive'))
+                             * above and the elseif below embodies the same condition, albeit divided into 2 ifs
+                             */
+                            elseif (substr($file, -4) == '.zip' && is_a($ZipArchive, '\ZipArchive')) {
                                 if ($ZipArchive->open($file)) {
                                     for ($i = 0; $i < min($ZipArchive->numFiles, 10); $i++) {
                                         $entry['info'] .= $ZipArchive->getNameIndex($i) . "\n";
@@ -569,34 +573,35 @@ class MyAdminProcess extends MyCommon
      */
     public function processUserChangePassword(&$post)
     {
-        if (isset($post['change-password'], $post['old-password'], $post['new-password'], $post['retype-password'])) {
-            if ($post['new-password'] != $post['retype-password']) {
-                Tools::addMessage('error', $this->tableAdmin->translate('The new password was not retyped correctly.'));
-            } else {
-                if ($row = $this->MyCMS->fetchSingle('SELECT * FROM ' . TAB_PREFIX . 'admin WHERE admin="' . $this->MyCMS->escapeSQL($_SESSION['user']) . '"')) {
-                    if ($row['active'] == '1' && $row['password_hashed'] == sha1($post['old-password'] . $row['salt'])) {
-                        // TODO ask CRS2 Static method GodsDev\Tools\Tools::resolve() invoked with 5 parameters, 3 required.
-                        Tools::resolve(
-                            $this->MyCMS->dbms->query(
-                                'UPDATE ' . TAB_PREFIX . 'admin
-                    SET password_hashed="' . $this->MyCMS->escapeSQL(sha1($post['new-password'] . $row['salt'])) . '"
-                    WHERE admin="' . $this->MyCMS->escapeSQL($_SESSION['user']) . '"',
-                                1,
-                                false
-                            ),
-                            $this->tableAdmin->translate('Password was changed.'),
-                            $this->tableAdmin->translate('Error occured changing password.'),
-                            true,
-                            false
-                        );
-                        Debugger::log("User '{$_SESSION['user']}' changed password.", ILogger::INFO);
-                        $this->redir();
-                    }
-                }
-                Tools::addMessage('error', $this->tableAdmin->translate('Error occured changing password.'));
-                $this->redir();
-            }
+        if (!isset($post['change-password'], $post['old-password'], $post['new-password'], $post['retype-password'])) {
+            return; // return void
         }
+        if ($post['new-password'] != $post['retype-password']) {
+            Tools::addMessage('error', $this->tableAdmin->translate('The new password was not retyped correctly.'));
+            return; // return void
+        }
+        $row = $this->MyCMS->fetchSingle(
+            'SELECT * FROM ' . TAB_PREFIX . 'admin WHERE admin="' . $this->MyCMS->escapeSQL($_SESSION['user']) . '"'
+        );
+        if ($row && $row['active'] === '1' && $row['password_hashed'] == sha1($post['old-password'] . $row['salt'])) {
+            $result = $this->MyCMS->dbms->query(
+                'UPDATE ' . TAB_PREFIX . 'admin SET password_hashed="' . $this->MyCMS->escapeSQL(
+                    sha1($post['new-password'] . $row['salt'])
+                ) . '" WHERE admin="' . $this->MyCMS->escapeSQL($_SESSION['user']) . '"',
+                1, // log errors
+                false // don't log query! (security)
+            );
+            if ($result) {
+                Tools::addMessage('success', $this->tableAdmin->translate('Password was changed.'));
+                Debugger::log("User '{$_SESSION['user']}' changed password.", ILogger::INFO);
+            } else {
+                Tools::addMessage('error', $this->tableAdmin->translate('Error occured changing password.'));
+            }
+            $this->redir();
+        }
+        Tools::addMessage('error', $this->tableAdmin->translate('Error occured changing password.'));
+        Debugger::log("User '{$_SESSION['user']}' failed changing password.", ILogger::INFO);
+        $this->redir();
     }
 
     /**
