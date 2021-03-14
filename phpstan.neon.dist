@@ -1,7 +1,7 @@
 # Invoked by locally installed PHPStan of library
 includes:
       - conf/phpstan.common.neon
-      - dist/phpstan.neon.dist
+      - dist/conf/phpstan.app.neon
 
 parameters:
     ignoreErrors:

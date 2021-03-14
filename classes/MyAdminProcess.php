@@ -521,12 +521,12 @@ class MyAdminProcess extends MyCommon
                                 } elseif ($exif = exif_read_data($file)) {
                                     $entry['info'] .= Tools::wrap(Tools::set($IMAGE_TYPE[$exif['FILE']['FileType']]), ' ') . Tools::set($exif['COMPUTED']['Width']) . '×' . Tools::set($exif['COMPUTED']['Height']);
                                 }
-                            } /**
-                             * @phpstan-ignore-next-line
-                             * $ZipArchive is created within condition ($post['info'] && class_exists('\ZipArchive'))
-                             * above and the elseif below embodies the same condition, albeit divided into 2 ifs
-                             */
-                            elseif (substr($file, -4) == '.zip' && is_a($ZipArchive, '\ZipArchive')) {
+                                /**
+                                 * @phpstan-ignore-next-line
+                                 * $ZipArchive is created within condition ($post['info'] && class_exists('\ZipArchive'))
+                                 * above and the elseif below embodies the same condition, albeit divided into 2 ifs
+                                 */
+                            } elseif (substr($file, -4) == '.zip' && is_a($ZipArchive, '\ZipArchive')) {
                                 if ($ZipArchive->open($file)) {
                                     for ($i = 0; $i < min($ZipArchive->numFiles, 10); $i++) {
                                         $entry['info'] .= $ZipArchive->getNameIndex($i) . "\n";

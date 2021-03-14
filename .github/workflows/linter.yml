@@ -18,6 +18,8 @@ on:
     branches-ignore:
       - 'master'
       - 'main'
+      # notest branches to ignore testing of partial online commits
+      - 'notest/**'
 
 ###############
 # Set the Job #
