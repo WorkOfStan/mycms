@@ -191,6 +191,17 @@ class Controller extends MyController
                 return true;
             case 'item-B':
                 $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 2';
+  $this->MyCMS->context['mailStatus'] = 'Test mail init';
+$tempItemB=$this->MyCMS->dbms->query('SELECT updated FROM `' . TAB_PREFIX . 'content` WHERE `active` = 1 and type like "counter" and code like "last_email_sent" ORDER BY created DESC LIMIT 0,1') :
+           if($tempItemB===false){
+//Query set with created =updated
+} elseif ( $tempItemB < 24h) {
+    $this->MyCMS->context['mailStatus'] = 'Wait...';
+} else {
+//Query update
+$tempSend = sendMail;
+$this->MyCMS->context['mailStatus'] = 'Sent with result '.print_r($tempSend, true);
+}
                 return true;
             case 'item-gama':
                 $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 3';
