@@ -111,7 +111,7 @@ $WEBSITE = [
         //   'relativeUrl' => url after language folder
         'menu' => [
             ['activeTabTemplate' => 'item-1', 'menuItemLabel' => 'Item 1', 'relativeUrl' => 'item-1'],
-            ['activeTabTemplate' => 'item-B', 'menuItemLabel' => 'Item 2', 'relativeUrl' => 'item-B'],
+            ['activeTabTemplate' => 'item-B', 'menuItemLabel' => 'Email test', 'relativeUrl' => 'item-B'],
             ['activeTabTemplate' => 'item-gama', 'menuItemLabel' => 'Item 3', 'relativeUrl' => 'item-gama'],
             ['activeTabTemplate' => 'item-4', 'menuItemLabel' => 'Item 4', 'relativeUrl' => 'item-4'],
             ['activeTabTemplate' => 'category', 'menuItemLabel' => 'Category 1', 'relativeUrl' => '?category=1'],
@@ -127,7 +127,7 @@ $WEBSITE = [
         // populates the default Czech menu
         'menu' => [
             ['activeTabTemplate' => 'item-1', 'menuItemLabel' => 'Položka 1', 'relativeUrl' => 'item-1'],
-            ['activeTabTemplate' => 'item-B', 'menuItemLabel' => 'Položka 2', 'relativeUrl' => 'item-B'],
+            ['activeTabTemplate' => 'item-B', 'menuItemLabel' => 'E-mail test', 'relativeUrl' => 'item-B'],
             ['activeTabTemplate' => 'item-gama', 'menuItemLabel' => 'Položka 3', 'relativeUrl' => 'item-gama'],
             ['activeTabTemplate' => 'item-4', 'menuItemLabel' => 'Položka 4', 'relativeUrl' => 'item-4'],
             ['activeTabTemplate' => 'category', 'menuItemLabel' => 'Kategorie 1', 'relativeUrl' => '?category=1'],
@@ -144,7 +144,7 @@ $WEBSITE = [
         //   'relativeUrl' => url after language folder
         'menu' => [
             ['activeTabTemplate' => 'item-1', 'menuItemLabel' => 'Artikel 1', 'relativeUrl' => 'item-1'],
-            ['activeTabTemplate' => 'item-B', 'menuItemLabel' => 'Artikel 2', 'relativeUrl' => 'item-B'],
+            ['activeTabTemplate' => 'item-B', 'menuItemLabel' => 'E-Mail-Test', 'relativeUrl' => 'item-B'],
             ['activeTabTemplate' => 'item-gama', 'menuItemLabel' => 'Artikel 3', 'relativeUrl' => 'item-gama'],
             ['activeTabTemplate' => 'item-4', 'menuItemLabel' => 'Artikel 4', 'relativeUrl' => 'item-4'],
             ['activeTabTemplate' => 'category', 'menuItemLabel' => 'Kategorie 1', 'relativeUrl' => '?category=1'],
@@ -158,7 +158,7 @@ $WEBSITE = [
         // populates the default French menu
         'menu' => [
             ['activeTabTemplate' => 'item-1', 'menuItemLabel' => 'Article 1', 'relativeUrl' => 'item-1'],
-            ['activeTabTemplate' => 'item-B', 'menuItemLabel' => 'Article 2', 'relativeUrl' => 'item-B'],
+            ['activeTabTemplate' => 'item-B', 'menuItemLabel' => 'Test e-mail', 'relativeUrl' => 'item-B'],
             ['activeTabTemplate' => 'item-gama', 'menuItemLabel' => 'Article 3', 'relativeUrl' => 'item-gama'],
             ['activeTabTemplate' => 'item-4', 'menuItemLabel' => 'Article 4', 'relativeUrl' => 'item-4'],
             ['activeTabTemplate' => 'category', 'menuItemLabel' => 'Categorie 1', 'relativeUrl' => '?category=1'],

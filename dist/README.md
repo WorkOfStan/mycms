@@ -309,14 +309,13 @@ Note: `header("Content-type: application/json");` in outputJSON hides Tracy
 
 ## Coding style and linting
 
-super-linter uses PHPSTAN to identify PHPDoc errors
-* but github-action doesn't have access to libraries declared in composer (ignoreErrors)
-* and it needs to know which global constants are used (`.github/linters/conf/constants.php`) on top of standard config files
+GitHub Actions run PHPSTAN to identify errors
+* the same way as would be run locally
+* so it might need to know which global constants are used (`.github/linters/conf/constants.php`) on top of standard config files
 * and where to look for present classes (scanDirectories), hence following files:
-* `.github/linters/phpstan.neon` - for super-linter (of this app) on github
-* `phpstan.neon.dist` - for local PHPSTAN
-* `conf/phpstan.common.neon` - both for local and super-linter on github PHPSTAN
-* `conf/phpstan.mycms.neon` - both for local and super-linter (of this app or mycms) on github PHPSTAN
+* `phpstan.neon.dist` - for PHPSTAN of this app (dist folder)
+* `conf/phpstan.app.neon` - both for this app and mycms library test
+* `conf/phpstan.common.neon` - both for this app and mycms library test
 * Note: if your DEFAULT_BRANCH is not `develop`, change `.github/linters/phpstan.neon` accordingly
 * Note: when code becomes stable, change VALIDATE_ALL_CODEBASE to `false`
 
@@ -347,6 +346,11 @@ sass styles/index.sass styles/index.css
 ```
 
 When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in `config.php` in order to force cache reload these resources.
+
+## Mail
+
+Third tab is `Email test` and if sending emails isn't forbidden by `define('MAIL_SENDING_ACTIVE', false);` in `config.local.php`
+it tries to send a test email to `EMAIL_ADMIN`. One try allowed in 23 hours.
 
 ## TODO
 
