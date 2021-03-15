@@ -191,17 +191,30 @@ class Controller extends MyController
                 return true;
             case 'item-B':
                 $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 2';
-  $this->MyCMS->context['mailStatus'] = 'Test mail init';
-$tempItemB=$this->MyCMS->dbms->query('SELECT updated FROM `' . TAB_PREFIX . 'content` WHERE `active` = 1 and type like "counter" and code like "last_email_sent" ORDER BY created DESC LIMIT 0,1') :
-           if($tempItemB===false){
-//Query set with created =updated
-} elseif ( $tempItemB < 24h) {
-    $this->MyCMS->context['mailStatus'] = 'Wait...';
-} else {
-//Query update
-$tempSend = sendMail;
-$this->MyCMS->context['mailStatus'] = 'Sent with result '.print_r($tempSend, true);
-}
+                $this->MyCMS->context['mailStatus'] = 'Test mail init';
+                $tempItemB = $this->MyCMS->dbms->queryArray('SELECT `added` FROM `' . TAB_PREFIX . 'content` WHERE `active` = "1" AND `type` LIKE "counter" AND `code` LIKE "last_email_sent" ORDER BY `added` DESC LIMIT 0,1');
+                $tempItemWait = $this->MyCMS->dbms->queryArray('SELECT `added` FROM `' . TAB_PREFIX . 'content` WHERE `active` = "1" AND `type` LIKE "counter" AND `code` LIKE "last_email_sent" AND `added` < DATE_SUB(NOW(), INTERVAL 23 HOUR) ORDER BY `added` DESC LIMIT 0,1');
+                //$tempItemWait = $this->MyCMS->dbms->queryArray('SELECT `added` FROM `' . TAB_PREFIX . 'content` WHERE `active` = "1" AND `type` LIKE "counter" AND `code` LIKE "last_email_sent" AND `added` < DATE_SUB(NOW(), INTERVAL 23 SECOND) ORDER BY `added` DESC LIMIT 0,1');
+                Debugger::barDump($tempItemB, 'itemB');
+                Debugger::barDump($tempItemWait, 'itemWait');
+                if (empty($tempItemB)) {
+                    //Query set with added
+                    // INSERT INTO `mycmsprojectspecific_content` (`id`, `type`, `code`, `name_cs`, `content_cs`, `url_cs`, `name_de`, `content_de`, `url_de`, `name_en`, `content_en`, `url_en`, `name_fr`, `content_fr`, `url_fr`, `added`, `context`, `sort`, `active`) VALUES (NULL, 'counter', 'last_email_sent', '', NULL, NULL, '', NULL, NULL, '', NULL, NULL, '', NULL, NULL, CURRENT_TIMESTAMP, '', '0', '1');
+                    $tempItemB = $this->MyCMS->dbms->query(
+                        "INSERT INTO `" . TAB_PREFIX . "content` "
+                        . "(`id`, `type`, `code`, `added`, `context`, `sort`, `active`) "
+                        . "VALUES (NULL, 'counter', 'last_email_sent', CURRENT_TIMESTAMP, '[]', '0', '1');"
+                    );
+                } elseif (empty($tempItemWait)) {
+                    $this->MyCMS->context['mailStatus'] = 'Wait...';
+                } else {
+                    //Query update
+                    $tempItemB = $this->MyCMS->dbms->query("UPDATE `" . TAB_PREFIX . "content` SET `added` = CURRENT_TIME() WHERE `mycmsprojectspecific_content`.`code` = 'last_email_sent';");
+                    Assert::notFalse($tempItemB, 'Update query failed');
+                    // TODO: real sending!!! with email enablement const!
+                    $tempSend = 'sendMail tbd';
+                    $this->MyCMS->context['mailStatus'] = 'Sent with result ' . print_r($tempSend, true);
+                }
                 return true;
             case 'item-gama':
                 $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 3';
