@@ -66,22 +66,25 @@ jobs:
     #   run: composer run-script test
 
     # PHPStan works for PHP/7.1+ so it can't even be in composer.json
+    - name: "Composer + PHPStan (app)"
+      if: ${{ matrix.php-version >= '7.1' }}
+      run: |
+        #to fix `Constant DB_USERNAME not found.` etc
+        cp -p dist/conf/config.local.dist.php dist/conf/config.local.php
+        cd dist
+        composer update --prefer-dist --no-progress
+        phpstan analyse --no-interaction --no-progress .
+        cd ..
+
     - name: "PHPStan (library + app)"
       # alternative syntax # if: ${{ matrix.php-version != '5.3' && matrix.php-version != '5.6' }}
       if: ${{ matrix.php-version >= '7.1' }}
       run: |
         #to fix `Constant DB_USERNAME not found.` etc
-        cp -p dist/conf/config.local.dist.php dist/conf/config.local.php
+        #cp -p dist/conf/config.local.dist.php dist/conf/config.local.php
         #composer require --dev phpstan/phpstan:^0.12
         #vendor/bin/phpstan analyse --debug .
         # If removal needed:
         # composer remove --dev phpstan/phpstan
         #phpstan -V
-        phpstan analyse --no-interaction --no-progress .
-
-    - name: "Composer + PHPStan (app)"
-      if: ${{ matrix.php-version >= '7.1' }}
-      run: |
-        cd dist
-        composer update --prefer-dist --no-progress
         phpstan analyse --no-interaction --no-progress .
