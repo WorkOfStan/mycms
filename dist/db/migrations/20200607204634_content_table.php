@@ -56,7 +56,7 @@ class ContentTable extends AbstractMigration
         }
 
         $content
-            ->addColumn('added', 'datetime', ['comment' => 'Creation timestamp', 'default' => 'CURRENT_TIMESTAMP', 'null' => false])
+            ->addColumn('added', 'timestamp', ['comment' => 'Creation timestamp', 'default' => 'CURRENT_TIMESTAMP', 'null' => false])
             ->addColumn('context', 'string', ['comment' => '{"edit":"json"}', 'limit' => 4096, 'null' => false,])
             ->addColumn('sort', 'integer', ['comment' => 'sort order', 'default' => 0, 'limit' => MysqlAdapter::INT_SMALL, 'null' => false,])
             ->addColumn('active', 'boolean', ['comment' => '0=inactive, 1=active', 'default' => 1])
@@ -83,7 +83,7 @@ class ContentTable extends AbstractMigration
         }
 
         $category
-            ->addColumn('added', 'datetime', ['comment' => 'Creation timestamp', 'default' => 'CURRENT_TIMESTAMP', 'null' => false])
+            ->addColumn('added', 'timestamp', ['comment' => 'Creation timestamp', 'default' => 'CURRENT_TIMESTAMP', 'null' => false])
             ->addColumn('context', 'string', ['comment' => '{"edit":"json"}', 'default' => '{}', 'limit' => 4096, 'null' => false,])
             ->addColumn('sort', 'integer', ['comment' => 'sort order', 'default' => 0, 'limit' => MysqlAdapter::INT_SMALL, 'null' => false,])
             ->addColumn('active', 'boolean', ['comment' => '0=inactive, 1=active', 'default' => 1])
@@ -112,7 +112,7 @@ class ContentTable extends AbstractMigration
         }
 
         $product
-            ->addColumn('added', 'datetime', ['comment' => 'Creation timestamp', 'default' => 'CURRENT_TIMESTAMP', 'null' => false])
+            ->addColumn('added', 'timestamp', ['comment' => 'Creation timestamp', 'default' => 'CURRENT_TIMESTAMP', 'null' => false])
             ->addColumn('context', 'string', ['comment' => '{"edit":"json"}', 'limit' => 4096, 'null' => false,])
             ->addColumn('sort', 'integer', ['comment' => 'sort order', 'default' => 0, 'limit' => MysqlAdapter::INT_SMALL, 'null' => false,])
             ->addColumn('active', 'boolean', ['comment' => '0=inactive, 1=active', 'default' => 1])

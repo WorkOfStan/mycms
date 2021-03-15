@@ -20,6 +20,7 @@ final class ContentExample extends AbstractMigration
      */
     public function change() //: void
     {
+        // Note: generates several `PHP Notice:  Constant` but it is required to set again `$myCmsConf`
         require __DIR__ . '/../../conf/config.php';
         $languages = array_keys($myCmsConf['TRANSLATIONS']);
         sort($languages);
