@@ -215,7 +215,7 @@ class Controller extends MyController
                 } else {
                     // Update & try to send
                     $tempItemB = $this->MyCMS->dbms->query(
-                        "UPDATE `" . TAB_PREFIX . "content` SET `added` = CURRENT_TIME()"
+                        "UPDATE `" . TAB_PREFIX . "content` SET `added` = CURRENT_TIMESTAMP"
                         . " WHERE `mycmsprojectspecific_content`.`code` = 'last_email_sent';"
                     );
                     Assert::notFalse($tempItemB, 'Update query failed');

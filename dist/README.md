@@ -350,7 +350,7 @@ When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in
 ## Mail
 
 Third tab is `Email test` and if sending emails isn't forbidden by `define('MAIL_SENDING_ACTIVE', false);` in `config.local.php`
-it tries to send a test email to `EMAIL_ADMIN`. One try allowed in 23 hours.
+it tries to send a test email to `EMAIL_ADMIN`. One try allowed in 23 hours (as a simple measure against SPAM).
 
 ## TODO
 
@@ -382,5 +382,4 @@ it tries to send a test email to `EMAIL_ADMIN`. One try allowed in 23 hours.
 * 200712: remove unnecessary `sql =` constructs
 * 200802: test with 2 categories
 * 200802: image for product and category in assets
-* 200826: <http://localhost:8080/godsdev/mycms/dist/admin.php?language=fr> nastaví jazyk položek do fr, ale v Settings se to nedá: ať se dá
 * 200921: (MyCMS) properly fix message: '#Parameter #2 $newvalue of function ini_set expects string, true given.#'    path: /github/workspace/set-environment.php
