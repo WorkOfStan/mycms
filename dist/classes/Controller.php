@@ -196,9 +196,13 @@ class Controller extends MyController
             case 'item-B':
                 $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 2';
                 $this->MyCMS->context['mailStatus'] = 'Test mail init';
-                $tempItemB = $this->MyCMS->dbms->queryArray('SELECT `added` FROM `' . TAB_PREFIX . 'content` WHERE `active` = "1" AND `type` LIKE "counter" AND `code` LIKE "last_email_sent" ORDER BY `added` DESC LIMIT 0,1');
-                $tempItemWait = $this->MyCMS->dbms->queryArray('SELECT `added` FROM `' . TAB_PREFIX . 'content` WHERE `active` = "1" AND `type` LIKE "counter" AND `code` LIKE "last_email_sent" AND `added` < DATE_SUB(NOW(), INTERVAL 23 HOUR) ORDER BY `added` DESC LIMIT 0,1');
-                //debug//$tempItemWait = $this->MyCMS->dbms->queryArray('SELECT `added` FROM `' . TAB_PREFIX . 'content` WHERE `active` = "1" AND `type` LIKE "counter" AND `code` LIKE "last_email_sent" AND `added` < DATE_SUB(NOW(), INTERVAL 23 SECOND) ORDER BY `added` DESC LIMIT 0,1');
+                $tempItemB = $this->MyCMS->dbms->queryArray('SELECT `added` FROM `' . TAB_PREFIX . 'content` '
+                    . 'WHERE `active` = "1" AND `type` LIKE "counter" AND `code` LIKE "last_email_sent" '
+                    . 'ORDER BY `added` DESC LIMIT 0,1');
+                $tempItemWait = $this->MyCMS->dbms->queryArray('SELECT `added` FROM `' . TAB_PREFIX . 'content` '
+                    . 'WHERE `active` = "1" AND `type` LIKE "counter" AND `code` LIKE "last_email_sent" '
+                    . 'AND `added` < DATE_SUB(NOW(), INTERVAL 23 HOUR) '
+                    . 'ORDER BY `added` DESC LIMIT 0,1');
                 Debugger::barDump(
                     ['last_email_sent' => $tempItemB, 'last_email_sent_within_waiting_period' => $tempItemWait],
                     'Last email sent timestamps'
