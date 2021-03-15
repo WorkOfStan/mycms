@@ -37,7 +37,9 @@ class RedirectorTable extends AbstractMigration
             ->addColumn('old_url', 'string', ['limit' => 500, 'comment' => 'URL to be redirected', 'null' => false])
             ->addIndex('old_url')
             ->addColumn('new_url', 'string', ['limit' => 500, 'comment' => 'Target URL', 'null' => false])
-            ->addColumn('added', 'datetime', ['comment' => 'Creation timestamp', 'default' => 'CURRENT_TIMESTAMP', 'null' => false])
+            // The DEFAULT CURRENT_TIMESTAMP support for a DATETIME (datatype) was added in MySQL 5.6.
+            // In 5.5 and earlier versions, this applied only to TIMESTAMP (datatype) columns.
+            ->addColumn('added', 'timestamp', ['comment' => 'Creation timestamp', 'default' => 'CURRENT_TIMESTAMP', 'null' => false])
             ->addColumn('active', 'boolean', ['comment' => '0=inactive, 1=active', 'default' => 1])
             ->create();
     }
