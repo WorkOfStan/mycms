@@ -5,6 +5,6 @@ includes:
 parameters:
     ignoreErrors:
       # These variables are responsibility of the including/included script
-      -
-        message: '#Undefined variable: \$myCmsConf#'
-        path: db/migrations/*.php
+#      -
+#        message: '#Undefined variable: \$myCmsConf#'
+#        path: db/migrations/*.php

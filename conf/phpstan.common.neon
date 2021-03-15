@@ -5,7 +5,7 @@ parameters:
         analyse:
           - ../vendor
           # Phinx\Migration\AbstractMigration is not defined in mycms, only mycms/dist
-          - ../dist/db/migrations/*.php
+          #- ../dist/db/migrations/*.php
     bootstrapFiles:
       - config.php
       #- ../.github/linters/conf/constants.php # uncomment if needed

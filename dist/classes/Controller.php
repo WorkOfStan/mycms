@@ -5,6 +5,7 @@ namespace GodsDev\mycmsprojectnamespace;
 use GodsDev\MyCMS\MyCMS;
 use GodsDev\MyCMS\MyController;
 use GodsDev\mycmsprojectnamespace\FriendlyUrl;
+use GodsDev\mycmsprojectnamespace\Mail;
 use GodsDev\mycmsprojectnamespace\ProjectSpecific;
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
@@ -18,16 +19,19 @@ class Controller extends MyController
     //project specific accepted attributes:
 
     /** @var string */
-    protected $requestUri; // = ''; // default is homepage
+    protected $httpMethod;
+
+    /** @var string */
+    protected $language; // = DEFAULT_LANGUAGE;
+
+    /** @var Mail */
+    protected $mail;
 
     /** @var ProjectSpecific */
     private $projectSpecific;
 
     /** @var string */
-    protected $httpMethod;
-
-    /** @var string */
-    protected $language; // = DEFAULT_LANGUAGE;
+    protected $requestUri; // = ''; // default is homepage
 
     /**
      * Feature flags that bubble down to latte and controller
@@ -65,6 +69,7 @@ class Controller extends MyController
             'friendlyUrl' => new FriendlyUrl($MyCMS, $options), //$this->friendlyUrl instantiated
         ]));
         //Note: $this->featureFlags is populated
+        $this->mail = new Mail($MyCMS, $options);
     }
 
     /**
@@ -140,8 +145,7 @@ class Controller extends MyController
                 $this->MyCMS->context['content']['image'] = array_key_exists(
                     'image',
                     $this->MyCMS->context['content']['context']
-                )
-                    ? (string) $this->MyCMS->context['content']['context']['image'] : '';
+                ) ? (string) $this->MyCMS->context['content']['context']['image'] : '';
                 return true;
             case 'category':
                 if (!Tools::ifset($this->get['category'])) {
@@ -191,6 +195,48 @@ class Controller extends MyController
                 return true;
             case 'item-B':
                 $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 2';
+                $this->MyCMS->context['mailStatus'] = 'Test mail init';
+                $tempItemB = $this->MyCMS->dbms->queryArray('SELECT `added` FROM `' . TAB_PREFIX . 'content` '
+                    . 'WHERE `active` = "1" AND `type` LIKE "counter" AND `code` LIKE "last_email_sent" '
+                    . 'ORDER BY `added` DESC LIMIT 0,1');
+                $tempItemWait = $this->MyCMS->dbms->queryArray('SELECT `added` FROM `' . TAB_PREFIX . 'content` '
+                    . 'WHERE `active` = "1" AND `type` LIKE "counter" AND `code` LIKE "last_email_sent" '
+                    . 'AND `added` < DATE_SUB(NOW(), INTERVAL 23 HOUR) '
+                    . 'ORDER BY `added` DESC LIMIT 0,1');
+                Debugger::barDump(
+                    ['last_email_sent' => $tempItemB, 'last_email_sent_within_waiting_period' => $tempItemWait],
+                    'Last email sent timestamps'
+                );
+                if (empty($tempItemB)) {
+                    // Init
+                    $tempItemB = $this->MyCMS->dbms->query(
+                        "INSERT INTO `" . TAB_PREFIX . "content` "
+                        . "(`id`, `type`, `code`, `added`, `context`, `sort`, `active`) "
+                        . "VALUES (NULL, 'counter', 'last_email_sent', CURRENT_TIMESTAMP, '[]', '0', '1');"
+                    );
+                } elseif (empty($tempItemWait)) {
+                    $this->MyCMS->context['mailStatus'] = 'Wait...';
+                } else {
+                    // Update & try to send
+                    $tempItemB = $this->MyCMS->dbms->query(
+                        "UPDATE `" . TAB_PREFIX . "content` SET `added` = CURRENT_TIMESTAMP"
+                        . " WHERE `mycmsprojectspecific_content`.`code` = 'last_email_sent';"
+                    );
+                    Assert::notFalse($tempItemB, 'Update query failed');
+                    // Note: sending emails may be turned off in config.php - Debugger::barDump('MAIL SENDING INACTIVE')
+                    $tempSend = $this->mail->sendMail(
+                        EMAIL_ADMIN,
+                        'Test project mail',
+                        'Hello, world of mail from PHP version=' . PHP_VERSION
+                    );
+                    if (is_int($tempSend) & $tempSend > 0) {
+                        $this->MyCMS->logger->info('Test mail sent to ' . EMAIL_ADMIN);
+                        $this->MyCMS->context['mailStatus'] = 'Sent with result ' . print_r($tempSend, true);
+                    } else {
+                        $this->MyCMS->logger->warning('Test mail FAILED to ' . EMAIL_ADMIN);
+                        $this->MyCMS->context['mailStatus'] = 'Sending failed';
+                    }
+                }
                 return true;
             case 'item-gama':
                 $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 3';
@@ -209,12 +255,11 @@ class Controller extends MyController
                 return true;
             case 'search-results': //search _GET[search] contains the search phrase
                 $this->MyCMS->context['limit'] = PAGINATION_LIMIT;
-                $this->MyCMS->context['offset'] = isset($this->get['offset'])
-                    ? filter_var(
-                        $this->get['offset'],
-                        FILTER_VALIDATE_INT,
-                        ['default' => 0, 'min_range' => 0, 'max_range' => 1e9]
-                    ) : 0;
+                $this->MyCMS->context['offset'] = isset($this->get['offset']) ? filter_var(
+                    $this->get['offset'],
+                    FILTER_VALIDATE_INT,
+                    ['default' => 0, 'min_range' => 0, 'max_range' => 1e9]
+                ) : 0;
                 $this->MyCMS->context['results'] = $this->projectSpecific->searchResults(
                     $this->get['search'],
                     $this->MyCMS->context['offset'],
