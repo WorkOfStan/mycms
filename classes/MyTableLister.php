@@ -185,10 +185,10 @@ class MyTableLister
             throw new \RunTimeException('Could not get columns from table ' . $this->table . '.');
         }
         $query = $this->dbms->query(
-            'SELECT COLUMN_NAME,REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME
-            FROM information_schema.KEY_COLUMN_USAGE WHERE CONSTRAINT_NAME != "PRIMARY" AND CONSTRAINT_CATALOG = "def"
-            AND TABLE_SCHEMA = "' . $this->escapeSQL($this->database) . '"
-            AND TABLE_NAME = "' . $this->escapeSQL($this->table) . '"'
+            'SELECT COLUMN_NAME,REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME '
+            . 'FROM information_schema.KEY_COLUMN_USAGE '
+            . 'WHERE CONSTRAINT_NAME != "PRIMARY" AND CONSTRAINT_CATALOG = "def" AND TABLE_SCHEMA = "'
+            . $this->escapeSQL($this->database) . '" AND TABLE_NAME = "' . $this->escapeSQL($this->table) . '"'
         );
         if ($query) {
             while ($row = $query->fetch_assoc()) {
@@ -196,16 +196,17 @@ class MyTableLister
                 $this->fields[$row['COLUMN_NAME']]['foreign_column'] = $row['REFERENCED_COLUMN_NAME'];
             }
         }
-        $tmp = $this->dbms->fetchSingle('SELECT TABLE_COMMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA="' . $this->escapeSQL($this->database) . '" AND TABLE_NAME="' . $this->escapeSQL($this->table) . '"');
+        $tmp = $this->dbms->fetchSingle('SELECT TABLE_COMMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA="'
+            . $this->escapeSQL($this->database) . '" AND TABLE_NAME="' . $this->escapeSQL($this->table) . '"');
         $this->tableContext = json_decode($tmp, true) or [];
     }
 
     /**
      * Compose a SELECT SQL statement with given columns and _GET variables
      *
-     * @param array $columns
+     * @param array<string> $columns
      * @param array $vars &$vars variables used to filter records
-     * @return array with these indexes: [join], [where], [sort], [sql]
+     * @return array<string> with these indexes: [join], [where], [sort], [sql]
      */
     public function selectSQL($columns, &$vars)
     {
@@ -355,7 +356,7 @@ class MyTableLister
      * Create array of columns for preparing the SQL statement
      *
      * @param array $options
-     * @return array
+     * @return array<string>
      */
     public function getColumns($options)
     {
@@ -580,6 +581,7 @@ class MyTableLister
         }
         $output .= '</tbody></table>' . PHP_EOL;
         if (!isset($options['no-selected-rows-operations'])) {
+            // TODO test and describe CLONE and EDIT functionality
             $output .= '<div class="selected-rows mb-2"><i class="fa fa-check-square"></i>=<span class="listed">0</span>
                 <label class="btn btn-sm btn-light mx-1 mt-2">' . Tools::htmlInput('total-rows', '', $options['total-rows'], ['type' => 'checkbox', 'class' => 'total-rows']) . ' ' . $this->translate('Whole resultset') . '</label>
                 <button name="table-export" value="1" class="btn btn-sm ml-1" disabled="disabled"><i class="fa fa-download"></i> ' . $this->translate('Export') . '</button>
@@ -1020,10 +1022,9 @@ class MyTableLister
     public function rowLink($row)
     {
         $result = [];
-        // todo fix Parameter #1 $types of method GodsDev\MyCMS\MyTableLister::filterKeys() expects array, string given.
         if ($keys = $this->filterKeys(['PRI'])) {
-            $result [] = 'where[' . urlencode(array_keys($keys)[0]) . ']=' . urlencode(Tools::set($row[array_keys($keys)[0]]));
-        // todo fix Parameter #1 $types of method GodsDev\MyCMS\MyTableLister::filterKeys() expects array, string given.
+            $result [] = 'where[' . urlencode(array_keys($keys)[0]) . ']='
+                . urlencode(Tools::set($row[array_keys($keys)[0]]));
         } elseif ($keys = $this->filterKeys(['UNI'])) {
             foreach ($keys as $key => $value) {
                 if (isset($row[$key]) && $row[$key] !== null) {
@@ -1039,7 +1040,8 @@ class MyTableLister
                 if (!isset($row[$key])) {
                     continue;
                 }
-                $result [] = is_null($row[$key]) ? 'null[' . urlencode($key) . ']=' : 'where[' . urlencode($key) . ']=' . urlencode($row[$key]);
+                $result [] = is_null($row[$key]) ? //
+                    'null[' . urlencode($key) . ']=' : 'where[' . urlencode($key) . ']=' . urlencode($row[$key]);
             }
         }
         return $result;

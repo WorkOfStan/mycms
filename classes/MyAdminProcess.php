@@ -182,17 +182,26 @@ class MyAdminProcess extends MyCommon
      */
     public function processExport(&$post, $get)
     {
+        //Debugger::barDump([$post, $get, $_GET], 'processExport(&$post, $get)');
         if (isset($post['table-export'], $post['database-table'])) {
             if ((isset($post['check']) && count($post['check'])) || Tools::set($post['total-rows'])) {
                 if (Tools::set($post['total-rows'])) { //export whole resultset (regard possible $get limitations)
-                    $sql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $_GET);
+                    $sql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $get);
                     $sql = $sql['select'];
+                //Debugger::barDump($sql, 'SQL array');
                 } else { //export only checked rows
-                    // TODO ask CRS2 - filterToSql doesn't exists. $errors isn't defined. $sql isn't defined.
-                    $this->filterToSQL($get, $sql, $errors);
-                    if ($errors) {
-                        Tools::addMessage('warning', $this->tableAdmin->translate('Wrong input parameter') . ': ' . implode(', ', $errors));
-                    }
+                    $sql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $get);
+                    $sql = $sql['select'] . ' WHERE `' . $post['database-table'] . '`.`id` IN (' . implode(
+                        ',',
+                        array_map(
+                            function ($whereString) {
+                                $tempSplit = explode('=', $whereString);
+                                return (int) $tempSplit[1];
+                            },
+                            $post['check'] // array of strings like that: 'where[id]=1'
+                        )
+                    ) . ')';
+                    Debugger::barDump($sql, 'SQL array');
                 }
                 if ($sql) {
                     $post['database-table'] = $this->tableAdmin->escapeDbIdentifier($post['database-table']);
@@ -215,12 +224,14 @@ class MyAdminProcess extends MyCommon
                     }
                     $output = substr($output, 0, -2) . ($i ? $duplicateKey : '') . ";\n";
                     // we got output
-                    if (Tools::set($post['download'])) {
-                        header('Content-Disposition: attachment; filename=' . $post['database-table'] . '.sql;');
-                        header('Content-Transfer-Encoding: binary');
-                        header('Content-type: text/plain; charset=utf-8');
-                    }
+                    // TODO: add download/display-only option
+//                    if (Tools::set($post['download'])) {
+                    header('Content-Disposition: attachment; filename=' . $post['database-table']
+                        . '_' . date('Y-m-d') . '.sql;');
+                    header('Content-Transfer-Encoding: binary');
+//                    }
                     header('Content-type: text/plain; charset=utf-8');
+                    // todo: display SQL here instead of Debugger::barDump($sql, 'SQL array'); above//$this->endAdmin();
                     exit($output);
                 } else {
                     Tools::addMessage('info', $this->tableAdmin->translate('No records selected.'));
