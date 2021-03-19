@@ -9,6 +9,8 @@
 let sortIndex = 0;
 let searchIndex = 0;
 let imageSelectorTarget = '';
+let vDivider = 25;
+let vDividerMoving = false;
 
 function prepareDatetimepicker(date, time) {
     let timeformat = (date ? 'dd-MM-yyyy' : '') + (date && time ? ' ' : '') + (time ? 'hh:mm:ss' : '');
@@ -68,7 +70,7 @@ function urlChange(changes) {
     let pairs = location.search.substr(1).split('&');
     let tmp = {};
     for (i in pairs) {
-        pair = pairs[i].split('=');
+        let pair = pairs[i].split('=');
         if (Object.keys(changes).indexOf(pair[0]) == -1) {
             tmp[pair[0]] = pair[1];
         } else if (typeof (changes[pair[0]]) != 'undefined') {
@@ -120,7 +122,7 @@ function fillAgenda(data, options) {
     for (i in data.data) {
         html += agendaRow(data, i, options);
     }
-    agenda = $('#agenda-' + data.agenda);
+    let agenda = $('#agenda-' + data.agenda);
     if (typeof (options.prefill) == 'object') {
         for (i in options.prefill) {
             prefill += '&amp;prefill[' + i + ']=' + options.prefill[i];
@@ -131,7 +133,7 @@ function fillAgenda(data, options) {
 
 function agendaRow(data, index, options) {
     let row = data.data[index];
-    result = '<div class="m-1" data-id="' + row.id + '" data-table="' + data.agenda + '">\n'
+    let result = '<div class="m-1" data-id="' + row.id + '" data-table="' + data.agenda + '">\n'
             + '<a href="?table=' + TAB_PREFIX + (options['table'] || data.agenda) + '&amp;where[id]=' + row.id + '"'
             + ' class="btn btn-link btn-xs" title="edit"><i class="fa fa-pencil-alt" aria-hidden="true"></i></a>\n';
     if (row.sort) {
@@ -175,7 +177,7 @@ function updateImageSelector(ImageFolder, ImageFiles) {
         type: 'POST',
         success: function (data) {
             if (data.success) {
-                html = '';
+                let html = '';
                 for (i in data.data) {
                     filename = data.data[i]['name'] + data.data[i]['extension'];
                     src = data.subfolder + '/' + filename;
@@ -187,7 +189,7 @@ function updateImageSelector(ImageFolder, ImageFiles) {
             }
             $(ImageFiles).find('a').on('click', function (event) {
                 event.preventDefault();
-                tmp = $(ImageFolder).parent().parent();
+                let tmp = $(ImageFolder).parent().parent();
                 tmp.find('.note-image-url').val($(this).find('img').data('src'));
                 tmp.parent().parent().find('.modal-footer button.btn-primary').click();
             });
@@ -231,6 +233,20 @@ function selectWithNullOnChange(element, name) {
 
 function pad0(input, len) {
     return '0'.repeat(len - String(input).length) + input;
+}
+
+// toggles Export, Edit, Clone buttons based on row selection
+function updateNumberOfSelectedRows(element) {
+    var checked = $(element).closest('table').find('.multi-options input[type=checkbox]:checked').length;
+    let form = $(element).closest('form');
+    checked = form.find('.table-admin .multi-options input[type=checkbox]:checked').length;
+    form.find('.selected-rows .listed').text(checked);
+    form.find('.selected-rows button').attr('disabled', checked == 0 && !form.find('.selected-rows .total-rows').is(':checked'));
+    return checked;
+}
+
+function addMediaMessage(message) {
+    $('#media-file-feedback span:first').text(message).parent().show();
 }
 
 function moveCategory(element, up) {
@@ -447,13 +463,19 @@ function standardDocumentReady() {
     // table form - indicate overflow in textareas with maxlength
     $('.database textarea[data-maxlength]').on('keyup', function (event) {
         $(this).toggleClass('is-invalid', (len = String($(this).val()).length) > (maxlen = $(this).data('maxlength')));
-        limit = $(this).nextAll().filter('i.input-limit');
+        let limit = $(this).nextAll().filter('i.input-limit');
         if (typeof (limit) != "undefined" && typeof (limit[0]) != "undefined") {
             limit[0].title = len + '/' + maxlen;
         }
     });
+    // toggles Export, Edit, Clone buttons based on row selection
     $('table.table-admin thead input[type=checkbox].check-all').on('change', function () { // "check all" checkbox
         $(this).closest('table').find('tr td.multi-options input[type=checkbox]').prop('checked', $(this).prop('checked'));
+        updateNumberOfSelectedRows(this);
+    });
+    // toggles Export, Edit, Clone buttons based on row selection
+    $('table.table-admin tr .multi-options input[type=checkbox]').on('change', function (event) {
+        updateNumberOfSelectedRows(this);
     });
     $('textarea.richtext').summernote({
         height: 200,
@@ -575,4 +597,117 @@ function standardDocumentReady() {
     $('#agenda-translations form table input.translation').on('change', function (event) {
         $('#old_name,#new_name').val($(this).val());
     });
+    //vDivider
+    $('#v-divider').on('mousedown', function(event){
+        vDividerMoving = true;
+        if (event.buttons & 1) {
+            event.preventDefault();
+        }
+    });
+    $('#v-divider').on('mouseup', function(event){
+        $('#v-divider').css('left', vDivider + '%');
+        $('#admin-sidebar').css('max-width', vDivider + '%');
+        $('#admin-main').css('max-width', 'calc(' + (100 - vDivider) + '% - 15px)').css('flex', '0 0 ' + (100 - vDivider) + '%');
+        vDividerMoving = false;
+        localStorage.setItem('vDivider', vDivider);
+    });
+    $('body > div.container-fluid.row').on('mousemove', function(event){
+        if (vDividerMoving) {
+            vDivider = event.clientX * 100 / event.delegateTarget.offsetWidth;
+            vDivider = Math.max(Math.min(vDivider, 80), 5);
+            $('#v-divider').css('left', vDivider + '%').prop('title', vDivider.toFixed(1) + '%');
+        }
+    });
+    vDivider = (localStorage.getItem('vDivider') || vDivider) - 0;
+    $('#v-divider').trigger('mouseup', {'buttons': 1, 'preventDefault': function(){}});
+    // save content of summernote editor even if in codeView
+    $('.note-codable').on('blur', function () {
+        $(this).closest('.TableAdminTextarea').find('textarea:first-child').val($(this).val());
+    });
+    // show/hide table columns
+    $('.toggle-div input[type=checkbox]').on('change', function (event) {
+        let rand = $(this).closest('.toggle-div').data('rand');
+        toggleTableColumn($('#table-admin' + rand), $(this).data('column'), $(this).prop('checked'));
+    });
+    $('.database .form-control').on('change', function (event) {
+        $('#null-' + $(this).attr('id')).prop('checked', false);
+    });
+    $('#agenda-translations form table input.translation').on('change', function(event) {
+        $('#old_name,#new_name').val($(this).val());
+    });
+    // toggles Export, Edit, Clone buttons based on row selection
+    $('.selected-rows .total-rows').on('click', function (event) {
+        updateNumberOfSelectedRows(this);
+    });
+    $('.selected-rows button').on('click', function (event) {
+        if ($(this).parent().find('.listed').text() - 0 || $(this).parent().find('input[name=total-rows]').is(':checked')) {
+            return true;
+        } else {
+            event.preventDefault();
+            addMediaMessage(TRANSLATE['Select at least one record and try again.']);
+            return false;
+        }
+        
+    });
+    // #nav-search-button toggles a #nav-search-button and get nav-search-input focused
+    $('#nav-search-button').on('click', function (event) {
+        $('#nav-search-form').toggle();
+        $('#nav-search-input').focus();
+    });
+    // edit-selected - filling in some value changes operand from "original" to "value"
+    $('.table-edit-selected tr td:nth-child(3) input, .table-edit-selected tr td:nth-child(3) textarea').on('change', function (event) {
+        let op = $(this).closest('tr').find('td:nth-child(2) select');
+        if (op.val() == 'original') {
+            op.val('value');
+        }
+    });
+    // edit-selected - changing operand to "original" erases the argument value (or unchecks all checkboxes/radio buttons)
+    $('.table-edit-selected tr td:nth-child(2) select').on('change', function (event) {
+        if ($(this).val() == 'original') {
+            let arg = $(this).closest('td').next().find('input,textarea');
+            if (arg[1] && arg[1].nodeName == 'INPUT' && (arg[1].type == 'checkbox' || arg[1].type == 'radio')) {
+                arg.parent().find('input[type=checkbox], input[type=radio]').prop('checked', false);
+            } else {
+                arg.val('');
+            }
+        }
+    });
+    // input.mycms-password --> input group with button to toggle
+    $('input.mycms-password').each(function(){
+        $(this).removeClass('mycms-password');
+        $(this)[0].outerHTML = '<div class="input-group">' + $(this)[0].outerHTML + '<div class="input-group-append"><button class="btn btn-secondary mycms-password-toggle" type="button"><i class="fa fa-eye-slash"></i></button></div>';
+    });
+    $('.mycms-password-toggle').on('click', function(event){
+        event.preventDefault();
+        let password = $(this).parent().parent().find('input.form-control');
+        $(password).attr('type', password.prop('type') == 'password' ? 'text' : 'password');
+        $(this).find('i.fa').removeClass('fa-eye').removeClass('fa-eye-slash').addClass(password.prop('type') == 'password' ? 'fa-eye-slash' : 'fa-eye');
+    });
+    // friendly URLs, fill up an url
+    $('form.friendly-urls .input-group .input-group-text.btn').on('click', function() {
+        let url = $(this).parent().parent().find('input[type=text]');
+        $(url).val($(url).data('fill'));
+    });
+    // friendly URLs, fill up all empty urls
+    $('form.friendly-urls button.btn-fill').on('click', function() {
+        let urls = $('form.friendly-urls .input-group input[type=text].form-control');
+        for (i in urls) {
+            if (($(urls[i]).val() == '' || $('form.friendly-urls input#only-empty').is(':checked')) && $(urls[i]).data('fill')) {
+                $(urls[i]).val($(urls[i]).data('fill'));
+            }
+        }
+    });
+    $('form.friendly-urls button.btn-check-up').on('click', function() {
+        let urls = $('form.friendly-urls input[type=text]');
+        $(urls).removeClass('is-invalid');
+        let unique = {};
+        for (i in urls) {
+            if (typeof(unique[urls[i].value]) == 'undefined') {
+                unique[urls[i].value] = 1;
+            } else {
+                $(urls[i]).addClass('is-invalid');
+            }
+        }
+    });
+
 }
