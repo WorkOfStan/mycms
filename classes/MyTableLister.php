@@ -206,7 +206,7 @@ class MyTableLister
      *
      * @param array<string> $columns
      * @param array $vars &$vars variables used to filter records
-     * @return array<string> with these indexes: [join], [where], [sort], [sql]
+     * @return array<string|int> with these indexes: [join], [where], [sort], [sql], int[limit]
      */
     public function selectSQL($columns, &$vars)
     {
@@ -345,17 +345,19 @@ class MyTableLister
 //                    $result .= ', ' . $this->escapeDbIdentifier($field) . ' = ' . $this->escapeDbIdentifier($field);
 //                    break;
                 default:
+                    // TODO: the only place why $vars should be passed as reference. Explore if necessary
                     error_log('bulkUpdateSQL unknown operator ' . (string) Tools::set($vars['op'][$field]));
                     break;
             }
         }
-        // todo fix Method GodsDev\MyCMS\MyTableLister::bulkUpdateSQL() should return string but return statement is missing.
+        // TODO: explore how and where this method is used. Seems unused.
+        return $result;
     }
 
     /**
      * Create array of columns for preparing the SQL statement
      *
-     * @param array $options
+     * @param array<array> $options
      * @return array<string>
      */
     public function getColumns($options)
@@ -948,7 +950,7 @@ class MyTableLister
     /**
      * Display a break-down of records in given table (default "content") by given column (default "type")
      *
-     * @param array $options OPTIONAL
+     * @param array<string> $options OPTIONAL
      * @return string
      */
     public function contentByType(array $options = [])
@@ -959,8 +961,7 @@ class MyTableLister
             . ' FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $options['table'])
             . ' GROUP BY ' . Tools::escapeDbIdentifier($options['type']) . ' WITH ROLLUP LIMIT 100');
         if (!$query) {
-            // TODO fix Method GodsDev\MyCMS\MyTableLister::contentByType() should return string but empty return statement found.
-            return;
+            return '';
         }
         $typeIndex = 0;
         foreach (array_keys($this->fields) as $key => $value) {
@@ -978,11 +979,10 @@ class MyTableLister
                 . '</td><td class="text-right"><a href="' . $url . '" title="' . $this->translate('Filter records') . '">' . (int) $row[1] . '</td></tr>' . PHP_EOL;
         }
         $output .= '</table></details>';
-        if (isset($options['return-output']) && $options['return-output']) {
-            return $output;
-        }
-        echo $output;
-        // TODO fix Method GodsDev\MyCMS\MyTableLister::contentByType() should return string but return statement is missing.
+//        if (isset($options['return-output']) && $options['return-output']) {
+        return $output;
+//        }
+//        echo $output;
     }
 
     public function decodeChoiceOptions($list)

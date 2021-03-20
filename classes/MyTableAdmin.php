@@ -594,11 +594,12 @@ class MyTableAdmin extends MyTableLister
     /**
      * Output for the dashboard (home screen of the admin)
      *
-     * @param array $options OPTIONAL
+     * @param array<string> $options OPTIONAL
+     * @return void
      */
     public function dashboard(array $options = [])
     {
-        $this->contentByType($options);
+        echo $this->contentByType($options);
     }
 }
 
