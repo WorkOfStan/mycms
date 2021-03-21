@@ -10,7 +10,7 @@
     ],
     "require": {
         "php": "^5.6 || ^7.0",
-        "godsdev/mycms": "dev-feature/refactoring2103",
+        "godsdev/mycms": "dev-notest/fix-tools-type-hint",
         "robmorgan/phinx": "^0.10.6|^0.12.3",
         "swiftmailer/swiftmailer": "^5.4|^6.2",
         "webmozart/assert": "^1.9.1"
@@ -34,7 +34,6 @@
         "issues": "https://github.com/WorkOfStan/mycms/issues",
         "source": "https://github.com/WorkOfStan/mycms"
     },
-    "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
             "GodsDev\\mycmsprojectnamespace\\": ["classes/"]
