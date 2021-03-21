@@ -34,6 +34,7 @@
         "issues": "https://github.com/WorkOfStan/mycms/issues",
         "source": "https://github.com/WorkOfStan/mycms"
     },
+    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "GodsDev\\mycmsprojectnamespace\\": ["classes/"]
