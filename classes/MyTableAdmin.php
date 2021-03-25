@@ -248,7 +248,7 @@ class MyTableAdmin extends MyTableLister
                 $input['class'] = 'form-control';
                 if ($field['key'] == 'PRI') {
                     $input['readonly'] = 'readonly';
-                    $input = '<div class="input-group">' . Tools::htmlInput("fields[$key]", false, $value, $input)
+                    $input = '<div class="input-group">' . Tools::htmlInput("fields[$key]", '', $value, $input)
                         . '<span class="input-group-btn"><button class="btn btn-secondary btn-id-unlock" type="button" title="' . $this->translate('Unlock') . '"><i class="glyphicon glyphicon-lock fa fa-lock" aria-hidden="true"></i></button></span></div>';
                 }
                 break;
@@ -273,7 +273,7 @@ class MyTableAdmin extends MyTableLister
                 $input['type'] = 'datetime-local';
                 $input['step'] = 1;
                 $input['class'] = 'form-control input-datetime';
-                $input = '<div class="input-group">' . Tools::htmlInput("fields[$key]", false, $value, $input)
+                $input = '<div class="input-group">' . Tools::htmlInput("fields[$key]", '', $value, $input)
                     . '<span class="input-group-btn"><button class="btn btn-secondary btn-fill-now" type="button" title="' . $this->translate('Now') . '"><i class="glyphicon glyphicon-time fa fa-clock-o fa-clock" aria-hidden="true"></i></button></span></div>';
                 break;
             case 'bit':
@@ -308,14 +308,24 @@ class MyTableAdmin extends MyTableLister
                 $tmp = [];
                 $value = explode(',', $value);
                 foreach ($choices as $k => $v) {
-                    $tmp[$k] = Tools::htmlInput("fields[$key][$k]", $v === '' ? '<i>' . $this->translate('nothing') . '</i>' : $v, 1 << $k, [
+                    $tmp[$k] = Tools::htmlInput(
+                        "fields[$key][$k]",
+                        $v === '' ? '<i>' . $this->translate('nothing') . '</i>' : $v,
+                        1 << $k,
+                        [
                             'type' => 'checkbox',
-                            // todo ask CRS2 is_array($value) seeems to be always true, so Else branch is unreachable because ternary operator condition is always true.
-                            'checked' => ((1 << $k) & (int) (is_array($value) ? reset($value) : $value)) ? 'checked' : null,
+                            'checked' => (
+                                (1 << $k) & (int) (
+                                    //as $value seems to always be array, the former code
+                                    //`is_array($value) ? reset($value) : $value` seems redundant
+                                    reset($value)
+                                )
+                            ) ? 'checked' : null,
                             'id' => "$key-$k-$this->rand",
                             'label-html' => $v === '',
                             'label-class' => 'font-weight-normal'
-                    ]);
+                    ]
+                    );
                 }
                 $input = implode(', ', $tmp) . '<br>';
                 break;
@@ -351,13 +361,13 @@ class MyTableAdmin extends MyTableLister
                     . '<i class="fab fa-stack-overflow input-limit" aria-hidden="true" data-fields="' . Tools::h($key) . '"></i></div>';
         }
         if (is_array($input)) {
-            $input = Tools::htmlInput("fields[$key]", false, $value, $input);
+            $input = Tools::htmlInput("fields[$key]", '', $value, $input);
         }
         if (isset($options['original']) && $options['original']) {
             if (is_null($value)) {
-                $input .= Tools::htmlInput("original-null[$key]", false, 1, 'hidden');
+                $input .= Tools::htmlInput("original-null[$key]", '', 1, 'hidden');
             } else {
-                $input .= Tools::htmlInput("original[$key]", false, isset($options['prefill'][$key]) && is_scalar($options['prefill'][$key]) ? '' : $value, 'hidden');
+                $input .= Tools::htmlInput("original[$key]", '', isset($options['prefill'][$key]) && is_scalar($options['prefill'][$key]) ? '' : $value, 'hidden');
             }
         }
         $output .= $input . $this->customInputAfter($key, $value, $record) . ($options['layout-row'] ? '' : '</td></tr>') . PHP_EOL;
@@ -366,8 +376,9 @@ class MyTableAdmin extends MyTableLister
 
     /**
      * Output HTML select for picking a path (project-specific)
+     * TODO: What is the point here? This method wasn't used neither in A nor in F project.
      *
-     * @param string $name of the table (without prefix) and main column
+     * @param string|array<string> $name of the table (without prefix) and main column
      * @param int $path_id reference to the path
      * @param array $options
      * @return string HTML <select>
@@ -375,10 +386,15 @@ class MyTableAdmin extends MyTableLister
     public function outputSelectPath($name, $path_id = null, $options = [])
     {
         // TODO what does this construction mean? Call to function is_array() with string will always evaluate to false.
+        // TODO: compare to 'typeToTableMapping' mechanism
         if (!is_array($name)) {
             $name = ['table' => $name, 'column' => $name];
         }
-        if ($module = $this->dbms->query('SHOW FULL COLUMNS FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name['table']) . ' WHERE FIELD="' . $this->escapeSQL($name['column']) . '"')) {
+        $module = $this->dbms->query(
+            'SHOW FULL COLUMNS FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name['table'])
+            . ' WHERE FIELD="' . $this->escapeSQL($name['column']) . '"'
+        );
+        if ($module) {
             $module = json_decode($module->fetch_assoc()['Comment'], true);
             $module = isset($module['module']) && $module['module'] ? $module['module'] : 10;
         } else {

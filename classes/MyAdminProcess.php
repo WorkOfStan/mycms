@@ -60,8 +60,8 @@ class MyAdminProcess extends MyCommon
     /**
      * Convert variables confining records of a table into a WHERE clause of a SQL statement.
      *
-     * @param array $checks array of conditions, e.g. ["where[id]=4", "where[id]=5"]
-     * @param array $errors &$errors this variable is filled with
+     * @param array<string> $checks array of conditions, e.g. ["where[id]=4", "where[id]=5"]
+     * @param array<string> $errors &$errors this variable is filled with
      * @return string SQL WHERE clause
      */
     protected function filterChecks(array $checks, array &$errors)
@@ -74,7 +74,8 @@ class MyAdminProcess extends MyCommon
                 $condition = explode('=', $condition, 2);
                 if (Tools::begins($condition[0], 'where[') && Tools::ends($condition[0], ']')) { //@todo doesn't work for nulls
                     // TODO fix: Call to function is_null() with string will always evaluate to false.
-                    $condition[1] = is_null($condition[1]) ? ' IS NULL' : (is_numeric($condition[1]) ? ' = ' . $condition[1] : ' = "' . $this->tableAdmin->escapeSQL($condition[1]) . '"');
+                    $condition[1] = // is_null($condition[1]) ? ' IS NULL' : // TODO make this work for NULL values as well
+                        (is_numeric($condition[1]) ? ' = ' . $condition[1] : ' = "' . $this->tableAdmin->escapeSQL($condition[1]) . '"');
                     $partial .= ' AND ' . $this->tableAdmin->escapeDbIdentifier(substr($condition[0], 5, -1)) . $condition[1];
                 } else {
                     $errors [] = $condition[0];
@@ -160,12 +161,12 @@ class MyAdminProcess extends MyCommon
                     Tools::dump($post, $sql);
                     exit; //@todo
                 }
-                // TODO nedosažitelný kód - ask CRS2
-                if ($sql) {
-                    $this->MyCMS->dbms->query('SELECT ');
-                } else {
-                    Tools::addMessage('info', $this->tableAdmin->translate('No records selected.'));
-                }
+                // TODO Unreachable statement - code above always terminates. -- compare with similar Admin code
+//                if ($sql) {
+//                    $this->MyCMS->dbms->query('SELECT ');
+//                } else {
+//                    Tools::addMessage('info', $this->tableAdmin->translate('No records selected.'));
+//                }
             } else {
                 Tools::addMessage('info', 'Wrong input parameters.');
             }
@@ -191,16 +192,17 @@ class MyAdminProcess extends MyCommon
                 //Debugger::barDump($sql, 'SQL array');
                 } else { //export only checked rows
                     $sql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $get);
-                    $sql = $sql['select'] . ' WHERE `' . $post['database-table'] . '`.`id` IN (' . implode(
-                        ',',
-                        array_map(
-                            function ($whereString) {
-                                $tempSplit = explode('=', $whereString);
-                                return (int) $tempSplit[1];
-                            },
-                            $post['check'] // array of strings like that: 'where[id]=1'
-                        )
-                    ) . ')';
+                    $sql = $sql['select'] . ' WHERE `' . $post['database-table'] . '`.`id` IN (' .
+                        implode(
+                            ',',
+                            array_map(
+                                function ($whereString) {
+                                    $tempSplit = explode('=', $whereString);
+                                    return (int) $tempSplit[1];
+                                },
+                                $post['check'] // array of strings like that: 'where[id]=1'
+                            )
+                        ) . ')';
                     Debugger::barDump($sql, 'SQL array');
                 }
                 if ($sql) {
@@ -526,17 +528,17 @@ class MyAdminProcess extends MyCommon
                         ];
                         if ($post['info']) {
                             if (in_array($pathinfo['extension'], $IMAGE_EXTENSIONS)) {
-                                if ($size = getimagesize($file)) {
-                                    // TODO: check whether following ternary operator condition is always true, as otherwise it wouldn't end up in this branch
-                                    $entry['info'] .= $size ? Tools::wrap(Tools::set($IMAGE_TYPE[$size[2]], ''), '', ' ') . $size[0] . '×' . $size[1] : '';
-                                } elseif ($exif = exif_read_data($file)) {
-                                    $entry['info'] .= Tools::wrap(Tools::set($IMAGE_TYPE[$exif['FILE']['FileType']]), ' ') . Tools::set($exif['COMPUTED']['Width']) . '×' . Tools::set($exif['COMPUTED']['Height']);
-                                }
-                                /**
-                                 * @phpstan-ignore-next-line
-                                 * $ZipArchive is created within condition ($post['info'] && class_exists('\ZipArchive'))
-                                 * above and the elseif below embodies the same condition, albeit divided into 2 ifs
-                                 */
+                                $size = getimagesize($file);
+                                $entry['info'] .= $size ?
+                                    Tools::wrap(Tools::set($IMAGE_TYPE[$size[2]], ''), '', ' ') . $size[0] . '×' . $size[1] :
+                                    (
+                                        ($exif = exif_read_data($file)) ? (Tools::wrap(Tools::set($IMAGE_TYPE[$exif['FILE']['FileType']]), ' ') . Tools::set($exif['COMPUTED']['Width']) . '×' . Tools::set($exif['COMPUTED']['Height'])) : ''
+                                    );
+                            /**
+                             * @phpstan-ignore-next-line
+                             * $ZipArchive is created within condition ($post['info'] && class_exists('\ZipArchive'))
+                             * above and the elseif below embodies the same condition, albeit divided into 2 ifs
+                             */
                             } elseif (substr($file, -4) == '.zip' && is_a($ZipArchive, '\ZipArchive')) {
                                 if ($ZipArchive->open($file)) {
                                     for ($i = 0; $i < min($ZipArchive->numFiles, 10); $i++) {
