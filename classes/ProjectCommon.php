@@ -21,6 +21,7 @@ class ProjectCommon extends MyCommon
     /**
      * Shortcut for echo'<pre>'; var_dump(); and exit;
      * @param mixed $var variable(s) or expression to display
+     * @return never
      */
     public static function dump($var)
     {
@@ -77,7 +78,12 @@ class ProjectCommon extends MyCommon
         return $this->language;
     }
 
-    //@todo refactor as getTexy() which returns Texy object that is initialized in this dynamic class
+    /**
+     * @todo refactor as getTexy() which returns Texy object that is initialized in this dynamic class
+     *
+     * @global \Texy $Texy
+     * @return void
+     */
     public static function prepareTexy()
     {
         global $Texy;
@@ -94,6 +100,7 @@ class ProjectCommon extends MyCommon
      *
      * @param string $stringOfTime
      * @param string $language
+     * @return string
      */
     public static function localDate($stringOfTime, $language)
     {
@@ -110,7 +117,7 @@ class ProjectCommon extends MyCommon
      * The list of selected words may be enlarged or redefined in the ProjectSpecific child
      *
      * @param string $text
-     * @param array $addReplacePatterns add or redefine patterns
+     * @param array<string> $addReplacePatterns add or redefine patterns
      * @return string
      */
     public function correctLineBreak($text, array $addReplacePatterns = [])

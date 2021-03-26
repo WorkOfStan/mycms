@@ -32,7 +32,7 @@ class MyCommon
     /**
      *
      * @param MyCMS $MyCMS
-     * @param array $options overrides default values of declared properties
+     * @param array<mixed> $options overrides default values of declared properties
      */
     public function __construct(MyCMS $MyCMS, array $options = [])
     {
@@ -49,7 +49,7 @@ class MyCommon
      *
      * @param  mixed  $var
      * @param  string $title
-     * @param  array  $options of Debugger::barDump (Dumper::DEPTH, Dumper::TRUNCATE, Dumper::LOCATION, Dumper::LAZY)
+     * @param  array<mixed>  $options of Debugger::barDump (Dumper::DEPTH, Dumper::TRUNCATE, Dumper::LOCATION, Dumper::LAZY)
      * @return mixed  variable itself
      */
     protected function verboseBarDump($var, $title = null, array $options = [])

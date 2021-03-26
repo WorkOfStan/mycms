@@ -22,13 +22,13 @@ class MyTableLister
     /** @var string table to list */
     protected $table;
 
-    /** @var array all tables in the database */
+    /** @var array<array> all tables in the database */
     public $tables;
 
-    /** @var array all fields in the table */
+    /** @var array<array> all fields in the table */
     public $fields;
 
-    /** @var array display options */
+    /** @var array<mixed> display options */
     protected $options;
 
     /** @var string JavaScript code gathered to show the listing */
@@ -77,7 +77,7 @@ class MyTableLister
         'en' => 'English'
     ];
 
-    /** @var array possible table settings, stored in its comment */
+    /** @var array<array> possible table settings, stored in its comment */
     public $tableContext = null;
 
     /**
@@ -85,7 +85,7 @@ class MyTableLister
      *
      * @param LogMysqli $dbms database management system already connected to wanted database
      * @param string $table to view
-     * @param array $options
+     * @param array<mixed> $options
      */
     public function __construct(LogMysqli $dbms, $table, array $options = [])
     {
@@ -205,7 +205,7 @@ class MyTableLister
      * Compose a SELECT SQL statement with given columns and _GET variables
      *
      * @param array<string> $columns
-     * @param array $vars &$vars variables used to filter records
+     * @param array<mixed> $vars &$vars variables used to filter records
      * @return array<string|int> with these indexes: [join], [where], [sort], [sql], int[limit]
      */
     public function selectSQL($columns, &$vars)
@@ -308,7 +308,7 @@ class MyTableLister
      * Operation `original` means "leave the column as is" (i.e. don't use it in this SQL statement)
      * And for any other (=unknown) operation is the column ignored, i.e. is not used in this SQL statement.
      *
-     * @param array $vars &$vars variables used to filter records
+     * @param array<string,array> $vars &$vars variables used to filter records
      * @return string
      */
     public function bulkUpdateSQL(&$vars)
@@ -400,7 +400,7 @@ class MyTableLister
      *   $options['exclude']=array - columns to exclude
      *   $options['columns']=array - special treatment of columns
      *   $options['return-output']=non-zero - return output (instead of echo)
-     * @return mixed void||string (for $options['return-output'])
+     * @return void|string (string for $options['return-output'])
      */
     public function view(array $options = [])
     {
@@ -438,7 +438,7 @@ class MyTableLister
      * Part of the view() method to output the controls.
      *
      * @param array $options as in view()
-     * @return mixed void||string (for $options['return-output'])
+     * @return void|string (string for $options['return-output'])
      */
     protected function viewInputs($options)
     {
@@ -693,11 +693,19 @@ class MyTableLister
         return $result;
     }
 
+    /**
+     *
+     * @return string
+     */
     public function getTable()
     {
         return $this->table;
     }
 
+    /**
+     *
+     * @return string
+     */
     public function getDatabase()
     {
         return $this->database;
@@ -705,6 +713,9 @@ class MyTableLister
 
     /**
      * Wrapper for $this->dbms->escapeSQL()
+     *
+     * @param string $string
+     * @return string
      */
     public function escapeSQL($string)
     {
@@ -713,6 +724,9 @@ class MyTableLister
 
     /**
      * Wrapper for $this->dbms->escapeDbIdentifier()
+     *
+     * @param string $string to escape
+     * @return string escaped identifier
      */
     public function escapeDbIdentifier($string)
     {
@@ -721,6 +735,8 @@ class MyTableLister
 
     /**
      * Wrapper for $this->dbms->errorDuplicateEntry()
+     *
+     * @return bool
      */
     public function errorDuplicateEntry()
     {
@@ -729,6 +745,9 @@ class MyTableLister
 
     /**
      * Wrapper for $this->dbms->checkIntervalFormat()
+     *
+     * @param string $interval
+     * @return int|false 1=yes, 0=no, false=error
      */
     public function checkIntervalFormat($interval)
     {

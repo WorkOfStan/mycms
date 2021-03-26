@@ -48,7 +48,7 @@ class MyAdminProcess extends MyCommon
      * Tracy wrapper of AJAX calls, i.e. exit(json_encode($result))
      *
      * @param mixed $result Can be any type except a resource.
-     * @return void
+     * @return never
      */
     protected function exitJson($result)
     {
@@ -93,8 +93,8 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "activity" action - update activity column of all admins, delete old tabs.
      *
-     * @param array $post $_POST by reference
-     * @return void and output JSON
+     * @param array<string|array> $post $_POST by reference
+     * @return void and may output JSON as return never
      */
     public function processActivity(&$post)
     {
@@ -145,7 +145,7 @@ class MyAdminProcess extends MyCommon
      * Process the "clone" action.
      * TODO check if this code is working as expected by AdminProcess call // clone table rows and fix unreachable code below accordingly (No CRS2 guidance)
      *
-     * @param array $post $_POST by reference
+     * @param array<string|array> $post $_POST by reference
      * @return void
      */
     public function processClone(&$post)
@@ -177,8 +177,8 @@ class MyAdminProcess extends MyCommon
      * Process the "export" action. If $post[download] is non-zero prompt the output as a download attachment.
      * TODO check if this code does what it should, as ... Metoda filterToSql neexistuje. $errors ani $sql nejsou definovány. (No CRS2 guidance)
      *
-     * @param array $post $_POST by reference
-     * @param array $get
+     * @param array<string|array> $post $_POST by reference
+     * @param array<string|array> $get
      * @return void
      */
     public function processExport(&$post, $get)
@@ -247,8 +247,9 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "file delete" action.
      *
-     * @param array $post $_POST by reference
-     * @return void and output array JSON array containing indexes: "success" (bool), "messages" (string), "processed-files" (int)
+     * @param array<string|array> $post $_POST by reference
+     * @return void and may output array
+     *   JSON array containing indexes: "success" (bool), "messages" (string), "processed-files" (int)
      */
     public function processFileDelete(&$post)
     {
@@ -264,7 +265,11 @@ class MyAdminProcess extends MyCommon
                         $result['processed-files']++;
                     }
                 }
-                Tools::addMessage('info', $result['message'] = $this->tableAdmin->translate('Total of deleted files: ') . $result['processed-files'] . '.');
+                Tools::addMessage(
+                    'info',
+                    $result['message'] = $this->tableAdmin->translate('Total of deleted files: ')
+                    . $result['processed-files'] . '.'
+                );
                 $result['success'] = $result['processed-files'] > 0;
             }
             $this->exitJson($result);
@@ -276,8 +281,9 @@ class MyAdminProcess extends MyCommon
      * Files are added into the archive from the current directory and stored without directory.
      * The ZipArchive->addFile() method is used. Standard file/error handling is used.
      *
-     * @param array $post $_POST by reference
-     * @return void and output array JSON array containing indexes: "success" (bool), "messages" (string), "processed-files" (int)
+     * @param array<string|array> $post $_POST by reference
+     * @return void and may output array
+     *   JSON array containing indexes: "success" (bool), "messages" (string), "processed-files" (int)
      */
     public function processFilePack(&$post)
     {
@@ -323,8 +329,9 @@ class MyAdminProcess extends MyCommon
      * If the new file exists then the operation is aborted.
      * New file name must keep the same extension and consist only of letters, digits or ( ) . _
      *
-     * @param array $post $_POST by reference
-     * @return void and output array JSON array containing indexes: "success" (bool), "messages" (string) and "data" (string) of renamed file, if successful
+     * @param array<string|array> $post $_POST by reference
+     * @return void and may output array
+     *   JSON array containing indexes: "success" (bool), "messages" (string) and "data" (string) of renamed file, if successful
      */
     public function processFileRename(&$post)
     {
@@ -370,8 +377,9 @@ class MyAdminProcess extends MyCommon
      * 1) white list of file extentions
      * 2) file size limitation
      *
-     * @param array $post $_POST by reference
-     * @return void and output array JSON array containing indexes: "success" (bool), "messages" (string), "processed-files" (int)
+     * @param array<string|array> $post $_POST by reference
+     * @return void and may output array
+     *   JSON array containing indexes: "success" (bool), "messages" (string), "processed-files" (int)
      */
     public function processFileUnpack(&$post)
     {
@@ -406,7 +414,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "files upload" action.
      *
-     * @param array $post $_POST by reference
+     * @param array<string|array> $post $_POST by reference
      * @return void and on success reload the page
      * @todo change to return bool success. Or add $post[redir] as an option
      */
@@ -446,13 +454,13 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "login" action.
      *
-     * @param array $post $_POST by reference
+     * @param array<string|array> $post $_POST by reference
      * @return void
      */
     public function processLogin(&$post)
     {
         if (isset($post['user'], $post['password'], $post['login'])) {
-            if (!isset($post['token']) || !$this->MyCMS->csrfCheck($post['token'])) {
+            if (!isset($post['token']) || !$this->MyCMS->csrfCheck((int) $post['token'])) {
                 // let it fall to 'Error occured logging You in.'
             } elseif ($row = $this->MyCMS->fetchSingle('SELECT * FROM ' . TAB_PREFIX . 'admin WHERE admin="' . $this->MyCMS->escapeSQL($post['user']) . '"')) {
                 if ($row['active'] == '1' && $row['password_hashed'] == sha1($post['password'] . $row['salt'])) {
@@ -480,7 +488,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "logout" action.
      *
-     * @param array $post $_POST by reference
+     * @param array<string|array> $post $_POST by reference
      * @return void
      */
     public function processLogout(&$post)
@@ -497,7 +505,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Return files in /assets or its subfolder
      *
-     * @param array $post $_POST by reference
+     * @param array<string|array> $post $_POST by reference
      * @return void
      */
     public function processSubfolder(&$post)
@@ -562,7 +570,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "user change activation" action.
      *
-     * @param array $post $_POST by reference
+     * @param array<string|array> $post $_POST by reference
      * @return void and output array JSON array containing indexes: "success" (bool), "data" (string) admin name
      */
     public function processUserActivation(&$post)
@@ -581,7 +589,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "user change password" action.
      *
-     * @param array $post $_POST by reference
+     * @param array<string|array> $post $_POST by reference
      * @return void
      */
     public function processUserChangePassword(&$post)
@@ -620,7 +628,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "user create" action.
      *
-     * @param array $post $_POST by reference
+     * @param array<string|array> $post $_POST by reference
      * @return void
      */
     public function processUserCreate(&$post)
@@ -644,7 +652,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "user delete" action.
      *
-     * @param array $post $_POST by reference
+     * @param array<string|array> $post $_POST by reference
      * @return void
      */
     public function processUserDelete(&$post)
@@ -663,7 +671,7 @@ class MyAdminProcess extends MyCommon
      * Tracy wrapper of Tools::redir.
      *
      * @param string $url OPTIONAL
-     * @return void
+     * @return never
      */
     protected function redir($url = '')
     {

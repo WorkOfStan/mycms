@@ -33,7 +33,7 @@ class MyCMSMonoLingual
 
     /**
      * variables for template rendering
-     * @var array
+     * @var array<mixed>
      */
     public $context = [];
 
@@ -74,6 +74,7 @@ class MyCMSMonoLingual
      * Add a new CSRF token in $_SESSION['token']
      * @param bool $checkOnly - add new token only if $_SESSION['token'] is empty
      * @todo - test fully
+     * @return void
      */
     public function csrfStart($checkOnly = false)
     {
@@ -118,6 +119,11 @@ class MyCMSMonoLingual
         return $this->dbms->fetchSingle($sql);
     }
 
+    /**
+     *
+     * @param string $sql
+     * @return array<array> array of associative arrays for each result row or empty array on error or no results
+     */
     public function fetchAll($sql)
     {
         return $this->dbms->fetchAll($sql);
@@ -125,8 +131,8 @@ class MyCMSMonoLingual
 
     /**
      *
-     * @param string $sql SQL to be executed
-     * @return array|false - either associative array, empty array on empty SELECT, or false on error
+     * @param string $sql SQL statement to be executed
+     * @return array<array>|false - either associative array, empty array on empty SELECT, or false on error
      */
     public function fetchAndReindex($sql)
     {
@@ -138,7 +144,8 @@ class MyCMSMonoLingual
      *
      * @param string $dirTemplateCache
      * @param string $customFilters
-     * @param array $params
+     * @param array<mixed> $params
+     * @return void
      */
     public function renderLatte($dirTemplateCache, $customFilters, array $params)
     {

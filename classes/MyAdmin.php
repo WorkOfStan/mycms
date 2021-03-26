@@ -16,10 +16,10 @@ class MyAdmin extends MyCommon
 {
     use \Nette\SmartObject;
 
-    /** @var array */
+    /** @var array<array> */
     protected $agendas = [];
 
-    /** @var array */
+    /** @var array<string> */
     protected $ASSETS_SUBFOLDERS = [];
 
     /** @var array<array> client-side resources - css, js, fonts etc. */
@@ -50,7 +50,7 @@ class MyAdmin extends MyCommon
         'author' => '',
     ];
 
-    /** @var array tables and columns to search in admin */
+    /** @var array<array> tables and columns to search in admin */
     protected $searchColumns = [];
 
     /** @var MyTableAdmin */
@@ -855,6 +855,7 @@ class MyAdmin extends MyCommon
 
     /**
      * Get page title (used in the <title> element)
+     * @return string
      */
     public function getPageTitle()
     {
