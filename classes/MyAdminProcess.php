@@ -676,6 +676,6 @@ class MyAdminProcess extends MyCommon
     protected function redir($url = '')
     {
         $this->endAdmin();
-        Tools::redir($url);
+        Tools::redir($url, 303, false);
     }
 }

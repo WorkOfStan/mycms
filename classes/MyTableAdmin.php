@@ -17,7 +17,7 @@ class MyTableAdmin extends MyTableLister
      * @param mixed $where to identify which row to fetch and offer for edit
      *      e.g. ['id' => 5] translates as "WHERE id=5" in SQL
      *      scalar value translates as ['id' => value]
-     * @param array $options additional options
+     * @param array<mixed> $options additional options
      *      [include-fields] - array of fields to include only
      *      [exclude-fields] - array of fields to exclude
      *      [exclude-form] - exclude the <form> element
@@ -123,10 +123,10 @@ class MyTableAdmin extends MyTableLister
     /**
      * Output appropriate HTML input item for given field.
      *
-     * @param array $field
+     * @param array<array> $field
      * @param string $key
-     * @param array $record
-     * @param array $options
+     * @param array<string> $record
+     * @param array<mixed> $options
      * @return string
      */
     protected function outputField(array $field, $key, array $record, array $options)
@@ -152,7 +152,8 @@ class MyTableAdmin extends MyTableLister
                 ($field['type'] == 'enum' && $field['null'] ? 'null' : ''),
                 1,
                 [
-                    'type' => ($field['type'] == 'enum' ? 'radio' : 'checkbox'),
+                    // TODO fix NULL option for ENUM to be saved in database
+                    'type' => ($field['type'] == 'enum' ? 'radio' : 'checkbox'), // TODO why enum should use radio??
                     'title' => ($field['null'] ? $this->translate('Insert NULL') : null),
                     'disabled' => ($field['null'] ? null : 'disabled'),
                     'checked' => (Tools::among($value, null, false) ? 'checked' : null),
@@ -282,7 +283,7 @@ class MyTableAdmin extends MyTableLister
                 $input['checked'] = ($value ? 'checked' : null);
                 break;
             case 'enum':
-                $choices = $this->dbms->decodeChoiceOptions($field['size']);
+                $choices = $this->dbms->decodeChoiceOptions((string)$field['size']);
                 $input = [];
                 foreach ($choices as $k => $v) {
                     $input[$k] = Tools::htmlInput("fields[$key]", $v, $k + 1, [
@@ -292,15 +293,16 @@ class MyTableAdmin extends MyTableLister
                             'label-class' => 'font-weight-normal'
                     ]);
                 }
-                $input = array_merge(
-                    [Tools::htmlInput('fields[' . $key . ']', $this->translate('empty') . ' ', 0, [
-                            'type' => 'radio',
-                            'id' => "fields[$key-0]",
-                            'value' => 0,
-                            'label-class' => 'font-weight-normal'
-                        ])],
-                    $input
-                );
+                // Note: ENUM doesn't accept zero value. To set empty, use NULL option.
+//                $input = array_merge(
+//                    [Tools::htmlInput('fields[' . $key . ']', $this->translate('empty') . ' ', 0, [
+//                            'type' => 'radio',
+//                            'id' => "fields[$key-0]",
+//                            'value' => 0,
+//                            'label-class' => 'font-weight-normal'
+//                        ])],
+//                    $input
+//                );
                 $input = ($options['layout-row'] ? '<br>' : '') . implode(', ', $input) . '<br>';
                 break;
             case 'set':
@@ -380,7 +382,7 @@ class MyTableAdmin extends MyTableLister
      *
      * @param string|array<string> $name of the table (without prefix) and main column
      * @param int $path_id reference to the path
-     * @param array $options
+     * @param array<mixed> $options
      * @return string HTML <select>
      */
     public function outputSelectPath($name, $path_id = null, $options = [])
