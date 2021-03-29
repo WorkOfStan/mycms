@@ -123,7 +123,7 @@ class MyTableAdmin extends MyTableLister
     /**
      * Output appropriate HTML input item for given field.
      *
-     * @param array<array> $field
+     * @param array<string|bool|null> $field
      * @param string $key
      * @param array<string> $record
      * @param array<mixed> $options
@@ -263,7 +263,7 @@ class MyTableAdmin extends MyTableLister
             case 'decimal':
             case 'float':
             case 'double':
-                $value = +$value;
+                $value = (float) $value;
                 $input['class'] = 'form-control text-right';
                 break;
             case 'datetime':
@@ -283,7 +283,7 @@ class MyTableAdmin extends MyTableLister
                 $input['checked'] = ($value ? 'checked' : null);
                 break;
             case 'enum':
-                $choices = $this->dbms->decodeChoiceOptions((string)$field['size']);
+                $choices = $this->dbms->decodeChoiceOptions($field['size']);
                 $input = [];
                 foreach ($choices as $k => $v) {
                     $input[$k] = Tools::htmlInput("fields[$key]", $v, $k + 1, [
@@ -366,6 +366,10 @@ class MyTableAdmin extends MyTableLister
             $input = Tools::htmlInput("fields[$key]", '', $value, $input);
         }
         if (isset($options['original']) && $options['original']) {
+            /**
+             * @phpstan-ignore-next-line
+             * TODO fix Call to function is_null() with (array<int, string>&nonEmpty)|bool|float|int|string will always evaluate to false.
+             */
             if (is_null($value)) {
                 $input .= Tools::htmlInput("original-null[$key]", '', 1, 'hidden');
             } else {
@@ -422,6 +426,16 @@ class MyTableAdmin extends MyTableLister
         return $result;
     }
 
+    /**
+     *
+     * @param mixed $value
+     * @param string $text
+     * @param string $group
+     * @param string|false $lastGroup
+     * @param mixed $default
+     * @param array<string|array> $options
+     * @return string HTML code
+     */
     protected function addForeignOption($value, $text, $group, &$lastGroup, $default, $options)
     {
         $result = '';
@@ -438,10 +452,10 @@ class MyTableAdmin extends MyTableLister
      * Output HTML <select name=$field> with $values as its items
      *
      * @param string $field name of the select element
-     * @param mixed $values either array of values for the <select>
+     * @param string|array<string|array> $values either array of values for the <select>
      *        or string with the SQL SELECT statement
      * @param scalar $default original value
-     * @param array $options additional options for the element rendition; plus
+     * @param array<string|array> $options additional options for the element rendition; plus
      *        [exclude] => value to exclude from select's options
      *        [class]
      *        [id]
@@ -522,6 +536,11 @@ class MyTableAdmin extends MyTableLister
             }
             $original = null;
             foreach ($this->fields as $key => $field) {
+                /**
+                 * @phpstan-ignore-next-line
+                 * TODO fix Result of && is always false.
+                 * TODO Strict comparison using === between array and '' will always evaluate to false.
+                 */
                 if (Tools::set($_POST['fields-null'][$key]) || (Tools::set($field['foreign_table']) && $field === '')) {
                     $_POST['fields'][$key] = null;
                 } elseif (Tools::set($_POST['fields-own'][$key])) {

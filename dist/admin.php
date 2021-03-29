@@ -3,10 +3,15 @@
 use GodsDev\mycmsprojectnamespace\Admin;
 use GodsDev\mycmsprojectnamespace\AdminProcess;
 use GodsDev\mycmsprojectnamespace\TableAdmin;
+use Tracy\Debugger;
 
 // Admin
 require_once './set-environment.php';
 require_once './prepare.php';
+
+if (isset($_POST) && !empty($_POST)) {
+    Debugger::getBar()->addPanel(new \GodsDev\MyCMS\Tracy\BarPanelTemplate('HTTP POST', $_POST));
+}
 
 //$AGENDAS is used in AdminProcess.php. If $_SESSION['language'] is used in it, set it after prepare.php,
 //where $_SESSION['language'] is fixed. For reference see README.md.

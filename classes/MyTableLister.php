@@ -388,7 +388,7 @@ class MyTableLister
     /**
      * Output a customizable table to browse, search, page and pick its items for editing
      *
-     * @param array $options configuration array
+     * @param array<mixed> $options configuration array
      *   $options['form-action']=send.php - instead of <form action="">
      *   $options['read-only']=non-zero - no links to admin
      *   $options['no-sort']=non-zero - don't offer 'sorting' option
@@ -437,7 +437,7 @@ class MyTableLister
     /**
      * Part of the view() method to output the controls.
      *
-     * @param array $options as in view()
+     * @param array<mixed> $options as in view()
      * @return void|string (string for $options['return-output'])
      */
     protected function viewInputs($options)
@@ -519,12 +519,12 @@ class MyTableLister
     /**
      * Part of the view() method to output the content of selected table
      *
-     * @param \mysqli_result $query
-     * @param array $columns selected columns
-     * @param array $options as in view()
+     * @param \mysqli_result<object>|bool $query
+     * @param string[] $columns selected columns
+     * @param array<mixed> $options as in view()
      * @return mixed void or string (for $options['return-output'])
      */
-    protected function viewTable(\mysqli_result $query, array $columns, array $options)
+    protected function viewTable($query, array $columns, array $options)
     {
         Tools::setifnull($_GET['sort']);
         $output = '<form action="" method="post" enctype="multipart/form-data" data-rand="' . $this->rand . '">' . PHP_EOL
@@ -623,8 +623,8 @@ class MyTableLister
      * @param int $rowsPerPage
      * @param int $totalRows
      * @param int $offset
-     * @param array $options as in view()
-     * @return mixed void or string (for $options['return-output'])
+     * @param array<mixed> $options as in view()
+     * @return void|string (string for $options['return-output'])
      */
     public function pagination($rowsPerPage, $totalRows, $offset = null, $options = [])
     {
@@ -677,7 +677,7 @@ class MyTableLister
      * Return fields which are keys (indexes) of given type
      *
      * @param string $filterType key type, either "PRI", "MUL", "UNI" or ""
-     * @return array key names
+     * @return string[] key names
      */
     public function fieldKeys($filterType)
     {
@@ -849,7 +849,7 @@ class MyTableLister
      *
      * @param string $field
      * @param mixed $value field's value
-     * @param array $record
+     * @param array<string> $record
      * @return bool - true = method was applied so don't proceed with the default, false = method wasn't applied
      */
     public function customInput($field, $value, array $record = [])
@@ -862,7 +862,7 @@ class MyTableLister
      *
      * @param string $field
      * @param string $value
-     * @param array $record
+     * @param array<string> $record
      * @return string HTML
      */
     public function customInputBefore($field, $value, array $record = [])
@@ -875,7 +875,7 @@ class MyTableLister
      *
      * @param string $field
      * @param string $value
-     * @param array $record
+     * @param array<string> $record
      * @return string HTML
      */
     public function customInputAfter($field, $value, array $record = [])
@@ -886,7 +886,7 @@ class MyTableLister
     /**
      * Custom HTML to be show after detail's edit form but before action buttons
      *
-     * @param array $record
+     * @param array<string> $record
      * @return string
      */
     public function customRecordDetail(array $record)
@@ -897,7 +897,7 @@ class MyTableLister
     /**
      * Custom HTML to be show after standard action buttons of the detail's form
      *
-     * @param array $record
+     * @param array<string> $record
      * @return string
      */
     public function customRecordActions(array $record)
@@ -958,7 +958,7 @@ class MyTableLister
      * User-defined manipulating with column value of given table
      *
      * @param string $column
-     * @param array $row
+     * @param array<mixed> $row
      * @return mixed original or manipulated data
      */
     public function customValue($column, array $row)
@@ -1004,6 +1004,13 @@ class MyTableLister
 //        echo $output;
     }
 
+    /**
+     * Decode options in 'set' and 'enum' columns - specific to MySQL/MariaDb
+     *
+     * @param string $list list of options (e.g. "enum('single','married','divorced')"
+     *     or just "'single','married','divorced'")
+     * @return array<string>
+     */
     public function decodeChoiceOptions($list)
     {
         return $this->dbms->decodeChoiceOptions($list);
@@ -1012,8 +1019,8 @@ class MyTableLister
     /**
      * Return keys to current table of a specified type(s)
      *
-     * @param array<string> $types type(s) - possible items: PRI, UNI, MUL (database specific)
-     * @return array filtered keys, e.g. ['id'=>'PRI', 'division'=>'MUL', 'document_id'=>'UNI']
+     * @param string[] $types type(s) - possible items: PRI, UNI, MUL (database specific)
+     * @return string[] filtered keys, e.g. ['id'=>'PRI', 'division'=>'MUL', 'document_id'=>'UNI']
      */
     public function filterKeys(array $types)
     {
@@ -1035,8 +1042,8 @@ class MyTableLister
      * Return a link (URL fragment) to a given row of the current table as an array.
      * To make a string of it, use implode("&", ...).
      *
-     * @param array $row
-     * @retun array URL fragment identifying current row, e.g. "where[id]=5"
+     * @param array<string|null> $row
+     * @return array<string> URL fragment identifying current row, e.g. "where[id]=5"
      */
     public function rowLink($row)
     {
