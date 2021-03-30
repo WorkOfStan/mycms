@@ -7,13 +7,60 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.3.15] - 2020-05-02
-bulkUpdateSQL: fix `continue` to `break` (not to `continue 2`)
+### Fixed
+- bulkUpdateSQL: fix `continue` to `break` (not to `continue 2`)
 [as since PHP 7.3.0 continue within a switch that is attempting to act like a break statement for the switch will trigger an E_WARNING.]
 
 
-0.2.5
+## [0.3.14] - 2020-05-02
+### Changed
+- classes Test in separate path so that `/godsdev/mycms/classes/Test/` are not part of `autoload_static.php`
 
-0.1
+## [0.3.13] - 2020-05-02
+
+## [0.3.12] - 2020-04-20
+
+
+## [0.3.11] - 2020-03-14
+
+## [0.3.10] - 2019-01-31
+
+
+## [0.3.9] - 2019-01-18
+
+
+## [0.3.8] - 2018-12-12
+
+## [0.3.7] - 2018-10-08
+
+
+## [0.3.6] - 2018-09-20
+
+## [0.3.5] - 2018-09-20
+
+
+## [0.3.4] - 2018-05-27
+
+## [0.3.3] - 2018-06-01
+
+## [0.3.2] - 2018-05-29
+
+
+## [0.3.1] - 2018-05-07
+
+## [0.3.0] - 2018-05-07
+
+
+## [0.2.5] - 2017-11-24
+## [0.2.4] - 2017-11-07
+## [0.2.3] - 2017-11-05
+## [0.2.2] - 2017-11-05
+## [0.2.1] - 2017-10-12
+## [0.2.0] - 2017-10-12
+
+## [0.1] - 2017-10-06
+
+
 
 Types of changes
 
@@ -154,7 +201,32 @@ notable changes.
 - Good examples and basic guidelines, including proper date formatting.
 - Counter-examples: "What makes unicorns cry?"
 
-[Unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v1.0.0...HEAD
+
+
+[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.3.15...HEAD
+[0.3.15]: https://github.com/WorkOfStan/mycms/compare/v0.3.14...v0.3.15
+[0.3.14]: https://github.com/WorkOfStan/mycms/compare/v0.3.13...v0.3.14
+[0.3.13]: https://github.com/WorkOfStan/mycms/compare/v0.3.12...v0.3.13
+[0.3.12]: https://github.com/WorkOfStan/mycms/compare/v0.3.11...v0.3.12
+[0.3.11]: https://github.com/WorkOfStan/mycms/compare/v0.3.10...v0.3.11
+[0.3.10]: https://github.com/WorkOfStan/mycms/compare/v0.3.9...v0.3.10
+[0.3.9]: https://github.com/WorkOfStan/mycms/compare/v0.3.8...v0.3.9
+[0.3.8]: https://github.com/WorkOfStan/mycms/compare/v0.3.7...v0.3.8
+[0.3.7]: https://github.com/WorkOfStan/mycms/compare/v0.3.6...v0.3.7
+[0.3.6]: https://github.com/WorkOfStan/mycms/compare/v0.3.5...v0.3.6
+[0.3.5]: https://github.com/WorkOfStan/mycms/compare/v0.3.4...v0.3.5
+[0.3.4]: https://github.com/WorkOfStan/mycms/compare/v0.3.3...v0.3.4
+[0.3.3]: https://github.com/WorkOfStan/mycms/compare/v0.3.2...v0.3.3
+[0.3.2]: https://github.com/WorkOfStan/mycms/compare/v0.3.1...v0.3.2
+[0.3.1]: https://github.com/WorkOfStan/mycms/compare/v0.3.0...v0.3.1
+[0.3.0]: https://github.com/WorkOfStan/mycms/compare/v0.2.5...v0.3.0
+[0.2.5]: https://github.com/WorkOfStan/mycms/compare/v0.2.4...v0.2.5
+[0.2.4]: https://github.com/WorkOfStan/mycms/compare/v0.2.3...v0.2.4
+[0.2.3]: https://github.com/WorkOfStan/mycms/compare/v0.2.2...v0.2.3
+[0.2.2]: https://github.com/WorkOfStan/mycms/compare/v0.2.1...v0.2.2
+[0.2.1]: https://github.com/WorkOfStan/mycms/compare/v0.2.0...v0.2.1
+[0.2.0]: https://github.com/WorkOfStan/mycms/compare/v0.1...v0.2.0
+[0.1]: https://github.com/WorkOfStan/mycms/releases/tag/v0.1
 [1.0.0]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.3.0...v1.0.0
 [0.3.0]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.1.0...v0.2.0
