@@ -16,7 +16,7 @@ class FriendlyUrl extends MyFriendlyUrl
      * accepted attributes:
      */
 
-    /** @var array */
+    /** @var array<mixed> content of $_GET and $_POST */
     protected $get;
 
     /** @var string */
@@ -33,7 +33,7 @@ class FriendlyUrl extends MyFriendlyUrl
 
     /**
      * @param MyCMS $MyCMS
-     * @param array $options overides default values of declared properties
+     * @param array<mixed> $options overides default values of declared properties
      */
     public function __construct(MyCMS $MyCMS, array $options = [])
     {

@@ -26,7 +26,7 @@ class ProjectSpecific extends ProjectCommon
      * @param string $totalRows //TODO or?? mixed $totalRows first selected row
      *     (or its first column if only one column is selected),
      *     null on empty SELECT, or false on error
-     * @return array search result
+     * @return array<array> search result
      */
     public function searchResults($text, $offset = 0, &$totalRows = null)
     {
@@ -67,8 +67,8 @@ class ProjectSpecific extends ProjectCommon
      *
      * @param mixed $id of the content OPTIONAL
      * @param string $code OPTIONAL
-     * @param array $options OPTIONAL
-     * @return array resultset
+     * @param array<string> $options OPTIONAL
+     * @return string[] resultset
      */
     public function getContent($id = null, $code = null, array $options = [])
     {
@@ -87,7 +87,7 @@ class ProjectSpecific extends ProjectCommon
             . ' co.description_' . $options['language'] . ' AS description '
             . ' FROM ' . TAB_PREFIX . 'content co LEFT JOIN ' . TAB_PREFIX . 'category ca ON co.category_id=ca.id '
             . ' WHERE co.active="1"' . Tools::wrap($this->MyCMS->escapeSQL($code), ' AND co.code="', '"')
-                . Tools::wrap(intval($id), ' AND co.id=') . ' LIMIT 1'))
+            . Tools::wrap(intval($id), ' AND co.id=') . ' LIMIT 1'))
         ) {
             $result['context'] = json_decode($result['context'], true) ?: [];
             $result['added'] = Tools::localeDate($result['added'], $options['language'], false);
@@ -99,7 +99,7 @@ class ProjectSpecific extends ProjectCommon
         }/* elseif (($pos = strpos($result['description'], '%GRANDCHILDREN%')) !== false) {
           $result['description'] = str_replace('%GRANDCHILDREN%', '', $result['description']);
           $this->MyCMS->context['children'] = ProjectSpecific::getChildren(
-            $result['category_id'], $options + array('level' => 1));
+          $result['category_id'], $options + array('level' => 1));
           } */
         if (($pos = strpos($result['description'], '%SITEMAP%')) !== false) {
             $result['description'] = str_replace(
@@ -117,8 +117,8 @@ class ProjectSpecific extends ProjectCommon
      *
      * @param mixed $id of the content OPTIONAL
      * @param string $code OPTIONAL
-     * @param array $options OPTIONAL
-     * @return array resultset
+     * @param array<string> $options OPTIONAL
+     * @return array<mixed> resultset
      */
     public function getCategory($id = null, $code = null, array $options = [])
     {
@@ -147,7 +147,7 @@ class ProjectSpecific extends ProjectCommon
      * Retrieves product info
      *
      * @param int $id
-     * @return array|null array first selected row, null on empty SELECT
+     * @return array<mixed>|null array first selected row, null on empty SELECT
      * @throws \Exception on error
      */
     public function getProduct($id)
@@ -177,8 +177,8 @@ class ProjectSpecific extends ProjectCommon
      * TODO: make this method useful for dist project as a demonstration
      *
      * @param string $path
-     * @param array $options OPTIONAL
-     * @return array|false
+     * @param array<string> $options OPTIONAL
+     * @return array<array|string>|false
      */
     public function getBreadcrumbs($path, array $options = [])
     {
@@ -200,11 +200,11 @@ class ProjectSpecific extends ProjectCommon
      * TODO: make this method useful for dist project as a demonstration
      *
      * @param int|array<int> $category_id category/ies to search, either int or array of integers
-     * @param array $options = []
+     * @param array<string> $options = []
      *          [path] - path of the category
      *          [level] - level to which seek for children
      *          [except_id] - id of the child to omit from the result
-     * @return array|false - either associative array, empty array on empty SELECT, or false on error
+     * @return array<array|string|int>|false - either associative array, empty array on empty SELECT, or false on error
      */
     public function getChildren($category_id, array $options = [])
     {
@@ -213,9 +213,9 @@ class ProjectSpecific extends ProjectCommon
             $category_id = array_keys($this->MyCMS->fetchAndReindex($sql = 'SELECT id FROM ' . TAB_PREFIX . 'category
                 WHERE LEFT(path, ' . strlen($options['path']) . ')="' . $this->MyCMS->escapeSQL($options['path']) . '"
                 AND LENGTH(path) > ' . strlen($options['path']) . '
-                AND LENGTH(path) <= ' . (strlen($options['path']) + $options['level'] * PATH_MODULE)));
+                AND LENGTH(path) <= ' . (strlen($options['path']) + (int) $options['level'] * PATH_MODULE)));
         } else {
-            $category_id = array($category_id);
+            $category_id = [$category_id];
         }
         $result = $this->MyCMS->fetchAndReindex('SELECT co.id, image,code, CONCAT("?article&id=", co.id) AS link,
             content_' . $options['language'] . ' AS title,
@@ -229,7 +229,7 @@ class ProjectSpecific extends ProjectCommon
     /**
      * TODO: make this method useful for dist project as a demonstration
      *
-     * @param array $options OPTIONAL
+     * @param array<string> $options OPTIONAL
      * @return string
      */
     public function getSitemap(array $options = [])

@@ -14,7 +14,7 @@ class TableAdmin extends MyTableAdmin
      *
      * @param LogMysqli $dbms database management system (e.g. new mysqli())
      * @param string $table table name
-     * @param array $options
+     * @param array<mixed> $options
      */
     public function __construct(LogMysqli $dbms, $table, array $options = [])
     {
@@ -307,7 +307,7 @@ class TableAdmin extends MyTableAdmin
      *
      * @param string $field
      * @param string $value field's value
-     * @param array $record
+     * @param array<string> $record
      * @return bool - true = method was applied so don't proceed with the default, false = method wasn't applied
      */
     public function customInput($field, $value, array $record = [])
@@ -480,7 +480,7 @@ class TableAdmin extends MyTableAdmin
      * User-defined manipulating with column value of given table
      *
      * @param string $column
-     * @param array $row
+     * @param array<mixed> $row
      * @return mixed
      */
     public function customValue($column, array $row)

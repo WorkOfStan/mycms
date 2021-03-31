@@ -15,19 +15,19 @@ class MyCMSProject extends MyCMS
 
     // attributes we need for this project
 
-    /** @var array */
+    /** @var array<string> */
     public $PAGES_SPECIAL;
 
-    /** @var array */
+    /** @var array<mixed> */
     public $SETTINGS;
 
-    /** @var array */
+    /** @var array<array> */
     public $WEBSITE;
 
     /**
      * Constructor
      *
-     * @param array $myCmsConf
+     * @param array<mixed> $myCmsConf
      */
     public function __construct(array $myCmsConf = [])
     {

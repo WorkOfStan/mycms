@@ -36,7 +36,7 @@ class Controller extends MyController
     /**
      * Feature flags that bubble down to latte and controller
      *
-     * @var array
+     * @var array<bool>
      */
     protected $featureFlags;
 
@@ -61,7 +61,7 @@ class Controller extends MyController
      *
      *
      * @param MyCMS $MyCMS
-     * @param array $options overrides default values of declared properties
+     * @param array<mixed> $options overrides default values of declared properties
      */
     public function __construct(MyCMS $MyCMS, array $options = [])
     {
@@ -78,7 +78,7 @@ class Controller extends MyController
      * Might even change $this->MyCMS->template value
      * Contains the typical controller code
      *
-     * @param array $options
+     * @param array<mixed> $options
      * @return bool true on success, false on error
      */
     protected function prepareAllTemplates(array $options = [])
@@ -91,7 +91,7 @@ class Controller extends MyController
      * Set $this->MyCMS->context accordingly for single templates
      * May even change $this->MyCMS->template value
      *
-     * @param array $options ['REQUEST_URI']
+     * @param array<mixed> $options ['REQUEST_URI']
      * @return bool true on success, false on error
      */
     protected function prepareTemplate(array $options = [])
@@ -277,7 +277,7 @@ class Controller extends MyController
     /**
      * For PHP Unit test
      *
-     * @return array
+     * @return array<array>
      */
     public function getVars()
     {

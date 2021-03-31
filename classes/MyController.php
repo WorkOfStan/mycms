@@ -49,7 +49,7 @@ class MyController extends MyCommon
 
     /**
      *
-     * @param \GodsDev\MyCMS\MyCMS $MyCMS
+     * @param MyCMS $MyCMS
      * @param array<mixed> $options that overrides default values within constructor
      */
     public function __construct(MyCMS $MyCMS, array $options = [])

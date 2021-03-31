@@ -30,6 +30,12 @@ class CustomFilters
 //        $this->projectSpecific = new ProjectSpecific($this->MyCMS);
     }
 
+    /**
+     *
+     * @param string $filter
+     * @param mixed $value
+     * @return string|void
+     */
     public function common($filter, $value)
     {
         $args = func_get_args();
@@ -42,26 +48,52 @@ class CustomFilters
         }
     }
 
+    /**
+     *
+     * @param string $s
+     * @param int $len
+     * @return string
+     */
     public static function shortify($s, $len = 10)
     {
         return mb_substr($s, 0, $len);
     }
 
+    /**
+     *
+     * @param string $s
+     * @return string
+     */
     public static function firstLower($s)
     {
         return mb_strtolower(mb_substr($s, 0, 1)) . mb_substr($s, 1);
     }
 
+    /**
+     *
+     * @param string $s
+     * @return string
+     */
     public static function webalize($s)
     {
         return Tools::webalize($s);
     }
 
+    /**
+     *
+     * @param string $text
+     * @return string
+     */
     public function translate($text)
     {
         return $this->MyCMS->translate($text);
     }
 
+    /**
+     *
+     * @param mixed $args
+     * @return string
+     */
     public static function vardump($args)
     {
         $result = '';
@@ -71,9 +103,14 @@ class CustomFilters
         return $result;
     }
 
+    /**
+     *
+     * @param string $parameter
+     * @return string
+     */
     public function section($parameter)
     {
-        global $Texy;
+//        global $Texy;
         switch ($parameter) {
             case 'showMessages':
                 return Tools::showMessages(false);

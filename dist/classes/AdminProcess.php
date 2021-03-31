@@ -27,7 +27,7 @@ class AdminProcess extends MyAdminProcess
      * accepted attributes:
      */
 
-    /** @var array */
+    /** @var array<array> */
     protected $agendas;
 
     /**
@@ -35,7 +35,7 @@ class AdminProcess extends MyAdminProcess
      * Commands with all required variables cause page redirection.
      * $_SESSION is manipulated by this function - mainly [messages] get added
      *
-     * @param array $post $_POST variable by reference
+     * @param array<string|array> $post $_POST by reference
      * @todo refactor, so that $this->endAdmin(); is called automatically
      *
      * @return void
@@ -165,8 +165,7 @@ class AdminProcess extends MyAdminProcess
             } else {
                 //Tools::addMessage('info', $this->tableAdmin->translate('Nothing to change.'));
             }
-            $this->redir();
-            return;
+            $this->redir(); // this method terminates
         }
         // loggin admin out
         $this->processLogout($post);
@@ -212,8 +211,7 @@ class AdminProcess extends MyAdminProcess
                 $post['referer'] = Tools::xorDecipher(base64_decode($post['referer']), $post['token']);
                 $this->redir($post['referer']);
             }
-            $this->redir();
-            return;
+            $this->redir(); // redir() method terminates
         }
         // delete a table record
         if (isset($post['record-delete'])) {
@@ -231,7 +229,7 @@ class AdminProcess extends MyAdminProcess
      * It is public for PHPUnit test
      *
      * @param string $agenda
-     * @return array
+     * @return array<array>
      */
     public function getAgenda($agenda)
     {
@@ -239,7 +237,7 @@ class AdminProcess extends MyAdminProcess
         if (!isset($this->agendas[$agenda])) {
             return $result;
         }
-        /** @var array $options array of agenda set in admin.php in $AGENDAS */
+        /** @var array<string|array> $options array of agenda set in admin.php in $AGENDAS */
         $options = $this->agendas[$agenda];
         Tools::setifempty($options['table'], $agenda);
         Tools::setifempty($options['sort']);
@@ -274,6 +272,7 @@ class AdminProcess extends MyAdminProcess
                 }
             }
         }
+        // TODO does the next foreach have any impact on the returned value?
         foreach ($correctOrder as $key => $value) {
             $this->MyCMS->dbms->query('UPDATE `' . $this->MyCMS->dbms->escapeDbIdentifier(
                 TAB_PREFIX . $options['table']
