@@ -10,9 +10,10 @@ namespace GodsDev\MyCMS\ThrowableFunctions;
 use Exception;
 
 /**
+ * Return the argument unless it is `false`.
  *
  * @param mixed $result
- * @return void as it can't be used to return the result directly as mixed return would not be type strict
+ * @return mixed
  * @throws Exception
  */
 function throwOnFalse($result)
@@ -20,12 +21,14 @@ function throwOnFalse($result)
     if ($result === false) {
         throw new Exception('error ' . debug_backtrace()[1]['function']);
     }
+    return $result;
 }
 
 /**
+ * Return the argument unless it is `null`.
  *
  * @param mixed $result
- * @return void as it can't be used to return the result directly as mixed return would not be type strict
+ * @return mixed
  * @throws Exception
  */
 function throwOnNull($result)
@@ -33,45 +36,42 @@ function throwOnNull($result)
     if (is_null($result)) {
         throw new Exception('error ' . debug_backtrace()[1]['function']);
     }
+    return $result;
 }
 
 /**
  *
  * @param string $pattern
  * @param string $subject
- * @param array $matches
+ * @param string[] $matches
  * @param int $flags
  * @param int $offset
  * @return int
  */
 function preg_match($pattern, $subject, array &$matches = null, $flags = 0, $offset = 0)
 {
-    $result = \preg_match($pattern, $subject, $matches, $flags, $offset);
-    throwOnFalse($result);
-    return $result;
+    return throwOnFalse(\preg_match($pattern, $subject, $matches, $flags, $offset));
 }
 
 /**
  *
- * @param string|array $pattern
- * @param string|array $replacement
- * @param string|array $subject
+ * @param string|string[] $pattern
+ * @param string|string[] $replacement
+ * @param string|string[] $subject
  * @param int $limit
  * @param int $count
- * @return string|array
+ * @return string|string[]
  */
 function preg_replace($pattern, $replacement, $subject, $limit = -1, &$count = null)
 {
-    $result = \preg_replace($pattern, $replacement, $subject, $limit, $count);
-    throwOnNull($result);
-    return $result;
+    return throwOnNull(\preg_replace($pattern, $replacement, $subject, $limit, $count));
 }
 
 /**
  * $subject is expected to be string, so the function returns string
  *
- * @param string|array $pattern
- * @param string|array $replacement
+ * @param string|string[] $pattern
+ * @param string|string[] $replacement
  * @param string $subject
  * @param int $limit
  * @param int $count
@@ -79,7 +79,5 @@ function preg_replace($pattern, $replacement, $subject, $limit = -1, &$count = n
  */
 function preg_replaceString($pattern, $replacement, $subject, $limit = -1, &$count = null)
 {
-    $result = \preg_replace($pattern, $replacement, $subject, $limit, $count);
-    throwOnNull($result);
-    return $result;
+    return throwOnNull(\preg_replace($pattern, $replacement, $subject, $limit, $count));
 }
