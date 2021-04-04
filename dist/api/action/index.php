@@ -51,8 +51,8 @@ $controllerResult = $controller->controller();
 //Debugger::barDump($controllerResult, 'ControllerResult');
 Debugger::barDump($controllerResult['context'], 'ControllerResult[context]');
 
-if(!is_array($controllerResult['context']['article'])){
-    throw new Exception ('Description would be missing.');
+if(!is_array($controllerResult['context'])){
+    throw new Exception ('Article Description would be missing.');
 }
 
 if (isset($_GET['wrap']) && $_GET['wrap'] === 'simple') {
