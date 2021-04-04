@@ -69,7 +69,9 @@ class Controller extends MyController
             'friendlyUrl' => new FriendlyUrl($MyCMS, $options), //$this->friendlyUrl instantiated
         ]));
         //Note: $this->featureFlags is populated
-        $this->mail = new Mail($MyCMS, $options);
+        if (class_exists('Swift_SmtpTransport')) { // so that PHPUnit test run from root doesn't fail
+            $this->mail = new Mail($MyCMS, $options);
+        }
     }
 
     /**
