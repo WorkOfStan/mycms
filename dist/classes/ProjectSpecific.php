@@ -5,6 +5,7 @@ namespace GodsDev\mycmsprojectnamespace;
 use GodsDev\MyCMS\ProjectCommon;
 use GodsDev\Tools\Tools;
 use Webmozart\Assert\Assert;
+use function GodsDev\MyCMS\ThrowableFunctions\preg_replaceString;
 
 /**
  * functions specific to the project
@@ -32,7 +33,7 @@ class ProjectSpecific extends ProjectCommon
     {
         $result = [];
         $q = preg_quote($text);
-        $query = $this->MyCMS->dbms->query('SELECT CONCAT("?article&id=", id) AS link,content_' . $this->language
+        $query = $this->MyCMS->dbms->queryStrictObject('SELECT CONCAT("?article&id=", id) AS link,content_' . $this->language
             . ' AS title,LEFT(description_' . $this->language . ',1000) AS description
             FROM ' . TAB_PREFIX . 'content WHERE active="1" AND type IN ("page", "news") AND (content_'
             . $this->language . ' LIKE "%' . $q . '%" OR description_' . $this->language . ' LIKE "%' . $q . '%")
@@ -49,14 +50,12 @@ class ProjectSpecific extends ProjectCommon
             . ' LIKE "%' . $q . '%" OR description_' . $this->language . ' LIKE "%' . $q . '%"
             LIMIT 10 OFFSET ' . (int) $offset);
         $totalRows = $this->MyCMS->fetchSingle('SELECT FOUND_ROWS()');
-        if ($query) {
-            while ($row = $query->fetch_assoc()) {
-                $row['description'] = strip_tags(preg_replace('~(</[a-z0-9]+>)~six', "$1 ", $row['description']));
-                if ($pos = mb_strpos(mb_strtolower($row['description']), mb_strtolower($text))) {
-                    $row['description'] = mb_substr($row['description'], max(0, $pos - 20), 201);
-                }
-                $result [] = $row;
+        while ($row = $query->fetch_assoc()) {
+            $row['description'] = strip_tags(preg_replaceString('~(</[a-z0-9]+>)~six', "$1 ", $row['description']));
+            if ($pos = mb_strpos(mb_strtolower($row['description']), mb_strtolower($text))) {
+                $row['description'] = mb_substr($row['description'], max(0, $pos - 20), 201);
             }
+            $result [] = $row;
         }
         return $result;
     }
