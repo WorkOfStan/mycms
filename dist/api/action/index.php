@@ -23,6 +23,7 @@ if (
 
 require_once './../../prepare.php';
 
+use Exception;
 use Tracy\Debugger;
 
 Debugger::enable(Debugger::PRODUCTION, DIR_TEMPLATE . '/../log');
@@ -49,6 +50,10 @@ $controllerResult = $controller->controller();
 //$MyCMS->context = $controllerResult['context'];
 //Debugger::barDump($controllerResult, 'ControllerResult');
 Debugger::barDump($controllerResult['context'], 'ControllerResult[context]');
+
+if(!is_array($controllerResult['context']['article'])){
+    throw new Exception ('Description would be missing.');
+}
 
 if (isset($_GET['wrap']) && $_GET['wrap'] === 'simple') {
     //jobs, pro které to je využíváno, nemají formátovanou obálku; a takto je doplněna
