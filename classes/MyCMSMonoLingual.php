@@ -2,6 +2,8 @@
 
 namespace GodsDev\MyCMS;
 
+use Exception;
+use GodsDev\MyCMS\Tracy\BarPanelTemplate;
 use Psr\Log\LoggerInterface;
 use Tracy\Debugger;
 
@@ -47,6 +49,7 @@ class MyCMSMonoLingual
      * Constructor
      *
      * @param array<array> $myCmsConf
+     * @throw Exception if logger not configured
      */
     public function __construct(array $myCmsConf = [])
     {
@@ -56,12 +59,9 @@ class MyCMSMonoLingual
             }
         }
         // Logger is obligatory
-        if (
-//            !is_object($this->logger) ||
-            !($this->logger instanceof LoggerInterface)
-        ) {
+        if (!($this->logger instanceof LoggerInterface)) {
             error_log("Error: MyCMS constructed without logger. (" . get_class($this->logger) . ")");
-            die('Fatal error - project is not configured.'); //@todo nicely formatted error page
+            throw new Exception('Fatal error - project is not configured.');
         }
         if (is_object($this->dbms) && is_a($this->dbms, '\GodsDev\MyCMS\LogMysqli')) {
             $this->dbms->query('SET NAMES UTF8 COLLATE "utf8_general_ci"');
@@ -150,11 +150,11 @@ class MyCMSMonoLingual
     public function renderLatte($dirTemplateCache, $customFilters, array $params)
     {
         Debugger::getBar()->addPanel(
-            new \GodsDev\MyCMS\Tracy\BarPanelTemplate('Template: ' . $this->template, $this->context)
+            new BarPanelTemplate('Template: ' . $this->template, $this->context)
         );
         if (isset($_SESSION['user'])) {
             Debugger::getBar()->addPanel(
-                new \GodsDev\MyCMS\Tracy\BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION)
+                new BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION)
             );
         }
         $Latte = new \Latte\Engine();
@@ -166,7 +166,7 @@ class MyCMSMonoLingual
         unset($_SESSION['messages']);
         if (!empty($this->dbms->getStatementsArray())) {
             Debugger::getBar()->addPanel(
-                new \GodsDev\MyCMS\Tracy\BarPanelTemplate(
+                new BarPanelTemplate(
                     'SQL: ' . count($this->dbms->getStatementsArray()),
                     $this->dbms->getStatementsArray()
                 )
