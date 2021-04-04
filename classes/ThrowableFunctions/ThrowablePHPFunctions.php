@@ -19,7 +19,7 @@ use Exception;
 function throwOnFalse($result)
 {
     if ($result === false) {
-        throw new Exception('error ' . debug_backtrace()[1]['function']);
+        throw new Exception('error (false) ' . debug_backtrace()[1]['function']);
     }
     return $result;
 }
@@ -34,9 +34,25 @@ function throwOnFalse($result)
 function throwOnNull($result)
 {
     if (is_null($result)) {
-        throw new Exception('error ' . debug_backtrace()[1]['function']);
+        throw new Exception('error (null) ' . debug_backtrace()[1]['function']);
     }
     return $result;
+}
+
+/**
+ *
+ * @param string $pattern
+ * @param string $replacement
+ * @param string $string
+ * @param string $options OPTIONAL
+ * @return string
+ */
+function mb_eregi_replace($pattern, $replacement, $string, $options = null)
+{
+    return
+        is_null($options) ?
+        throwOnFalse(throwOnNull(\mb_eregi_replace($pattern, $replacement, $string))) :
+        throwOnFalse(throwOnNull(\mb_eregi_replace($pattern, $replacement, $string, $options)));
 }
 
 /**

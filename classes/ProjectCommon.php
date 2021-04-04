@@ -3,6 +3,7 @@
 namespace GodsDev\MyCMS;
 
 use Exception;
+use function GodsDev\MyCMS\ThrowableFunctions\preg_replaceString;
 
 class ProjectCommon extends MyCommon
 {
@@ -145,10 +146,6 @@ class ProjectCommon extends MyCommon
             '/ an /' => ' an ',
             '/Industry 4.0/' => 'Industry 4.0',
             ], $addReplacePatterns);
-        $result = preg_replace(array_keys($replacePatterns), array_values($replacePatterns), $text);
-//        if (is_null($result)) {
-//            throw new Exception('preg_replace error');
-//        }
-        return $result;
+        return preg_replaceString(array_keys($replacePatterns), array_values($replacePatterns), $text);
     }
 }

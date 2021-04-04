@@ -4,6 +4,7 @@ namespace GodsDev\MyCMS;
 
 use Exception;
 use GodsDev\Backyard\BackyardMysqli;
+use function GodsDev\MyCMS\ThrowableFunctions\mb_eregi_replace;
 
 /**
  * class with logging specific to this application
@@ -68,12 +69,8 @@ class LogMysqli extends BackyardMysqli
     {
         if ($logQuery && !preg_match('/^SELECT |^SET |^SHOW /i', $sql)) {
             //mb_eregi_replace does not destroy multi-byte characters such as character Š
-            $tempSql = mb_eregi_replace('/\s+/', ' ', $sql);
-//            if (!$tempSql) {
-//                throw new Exception('sql mb_eregi_replace fail');
-//            }
             error_log(
-                trim($tempSql) . '; -- [' . date("d-M-Y H:i:s") . ']'
+                trim(mb_eregi_replace('/\s+/', ' ', $sql)) . '; -- [' . date("d-M-Y H:i:s") . ']'
                 . (isset($_SESSION['user']) ? " by ({$_SESSION['user']})" : '') . PHP_EOL,
                 3,
                 'log/sql' . date("Y-m-d") . '.log.sql'
@@ -81,6 +78,31 @@ class LogMysqli extends BackyardMysqli
         }
         $this->sqlStatementsArray[] = $sql;
         return parent::query($sql, $errorLogOutput);
+    }
+
+    /**
+     * Logs SQL statement not starting with SELECT or SET. Throws exception in case response isn't \mysqli_result
+     *
+     * @param string $sql SQL to execute
+     * @param int $errorLogOutput optional default=1 turn-off=0
+     *   It is int in order to be compatible with
+     *   parameter $resultmode (int) of method mysqli::query()
+     * @param bool $logQuery optional default logging of database changing statement can be (for security reasons)
+     *     turned off by value false
+     * @return true
+     * @throw Exception if error with false or answer true
+     */
+    public function queryStrictBool($sql, $errorLogOutput = 1, $logQuery = true)
+    {
+        $result = $this->query($sql, $errorLogOutput, $logQuery);
+
+        if ($result === false) {
+            throw new Exception($this->errno . ': ' . $this->error);
+        }
+        if ($result === true) {
+            return true;
+        }
+        throw new Exception('Object answer on SQL statement (should have been true');
     }
 
     /**
@@ -103,7 +125,7 @@ class LogMysqli extends BackyardMysqli
             throw new Exception($this->errno . ': ' . $this->error);
         }
         if ($result === true) {
-            throw new Exception('Non-object answer on SQL statement');
+            throw new Exception('Non-object answer on SQL statement (unexpectedly equals true)');
         }
         return $result;
     }

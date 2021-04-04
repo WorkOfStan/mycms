@@ -326,7 +326,7 @@ class MyTableAdmin extends MyTableLister
                             'id' => "$key-$k-$this->rand",
                             'label-html' => $v === '',
                             'label-class' => 'font-weight-normal'
-                    ]
+                        ]
                     );
                 }
                 $input = implode(', ', $tmp) . '<br>';
@@ -400,7 +400,7 @@ class MyTableAdmin extends MyTableLister
             'SHOW FULL COLUMNS FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name['table'])
             . ' WHERE FIELD="' . $this->escapeSQL($name['column']) . '"'
         );
-        if ($module) {
+        if ($module && $module !== true) {
             $module = json_decode($module->fetch_assoc()['Comment'], true);
             $module = isset($module['module']) && $module['module'] ? $module['module'] : 10;
         } else {
@@ -422,8 +422,7 @@ class MyTableAdmin extends MyTableLister
                 $result .= Tools::htmlOption($row['id'], str_repeat('. ', strlen($row['path']) / $module - 1) . $row['category_'], $row['path'] === $options['path-value'] ? $row['id'] : $path_id);
             }
         }
-        $result .= '</select>';
-        return $result;
+        return $result . '</select>';
     }
 
     /**
@@ -482,14 +481,13 @@ class MyTableAdmin extends MyTableLister
                 $result .= $this->addForeignOption($key, $value, $group, $lastGroup, $default, $options);
             }
         } elseif (is_string($values)) { // string - SELECT id,name FROM ...
-            if ($query = $this->dbms->query($values)) {
+            if ($query = $this->dbms->query($values)) { //TODO queryStrictObject might be better choice; is false really to be ignored or throw exception is the way to go?
                 while ($row = $query->fetch_row()) {
                     $result .= $this->addForeignOption($row[0], $row[1], isset($row[2]) ? $row[2] : false, $lastGroup, $default, $options);
                 }
             }
         }
-        $result .= ($lastGroup === false ? '' : '</optgroup>') . '</select>';
-        return $result;
+        return $result . ($lastGroup === false ? '' : '</optgroup>') . '</select>';
     }
 
     /**

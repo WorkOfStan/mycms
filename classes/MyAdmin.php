@@ -4,11 +4,11 @@ namespace GodsDev\MyCMS;
 
 use Exception;
 use GodsDev\MyCMS\MyCMS;
-use GodsDev\MyCMS\Throwable\preg_replaceString;
 use GodsDev\MyCMS\Tracy\BarPanelTemplate;
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use Tracy\ILogger;
+use function GodsDev\MyCMS\ThrowableFunctions\preg_replaceString;
 
 /**
  * Parent for deployed Admin instance

@@ -215,7 +215,7 @@ class MyAdminProcess extends MyCommon
                         . "SET foreign_key_checks = 0;\n"
                         . "SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';\n\n"
                         . "DROP TABLE {$post['database-table']} IF EXISTS;\n{$output['Create Table']};\n\n"; //@todo specific to MySQL/MariaDb
-                    $query = $this->MyCMS->dbms->query($sql);
+                    $query = $this->MyCMS->dbms->queryStrictObject($sql);
                     $duplicateKey = '';
                     for ($i = 0; $row = $query->fetch_assoc(); $i++) {
                         if ($i % self::PROCESS_LIMIT == 0) {
@@ -659,7 +659,7 @@ class MyAdminProcess extends MyCommon
     {
         if (isset($post['delete-user'])) {
             Tools::resolve(
-                $this->MyCMS->dbms->query('DELETE FROM ' . TAB_PREFIX . 'admin WHERE admin="' . $this->MyCMS->escapeSQL($post['delete-user']) . '" LIMIT 1'),
+                $this->MyCMS->dbms->queryStrictBool('DELETE FROM ' . TAB_PREFIX . 'admin WHERE admin="' . $this->MyCMS->escapeSQL($post['delete-user']) . '" LIMIT 1'),
                 $this->tableAdmin->translate('User deleted.'),
                 $this->tableAdmin->translate('Error occured deleting the user.')
             );

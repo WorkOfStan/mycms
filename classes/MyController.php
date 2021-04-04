@@ -167,7 +167,7 @@ class MyController extends MyCommon
      * for general transformations
      * Outputs changed $MyCMS->template and $MyCMS->context as fields of an array
      *
-     * @return array<string,array>
+     * @return array<string,mixed>
      */
     public function run()
     {
