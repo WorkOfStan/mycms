@@ -2,6 +2,7 @@
 
 namespace GodsDev\MyCMS;
 
+use Exception;
 use GodsDev\Backyard\BackyardMysqli;
 
 /**
@@ -61,13 +62,18 @@ class LogMysqli extends BackyardMysqli
      * @param bool $logQuery optional default logging of database changing statement can be (for security reasons)
      *     turned off by value false
      * @return bool|\mysqli_result<object>
+     * @throws Exception on $sql mb_eregi_replace fail
      */
     public function query($sql, $errorLogOutput = 1, $logQuery = true)
     {
         if ($logQuery && !preg_match('/^SELECT |^SET |^SHOW /i', $sql)) {
             //mb_eregi_replace does not destroy multi-byte characters such as character Š
+            $tempSql = mb_eregi_replace('/\s+/', ' ', $sql);
+//            if (!$tempSql) {
+//                throw new Exception('sql mb_eregi_replace fail');
+//            }
             error_log(
-                trim(mb_eregi_replace('/\s+/', ' ', $sql)) . '; -- [' . date("d-M-Y H:i:s") . ']'
+                trim($tempSql) . '; -- [' . date("d-M-Y H:i:s") . ']'
                 . (isset($_SESSION['user']) ? " by ({$_SESSION['user']})" : '') . PHP_EOL,
                 3,
                 'log/sql' . date("Y-m-d") . '.log.sql'
@@ -75,6 +81,31 @@ class LogMysqli extends BackyardMysqli
         }
         $this->sqlStatementsArray[] = $sql;
         return parent::query($sql, $errorLogOutput);
+    }
+
+    /**
+     * Logs SQL statement not starting with SELECT or SET. Throws exception in case response isn't \mysqli_result
+     *
+     * @param string $sql SQL to execute
+     * @param int $errorLogOutput optional default=1 turn-off=0
+     *   It is int in order to be compatible with
+     *   parameter $resultmode (int) of method mysqli::query()
+     * @param bool $logQuery optional default logging of database changing statement can be (for security reasons)
+     *     turned off by value false
+     * @return \mysqli_result<object>
+     * @throw Exception if error with false or answer true
+     */
+    public function queryStrictObject($sql, $errorLogOutput = 1, $logQuery = true)
+    {
+        $result = $this->query($sql, $errorLogOutput, $logQuery);
+
+        if ($result === false) {
+            throw new Exception($this->errno . ': ' . $this->error);
+        }
+        if ($result === true) {
+            throw new Exception('Non-object answer on SQL statement');
+        }
+        return $result;
     }
 
     /**
@@ -219,11 +250,15 @@ class LogMysqli extends BackyardMysqli
      *
      * @param string $sql SQL to be executed
      * @return mixed first selected row (or its first column if only one column is selected), null on empty SELECT
-     * @throws \Exception on error
+     * @throws Exception on error
      */
     public function fetchSingle($sql)
     {
-        if ($query = $this->query($sql)) {
+        $query = $this->query($sql);
+        if ($query === true) {
+            return null;
+        }
+        if ($query) {
             $row = $query->fetch_assoc();
             if (is_array($row)) {
                 if (!count($row)) {
@@ -233,7 +268,7 @@ class LogMysqli extends BackyardMysqli
             }
             return null;
         }
-        throw new \Exception($this->errno . ': ' . $this->error);
+        throw new Exception($this->errno . ': ' . $this->error);
     }
 
     /**
@@ -267,11 +302,12 @@ class LogMysqli extends BackyardMysqli
      *
      * @param string $sql SQL statement to be executed
      * @return array<array|string>|false - either associative array, empty array on empty SELECT, or false on error
+     *   Error for this function is also an SQL statement that returns true.
      */
     public function fetchAndReindex($sql)
     {
         $query = $this->query($sql);
-        if (!$query) {
+        if (is_bool($query)) {
             return false;
         }
         $result = [];

@@ -3,7 +3,7 @@
 # Invoked by locally installed PHPStan of library
 # Invoked by GitHub super-linter PHPStan of library
 parameters:
-    level: 6
+    level: max
     excludePaths:
         analyse:
         #  - ../vendor

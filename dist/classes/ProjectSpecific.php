@@ -148,7 +148,6 @@ class ProjectSpecific extends ProjectCommon
      *
      * @param int $id
      * @return array<mixed>|null array first selected row, null on empty SELECT
-     * @throws \Exception on error
      */
     public function getProduct($id)
     {

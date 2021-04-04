@@ -2,6 +2,8 @@
 
 namespace GodsDev\MyCMS;
 
+use Exception;
+
 class ProjectCommon extends MyCommon
 {
     use \Nette\SmartObject;
@@ -101,15 +103,20 @@ class ProjectCommon extends MyCommon
      * @param string $stringOfTime
      * @param string $language
      * @return string
+     * @throws Exception if applicationDir malformed
      */
     public static function localDate($stringOfTime, $language)
     {
+        $strToTime = strtotime($stringOfTime);
+        if ($strToTime === false) {
+            throw new Exception('$stringOfTime is malformed');
+        }
         switch ($language) {
             case 'cs':
-                return date('j.n.Y', strtotime($stringOfTime));
+                return date('j.n.Y', $strToTime);
         }
         //en
-        return date('D, j M Y', strtotime($stringOfTime));
+        return date('D, j M Y', $strToTime);
     }
 
     /**
@@ -119,6 +126,7 @@ class ProjectCommon extends MyCommon
      * @param string $text
      * @param array<string> $addReplacePatterns add or redefine patterns
      * @return string
+     * @throws Exception in case of preg_replace error
      */
     public function correctLineBreak($text, array $addReplacePatterns = [])
     {
@@ -137,6 +145,10 @@ class ProjectCommon extends MyCommon
             '/ an /' => ' an ',
             '/Industry 4.0/' => 'Industry 4.0',
             ], $addReplacePatterns);
-        return preg_replace(array_keys($replacePatterns), array_values($replacePatterns), $text);
+        $result = preg_replace(array_keys($replacePatterns), array_values($replacePatterns), $text);
+//        if (is_null($result)) {
+//            throw new Exception('preg_replace error');
+//        }
+        return $result;
     }
 }

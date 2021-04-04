@@ -2,6 +2,7 @@
 
 namespace GodsDev\MyCMS;
 
+use Exception;
 use GodsDev\Tools\Tools;
 
 /**
@@ -101,13 +102,15 @@ class MyTableLister
      * Get all tables in the database (including comments) and store them to tables
      *
      * @return void
+     * @throws Exception on SQL statement not returning array
      */
     public function getTables()
     {
         $this->tables = [];
-        $query = $this->dbms->query('SELECT TABLE_NAME, TABLE_COMMENT FROM information_schema.TABLES '
+        $query = $this->dbms->queryStrictObject('SELECT TABLE_NAME, TABLE_COMMENT FROM information_schema.TABLES '
             . 'WHERE TABLE_SCHEMA = "' . $this->escapeSQL($this->database) . '"');
-        while ($row = $query->fetch_row()) {
+        $row = $query->fetch_row();
+        while ($row) {
             if ($row[0] === TAB_PREFIX . 'admin') {
                 continue; // admin table (or its rows) MUST NOT be accessed through admin.php
             }
@@ -133,68 +136,67 @@ class MyTableLister
             return;
         }
         $this->table = $table;
-        if ($query = $this->dbms->query('SHOW FULL COLUMNS IN ' . $this->escapeDbIdentifier($this->table))) {
-            $result = [];
-            while ($row = $query->fetch_assoc()) {
-                $item = [
-                    'type' => $row['Type'],
-                    'null' => strtoupper($row['Null']) == 'YES',
-                    'default' => $row['Default'],
-                    'size' => null,
-                    'key' => $row['Key'],
-                    'comment' => $row['Comment'],
-                    'basictype' => $row['Type']
-                ];
-                if ($pos = strpos($row['Type'], '(')) {
-                    $item['basictype'] = $item['type'] = substr($row['Type'], 0, $pos);
-                    $item['size'] = rtrim(substr($row['Type'], $pos + 1), ')');
-                }
-                switch ($item['basictype']) {
-                    case 'int':
-                    case 'bigint':
-                    case 'smallint':
-                    case 'tinyint':
-                    case 'year':
-                    case 'bit':
-                        $item['basictype'] = 'integer';
-                        break;
-                    case 'float':
-                    case 'double':
-                    case 'decimal':
-                        $item['basictype'] = 'rational';
-                        break;
-                    case 'enum':
-                    case 'set':
-                        $item['basictype'] = 'choice';
-                        break;
-                    case 'binary':
-                    case 'varbinary':
-                    case 'tinyblob':
-                    case 'mediumblob':
-                    case 'longblob':
-                        $item['basictype'] = 'binary';
-                        break;
-                    default:
-                        // this includes date/time, geometry and other scarcely used types
-                        $item['basictype'] = 'text';
-                }
-                $result[$row['Field']] = $item;
-            }
-            $this->fields = $result;
-        } else {
+        try {
+            $query = $this->dbms->queryStrictObject('SHOW FULL COLUMNS IN ' . $this->escapeDbIdentifier($this->table));
+        } catch (Exception $e) {
             throw new \RunTimeException('Could not get columns from table ' . $this->table . '.');
         }
-        $query = $this->dbms->query(
+        $result = [];
+        while ($row = $query->fetch_assoc()) {
+            $item = [
+                'type' => $row['Type'],
+                'null' => strtoupper($row['Null']) == 'YES',
+                'default' => $row['Default'],
+                'size' => null,
+                'key' => $row['Key'],
+                'comment' => $row['Comment'],
+                'basictype' => $row['Type']
+            ];
+            if ($pos = strpos($row['Type'], '(')) {
+                $item['basictype'] = $item['type'] = substr($row['Type'], 0, $pos);
+                $item['size'] = rtrim(substr($row['Type'], $pos + 1), ')');
+            }
+            switch ($item['basictype']) {
+                case 'int':
+                case 'bigint':
+                case 'smallint':
+                case 'tinyint':
+                case 'year':
+                case 'bit':
+                    $item['basictype'] = 'integer';
+                    break;
+                case 'float':
+                case 'double':
+                case 'decimal':
+                    $item['basictype'] = 'rational';
+                    break;
+                case 'enum':
+                case 'set':
+                    $item['basictype'] = 'choice';
+                    break;
+                case 'binary':
+                case 'varbinary':
+                case 'tinyblob':
+                case 'mediumblob':
+                case 'longblob':
+                    $item['basictype'] = 'binary';
+                    break;
+                default:
+                    // this includes date/time, geometry and other scarcely used types
+                    $item['basictype'] = 'text';
+            }
+            $result[$row['Field']] = $item;
+        }
+        $this->fields = $result;
+        $query2 = $this->dbms->queryStrictObject(
             'SELECT COLUMN_NAME,REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME '
             . 'FROM information_schema.KEY_COLUMN_USAGE '
             . 'WHERE CONSTRAINT_NAME != "PRIMARY" AND CONSTRAINT_CATALOG = "def" AND TABLE_SCHEMA = "'
             . $this->escapeSQL($this->database) . '" AND TABLE_NAME = "' . $this->escapeSQL($this->table) . '"'
         );
-        if ($query) {
-            while ($row = $query->fetch_assoc()) {
-                $this->fields[$row['COLUMN_NAME']]['foreign_table'] = $row['REFERENCED_TABLE_NAME'];
-                $this->fields[$row['COLUMN_NAME']]['foreign_column'] = $row['REFERENCED_COLUMN_NAME'];
-            }
+        while ($row = $query2->fetch_assoc()) {
+            $this->fields[$row['COLUMN_NAME']]['foreign_table'] = $row['REFERENCED_TABLE_NAME'];
+            $this->fields[$row['COLUMN_NAME']]['foreign_column'] = $row['REFERENCED_COLUMN_NAME'];
         }
         $tmp = $this->dbms->fetchSingle('SELECT TABLE_COMMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA="'
             . $this->escapeSQL($this->database) . '" AND TABLE_NAME="' . $this->escapeSQL($this->table) . '"');
@@ -227,7 +229,7 @@ class MyTableLister
                     . ' ON ' . $this->escapeDbIdentifier($this->table) . '.' . $this->escapeDbIdentifier($key)
                     . '=' . $this->escapeDbIdentifier($this->fields[$key]['foreign_table']) . '.' . $this->escapeDbIdentifier($this->fields[$key]['foreign_column']);
                 // try if column of the same name as the table exists (as a replacement for foreign table); use the first field in the table if it doesn't exist
-                $tmp = $this->dbms->query('SHOW FIELDS FROM ' . $this->escapeDbIdentifier($this->fields[$key]['foreign_table']))->fetch_all();
+                $tmp = $this->dbms->queryStrictObject('SHOW FIELDS FROM ' . $this->escapeDbIdentifier($this->fields[$key]['foreign_table']))->fetch_all();
                 foreach ($tmp as $k => $v) {
                     $tmp[$v[0]] = $v[0];
                     unset($tmp[$k]);
@@ -554,7 +556,7 @@ class MyTableLister
                     . '<small class="glyphicon glyphicon-edit fa fa-pencil fa-edit" aria-hidden="true"></small></a>';
                 $output .= '</td>';
                 foreach ($row as $key => $value) {
-                    if (Tools::ends($key, $this->DEFAULTS['FOREIGNLINK'])) {
+                    if (Tools::ends($key, (string) $this->DEFAULTS['FOREIGNLINK'])) {
                         continue;
                     }
                     $field = (array) $this->fields[$key];
@@ -571,7 +573,7 @@ class MyTableLister
                             // no break
                             case 'text':
                             default:
-                                $tmp = Tools::h(mb_substr($value, 0, $this->DEFAULTS['TEXTSIZE']));
+                                $tmp = Tools::h(mb_substr($value, 0, (int) $this->DEFAULTS['TEXTSIZE']));
                                 break;
                         }
                     }
@@ -639,7 +641,7 @@ class MyTableLister
             return;
         }
         $output = '<nav><ul class="pagination"><li class="page-item disabled"><a name="" class="page-link go-to-page non-page" data-pages="' . $pages . '" tabindex="-1">' . $this->translate('Page') . ':</a></li>';
-        if ($pages <= $this->DEFAULTS['PAGES_AROUND'] * 2 + 3) { // pagination with all pages
+        if ($pages <= (int) $this->DEFAULTS['PAGES_AROUND'] * 2 + 3) { // pagination with all pages
             if ($currentPage > 1) {
                 $output .= $this->addPage($currentPage - 1, $currentPage, $rowsPerPage, $this->translate('Previous'), $title);
             }
@@ -654,12 +656,13 @@ class MyTableLister
                 $output .= $this->addPage($currentPage - 1, $currentPage, $rowsPerPage, $this->translate('Previous'), $title);
             }
             $output .= $this->addPage(1, $currentPage, $rowsPerPage, null, $title);
-            $output .= ($currentPage - $this->DEFAULTS['PAGES_AROUND'] > 2 ? '<li><a name="" class="non-page">&hellip;</a></li>' : '');
-            for ($page = max($currentPage - $this->DEFAULTS['PAGES_AROUND'], 2); $page <= min($currentPage + $this->DEFAULTS['PAGES_AROUND'], $pages); $page++) {
+            $output .= ($currentPage - (int) $this->DEFAULTS['PAGES_AROUND'] > 2 ? '<li><a name="" class="non-page">&hellip;</a></li>' : '');
+            $page = max($currentPage - (int) $this->DEFAULTS['PAGES_AROUND'], 2);
+            for ($page; $page <= min($currentPage + (int) $this->DEFAULTS['PAGES_AROUND'], $pages); $page++) {
                 $output .= $this->addPage($page, $currentPage, $rowsPerPage, null, $title);
             }
-            $output .= ($currentPage < $pages - $this->DEFAULTS['PAGES_AROUND'] - 1 ? '<li><a name="" class="non-page">&hellip;</a></li>' : '');
-            if ($currentPage < $pages - $this->DEFAULTS['PAGES_AROUND']) {
+            $output .= ($currentPage < $pages - (int) $this->DEFAULTS['PAGES_AROUND'] - 1 ? '<li><a name="" class="non-page">&hellip;</a></li>' : '');
+            if ($currentPage < $pages - (int) $this->DEFAULTS['PAGES_AROUND']) {
                 $output .= $this->addPage($pages, $currentPage, $rowsPerPage, null, $title);
             }
             if ($currentPage < $pages) {
@@ -979,7 +982,7 @@ class MyTableLister
         $query = $this->dbms->query('SELECT SQL_CALC_FOUND_ROWS ' . Tools::escapeDbIdentifier($options['type']) . ',COUNT(' . Tools::escapeDbIdentifier($options['type']) . ')'
             . ' FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $options['table'])
             . ' GROUP BY ' . Tools::escapeDbIdentifier($options['type']) . ' WITH ROLLUP LIMIT 100');
-        if (!$query) {
+        if (is_bool($query)) {
             return '';
         }
         $typeIndex = 0;

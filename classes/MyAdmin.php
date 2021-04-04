@@ -2,7 +2,9 @@
 
 namespace GodsDev\MyCMS;
 
+use Exception;
 use GodsDev\MyCMS\MyCMS;
+use GodsDev\MyCMS\Throwable\preg_replaceString;
 use GodsDev\MyCMS\Tracy\BarPanelTemplate;
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
@@ -598,6 +600,7 @@ class MyAdmin extends MyCommon
      *
      * @param string $keyword
      * @return string
+     * @throws Exception on preg_replace error
      */
     protected function outputSearchResults($keyword)
     {
@@ -624,7 +627,7 @@ class MyAdmin extends MyCommon
                     for ($i = 1; $i < count($row); $i++) {
                         $row[$i] = strip_tags($row[$i]);
                         if (($p = stripos($row[$i], $keyword)) !== false) {
-                            $row[$i] = preg_replace('~(' . preg_quote($keyword) . ')~six', '<b>${1}</b>', $row[$i]);
+                            $row[$i] = preg_replaceString('~(' . preg_quote($keyword) . ')~six', '<b>${1}</b>', $row[$i]);
                             $where .= '<li>…' . mb_substr($row[$i], max($p - 50, 0), strlen($keyword) + 100) . '…</li>' . PHP_EOL;
                         }
                     }

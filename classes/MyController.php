@@ -2,6 +2,7 @@
 
 namespace GodsDev\MyCMS;
 
+use Exception;
 use GodsDev\MyCMS\MyFriendlyUrl;
 use GodsDev\MyCMS\Tracy\BarPanelTemplate;
 use GodsDev\Tools\Tools;
@@ -51,6 +52,7 @@ class MyController extends MyCommon
      *
      * @param MyCMS $MyCMS
      * @param array<mixed> $options that overrides default values within constructor
+     * @throws Exception if applicationDir malformed
      */
     public function __construct(MyCMS $MyCMS, array $options = [])
     {
@@ -63,7 +65,7 @@ class MyController extends MyCommon
         ];
         if (isset($this->friendlyUrl) && ($this->friendlyUrl instanceof MyFriendlyUrl)) {
             if (substr($this->friendlyUrl->applicationDir, -1) === '/') {
-                throw new \Exception('applicationDir MUST NOT end with slash');
+                throw new Exception('applicationDir MUST NOT end with slash');
             }
             // so that URL relative to root may be constructed in latte (e.g. language selector)
             // $this->friendlyUrl->applicationDir never ends with / . Latte may use URL relative to domain root.
