@@ -38,10 +38,7 @@
     "autoload": {
         "psr-4": {
             "GodsDev\\mycmsprojectnamespace\\": ["classes/"]
-        },
-        "files": [
-            "classes/ThrowableFunctions/ThrowablePHPFunctions.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {

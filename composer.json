@@ -42,7 +42,10 @@
     "autoload": {
         "psr-4": {
             "GodsDev\\MyCMS\\": ["classes/"]
-        }
+        },
+        "files": [
+            "classes/ThrowableFunctions/ThrowablePHPFunctions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
