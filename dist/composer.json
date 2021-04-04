@@ -40,7 +40,7 @@
             "GodsDev\\mycmsprojectnamespace\\": ["classes/"]
         },
         "files": [
-            "classes/Throwable/ThrowablePHPFunctions.php"
+            "classes/ThrowableFunctions/ThrowablePHPFunctions.php"
         ]
     },
     "autoload-dev": {
