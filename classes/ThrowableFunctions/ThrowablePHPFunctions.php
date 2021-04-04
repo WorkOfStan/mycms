@@ -5,7 +5,7 @@
  * These function throw an \Exception instead.
  */
 
-namespace GodsDev\MyCMS\Throwable;
+namespace GodsDev\MyCMS\ThrowableFunctions;
 
 use Exception;
 
