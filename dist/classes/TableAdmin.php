@@ -396,6 +396,7 @@ class TableAdmin extends MyTableAdmin
                     $this->dbms->query('UPDATE ' . Tools::escapeDbIdentifier($_POST['table'])
                         . ' SET path = NULL WHERE id IN (' . implode(', ', array_keys($update)) . ')');
                     foreach ($update as $key => $value) {
+if(!is_string($value)){throw new Exception('path must be string');}//todo assert instead!
                         $this->dbms->query('UPDATE ' . Tools::escapeDbIdentifier($_POST['table'])
                             . ' SET path = "' . $this->dbms->escapeSQL($value) . '" WHERE id = ' . (int) $key);
                     }
