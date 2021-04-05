@@ -247,7 +247,7 @@ class AdminProcess extends MyAdminProcess
             'CONCAT(REPEAT("… ",LENGTH(' . $this->MyCMS->dbms->escapeDbIdentifier($options['path']) . ') / '
             . PATH_MODULE . ' - 1),' . $options['table'] . '_' . DEFAULT_LANGUAGE . ')' :
             (
-                isset($options['column']) ?(is_array($options['column']) ?('CONCAT(' . implode(
+                isset($options['column']) ? (is_array($options['column']) ? ('CONCAT(' . implode(
                     ",'|',",
                     array_map([$this->MyCMS->dbms, 'escapeDbIdentifier'], $options['column'])
                 ) . ')') : $this->MyCMS->dbms->escapeDbIdentifier($options['column'])) :

@@ -4,6 +4,7 @@ namespace GodsDev\MyCMS;
 
 use Exception;
 use GodsDev\Tools\Tools;
+use Webmozart\Assert\Assert;
 
 /**
  * Class that can list rows of a database table, with editable search/filter
@@ -413,6 +414,7 @@ class MyTableLister
             return;
         }
         $sql = $this->selectSQL($columns, $_GET);
+        Assert::string($sql['sql']);
         $query = $this->dbms->query($sql['sql']);
         $options['total-rows'] = $this->dbms->fetchSingle('SELECT FOUND_ROWS()');
         $output = Tools::htmlInput('total-rows', '', $options['total-rows'], 'hidden');

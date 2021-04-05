@@ -111,13 +111,13 @@ class MyFriendlyUrl extends MyCommon
      * @param array<mixed> $options
      * @return array<mixed>|true `bool (true)` when `TEMPLATE_NOT_FOUND` || `array` with redir string field
      *     || `array` with token string field and matches array field (see above)
-     * @throw Exception on seriously malformed URL
+     * @throw Exception on malformed URL
      */
     protected function friendlyIdentifyRedirect(array $options = [])
     {
         $this->verboseBarDump($url = parse_url($options['REQUEST_URI']), 'friendlyIdentifyRedirect: parse_url');
-        if ($url === false) {
-            throw new Exception('Seriously malformed url ' . (string) $options['REQUEST_URI']);
+        if ($url === false || !array_key_exists('path', $url)) {
+            throw new Exception('Malformed url ' . (string) $options['REQUEST_URI']);
         }
         $this->verboseBarDump($token = $this->MyCMS->escapeSQL(
             pathinfo(
