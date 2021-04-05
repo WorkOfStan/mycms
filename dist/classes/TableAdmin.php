@@ -6,6 +6,7 @@ use Exception;
 use GodsDev\MyCMS\LogMysqli;
 use GodsDev\MyCMS\MyTableAdmin;
 use GodsDev\Tools\Tools;
+use Webmozart\Assert\Assert;
 
 class TableAdmin extends MyTableAdmin
 {
@@ -309,7 +310,7 @@ class TableAdmin extends MyTableAdmin
      * @param string $field
      * @param string $value field's value
      * @param array<string> $record
-     * @return bool - true = method was applied so don't proceed with the default, false = method wasn't applied
+     * @return bool|string - true = method was applied so don't proceed with the default, false = method wasn't applied
      */
     public function customInput($field, $value, array $record = [])
     {
@@ -396,7 +397,7 @@ class TableAdmin extends MyTableAdmin
                     $this->dbms->query('UPDATE ' . Tools::escapeDbIdentifier($_POST['table'])
                         . ' SET path = NULL WHERE id IN (' . implode(', ', array_keys($update)) . ')');
                     foreach ($update as $key => $value) {
-if(!is_string($value)){throw new Exception('path must be string');}//todo assert instead!
+                        Assert::string($value, 'path must be string');
                         $this->dbms->query('UPDATE ' . Tools::escapeDbIdentifier($_POST['table'])
                             . ' SET path = "' . $this->dbms->escapeSQL($value) . '" WHERE id = ' . (int) $key);
                     }

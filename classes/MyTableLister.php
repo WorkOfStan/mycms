@@ -852,7 +852,7 @@ class MyTableLister
      * @param string $field
      * @param mixed $value field's value
      * @param array<string> $record
-     * @return bool - true = method was applied so don't proceed with the default, false = method wasn't applied
+     * @return bool|string - true = method was applied so don't proceed with the default, false = method wasn't applied
      */
     public function customInput($field, $value, array $record = [])
     {

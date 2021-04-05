@@ -127,6 +127,7 @@ class AdminProcess extends MyAdminProcess
                     . Tools::arrayListed(array_keys($edits), 8) . ')');
                 $i = 0;
                 foreach ($edits as $key => $value) {
+                    Assert::string($value);
                     $tmp = substr($value, 0, $strlen - PATH_MODULE)
                         . str_pad((string) (intval(substr($value, $strlen - PATH_MODULE, PATH_MODULE)) + (Tools::begins(
                             $value,
@@ -148,7 +149,7 @@ class AdminProcess extends MyAdminProcess
         // move product up/down
         if (
             isset($post['product-switch'], $post['id']) &&
-            ($product = $this->MyCMS->dbms->query(
+            ($product = $this->MyCMS->dbms->queryStrictObject(
                 'SELECT category_id,sort FROM ' . TAB_PREFIX . 'product WHERE id=' . (int) $post['id']
             )->fetch_assoc())
         ) {
@@ -247,10 +248,10 @@ class AdminProcess extends MyAdminProcess
             . PATH_MODULE . ' - 1),' . $options['table'] . '_' . DEFAULT_LANGUAGE . ')' :
             (isset($options['column']) ? (
                 is_array($options['column']) ? ('CONCAT(' .
-                implode(
-                    ",'|',",
-                    array_map([$this->MyCMS->dbms, 'escapeDbIdentifier'], $options['column'])
-                ) . ')') :
+            implode(
+                ",'|',",
+                array_map([$this->MyCMS->dbms, 'escapeDbIdentifier'], $options['column'])
+            ) . ')') :
             $this->MyCMS->dbms->escapeDbIdentifier($options['column'])
             ) : $this->MyCMS->dbms->escapeDbIdentifier($options['table'] . '_' . DEFAULT_LANGUAGE));
         $sql = 'SELECT id,' . $selectExpression . ' AS name'
@@ -262,14 +263,12 @@ class AdminProcess extends MyAdminProcess
                 ' ORDER BY '
             )
             . ' LIMIT ' . $this::PROCESS_LIMIT;
-        $query = $this->MyCMS->dbms->query($sql);
-        if ($query) {
-            for ($i = 1; $row = $query->fetch_assoc(); $i++) {
-                $row['name'] = Tools::shortify(strip_tags($row['name']), 100);
-                $result [] = $row;
-                if ($agenda == 'product' && isset($row['sort']) && $row['sort'] != $i) {
-                    $correctOrder[$row['id']] = $i;
-                }
+        $query = $this->MyCMS->dbms->queryStrictObject($sql);
+        for ($i = 1; $row = $query->fetch_assoc(); $i++) {
+            $row['name'] = Tools::shortify(strip_tags($row['name']), 100);
+            $result [] = $row;
+            if ($agenda == 'product' && isset($row['sort']) && $row['sort'] != $i) {
+                $correctOrder[$row['id']] = $i;
             }
         }
         // TODO does the next foreach have any impact on the returned value?

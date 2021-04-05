@@ -2,6 +2,7 @@
 
 namespace GodsDev\mycmsprojectnamespace;
 
+use Exception;
 use GodsDev\MyCMS\ProjectCommon;
 use GodsDev\Tools\Tools;
 use Webmozart\Assert\Assert;
@@ -235,6 +236,9 @@ class ProjectSpecific extends ProjectCommon
         $pages = $this->MyCMS->fetchAndReindex('SELECT path,id,category_' . $options['language']
             . ' AS category,path FROM ' . TAB_PREFIX . 'category WHERE LEFT(path, ' . PATH_MODULE . ')="'
             . $this->MyCMS->escapeSQL($options['PATH_HOME']) . '" ORDER BY path');
+        if ($pages === false) {
+            throw new Exception('Sitemap retrieval failed.');
+        }
         $result = '';
         foreach ($pages as $key => $value) {
             $result .= '<div class="indent-' . (strlen($key) / PATH_MODULE - 1) . '">'

@@ -2,6 +2,9 @@
 # Invoked by locally installed PHPStan of library
 includes:
       - phpstan.common.neon
+      # to use https://github.com/phpstan/phpstan-webmozart-assert
+      # TODO it needs the library present, so make sure it works both on github and locally
+      - ../vendor/phpstan/phpstan-webmozart-assert/extension.neon
 
 parameters:
     excludePaths:
