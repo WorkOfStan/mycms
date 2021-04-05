@@ -28,31 +28,33 @@ use Tracy\Debugger;
 
 Debugger::enable(Debugger::PRODUCTION, DIR_TEMPLATE . '/../log');
 
-
 $backyard->Json->outputJSON('{"action":"3-' . $_SESSION['language'] . '"}', true);
 
 // The code below is a real example
 //
 // $this->get['article']) && (isset($this->get['id']
 //Debugger::barDump($MyCMS, 'MyCMS before controller');
-$controller = new GodsDev\mycmsprojectnamespace\Controller($MyCMS, array(
-    'get' => array(
+$controller = new GodsDev\mycmsprojectnamespace\Controller(
+    $MyCMS,
+    [
+    'get' => [
         'action' => '',
         'id' => (int) $_GET['id'],
-    ),
+    ],
     'session' => $_SESSION,
     'language' => $_SESSION['language'],
     'verbose' => DEBUG_VERBOSE,
     'requestUri' => $_SERVER['REQUEST_URI'], //Note: this API expects ?article&id=N anyway
-    ));
+    ]
+);
 $controllerResult = $controller->controller();
 //$MyCMS->template = $controllerResult['template'];
 //$MyCMS->context = $controllerResult['context'];
 //Debugger::barDump($controllerResult, 'ControllerResult');
 Debugger::barDump($controllerResult['context'], 'ControllerResult[context]');
 
-if(!is_array($controllerResult['context'])){
-    throw new Exception ('Article Description would be missing.');
+if (!is_array($controllerResult['context'])) {
+    throw new Exception('Article Description would be missing.');
 }
 
 if (isset($_GET['wrap']) && $_GET['wrap'] === 'simple') {

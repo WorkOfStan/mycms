@@ -246,14 +246,13 @@ class AdminProcess extends MyAdminProcess
         $selectExpression = isset($options['path']) ?
             'CONCAT(REPEAT("… ",LENGTH(' . $this->MyCMS->dbms->escapeDbIdentifier($options['path']) . ') / '
             . PATH_MODULE . ' - 1),' . $options['table'] . '_' . DEFAULT_LANGUAGE . ')' :
-            (isset($options['column']) ? (
-                is_array($options['column']) ? ('CONCAT(' .
-            implode(
-                ",'|',",
-                array_map([$this->MyCMS->dbms, 'escapeDbIdentifier'], $options['column'])
-            ) . ')') :
-            $this->MyCMS->dbms->escapeDbIdentifier($options['column'])
-            ) : $this->MyCMS->dbms->escapeDbIdentifier($options['table'] . '_' . DEFAULT_LANGUAGE));
+            (
+                isset($options['column']) ?(is_array($options['column']) ?('CONCAT(' . implode(
+                    ",'|',",
+                    array_map([$this->MyCMS->dbms, 'escapeDbIdentifier'], $options['column'])
+                ) . ')') : $this->MyCMS->dbms->escapeDbIdentifier($options['column'])) :
+                $this->MyCMS->dbms->escapeDbIdentifier($options['table'] . '_' . DEFAULT_LANGUAGE)
+            );
         $sql = 'SELECT id,' . $selectExpression . ' AS name'
             . Tools::wrap($options['sort'], ',', ' AS sort') . Tools::wrap($options['path'], ',', ' AS path')
             . ' FROM ' . $this->MyCMS->dbms->escapeDbIdentifier(TAB_PREFIX . $options['table'])

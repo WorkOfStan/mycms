@@ -3,6 +3,7 @@
 namespace GodsDev\MyCMS;
 
 use Exception;
+
 use function GodsDev\MyCMS\ThrowableFunctions\preg_replaceString;
 
 class ProjectCommon extends MyCommon

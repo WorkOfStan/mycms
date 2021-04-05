@@ -6,6 +6,7 @@ use Exception;
 use GodsDev\MyCMS\ProjectCommon;
 use GodsDev\Tools\Tools;
 use Webmozart\Assert\Assert;
+
 use function GodsDev\MyCMS\ThrowableFunctions\preg_replaceString;
 
 /**
@@ -34,8 +35,8 @@ class ProjectSpecific extends ProjectCommon
     {
         $result = [];
         $q = preg_quote($text);
-        $query = $this->MyCMS->dbms->queryStrictObject('SELECT CONCAT("?article&id=", id) AS link,content_' . $this->language
-            . ' AS title,LEFT(description_' . $this->language . ',1000) AS description
+        $query = $this->MyCMS->dbms->queryStrictObject('SELECT CONCAT("?article&id=", id) AS link,'
+            . 'content_' . $this->language . ' AS title,LEFT(description_' . $this->language . ',1000) AS description
             FROM ' . TAB_PREFIX . 'content WHERE active="1" AND type IN ("page", "news") AND (content_'
             . $this->language . ' LIKE "%' . $q . '%" OR description_' . $this->language . ' LIKE "%' . $q . '%")
             UNION

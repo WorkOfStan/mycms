@@ -4,6 +4,7 @@ namespace GodsDev\MyCMS;
 
 use Exception;
 use GodsDev\Backyard\BackyardMysqli;
+
 use function GodsDev\MyCMS\ThrowableFunctions\mb_eregi_replace;
 
 /**

@@ -49,7 +49,8 @@ class MyCommon
      *
      * @param  mixed  $var
      * @param  string $title
-     * @param  array<mixed>  $options of Debugger::barDump (Dumper::DEPTH, Dumper::TRUNCATE, Dumper::LOCATION, Dumper::LAZY)
+     * @param  array<mixed> $options of Debugger::barDump
+     *   where array keys are [Dumper::DEPTH, Dumper::TRUNCATE, Dumper::LOCATION, Dumper::LAZY]
      * @return mixed  variable itself
      */
     protected function verboseBarDump($var, $title = null, array $options = [])
