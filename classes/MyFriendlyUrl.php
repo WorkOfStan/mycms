@@ -2,6 +2,7 @@
 
 namespace GodsDev\MyCMS;
 
+use Exception;
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 
@@ -110,10 +111,14 @@ class MyFriendlyUrl extends MyCommon
      * @param array<mixed> $options
      * @return array<mixed>|true `bool (true)` when `TEMPLATE_NOT_FOUND` || `array` with redir string field
      *     || `array` with token string field and matches array field (see above)
+     * @throw Exception on seriously malformed URL
      */
     protected function friendlyIdentifyRedirect(array $options = [])
     {
         $this->verboseBarDump($url = parse_url($options['REQUEST_URI']), 'friendlyIdentifyRedirect: parse_url');
+        if ($url === false) {
+            throw new Exception('Seriously malformed url ' . (string) $options['REQUEST_URI']);
+        }
         $this->verboseBarDump($token = $this->MyCMS->escapeSQL(
             pathinfo(
                 $url['path'],
@@ -464,7 +469,7 @@ class MyFriendlyUrl extends MyCommon
         $output2 = array_slice($output, 0, 1);
         // $output2 contains only the first parameter
         $output2Array = array_keys($output2);
-        $outputKey = reset($output2Array);
+        $outputKey = (string) reset($output2Array);
         $outputValue = (isset($this->MyCMS->templateAssignementParametricRules[$outputKey])
             && isset($this->MyCMS->templateAssignementParametricRules[$outputKey]['idcode'])
             && $this->MyCMS->templateAssignementParametricRules[$outputKey]['idcode'])
