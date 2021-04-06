@@ -74,24 +74,26 @@ class ProjectSpecific extends ProjectCommon
     public function getContent($id = null, $code = null, array $options = [])
     {
         $result = [];
-        if (
-            (!is_null($id) || !is_null($code)) && ($result = $this->MyCMS->fetchSingle('SELECT co.id,'
-            . ' product_id,'
-            . ' type,'
-            . ' co.code,'
-            . ' co.added,'
-            . ' co.context,'
-            . ' category_id,'
-            . ' path,'
-            . ' co.content_' . $options['language'] . ' AS title,'
-            . ' co.perex_' . $options['language'] . ' AS perex,'
-            . ' co.description_' . $options['language'] . ' AS description '
-            . ' FROM ' . TAB_PREFIX . 'content co LEFT JOIN ' . TAB_PREFIX . 'category ca ON co.category_id=ca.id '
-            . ' WHERE co.active="1"' . Tools::wrap($this->MyCMS->escapeSQL($code), ' AND co.code="', '"')
-            . Tools::wrap(intval($id), ' AND co.id=') . ' LIMIT 1'))
-        ) {
-            $result['context'] = json_decode($result['context'], true) ?: [];
-            $result['added'] = Tools::localeDate($result['added'], $options['language'], false);
+        if (!is_null($id) || !is_null($code)) {
+            $result = $this->MyCMS->fetchSingle('SELECT co.id,'
+                . ' product_id,'
+                . ' type,'
+                . ' co.code,'
+                . ' co.added,'
+                . ' co.context,'
+                . ' category_id,'
+                . ' path,'
+                . ' co.content_' . $options['language'] . ' AS title,'
+                . ' co.perex_' . $options['language'] . ' AS perex,'
+                . ' co.description_' . $options['language'] . ' AS description '
+                . ' FROM ' . TAB_PREFIX . 'content co LEFT JOIN ' . TAB_PREFIX . 'category ca ON co.category_id=ca.id '
+                // TODO Parameter #1 $string of method GodsDev\MyCMS\MyCMSMonoLingual::escapeSQL() expects string, string|null given.
+                . ' WHERE co.active="1"' . Tools::wrap($this->MyCMS->escapeSQL($code), ' AND co.code="', '"')
+                . Tools::wrap(intval($id), ' AND co.id=') . ' LIMIT 1');
+            if ($result) {
+                $result['context'] = json_decode($result['context'], true) ?: [];
+                $result['added'] = Tools::localeDate($result['added'], $options['language'], false);
+            }
         }
         $options += array('path' => $result['path'], 'except_id' => $result['id']);
         if (($pos = strpos($result['description'], '%CHILDREN%')) !== false) {
@@ -132,6 +134,7 @@ class ProjectSpecific extends ProjectCommon
             . ' content_' . $options['language'] . ' AS description'
             . ' FROM ' . TAB_PREFIX . 'category WHERE active="1"'
             . Tools::wrap(
+                // TODO Parameter #1 $string of method GodsDev\MyCMS\MyCMSMonoLingual::escapeSQL() expects string, string|null given.
                 $this->MyCMS->escapeSQL($code),
                 ' AND code="',
                 '"'
@@ -210,10 +213,12 @@ class ProjectSpecific extends ProjectCommon
     {
         Tools::setifnotset($options['level'], 0);
         if ($options['level'] && Tools::nonzero($options['path'])) {
-            $category_id = array_keys($this->MyCMS->fetchAndReindex($sql = 'SELECT id FROM ' . TAB_PREFIX . 'category
+            $tempKeys = $this->MyCMS->fetchAndReindex($sql = 'SELECT id FROM ' . TAB_PREFIX . 'category
                 WHERE LEFT(path, ' . strlen($options['path']) . ')="' . $this->MyCMS->escapeSQL($options['path']) . '"
                 AND LENGTH(path) > ' . strlen($options['path']) . '
-                AND LENGTH(path) <= ' . (strlen($options['path']) + (int) $options['level'] * PATH_MODULE)));
+                AND LENGTH(path) <= ' . (strlen($options['path']) + (int) $options['level'] * PATH_MODULE));
+            Assert::notFalse($tempKeys);
+            $category_id = array_keys($tempKeys);
         } else {
             $category_id = [$category_id];
         }
@@ -242,6 +247,7 @@ class ProjectSpecific extends ProjectCommon
         }
         $result = '';
         foreach ($pages as $key => $value) {
+            Assert::isArray($value);
             $result .= '<div class="indent-' . (strlen($key) / PATH_MODULE - 1) . '">'
                 . '<a href="?category&amp;id=' . $value['id'] . '">' . Tools::h($value['category']) . '</a>'
                 . '</div>' . PHP_EOL;

@@ -243,7 +243,10 @@ class AdminProcess extends MyAdminProcess
         Tools::setifempty($options['table'], $agenda);
         Tools::setifempty($options['sort']);
         Tools::setifempty($options['path']);
-        $selectExpression = isset($options['path']) ?
+        Assert::string($options['table']);
+        Assert::string($options['sort']);
+        Assert::string($options['path']);
+        $selectExpression = (isset($options['path']) && is_string($options['path'])) ?
             'CONCAT(REPEAT("… ",LENGTH(' . $this->MyCMS->dbms->escapeDbIdentifier($options['path']) . ') / '
             . PATH_MODULE . ' - 1),' . $options['table'] . '_' . DEFAULT_LANGUAGE . ')' :
             (

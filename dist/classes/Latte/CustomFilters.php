@@ -6,6 +6,7 @@ use GodsDev\Tools\Tools;
 //use GodsDev\mycmsprojectnamespace\ProjectSpecific;
 //use GodsDev\mycmsprojectnamespace\Template;
 use GodsDev\MyCMS\MyCMS;
+use Webmozart\Assert\Assert;
 
 /**
  * Custom project-specific filters for Latte.
@@ -44,7 +45,9 @@ class CustomFilters
           return ProjectSpecific::$filter();
           } else */
         if (method_exists(__CLASS__, $filter)) {
-            return call_user_func_array([__CLASS__, $filter], $args);
+            $tempCallable = [__CLASS__, $filter];
+            Assert::isCallable($tempCallable);
+            return call_user_func_array($tempCallable, $args);
         }
     }
 

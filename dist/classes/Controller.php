@@ -190,7 +190,8 @@ class Controller extends MyController
                     . ' AND name_' . $this->language . ' NOT LIKE ""' // hide product language variants with empty title
                     . ' ORDER BY sort ASC')
                 );
-                $this->MyCMS->context['totalRows'] = count($this->MyCMS->context['list']);
+                $this->MyCMS->context['totalRows'] = ($this->MyCMS->context['list'] === false) ? 0 :
+                    count($this->MyCMS->context['list']);
                 return true;
             case 'item-1':
                 $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 1';
@@ -248,6 +249,7 @@ class Controller extends MyController
                 return true;
             case 'product':
                 Assert::keyExists($this->get, 'id', 'product MUST be identified by id');
+                Assert::scalar($this->get['id']);
                 $this->MyCMS->context['product'] = $this->projectSpecific->getProduct((int) $this->get['id']);
                 if (is_null($this->MyCMS->context['product'])) {
                     $this->MyCMS->template = self::TEMPLATE_NOT_FOUND;
@@ -262,9 +264,10 @@ class Controller extends MyController
                     FILTER_VALIDATE_INT,
                     ['default' => 0, 'min_range' => 0, 'max_range' => 1e9]
                 ) : 0;
+                Assert::string($this->get['search']);
                 $this->MyCMS->context['results'] = $this->projectSpecific->searchResults(
                     $this->get['search'],
-                    $this->MyCMS->context['offset'],
+                    (int) $this->MyCMS->context['offset'],
                     $this->MyCMS->context['totalRows']
                 );
                 //@todo ošetřit empty result
