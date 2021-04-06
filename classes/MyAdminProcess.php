@@ -7,6 +7,7 @@ use GodsDev\MyCMS\MyCommon;
 use GodsDev\MyCMS\MyTableAdmin;
 use Tracy\Debugger;
 use Tracy\ILogger;
+use Webmozart\Assert\Assert;
 
 /**
  * Class to process standard operations in MyCMS
@@ -125,6 +126,7 @@ class MyAdminProcess extends MyCommon
                 $tabs = array_values($tabs);
                 if ($admin['admin'] == $_SESSION['user']) {
                     if ($new) {
+                        Assert::scalar($post['id']);
                         $tabs [] = [
                             'table' => $post['table'],
                             'id' => (int) $post['id'],

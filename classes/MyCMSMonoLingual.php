@@ -23,7 +23,7 @@ class MyCMSMonoLingual
 
     /**
      * database management system
-     * @var \GodsDev\MyCMS\LogMysqli
+     * @var LogMysqli
      */
     public $dbms = null;
 
@@ -143,7 +143,7 @@ class MyCMSMonoLingual
      * Latte initialization & Mark-up output
      *
      * @param string $dirTemplateCache
-     * @param string $customFilters
+     * @param callable $customFilters
      * @param array<mixed> $params
      * @return void
      */
