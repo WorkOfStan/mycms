@@ -75,7 +75,7 @@ jobs:
         #maybe not needed?#composer update --prefer-dist --no-progress
         composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
         #todo if above ok, then update also library+app
-        phpstan analyse --no-interaction --no-progress .
+        phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
         cd ..
 
     - name: "PHPStan (library + app)"
