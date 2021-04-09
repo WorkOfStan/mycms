@@ -612,11 +612,13 @@ class MyTableAdmin extends MyTableLister
         if ($sql && isset($command)) {
             $sql = $command . ' ' . Tools::escapeDbIdentifier($this->table) . ' SET ' . mb_substr($sql, 1) . Tools::wrap($command == 'UPDATE' ? mb_substr($where, 5) : '', ' WHERE ') . ($command == 'UPDATE' ? ' LIMIT 1' : '');
             //@todo add message when UPDATE didn't change anything
-            if ($this->resolveSQL(
-                $sql,
-                $messageSuccess ?: $this->translate('Record saved.'),
-                $messageError ?: $this->translate('Could not save the record.') . ' #%errno%: %error%'
-            )) {
+            if (
+                $this->resolveSQL(
+                    $sql,
+                    $messageSuccess ?: $this->translate('Record saved.'),
+                    $messageError ?: $this->translate('Could not save the record.') . ' #%errno%: %error%'
+                )
+            ) {
                 return true;
             } else {
                 //@todo if unsuccessful, store data being saved to session

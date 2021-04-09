@@ -87,7 +87,8 @@ class ProjectSpecific extends ProjectCommon
                 . ' co.perex_' . $options['language'] . ' AS perex,'
                 . ' co.description_' . $options['language'] . ' AS description '
                 . ' FROM ' . TAB_PREFIX . 'content co LEFT JOIN ' . TAB_PREFIX . 'category ca ON co.category_id=ca.id '
-                // TODO Parameter #1 $string of method GodsDev\MyCMS\MyCMSMonoLingual::escapeSQL() expects string, string|null given.
+                // TODO Parameter #1 $string of method GodsDev\MyCMS\MyCMSMonoLingual::escapeSQL() expects string,
+                //  string|null given.
                 . ' WHERE co.active="1"' . Tools::wrap($this->MyCMS->escapeSQL($code), ' AND co.code="', '"')
                 . Tools::wrap(intval($id), ' AND co.id=') . ' LIMIT 1');
             if ($result) {
@@ -134,7 +135,8 @@ class ProjectSpecific extends ProjectCommon
             . ' content_' . $options['language'] . ' AS description'
             . ' FROM ' . TAB_PREFIX . 'category WHERE active="1"'
             . Tools::wrap(
-                // TODO Parameter #1 $string of method GodsDev\MyCMS\MyCMSMonoLingual::escapeSQL() expects string, string|null given.
+                // TODO Parameter #1 $string of method GodsDev\MyCMS\MyCMSMonoLingual::escapeSQL() expects string,
+                //  string|null given.
                 $this->MyCMS->escapeSQL($code),
                 ' AND code="',
                 '"'

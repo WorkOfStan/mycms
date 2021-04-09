@@ -552,10 +552,12 @@ class MyAdminProcess extends MyCommon
                 }
                 Assert::string($post['subfolder']);
                 Assert::string($post['wildcard']);
-                foreach (glob(
-                    DIR_ASSETS . $post['subfolder'] . '/' . (isset($post['wildcard']) ? $post['wildcard'] : '*.*'),
-                    isset($post['wildcard']) ? GLOB_BRACE : 0
-                ) as $file) {
+                foreach (
+                    glob(
+                        DIR_ASSETS . $post['subfolder'] . '/' . (isset($post['wildcard']) ? $post['wildcard'] : '*.*'),
+                        isset($post['wildcard']) ? GLOB_BRACE : 0
+                    ) as $file
+                ) {
                     if (is_file($file)) {
                         $pathinfo = pathinfo($file);
                         $entry = [
