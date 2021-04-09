@@ -172,7 +172,9 @@ class MyController extends MyCommon
     public function run()
     {
         $this->verboseBarDump($this->language, 'Language on controller start');
+        Assert::string($this->result['template']);
         $this->MyCMS->template = $this->result['template'];
+        Assert::isArray($this->result['context']);
         $this->MyCMS->context = $this->result['context'];
 
         $options = ['REQUEST_URI' => $this->requestUri,];

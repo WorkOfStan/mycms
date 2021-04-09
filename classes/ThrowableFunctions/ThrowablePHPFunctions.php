@@ -41,6 +41,40 @@ function throwOnNull($result)
 
 /**
  *
+ * @param string $filename
+ * @return int
+ */
+function filemtime($filename)
+{
+    return throwOnFalse(\filemtime($filename));
+}
+
+
+/**
+ *
+ * @param string $pattern
+ * @param int $flags
+ * @return string[]
+ */
+function glob($pattern, $flags = 0)
+{
+    return throwOnFalse(\glob($pattern, $flags));
+}
+
+/**
+ *
+ * @param mixed $value
+ * @param int $flags
+ * @param int $depth
+ * @return string
+ */
+function json_encode($value, $flags = 0, $depth = 512)
+{
+    return throwOnFalse(\json_encode($value, $flags, $depth));
+}
+
+/**
+ *
  * @param string $pattern
  * @param string $replacement
  * @param string $string

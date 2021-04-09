@@ -9,6 +9,7 @@ use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use Tracy\ILogger;
 
+use function GodsDev\MyCMS\ThrowableFunctions\glob;
 use function GodsDev\MyCMS\ThrowableFunctions\preg_replaceString;
 
 /**
@@ -820,7 +821,6 @@ class MyAdmin extends MyCommon
                 . $this->outputAgendas() . '</nav>' . PHP_EOL;
         }
         $output .= '<main class="ml-3 ml-sm-auto col-md-9 pt-3" role="main" id="admin-main">'
-            // TODO will be fixed in next Tools version: fix Tools::showMessages void or array to always return string
             . Tools::showMessages(false);
         foreach (glob(DIR_ASSETS . '*', GLOB_ONLYDIR) as $value) {
             $this->ASSETS_SUBFOLDERS [] = substr($value, strlen(DIR_ASSETS));

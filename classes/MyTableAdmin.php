@@ -3,6 +3,7 @@
 namespace GodsDev\MyCMS;
 
 use GodsDev\Tools\Tools;
+use Webmozart\Assert\Assert;
 
 /**
  * This class facilitates administration of a database table
@@ -77,7 +78,7 @@ class MyTableAdmin extends MyTableLister
             foreach ($tabs as $tabKey => $tab) {
                 $tmp = Tools::webalize($this->table . '-' . $tabKey);
                 $output .= '<a class="nav-item nav-link' . ($tabKey === 0 ? ' active' : '') . '" id="nav-' . $tmp . '" data-toggle="tab" href="#tab-' . $tmp . '" role="tab" aria-controls="nav-profile" aria-selected="' . ($tabKey === 0 ? 'true' : 'false') . '">'
-                    . ($tabKey === 0 ? '<span class="glyphicon glyphicon-list fa fa-list" aria-hidden="true"></span>' : Tools::h($tabKey)) . '</a>' . PHP_EOL;
+                    . ($tabKey === 0 ? '<span class="glyphicon glyphicon-list fa fa-list" aria-hidden="true"></span>' : Tools::h((string) $tabKey)) . '</a>' . PHP_EOL;
             }
             $output .= '</nav>' . PHP_EOL . '<div class="tab-content">';
         }
@@ -169,10 +170,10 @@ class MyTableAdmin extends MyTableLister
             $input = $custom;
             $field['type'] = null;
         }
-        $comment = json_decode(isset($field['comment']) ? $field['comment'] : '{}', true);
+        $comment = json_decode(isset($field['comment']) ? (string) $field['comment'] : '{}', true);
         Tools::setifnull($comment['display']);
         if (!is_null($field['type']) && $comment['display'] == 'option') {
-            $query = $this->dbms->query($sql = 'SELECT DISTINCT ' . Tools::escapeDbIdentifier($key)
+            $query = $this->dbms->queryStrictObject($sql = 'SELECT DISTINCT ' . Tools::escapeDbIdentifier($key)
                 . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' ORDER BY ' . Tools::escapeDbIdentifier($key) . ' LIMIT ' . $this->DEFAULTS['MAXSELECTSIZE']);
             $input = '<select name="fields[' . Tools::h($key) . ']" id="' . Tools::h($key . $this->rand) . '" class="form-control d-inline-block w-initial"'
                 . (isset($comment['display-own']) && $comment['display-own'] ? ' onchange="$(\'#' . Tools::h($key . $this->rand) . '_\').val(null)"' : '') . '>'
@@ -201,6 +202,7 @@ class MyTableAdmin extends MyTableLister
             $field['type'] = null;
         }
         if (!is_null($field['type']) && Tools::set($comment['edit'], false) == 'json') {
+            Assert::string($value);
             $json = json_decode($value, true) ?: (Tools::among($value, '', '[]', '{}') ? [] : $value);
             $output .= '<div class="input-expanded">' . Tools::htmlInput($key . EXPAND_INFIX, '', 1, 'hidden');
             if (!is_array($json) && isset($comment['subfields']) && is_array($comment['subfields'])) {
@@ -217,6 +219,7 @@ class MyTableAdmin extends MyTableLister
                 $output .= '</table>';
             } else {
                 // TODO ask CRS2 if replacing #3 $cols and #4 $rows false,false by 60,5 as int is expected is the right correction
+                Assert::string($field['type']);
                 $output .= Tools::htmlTextarea("fields[$key]", $value, 60, 5, [
                         'id' => $key . $this->rand, 'data-maxlength' => $field['size'],
                         'class' => 'form-control type-' . Tools::webalize($field['type']) . ($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : '')
@@ -228,6 +231,8 @@ class MyTableAdmin extends MyTableLister
             $field['type'] = null;
         }
         if (!is_null($field['type']) && isset($comment['foreign-table'], $comment['foreign-column']) && $comment['foreign-table'] && $comment['foreign-column']) {
+            Assert::isArray($input);
+            Assert::keyExists($input, 'id');
             $output .= $this->outputForeignId(
                 "fields[$key]",
                 'SELECT id,' . Tools::escapeDbIdentifier($comment['foreign-column']) . ' FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $comment['foreign-table']),
@@ -244,6 +249,7 @@ class MyTableAdmin extends MyTableLister
             case 'mediumint':
             case 'bigint':
             case 'year':
+                Assert::isArray($input);
                 $input['type'] = 'number';
                 $input['step'] = 1;
                 $input['class'] = 'form-control';
@@ -254,9 +260,11 @@ class MyTableAdmin extends MyTableLister
                 }
                 break;
             case 'date':
+                Assert::isArray($input);
                 $input['class'] = 'form-control input-date';
                 break;
             case 'time':
+                Assert::isArray($input);
                 $input['step'] = 1;
                 $input['class'] = 'form-control input-time';
                 break;
@@ -264,13 +272,16 @@ class MyTableAdmin extends MyTableLister
             case 'float':
             case 'double':
                 $value = (float) $value;
+                Assert::isArray($input);
                 $input['class'] = 'form-control text-right';
                 break;
             case 'datetime':
             case 'timestamp':
+                //Assert::isArray($value); // TODO explore Call to static method Webmozart\Assert\Assert::isArray() with bool|float|int|string will always evaluate to false.
                 if (isset($value[10]) && $value[10] == ' ') {
                     $value[10] = 'T';
                 }
+                Assert::isArray($input);
                 $input['type'] = 'datetime-local';
                 $input['step'] = 1;
                 $input['class'] = 'form-control input-datetime';
@@ -278,11 +289,13 @@ class MyTableAdmin extends MyTableLister
                     . '<span class="input-group-btn"><button class="btn btn-secondary btn-fill-now" type="button" title="' . $this->translate('Now') . '"><i class="glyphicon glyphicon-time fa fa-clock-o fa-clock" aria-hidden="true"></i></button></span></div>';
                 break;
             case 'bit':
+                Assert::isArray($input);
                 $input['type'] = 'checkbox';
                 $input['step'] = 1;
                 $input['checked'] = ($value ? 'checked' : null);
                 break;
             case 'enum':
+                Assert::string($field['size']); // TODO explore if type casting to string shouldn't be rather used
                 $choices = $this->dbms->decodeChoiceOptions($field['size']);
                 $input = [];
                 foreach ($choices as $k => $v) {
@@ -306,8 +319,10 @@ class MyTableAdmin extends MyTableLister
                 $input = ($options['layout-row'] ? '<br>' : '') . implode(', ', $input) . '<br>';
                 break;
             case 'set':
+                Assert::string($field['size']); // TODO explore if type casting to string shouldn't be rather used
                 $choices = $this->dbms->decodeSetOptions($field['size']);
                 $tmp = [];
+                Assert::string($value);
                 $value = explode(',', $value);
                 foreach ($choices as $k => $v) {
                     $tmp[$k] = Tools::htmlInput(
@@ -336,12 +351,10 @@ class MyTableAdmin extends MyTableLister
             case 'blob':
             case 'longblob':
             case 'binary':
-                if (preg_match('~(^\pC)*~i', $value)) {
-                    $input = '<tt>' . Tools::ifempty(Tools::shortify($value, 100), '<i class="insipid">' . $this->translate('empty') . '</i>') . '</tt><br />'; //@todo constant --> parameter
-                } else {
-                    $input = '<a href="#" class="download-blob d-block" data-table="' . urlencode($this->table) . '" data-column="' . urlencode($key) . '" '
-                        . 'target="_blank" >' . $this->translate('Download') . '</a>' . PHP_EOL;
-                }
+                Assert::string($value);
+                $input = preg_match('~(^\pC)*~i', $value) ? '<tt>' . Tools::ifempty(Tools::shortify($value, 100), '<i class="insipid">' . $this->translate('empty') . '</i>') . '</tt><br />' : //@todo constant --> parameter
+                    '<a href="#" class="download-blob d-block" data-table="' . urlencode($this->table) . '" data-column="' . urlencode($key) . '" '
+                    . 'target="_blank" >' . $this->translate('Download') . '</a>' . PHP_EOL;
                 break;
             case null:
                 break;
@@ -349,6 +362,8 @@ class MyTableAdmin extends MyTableLister
                 if (Tools::among($field['type'], 'char', 'varchar') && ($field['size'] < 256 || Tools::set($comment['edit'], false) == 'input') && Tools::set($comment['edit'], false) != 'textarea') {
                     break;
                 }
+                Assert::string($value);
+                Assert::string($field['type']);
                 $input = '<div class="TableAdminTextarea">'
                     // TODO ask CRS2 if replacing #3 $cols and #4 $rows false,false by 60,5 as int is expected is the right correction
                     . Tools::htmlTextarea(
@@ -401,7 +416,9 @@ class MyTableAdmin extends MyTableLister
             . ' WHERE FIELD="' . $this->escapeSQL($name['column']) . '"'
         );
         if ($module && $module !== true) {
-            $module = json_decode($module->fetch_assoc()['Comment'], true);
+            $tempArr = $module->fetch_assoc();
+            Assert::isArray($tempArr);
+            $module = json_decode($tempArr['Comment'], true);
             $module = isset($module['module']) && $module['module'] ? $module['module'] : 10;
         } else {
             $module = 10;
@@ -410,9 +427,9 @@ class MyTableAdmin extends MyTableLister
             . '" class="' . Tools::h(isset($options['class']) ? $options['class'] : '')
             . '" id="' . Tools::h(isset($options['id']) ? $options['id'] : '') . '">'
             . Tools::htmlOption('', $this->translate('--choose--'));
-        $query = $this->dbms->query('SELECT id,path,' . Tools::escapeDbIdentifier($name['column']) . ' AS category_
+        $query = $this->dbms->queryStrictObject('SELECT id,path,' . Tools::escapeDbIdentifier($name['column']) . ' AS category_
             FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name['table']) . ' ORDER BY path');
-        if (!$query) {
+        if (empty($query)) { // for empty result
             return $result . '</select>';
         }
         $options['exclude'] = isset($options['exclude']) ? $options['exclude'] : [];
@@ -439,8 +456,10 @@ class MyTableAdmin extends MyTableLister
     {
         $result = '';
         if ($lastGroup != $group) {
-            $result .= ($lastGroup === false ? '' : '</optgroup>') . '<optgroup label="' . Tools::h($lastGroup = $group) . '" />';
+            $result .= ($lastGroup === false ? '' : '</optgroup>')
+                . '<optgroup label="' . Tools::h($lastGroup = $group) . '" />';
         }
+        Assert::isArray($options['exclude']);
         if (!in_array($value, $options['exclude'])) {
             $result .= Tools::htmlOption($value, $text, $default);
         }
@@ -466,6 +485,8 @@ class MyTableAdmin extends MyTableLister
      */
     public function outputForeignId($field, $values, $default = null, $options = [])
     {
+        Assert::string($options['class']);
+        Assert::string($options['id']);
         $result = '<select name="' . Tools::h($field)
             . '" class="' . Tools::h(isset($options['class']) ? $options['class'] : '')
             . '" id="' . Tools::h(isset($options['id']) ? $options['id'] : '') . '">'
@@ -591,7 +612,11 @@ class MyTableAdmin extends MyTableLister
         if ($sql && isset($command)) {
             $sql = $command . ' ' . Tools::escapeDbIdentifier($this->table) . ' SET ' . mb_substr($sql, 1) . Tools::wrap($command == 'UPDATE' ? mb_substr($where, 5) : '', ' WHERE ') . ($command == 'UPDATE' ? ' LIMIT 1' : '');
             //@todo add message when UPDATE didn't change anything
-            if ($this->resolveSQL($sql, $messageSuccess ?: $this->translate('Record saved.'), $messageError ?: $this->translate('Could not save the record.') . ' #%errno%: %error%')) {
+            if ($this->resolveSQL(
+                $sql,
+                $messageSuccess ?: $this->translate('Record saved.'),
+                $messageError ?: $this->translate('Could not save the record.') . ' #%errno%: %error%'
+            )) {
                 return true;
             } else {
                 //@todo if unsuccessful, store data being saved to session
@@ -616,14 +641,18 @@ class MyTableAdmin extends MyTableLister
         if (!$this->authorized()) {
             return false;
         }
-        $sql = [];
         if ($this->authorized() && isset($_GET['where'], $_GET['table']) && $_GET['table'] && is_array($_GET['where']) && count($_GET['where'])) {
+            $sql = [];
             foreach ($_GET['where'] as $key => $value) {
                 $sql [] = Tools::escapeDbIdentifier($key) . '="' . $this->escapeSQL($value) . '"';
             }
-            $sql = 'DELETE FROM ' . Tools::escapeDbIdentifier($_GET['table']) . ' WHERE ' . implode(' AND ', $sql);
+            return $this->resolveSQL(
+                'DELETE FROM ' . Tools::escapeDbIdentifier($_GET['table']) . ' WHERE ' . implode(' AND ', $sql),
+                $messageSuccess ?: $this->translate('Record deleted.'),
+                $messageError ?: $this->translate('Could not delete the record.') . '#%errno%: %error%'
+            );
         }
-        return $this->resolveSQL($sql, $messageSuccess ?: $this->translate('Record deleted.'), $messageError ?: $this->translate('Could not delete the record.') . '#%errno%: %error%');
+        return false;
     }
 
     /**

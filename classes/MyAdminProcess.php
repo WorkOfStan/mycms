@@ -9,6 +9,10 @@ use Tracy\Debugger;
 use Tracy\ILogger;
 use Webmozart\Assert\Assert;
 
+use function GodsDev\MyCMS\ThrowableFunctions\filemtime;
+use function GodsDev\MyCMS\ThrowableFunctions\glob;
+use function GodsDev\MyCMS\ThrowableFunctions\json_encode;
+
 /**
  * Class to process standard operations in MyCMS
  * dependencies:
@@ -153,6 +157,7 @@ class MyAdminProcess extends MyCommon
     public function processClone(&$post)
     {
         if (isset($post['clone'], $post['database-table'])) {
+            Assert::isArray($post['check']);
             if ((isset($post['check']) && count($post['check'])) || Tools::set($post['total-rows'])) {
                 if (Tools::set($post['total-rows'])) {
                     $sql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $_GET);
@@ -187,12 +192,14 @@ class MyAdminProcess extends MyCommon
     {
         //Debugger::barDump([$post, $get, $_GET], 'processExport(&$post, $get)');
         if (isset($post['table-export'], $post['database-table'])) {
+            Assert::isArray($post['check']);
             if ((isset($post['check']) && count($post['check'])) || Tools::set($post['total-rows'])) {
                 if (Tools::set($post['total-rows'])) { //export whole resultset (regard possible $get limitations)
                     $sql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $get);
                     $sql = $sql['select'];
                 //Debugger::barDump($sql, 'SQL array');
                 } else { //export only checked rows
+                    Assert::string($post['database-table']);
                     $sql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $get);
                     $sql = $sql['select'] . ' WHERE `' . $post['database-table'] . '`.`id` IN (' .
                         implode(
@@ -207,7 +214,9 @@ class MyAdminProcess extends MyCommon
                         ) . ')';
                     Debugger::barDump($sql, 'SQL array');
                 }
+                Assert::string($sql);
                 if ($sql) {
+                    Assert::string($post['database-table']);
                     $post['database-table'] = $this->tableAdmin->escapeDbIdentifier($post['database-table']);
                     $output = $this->MyCMS->fetchSingle('SHOW CREATE TABLE ' . $post['database-table']);
                     $output = "-- " . date('Y-m-d H:i:s') . "\n"
@@ -261,6 +270,7 @@ class MyAdminProcess extends MyCommon
                 'success' => false,
                 'messages' => ''
             ];
+            Assert::string($post['subfolder']);
             if (is_dir(DIR_ASSETS . $post['subfolder']) && is_array($post['delete-files'])) {
                 foreach ($post['delete-files'] as $value) {
                     if (unlink(DIR_ASSETS . $post['subfolder'] . "/$value")) {
@@ -290,6 +300,8 @@ class MyAdminProcess extends MyCommon
     public function processFilePack(&$post)
     {
         if (isset($post['subfolder'], $post['pack-files'], $post['archive'])) {
+            Assert::string($post['subfolder']);
+            Assert::string($post['archive']);
             $result = [
                 'processed-files' => 0,
                 'success' => false,
@@ -343,9 +355,13 @@ class MyAdminProcess extends MyCommon
                 'success' => false,
                 'messages' => ''
             ];
+            Assert::string($post['file_rename']);
             $post['file_rename'] = pathinfo($post['file_rename'], PATHINFO_BASENAME);
-            $path = DIR_ASSETS . strtr($post['subfolder'], '../', '') . '/'; // @todo safety
+            Assert::string($post['subfolder']);
+            $path = DIR_ASSETS . strtr($post['subfolder'], '../', '') . '/';
+            Assert::string($post['new_folder']);
             $newpath = DIR_ASSETS . strtr($post['new_folder'], '../', '') . '/';
+            Assert::string($post['old_name']);
             if (!is_file($path . $post['old_name'])) {
                 $result['messages'] = $this->tableAdmin->translate('File does not exist.');
             } elseif (pathinfo($post['old_name'], PATHINFO_EXTENSION) != pathinfo($post['file_rename'], PATHINFO_EXTENSION)) {
@@ -392,11 +408,14 @@ class MyAdminProcess extends MyCommon
                 'processed-files' => 0
             ];
             if (class_exists('\ZipArchive')) {
+                Assert::string($post['file_unpack']);
                 $post['file_unpack'] = pathinfo($post['file_unpack'], PATHINFO_BASENAME);
+                Assert::string($post['subfolder']);
                 $path = DIR_ASSETS . $post['subfolder'] . '/';
                 $ZipArchive = new \ZipArchive();
                 if ($ZipArchive->open($path . $post['file_unpack']) === true) {
                     // extract it to the path we determined above
+                    Assert::string($post['new_folder']);
                     $result['success'] = $ZipArchive->extractTo(DIR_ASSETS . $post['new_folder'] . '/');
                     $result['processed-files'] = $ZipArchive->numFiles;
                     $result['messages'] = $result['success'] ? $this->tableAdmin->translate('Archive unpacked.') . ' ' . $this->tableAdmin->translate('Affected files: ') . $ZipArchive->numFiles . '.' : $this->tableAdmin->translate('Error occured unpacking the archive.');
@@ -424,6 +443,7 @@ class MyAdminProcess extends MyCommon
     {
         if (isset($post['upload-media'], $post['subfolder'])) {
             Debugger::barDump($_FILES, '_FILES');
+            Assert::string($post['subfolder']);
             if (!file_exists(DIR_ASSETS . $post['subfolder'])) {
                 Tools::addMessage('error', $this->tableAdmin->translate("The subfolder doesn't exist."));
                 $this->redir();
@@ -462,10 +482,13 @@ class MyAdminProcess extends MyCommon
     public function processLogin(&$post)
     {
         if (isset($post['user'], $post['password'], $post['login'])) {
+            Assert::string($post['user']);
+            Assert::scalar($post['token']);
             if (!isset($post['token']) || !$this->MyCMS->csrfCheck((int) $post['token'])) {
                 // let it fall to 'Error occured logging You in.'
             } elseif ($row = $this->MyCMS->fetchSingle('SELECT * FROM ' . TAB_PREFIX . 'admin WHERE admin="' . $this->MyCMS->escapeSQL($post['user']) . '"')) {
                 if ($row['active'] == '1' && $row['password_hashed'] == sha1($post['password'] . $row['salt'])) {
+                    Assert::string($post['password']);
                     $_SESSION['user'] = $post['user'];
                     $_SESSION['rights'] = $row['rights'];
                     $this->MyCMS->logger->info("Admin {$_SESSION['user']} logged in.");
@@ -515,6 +538,7 @@ class MyAdminProcess extends MyCommon
         static $IMAGE_EXTENSIONS = ['jpg', 'gif', 'png', 'jpeg', 'bmp', 'wbmp', 'webp', 'xbm', 'xpm', 'swf', 'tif', 'tiff', 'jpc', 'jp2', 'jpx', 'jb2', 'swc', 'iff', 'ico']; //file extensions the getimagesize() or exif_read_data() can read
         static $IMAGE_TYPE = ['unknown', 'GIF', 'JPEG', 'PNG', 'SWF', 'PSD', 'BMP', 'TIFF_II', 'TIFF_MM', 'JPC', 'JP2', 'JPX', 'JB2', 'SWC', 'IFF', 'WBMP', 'XBM', 'ICO', 'COUNT'];
         if (isset($post['media-files'], $post['subfolder'])) {
+            Assert::string($post['subfolder']);
             $result = [
                 'subfolder' => DIR_ASSETS . $post['subfolder'],
                 'data' => [],
@@ -526,7 +550,12 @@ class MyAdminProcess extends MyCommon
                 if ($post['info'] && class_exists('\ZipArchive')) {
                     $ZipArchive = new \ZipArchive();
                 }
-                foreach (glob(DIR_ASSETS . $post['subfolder'] . '/' . (isset($post['wildcard']) ? $post['wildcard'] : '*.*'), isset($post['wildcard']) ? GLOB_BRACE : 0) as $file) {
+                Assert::string($post['subfolder']);
+                Assert::string($post['wildcard']);
+                foreach (glob(
+                    DIR_ASSETS . $post['subfolder'] . '/' . (isset($post['wildcard']) ? $post['wildcard'] : '*.*'),
+                    isset($post['wildcard']) ? GLOB_BRACE : 0
+                ) as $file) {
                     if (is_file($file)) {
                         $pathinfo = pathinfo($file);
                         $entry = [
@@ -537,6 +566,7 @@ class MyAdminProcess extends MyCommon
                             'info' => ''
                         ];
                         if ($post['info']) {
+                            Assert::keyExists($pathinfo, 'extension');
                             if (in_array($pathinfo['extension'], $IMAGE_EXTENSIONS)) {
                                 $size = getimagesize($file);
                                 $entry['info'] .= $size ?
@@ -636,9 +666,10 @@ class MyAdminProcess extends MyCommon
     public function processUserCreate(&$post)
     {
         if (isset($post['create-user'], $post['user'], $post['password'], $post['retype-password']) && $post['user'] && $post['password'] && $post['retype-password']) {
+            Assert::string($post['user']);
             $salt = mt_rand((int) 1e8, (int) 1e9);
             Tools::resolve(
-                $this->MyCMS->dbms->query(
+                $this->MyCMS->dbms->queryStrictBool(
                     'INSERT INTO ' . TAB_PREFIX . 'admin SET admin="' . $this->MyCMS->escapeSQL($post['user']) . '", password_hashed="' . $this->MyCMS->escapeSQL(sha1($post['password'] . $salt)) . '", salt=' . $salt . ', rights=2',
                     1,
                     false
@@ -660,6 +691,7 @@ class MyAdminProcess extends MyCommon
     public function processUserDelete(&$post)
     {
         if (isset($post['delete-user'])) {
+            Assert::string($post['delete-user']);
             Tools::resolve(
                 $this->MyCMS->dbms->queryStrictBool('DELETE FROM ' . TAB_PREFIX . 'admin WHERE admin="' . $this->MyCMS->escapeSQL($post['delete-user']) . '" LIMIT 1'),
                 $this->tableAdmin->translate('User deleted.'),

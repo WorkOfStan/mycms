@@ -256,7 +256,7 @@ class MyTableLister
             unset($filterColumn[0]);
             foreach ($vars['col'] as $key => $value) {
                 if (isset($filterColumn[$value], $vars['val'][$key])) {
-                    $id = $this->escapeDbIdentifier($this->table) . '.' . $this->escapeDbIdentifier($filterColumn[$value]);
+                    $id = $this->escapeDbIdentifier($this->table) . '.' . $this->escapeDbIdentifier((string) $filterColumn[$value]);
                     $val = $vars['val'][$key];
                     $op = $this->WHERE_OPS[$vars['op'][$key]];
                     $result['where'] .= ' AND ';
@@ -423,14 +423,13 @@ class MyTableLister
         }
         $output .= $this->viewInputs($options);
         if ($options['total-rows']) {
+            Assert::integer($sql['limit']);
             $output .= $this->viewTable($query, $columns, $options)
                 . $this->pagination($sql['limit'], $options['total-rows'], null, $options);
         }
-        if (!$options['total-rows'] && isset($_GET['col'])) {
-            $output .= '<p class="alert alert-danger"><small>' . $this->translate('No records found.') . '</small></p>';
-        } else {
-            $output .= '<p class="text-info"><small>' . $this->translate('Total rows: ') . $options['total-rows'] . '.</small></p>';
-        }
+        $output .= (!$options['total-rows'] && isset($_GET['col'])) ?
+            ('<p class="alert alert-danger"><small>' . $this->translate('No records found.') . '</small></p>') :
+            ('<p class="text-info"><small>' . $this->translate('Total rows: ') . $options['total-rows'] . '.</small></p>');
         if (isset($options['return-output']) && $options['return-output']) {
             return $output;
         }
@@ -563,6 +562,7 @@ class MyTableLister
                     $field = (array) $this->fields[$key];
                     $class = [];
                     if (isset($field['foreign_table'])) {
+                        Assert::integer($this->DEFAULTS['TEXTSIZE']);
                         $tmp = '<a href="?' . Tools::urlChange(['table' => $field['foreign_table'], 'where[id]' => $value]) . '" '
                             . 'title="' . Tools::h(mb_substr($row[$key . $this->DEFAULTS['FOREIGNLINK']], 0, $this->DEFAULTS['TEXTSIZE']) . (mb_strlen($row[$key . $this->DEFAULTS['FOREIGNLINK']]) > $this->DEFAULTS['TEXTSIZE'] ? '&hellip;' : '')) . '">'
                             . Tools::h($row[$key]) . '</a>';
@@ -764,29 +764,32 @@ class MyTableLister
      * @param string $sql SQL to execute
      * @param string $successMessage message in case of success
      * @param string $errorMessage message in case of an error
-     * @param mixed $noChangeMessage optional message in case of no affected change
+     * @param false|string $noChangeMessage optional message in case of no affected change
      *   false = use $successMessage
      *
-     * @return bool|null true for success, false for failure of the query;
-     *   if the query is empty return null (with no messages)
+     * @return bool true for success, false for failure of the query;
      */
     public function resolveSQL($sql, $successMessage, $errorMessage, $noChangeMessage = false)
     {
-        if (!$sql) {
-            return null;
+        Assert::string($sql);
+        if ($this->dbms->query($sql)) {
+            Tools::addMessage(
+                'success',
+                strtr(
+                    $this->dbms->affected_rows == 0 && $noChangeMessage !== false ? $noChangeMessage : $successMessage,
+                    [
+                        '%insertId%' => (preg_match('/^\s*INSERT\s/i', $sql)) ? $this->dbms->insert_id : '',
+                        '%affectedRows%' => $this->dbms->affected_rows
+                    ]
+                )
+            );
+            return true;
         }
-        if ($result = $this->dbms->query($sql)) {
-            $insertId = $affectedRows = '';
-            if (preg_match('/^\s*INSERT\s/i', $sql)) {
-                $insertId = $this->dbms->insert_id;
-            }
-            $affectedRows = $this->dbms->affected_rows;
-            $message = $affectedRows == 0 && $noChangeMessage !== false ? $noChangeMessage : $successMessage;
-            Tools::addMessage('success', strtr($message, ['%insertId%' => $insertId, '%affectedRows%' => $affectedRows]));
-        } else {
-            Tools::addMessage('error', strtr($errorMessage, ['%error%' => $this->dbms->error, '%errno%' => $this->dbms->errno]));
-        }
-        return $result;
+        Tools::addMessage(
+            'error',
+            strtr($errorMessage, ['%error%' => $this->dbms->error, '%errno%' => $this->dbms->errno])
+        );
+        return false;
     }
 
     /**
