@@ -2,7 +2,6 @@
 
 namespace GodsDev\mycmsprojectnamespace;
 
-use Exception;
 use GodsDev\MyCMS\LogMysqli;
 use GodsDev\MyCMS\MyTableAdmin;
 use GodsDev\Tools\Tools;
@@ -421,7 +420,6 @@ class TableAdmin extends MyTableAdmin
      * Custom deletion of a record
      *
      * @return bool - true = method was applied so don't proceed with the default, false = method wasn't applied
-     * @throws Exception if Path is not a string type
      */
     public function customDelete()
     {
@@ -448,9 +446,7 @@ class TableAdmin extends MyTableAdmin
                 $this->dbms->query('UPDATE ' . Tools::escapeDbIdentifier($_POST['table'])
                     . ' SET path = NULL WHERE id IN (' . implode(', ', array_keys($update)) . ')');
                 foreach ($update as $key => $value) {
-                    if (!is_string($value)) {
-                        throw new Exception('Path MUST be a string.');
-                    }
+                    Assert::string($value);
                     $this->dbms->query('UPDATE ' . Tools::escapeDbIdentifier($_POST['table'])
                         . ' SET path = "' . $this->dbms->escapeSQL($value) . '" WHERE id = ' . (int) $key);
                 }
