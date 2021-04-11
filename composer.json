@@ -8,7 +8,7 @@
         "tracy/tracy": "^2.4.10",
         "nette/utils": "^2.4.8|^3.2.2",
         "texy/texy": "^2.7.1",
-        "godsdev/tools": "dev-feature/fix-type-hint",
+        "godsdev/tools": "^0.3.8",
         "godsdev/backyard": "^3.2.10",
         "ext-session": "*",
         "ext-mbstring": "*"
@@ -38,7 +38,7 @@
         "issues": "https://github.com/GodsDev/mycms/issues",
         "source": "https://github.com/GodsDev/mycms"
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
             "GodsDev\\MyCMS\\": ["classes/"]
