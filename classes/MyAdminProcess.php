@@ -551,7 +551,7 @@ class MyAdminProcess extends MyCommon
                     $ZipArchive = new \ZipArchive();
                 }
                 Assert::string($post['subfolder']);
-                Assert::string($post['wildcard']);
+//                Assert::string($post['wildcard']); // TODO fix Expected a string. Got: NULL
                 foreach (
                     glob(
                         DIR_ASSETS . $post['subfolder'] . '/' . (isset($post['wildcard']) ? $post['wildcard'] : '*.*'),

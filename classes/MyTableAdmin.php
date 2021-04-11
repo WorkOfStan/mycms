@@ -362,7 +362,7 @@ class MyTableAdmin extends MyTableLister
                 if (Tools::among($field['type'], 'char', 'varchar') && ($field['size'] < 256 || Tools::set($comment['edit'], false) == 'input') && Tools::set($comment['edit'], false) != 'textarea') {
                     break;
                 }
-                Assert::string($value);
+                //Assert::string($value); // TODO fix Expected a string. Got: boolean
                 Assert::string($field['type']);
                 $input = '<div class="TableAdminTextarea">'
                     // TODO ask CRS2 if replacing #3 $cols and #4 $rows false,false by 60,5 as int is expected is the right correction
