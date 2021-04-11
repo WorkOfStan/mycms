@@ -240,25 +240,25 @@ class AdminProcess extends MyAdminProcess
         }
         /** @var array<string|array> $options array of agenda set in admin.php in $AGENDAS */
         $options = $this->agendas[$agenda];
-        Tools::setifempty($options['table'], $agenda);
+        $optionsTable = (isset($options['table']) && is_string($options['table'])) ?
+            ($options['table'] ?: $agenda) : $agenda;
         Tools::setifempty($options['sort']);
         Tools::setifempty($options['path']);
-        Assert::string($options['table']);
-        Assert::string($options['sort']);
-        Assert::string($options['path']);
-        $selectExpression = (isset($options['path']) && is_string($options['path'])) ?
-            'CONCAT(REPEAT("… ",LENGTH(' . $this->MyCMS->dbms->escapeDbIdentifier($options['path']) . ') / '
-            . PATH_MODULE . ' - 1),' . $options['table'] . '_' . DEFAULT_LANGUAGE . ')' :
-            (
-                isset($options['column']) ? (is_array($options['column']) ? ('CONCAT(' . implode(
-                    ",'|',",
-                    array_map([$this->MyCMS->dbms, 'escapeDbIdentifier'], $options['column'])
-                ) . ')') : $this->MyCMS->dbms->escapeDbIdentifier($options['column'])) :
-                $this->MyCMS->dbms->escapeDbIdentifier($options['table'] . '_' . DEFAULT_LANGUAGE)
-            );
+        if (isset($options['path']) && is_string($options['path'])) {
+            $selectExpression = 'CONCAT(REPEAT("… ",LENGTH('
+                . $this->MyCMS->dbms->escapeDbIdentifier($options['path']) . ') / ' . PATH_MODULE . ' - 1),'
+                . $optionsTable . '_' . DEFAULT_LANGUAGE . ')';
+        } else {
+            $selectExpression = isset($options['column']) ? (is_array($options['column']) ? ('CONCAT(' . implode(
+                ",'|',",
+                array_map([$this->MyCMS->dbms, 'escapeDbIdentifier'], $options['column'])
+            ) . ')') : $this->MyCMS->dbms->escapeDbIdentifier($options['column'])) :
+                $this->MyCMS->dbms->escapeDbIdentifier($optionsTable . '_' . DEFAULT_LANGUAGE);
+        }
+        Assert::nullOrString($options['sort']);
         $sql = 'SELECT id,' . $selectExpression . ' AS name'
             . Tools::wrap($options['sort'], ',', ' AS sort') . Tools::wrap($options['path'], ',', ' AS path')
-            . ' FROM ' . $this->MyCMS->dbms->escapeDbIdentifier(TAB_PREFIX . $options['table'])
+            . ' FROM ' . $this->MyCMS->dbms->escapeDbIdentifier(TAB_PREFIX . $optionsTable)
             . Tools::wrap(isset($options['where']) ? $options['where'] : '', ' WHERE ')
             . Tools::wrap(
                 $options['sort'] . ($options['sort'] && $options['path'] ? ',' : '') . $options['path'],
@@ -276,7 +276,7 @@ class AdminProcess extends MyAdminProcess
         // TODO does the next foreach have any impact on the returned value?
         foreach ($correctOrder as $key => $value) {
             $this->MyCMS->dbms->query('UPDATE `' . $this->MyCMS->dbms->escapeDbIdentifier(
-                TAB_PREFIX . $options['table']
+                TAB_PREFIX . $optionsTable
             ) . '` SET sort=' . (int) $value . ' WHERE id=' . (int) $key . ' LIMIT 1');
         }
         return $result;
