@@ -244,17 +244,18 @@ class AdminProcess extends MyAdminProcess
             ($options['table'] ?: $agenda) : $agenda;
         Tools::setifempty($options['sort']);
         Tools::setifempty($options['path']);
-        if (isset($options['path']) && is_string($options['path'])) {
-            $selectExpression = 'CONCAT(REPEAT("… ",LENGTH('
-                . $this->MyCMS->dbms->escapeDbIdentifier($options['path']) . ') / ' . PATH_MODULE . ' - 1),'
-                . $optionsTable . '_' . DEFAULT_LANGUAGE . ')';
-        } else {
-            $selectExpression = isset($options['column']) ? (is_array($options['column']) ? ('CONCAT(' . implode(
-                ",'|',",
-                array_map([$this->MyCMS->dbms, 'escapeDbIdentifier'], $options['column'])
-            ) . ')') : $this->MyCMS->dbms->escapeDbIdentifier($options['column'])) :
-                $this->MyCMS->dbms->escapeDbIdentifier($optionsTable . '_' . DEFAULT_LANGUAGE);
-        }
+        $selectExpression = (isset($options['path']) && is_string($options['path'])) ?
+            ('CONCAT(REPEAT("… ",LENGTH(' . $this->MyCMS->dbms->escapeDbIdentifier($options['path']) . ') / '
+            . PATH_MODULE . ' - 1),' . $optionsTable . '_' . DEFAULT_LANGUAGE . ')') :
+            (
+                isset($options['column']) ? (is_array($options['column']) ? (
+                    'CONCAT(' . implode(
+                        ",'|',",
+                        array_map([$this->MyCMS->dbms, 'escapeDbIdentifier'], $options['column'])
+                    ) . ')'
+                ) : $this->MyCMS->dbms->escapeDbIdentifier($options['column'])) :
+            $this->MyCMS->dbms->escapeDbIdentifier($optionsTable . '_' . DEFAULT_LANGUAGE)
+            );
         Assert::nullOrString($options['sort']);
         $sql = 'SELECT id,' . $selectExpression . ' AS name'
             . Tools::wrap($options['sort'], ',', ' AS sort') . Tools::wrap($options['path'], ',', ' AS path')
