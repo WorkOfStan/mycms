@@ -2,7 +2,10 @@
 
 namespace GodsDev\MyCMS;
 
+use Exception;
 use GodsDev\Backyard\BackyardMysqli;
+
+use function GodsDev\MyCMS\ThrowableFunctions\mb_eregi_replace;
 
 /**
  * class with logging specific to this application
@@ -60,7 +63,7 @@ class LogMysqli extends BackyardMysqli
      *   parameter $resultmode (int) of method mysqli::query()
      * @param bool $logQuery optional default logging of database changing statement can be (for security reasons)
      *     turned off by value false
-     * @return \mysqli_result|false
+     * @return bool|\mysqli_result<object>
      */
     public function query($sql, $errorLogOutput = 1, $logQuery = true)
     {
@@ -75,6 +78,56 @@ class LogMysqli extends BackyardMysqli
         }
         $this->sqlStatementsArray[] = $sql;
         return parent::query($sql, $errorLogOutput);
+    }
+
+    /**
+     * Logs SQL statement not starting with SELECT or SET. Throws exception in case response isn't \mysqli_result
+     *
+     * @param string $sql SQL to execute
+     * @param int $errorLogOutput optional default=1 turn-off=0
+     *   It is int in order to be compatible with
+     *   parameter $resultmode (int) of method mysqli::query()
+     * @param bool $logQuery optional default logging of database changing statement can be (for security reasons)
+     *     turned off by value false
+     * @return true
+     * @throws Exception if error indicated by `false` result or if result is \mysqli_result object
+     */
+    public function queryStrictBool($sql, $errorLogOutput = 1, $logQuery = true)
+    {
+        $result = $this->query($sql, $errorLogOutput, $logQuery);
+
+        if ($result === false) {
+            throw new Exception($this->errno . ': ' . $this->error);
+        }
+        if ($result === true) {
+            return true;
+        }
+        throw new Exception('Object answer on SQL statement (should have been true');
+    }
+
+    /**
+     * Logs SQL statement not starting with SELECT or SET. Throws exception in case response isn't `\mysqli_result`
+     *
+     * @param string $sql SQL to execute
+     * @param int $errorLogOutput optional default=1 turn-off=0
+     *   It is int in order to be compatible with
+     *   parameter $resultmode (int) of method mysqli::query()
+     * @param bool $logQuery optional default logging of database changing statement can be (for security reasons)
+     *     turned off by value false
+     * @return \mysqli_result<object>
+     * @throws Exception if error indicated by `false` result or if result is `true`
+     */
+    public function queryStrictObject($sql, $errorLogOutput = 1, $logQuery = true)
+    {
+        $result = $this->query($sql, $errorLogOutput, $logQuery);
+
+        if ($result === false) {
+            throw new Exception($this->errno . ': ' . $this->error);
+        }
+        if ($result === true) {
+            throw new Exception('Non-object answer on SQL statement (unexpectedly equals true)');
+        }
+        return $result;
     }
 
     /**
@@ -117,7 +170,7 @@ class LogMysqli extends BackyardMysqli
      *
      * @param string $list list of options (e.g. "enum('single','married','divorced')"
      *     or just "'single','married','divorced'")
-     * @return array
+     * @return array<string>
      */
     public function decodeChoiceOptions($list)
     {
@@ -138,7 +191,7 @@ class LogMysqli extends BackyardMysqli
      * Decode options in 'set' columns - specific to MySQL/MariaDb
      *
      * @param string $list list of options (e.g. ""
-     * @return array
+     * @return array<string>
      */
     public function decodeSetOptions($list)
     {
@@ -157,7 +210,7 @@ class LogMysqli extends BackyardMysqli
      * - specific to MySQL/MariaDb
      *
      * @param string $interval
-     * @result int 1=yes, 0=no, false=error
+     * @return int|false 1=yes, 0=no, false=error
      */
     public function checkIntervalFormat($interval)
     {
@@ -178,8 +231,8 @@ class LogMysqli extends BackyardMysqli
     /**
      * Return list of columns for use in an SQL statement
      *
-     * @param array $columns
-     * @param array $fields info about the columns like in MyTableLister->fields (optional)
+     * @param array<string> $columns
+     * @param array<array> $fields info about the columns like in MyTableLister->fields (optional)
      * @return string
      */
     public function listColumns(array $columns, array $fields = [])
@@ -219,11 +272,16 @@ class LogMysqli extends BackyardMysqli
      *
      * @param string $sql SQL to be executed
      * @return mixed first selected row (or its first column if only one column is selected), null on empty SELECT
-     * @throws \Exception on error
+     * @throws Exception when a database error occurs or when an SQL statement returns true.
      */
     public function fetchSingle($sql)
     {
-        if ($query = $this->query($sql)) {
+        $query = $this->query($sql);
+        if ($query === true) {
+            //return null;
+            throw new Exception('SQL statement resulting in \mysqli_result<object> expected. True received.');
+        }
+        if ($query) {
             $row = $query->fetch_assoc();
             if (is_array($row)) {
                 if (!count($row)) {
@@ -233,14 +291,14 @@ class LogMysqli extends BackyardMysqli
             }
             return null;
         }
-        throw new \Exception($this->errno . ': ' . $this->error);
+        throw new Exception($this->errno . ': ' . $this->error);
     }
 
     /**
      * Execute an SQL, fetch and return all resulting rows
      *
      * @param string $sql
-     * @return mixed array of associative arrays for each result row or empty array on error or no results
+     * @return array<array> array of associative arrays for each result row or empty array on error or no results
      */
     public function fetchAll($sql)
     {
@@ -265,13 +323,14 @@ class LogMysqli extends BackyardMysqli
      * Example: 'SELECT division_id,name,surname FROM employees' -->
      *     [1=>[[name=>'John',surname=>'Doe'], [name=>'Mary',surname=>'Saint']], 2=>[...]]
      *
-     * @param string $sql SQL to be executed
-     * @return array|false - either associative array, empty array on empty SELECT, or false on error
+     * @param string $sql SQL statement to be executed
+     * @return array<array|string>|false - either associative array, empty array on empty SELECT, or false on error
+     *   Error for this function is also an SQL statement that returns true.
      */
     public function fetchAndReindex($sql)
     {
         $query = $this->query($sql);
-        if (!$query) {
+        if (is_bool($query)) {
             return false;
         }
         $result = [];
@@ -304,7 +363,7 @@ class LogMysqli extends BackyardMysqli
      *     . ') VALUES (' . $this->values($data, 'values') . ')';
      * $sql = 'UPDATE employees SET ' . $this->values($data, 'pairs') . ' WHERE id=5';
      *
-     * @param array $data
+     * @param array<mixed> $data
      * @param string $format either "values" (default), "fields" or "pairs"
      *      or anything containing %value% for value and %column% for column name that gets replaced
      * @return string

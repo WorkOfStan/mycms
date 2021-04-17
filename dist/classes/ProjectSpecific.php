@@ -2,9 +2,12 @@
 
 namespace GodsDev\mycmsprojectnamespace;
 
+use Exception;
 use GodsDev\MyCMS\ProjectCommon;
 use GodsDev\Tools\Tools;
 use Webmozart\Assert\Assert;
+
+use function GodsDev\MyCMS\ThrowableFunctions\preg_replaceString;
 
 /**
  * functions specific to the project
@@ -26,14 +29,14 @@ class ProjectSpecific extends ProjectCommon
      * @param string $totalRows //TODO or?? mixed $totalRows first selected row
      *     (or its first column if only one column is selected),
      *     null on empty SELECT, or false on error
-     * @return array search result
+     * @return array<array> search result
      */
     public function searchResults($text, $offset = 0, &$totalRows = null)
     {
         $result = [];
         $q = preg_quote($text);
-        $query = $this->MyCMS->dbms->query('SELECT CONCAT("?article&id=", id) AS link,content_' . $this->language
-            . ' AS title,LEFT(description_' . $this->language . ',1000) AS description
+        $query = $this->MyCMS->dbms->queryStrictObject('SELECT CONCAT("?article&id=", id) AS link,'
+            . 'content_' . $this->language . ' AS title,LEFT(description_' . $this->language . ',1000) AS description
             FROM ' . TAB_PREFIX . 'content WHERE active="1" AND type IN ("page", "news") AND (content_'
             . $this->language . ' LIKE "%' . $q . '%" OR description_' . $this->language . ' LIKE "%' . $q . '%")
             UNION
@@ -49,14 +52,12 @@ class ProjectSpecific extends ProjectCommon
             . ' LIKE "%' . $q . '%" OR description_' . $this->language . ' LIKE "%' . $q . '%"
             LIMIT 10 OFFSET ' . (int) $offset);
         $totalRows = $this->MyCMS->fetchSingle('SELECT FOUND_ROWS()');
-        if ($query) {
-            while ($row = $query->fetch_assoc()) {
-                $row['description'] = strip_tags(preg_replace('~(</[a-z0-9]+>)~six', "$1 ", $row['description']));
-                if ($pos = mb_strpos(mb_strtolower($row['description']), mb_strtolower($text))) {
-                    $row['description'] = mb_substr($row['description'], max(0, $pos - 20), 201);
-                }
-                $result [] = $row;
+        while ($row = $query->fetch_assoc()) {
+            $row['description'] = strip_tags(preg_replaceString('~(</[a-z0-9]+>)~six', "$1 ", $row['description']));
+            if ($pos = mb_strpos(mb_strtolower($row['description']), mb_strtolower($text))) {
+                $row['description'] = mb_substr($row['description'], max(0, $pos - 20), 201);
             }
+            $result [] = $row;
         }
         return $result;
     }
@@ -67,30 +68,33 @@ class ProjectSpecific extends ProjectCommon
      *
      * @param mixed $id of the content OPTIONAL
      * @param string $code OPTIONAL
-     * @param array $options OPTIONAL
-     * @return array resultset
+     * @param array<string> $options OPTIONAL
+     * @return string[] resultset
      */
     public function getContent($id = null, $code = null, array $options = [])
     {
         $result = [];
-        if (
-            (!is_null($id) || !is_null($code)) && ($result = $this->MyCMS->fetchSingle('SELECT co.id,'
-            . ' product_id,'
-            . ' type,'
-            . ' co.code,'
-            . ' co.added,'
-            . ' co.context,'
-            . ' category_id,'
-            . ' path,'
-            . ' co.content_' . $options['language'] . ' AS title,'
-            . ' co.perex_' . $options['language'] . ' AS perex,'
-            . ' co.description_' . $options['language'] . ' AS description '
-            . ' FROM ' . TAB_PREFIX . 'content co LEFT JOIN ' . TAB_PREFIX . 'category ca ON co.category_id=ca.id '
-            . ' WHERE co.active="1"' . Tools::wrap($this->MyCMS->escapeSQL($code), ' AND co.code="', '"')
-                . Tools::wrap(intval($id), ' AND co.id=') . ' LIMIT 1'))
-        ) {
-            $result['context'] = json_decode($result['context'], true) ?: [];
-            $result['added'] = Tools::localeDate($result['added'], $options['language'], false);
+        if (!is_null($id) || !is_null($code)) {
+            $result = $this->MyCMS->fetchSingle('SELECT co.id,'
+                . ' product_id,'
+                . ' type,'
+                . ' co.code,'
+                . ' co.added,'
+                . ' co.context,'
+                . ' category_id,'
+                . ' path,'
+                . ' co.content_' . $options['language'] . ' AS title,'
+                . ' co.perex_' . $options['language'] . ' AS perex,'
+                . ' co.description_' . $options['language'] . ' AS description '
+                . ' FROM ' . TAB_PREFIX . 'content co LEFT JOIN ' . TAB_PREFIX . 'category ca ON co.category_id=ca.id '
+                // TODO Parameter #1 $string of method GodsDev\MyCMS\MyCMSMonoLingual::escapeSQL() expects string,
+                //  string|null given.
+                . ' WHERE co.active="1"' . Tools::wrap($this->MyCMS->escapeSQL($code), ' AND co.code="', '"')
+                . Tools::wrap(intval($id), ' AND co.id=') . ' LIMIT 1');
+            if ($result) {
+                $result['context'] = json_decode($result['context'], true) ?: [];
+                $result['added'] = Tools::localeDate($result['added'], $options['language'], false);
+            }
         }
         $options += array('path' => $result['path'], 'except_id' => $result['id']);
         if (($pos = strpos($result['description'], '%CHILDREN%')) !== false) {
@@ -99,12 +103,12 @@ class ProjectSpecific extends ProjectCommon
         }/* elseif (($pos = strpos($result['description'], '%GRANDCHILDREN%')) !== false) {
           $result['description'] = str_replace('%GRANDCHILDREN%', '', $result['description']);
           $this->MyCMS->context['children'] = ProjectSpecific::getChildren(
-            $result['category_id'], $options + array('level' => 1));
+          $result['category_id'], $options + array('level' => 1));
           } */
         if (($pos = strpos($result['description'], '%SITEMAP%')) !== false) {
             $result['description'] = str_replace(
                 '%SITEMAP%',
-                ProjectSpecific::getSitemap($options),
+                ProjectSpecific::getSitemap($options), // TOOD use self:: instead of ProjectSpecific
                 $result['description']
             );
         }
@@ -117,8 +121,8 @@ class ProjectSpecific extends ProjectCommon
      *
      * @param mixed $id of the content OPTIONAL
      * @param string $code OPTIONAL
-     * @param array $options OPTIONAL
-     * @return array resultset
+     * @param array<string> $options OPTIONAL
+     * @return array<mixed> resultset
      */
     public function getCategory($id = null, $code = null, array $options = [])
     {
@@ -131,6 +135,8 @@ class ProjectSpecific extends ProjectCommon
             . ' content_' . $options['language'] . ' AS description'
             . ' FROM ' . TAB_PREFIX . 'category WHERE active="1"'
             . Tools::wrap(
+                // TODO Parameter #1 $string of method GodsDev\MyCMS\MyCMSMonoLingual::escapeSQL() expects string,
+                //  string|null given.
                 $this->MyCMS->escapeSQL($code),
                 ' AND code="',
                 '"'
@@ -147,8 +153,7 @@ class ProjectSpecific extends ProjectCommon
      * Retrieves product info
      *
      * @param int $id
-     * @return array|null array first selected row, null on empty SELECT
-     * @throws \Exception on error
+     * @return array<mixed>|null array first selected row, null on empty SELECT
      */
     public function getProduct($id)
     {
@@ -177,8 +182,8 @@ class ProjectSpecific extends ProjectCommon
      * TODO: make this method useful for dist project as a demonstration
      *
      * @param string $path
-     * @param array $options OPTIONAL
-     * @return array|false
+     * @param array<string> $options OPTIONAL
+     * @return array<array|string>|false
      */
     public function getBreadcrumbs($path, array $options = [])
     {
@@ -200,22 +205,24 @@ class ProjectSpecific extends ProjectCommon
      * TODO: make this method useful for dist project as a demonstration
      *
      * @param int|array<int> $category_id category/ies to search, either int or array of integers
-     * @param array $options = []
+     * @param array<string> $options = []
      *          [path] - path of the category
      *          [level] - level to which seek for children
      *          [except_id] - id of the child to omit from the result
-     * @return array|false - either associative array, empty array on empty SELECT, or false on error
+     * @return array<array|string|int>|false - either associative array, empty array on empty SELECT, or false on error
      */
     public function getChildren($category_id, array $options = [])
     {
         Tools::setifnotset($options['level'], 0);
         if ($options['level'] && Tools::nonzero($options['path'])) {
-            $category_id = array_keys($this->MyCMS->fetchAndReindex($sql = 'SELECT id FROM ' . TAB_PREFIX . 'category
+            $tempKeys = $this->MyCMS->fetchAndReindex($sql = 'SELECT id FROM ' . TAB_PREFIX . 'category
                 WHERE LEFT(path, ' . strlen($options['path']) . ')="' . $this->MyCMS->escapeSQL($options['path']) . '"
                 AND LENGTH(path) > ' . strlen($options['path']) . '
-                AND LENGTH(path) <= ' . (strlen($options['path']) + $options['level'] * PATH_MODULE)));
+                AND LENGTH(path) <= ' . (strlen($options['path']) + (int) $options['level'] * PATH_MODULE));
+            Assert::notFalse($tempKeys);
+            $category_id = array_keys($tempKeys);
         } else {
-            $category_id = array($category_id);
+            $category_id = [$category_id];
         }
         $result = $this->MyCMS->fetchAndReindex('SELECT co.id, image,code, CONCAT("?article&id=", co.id) AS link,
             content_' . $options['language'] . ' AS title,
@@ -229,16 +236,21 @@ class ProjectSpecific extends ProjectCommon
     /**
      * TODO: make this method useful for dist project as a demonstration
      *
-     * @param array $options OPTIONAL
+     * @param array<string> $options OPTIONAL (fields language and PATH_HOME expected)
      * @return string
+     * @throws Exception if sitemap retrieval fails
      */
     public function getSitemap(array $options = [])
     {
         $pages = $this->MyCMS->fetchAndReindex('SELECT path,id,category_' . $options['language']
             . ' AS category,path FROM ' . TAB_PREFIX . 'category WHERE LEFT(path, ' . PATH_MODULE . ')="'
             . $this->MyCMS->escapeSQL($options['PATH_HOME']) . '" ORDER BY path');
+        if ($pages === false) {
+            throw new Exception('Sitemap retrieval failed.');
+        }
         $result = '';
         foreach ($pages as $key => $value) {
+            Assert::isArray($value);
             $result .= '<div class="indent-' . (strlen($key) / PATH_MODULE - 1) . '">'
                 . '<a href="?category&amp;id=' . $value['id'] . '">' . Tools::h($value['category']) . '</a>'
                 . '</div>' . PHP_EOL;

@@ -2,6 +2,10 @@
 
 namespace GodsDev\MyCMS;
 
+use Exception;
+
+use function GodsDev\MyCMS\ThrowableFunctions\preg_replaceString;
+
 class ProjectCommon extends MyCommon
 {
     use \Nette\SmartObject;
@@ -21,6 +25,7 @@ class ProjectCommon extends MyCommon
     /**
      * Shortcut for echo'<pre>'; var_dump(); and exit;
      * @param mixed $var variable(s) or expression to display
+     * @return never
      */
     public static function dump($var)
     {
@@ -77,7 +82,12 @@ class ProjectCommon extends MyCommon
         return $this->language;
     }
 
-    //@todo refactor as getTexy() which returns Texy object that is initialized in this dynamic class
+    /**
+     * @todo refactor as getTexy() which returns Texy object that is initialized in this dynamic class
+     *
+     * @global \Texy $Texy
+     * @return void
+     */
     public static function prepareTexy()
     {
         global $Texy;
@@ -94,15 +104,21 @@ class ProjectCommon extends MyCommon
      *
      * @param string $stringOfTime
      * @param string $language
+     * @return string
+     * @throws Exception if $stringOfTime is malformed
      */
     public static function localDate($stringOfTime, $language)
     {
+        $strToTime = strtotime($stringOfTime);
+        if ($strToTime === false) {
+            throw new Exception('$stringOfTime is malformed');
+        }
         switch ($language) {
             case 'cs':
-                return date('j.n.Y', strtotime($stringOfTime));
+                return date('j.n.Y', $strToTime);
         }
         //en
-        return date('D, j M Y', strtotime($stringOfTime));
+        return date('D, j M Y', $strToTime);
     }
 
     /**
@@ -110,8 +126,9 @@ class ProjectCommon extends MyCommon
      * The list of selected words may be enlarged or redefined in the ProjectSpecific child
      *
      * @param string $text
-     * @param array $addReplacePatterns add or redefine patterns
+     * @param array<string> $addReplacePatterns add or redefine patterns
      * @return string
+     * @throws Exception in case of preg_replace error
      */
     public function correctLineBreak($text, array $addReplacePatterns = [])
     {
@@ -130,6 +147,6 @@ class ProjectCommon extends MyCommon
             '/ an /' => ' an ',
             '/Industry 4.0/' => 'Industry 4.0',
             ], $addReplacePatterns);
-        return preg_replace(array_keys($replacePatterns), array_values($replacePatterns), $text);
+        return preg_replaceString(array_keys($replacePatterns), array_values($replacePatterns), $text);
     }
 }

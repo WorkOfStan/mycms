@@ -2,6 +2,7 @@
 
 namespace GodsDev\MyCMS;
 
+use Exception;
 use GodsDev\MyCMS\MyFriendlyUrl;
 use GodsDev\MyCMS\Tracy\BarPanelTemplate;
 use GodsDev\Tools\Tools;
@@ -16,7 +17,7 @@ use Webmozart\Assert\Assert;
 class MyController extends MyCommon
 {
 
-    /** @var array */
+    /** @var array<string|int|array> */
     protected $result;
 
     /**
@@ -26,7 +27,7 @@ class MyController extends MyCommon
     /**
      * HTTP request parameters
      *
-     * @var array
+     * @var array<string|array|int>
      */
     protected $get;
 
@@ -36,7 +37,7 @@ class MyController extends MyCommon
     /** @var string */
     protected $requestUri = ''; //default is homepage
 
-    /** @var array */
+    /** @var array<array|string> */
     protected $session;
 
     /**
@@ -49,8 +50,9 @@ class MyController extends MyCommon
 
     /**
      *
-     * @param \GodsDev\MyCMS\MyCMS $MyCMS
-     * @param array $options that overrides default values within constructor
+     * @param MyCMS $MyCMS
+     * @param array<mixed> $options that overrides default values within constructor
+     * @throws Exception if applicationDir malformed
      */
     public function __construct(MyCMS $MyCMS, array $options = [])
     {
@@ -63,7 +65,7 @@ class MyController extends MyCommon
         ];
         if (isset($this->friendlyUrl) && ($this->friendlyUrl instanceof MyFriendlyUrl)) {
             if (substr($this->friendlyUrl->applicationDir, -1) === '/') {
-                throw new \Exception('applicationDir MUST NOT end with slash');
+                throw new Exception('applicationDir MUST NOT end with slash');
             }
             // so that URL relative to root may be constructed in latte (e.g. language selector)
             // $this->friendlyUrl->applicationDir never ends with / . Latte may use URL relative to domain root.
@@ -81,7 +83,7 @@ class MyController extends MyCommon
      * $this->prepareTemplate($options);
      * $this->prepareAllTemplates($options);
      *
-     * @return array
+     * @return array<string|int|array>
      */
     public function controller()
     {
@@ -91,7 +93,7 @@ class MyController extends MyCommon
     /**
      * For PHP Unit test
      *
-     * @return array
+     * @return array<array>
      */
     public function getVars()
     {
@@ -108,7 +110,7 @@ class MyController extends MyCommon
      * Might even change $this->MyCMS->template value
      * Contains the typical controller code
      *
-     * @param array $options
+     * @param array<mixed> $options
      * @return bool true on success, false on error
      */
     protected function prepareAllTemplates(array $options = [])
@@ -122,7 +124,7 @@ class MyController extends MyCommon
      * Set $this->MyCMS->context accordingly for single templates
      * May even change $this->MyCMS->template value
      *
-     * @param array $options ['REQUEST_URI']
+     * @param array<mixed> $options ['REQUEST_URI']
      * @return bool true on success, false on error
      */
     protected function prepareTemplate(array $options = [])
@@ -135,6 +137,7 @@ class MyController extends MyCommon
      *
      * @param string $redir
      * @param int $httpCode Default is 301 as for SEO 301 is much better than 303
+     * @return never
      */
     protected function redir($redir, $httpCode = 301)
     {
@@ -164,12 +167,14 @@ class MyController extends MyCommon
      * for general transformations
      * Outputs changed $MyCMS->template and $MyCMS->context as fields of an array
      *
-     * @return array
+     * @return array<string,mixed>
      */
     public function run()
     {
         $this->verboseBarDump($this->language, 'Language on controller start');
+        Assert::string($this->result['template']);
         $this->MyCMS->template = $this->result['template'];
+        Assert::isArray($this->result['context']);
         $this->MyCMS->context = $this->result['context'];
 
         $options = ['REQUEST_URI' => $this->requestUri,];

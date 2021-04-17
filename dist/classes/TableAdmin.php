@@ -5,6 +5,7 @@ namespace GodsDev\mycmsprojectnamespace;
 use GodsDev\MyCMS\LogMysqli;
 use GodsDev\MyCMS\MyTableAdmin;
 use GodsDev\Tools\Tools;
+use Webmozart\Assert\Assert;
 
 class TableAdmin extends MyTableAdmin
 {
@@ -14,7 +15,7 @@ class TableAdmin extends MyTableAdmin
      *
      * @param LogMysqli $dbms database management system (e.g. new mysqli())
      * @param string $table table name
-     * @param array $options
+     * @param array<mixed> $options
      */
     public function __construct(LogMysqli $dbms, $table, array $options = [])
     {
@@ -307,8 +308,8 @@ class TableAdmin extends MyTableAdmin
      *
      * @param string $field
      * @param string $value field's value
-     * @param array $record
-     * @return bool - true = method was applied so don't proceed with the default, false = method wasn't applied
+     * @param array<string> $record
+     * @return bool|string - true = method was applied so don't proceed with the default, false = method wasn't applied
      */
     public function customInput($field, $value, array $record = [])
     {
@@ -395,6 +396,7 @@ class TableAdmin extends MyTableAdmin
                     $this->dbms->query('UPDATE ' . Tools::escapeDbIdentifier($_POST['table'])
                         . ' SET path = NULL WHERE id IN (' . implode(', ', array_keys($update)) . ')');
                     foreach ($update as $key => $value) {
+                        Assert::string($value, 'path must be string');
                         $this->dbms->query('UPDATE ' . Tools::escapeDbIdentifier($_POST['table'])
                             . ' SET path = "' . $this->dbms->escapeSQL($value) . '" WHERE id = ' . (int) $key);
                     }
@@ -444,6 +446,7 @@ class TableAdmin extends MyTableAdmin
                 $this->dbms->query('UPDATE ' . Tools::escapeDbIdentifier($_POST['table'])
                     . ' SET path = NULL WHERE id IN (' . implode(', ', array_keys($update)) . ')');
                 foreach ($update as $key => $value) {
+                    Assert::string($value);
                     $this->dbms->query('UPDATE ' . Tools::escapeDbIdentifier($_POST['table'])
                         . ' SET path = "' . $this->dbms->escapeSQL($value) . '" WHERE id = ' . (int) $key);
                 }
@@ -480,7 +483,7 @@ class TableAdmin extends MyTableAdmin
      * User-defined manipulating with column value of given table
      *
      * @param string $column
-     * @param array $row
+     * @param array<mixed> $row
      * @return mixed
      */
     public function customValue($column, array $row)

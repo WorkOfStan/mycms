@@ -9,7 +9,7 @@ class Admin extends MyAdmin
 {
     use \Nette\SmartObject;
 
-    /** @var array tables and columns to search in admin */
+    /** @var array<array> tables and columns to search in admin */
     protected $searchColumns = [
         'category' => ['id', 'category_#', 'description_#'], // "#" will be replaced by current language
         'content' => ['id', 'content_#', 'description_#'], // "#" will be replaced by current language
@@ -19,7 +19,7 @@ class Admin extends MyAdmin
     /**
      *
      * @param MyCMS $MyCMS
-     * @param array $options overrides default values of properties
+     * @param array<mixed> $options overrides default values of properties
      */
     public function __construct(MyCMS $MyCMS, array $options = [])
     {

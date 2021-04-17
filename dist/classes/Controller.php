@@ -36,7 +36,7 @@ class Controller extends MyController
     /**
      * Feature flags that bubble down to latte and controller
      *
-     * @var array
+     * @var array<bool>
      */
     protected $featureFlags;
 
@@ -61,7 +61,7 @@ class Controller extends MyController
      *
      *
      * @param MyCMS $MyCMS
-     * @param array $options overrides default values of declared properties
+     * @param array<mixed> $options overrides default values of declared properties
      */
     public function __construct(MyCMS $MyCMS, array $options = [])
     {
@@ -69,7 +69,9 @@ class Controller extends MyController
             'friendlyUrl' => new FriendlyUrl($MyCMS, $options), //$this->friendlyUrl instantiated
         ]));
         //Note: $this->featureFlags is populated
-        $this->mail = new Mail($MyCMS, $options);
+        if (class_exists('Swift_SmtpTransport')) { // so that PHPUnit test run from root doesn't fail
+            $this->mail = new Mail($MyCMS, $options);
+        }
     }
 
     /**
@@ -78,7 +80,7 @@ class Controller extends MyController
      * Might even change $this->MyCMS->template value
      * Contains the typical controller code
      *
-     * @param array $options
+     * @param array<mixed> $options
      * @return bool true on success, false on error
      */
     protected function prepareAllTemplates(array $options = [])
@@ -91,7 +93,7 @@ class Controller extends MyController
      * Set $this->MyCMS->context accordingly for single templates
      * May even change $this->MyCMS->template value
      *
-     * @param array $options ['REQUEST_URI']
+     * @param array<mixed> $options ['REQUEST_URI']
      * @return bool true on success, false on error
      */
     protected function prepareTemplate(array $options = [])
@@ -188,7 +190,8 @@ class Controller extends MyController
                     . ' AND name_' . $this->language . ' NOT LIKE ""' // hide product language variants with empty title
                     . ' ORDER BY sort ASC')
                 );
-                $this->MyCMS->context['totalRows'] = count($this->MyCMS->context['list']);
+                $this->MyCMS->context['totalRows'] = ($this->MyCMS->context['list'] === false) ? 0 :
+                    count($this->MyCMS->context['list']);
                 return true;
             case 'item-1':
                 $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 1';
@@ -246,6 +249,7 @@ class Controller extends MyController
                 return true;
             case 'product':
                 Assert::keyExists($this->get, 'id', 'product MUST be identified by id');
+                Assert::scalar($this->get['id']);
                 $this->MyCMS->context['product'] = $this->projectSpecific->getProduct((int) $this->get['id']);
                 if (is_null($this->MyCMS->context['product'])) {
                     $this->MyCMS->template = self::TEMPLATE_NOT_FOUND;
@@ -260,9 +264,10 @@ class Controller extends MyController
                     FILTER_VALIDATE_INT,
                     ['default' => 0, 'min_range' => 0, 'max_range' => 1e9]
                 ) : 0;
+                Assert::string($this->get['search']);
                 $this->MyCMS->context['results'] = $this->projectSpecific->searchResults(
                     $this->get['search'],
-                    $this->MyCMS->context['offset'],
+                    (int) $this->MyCMS->context['offset'],
                     $this->MyCMS->context['totalRows']
                 );
                 //@todo ošetřit empty result
@@ -277,7 +282,7 @@ class Controller extends MyController
     /**
      * For PHP Unit test
      *
-     * @return array
+     * @return array<array>
      */
     public function getVars()
     {

@@ -20,7 +20,10 @@ jobs:
       matrix:
         operating-system:
           - "ubuntu-latest"
-        php-version: ['5.6', '7.3', '7.4']
+        php-version: ['5.6', '7.0', '7.2', '7.3', '7.4']
+        # 7.1 is not checked, as due to https://bugs.php.net/bug.php?id=73803        
+        # ZipArchive class has public properties, that are not visible via reflection.
+        # Therefore using tools like PHPStan generates error: Access to an undefined property ZipArchive::$numFiles. in class\MyAdminProcess
 
     steps:
     - name: "Checkout"
@@ -72,8 +75,10 @@ jobs:
         #to fix `Constant DB_USERNAME not found.` etc
         cp -p dist/conf/config.local.dist.php dist/conf/config.local.php
         cd dist
-        composer update --prefer-dist --no-progress
-        phpstan analyse --no-interaction --no-progress .
+        #maybe not needed?#composer update --prefer-dist --no-progress
+        composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
+        #todo if above ok, then update also library+app
+        phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
         cd ..
 
     - name: "PHPStan (library + app)"

@@ -2,6 +2,8 @@
 
 namespace GodsDev\MyCMS;
 
+use Exception;
+use GodsDev\MyCMS\Tracy\BarPanelTemplate;
 use Psr\Log\LoggerInterface;
 use Tracy\Debugger;
 
@@ -21,7 +23,7 @@ class MyCMSMonoLingual
 
     /**
      * database management system
-     * @var \GodsDev\MyCMS\LogMysqli
+     * @var LogMysqli
      */
     public $dbms = null;
 
@@ -33,7 +35,7 @@ class MyCMSMonoLingual
 
     /**
      * variables for template rendering
-     * @var array
+     * @var array<mixed>
      */
     public $context = [];
 
@@ -47,6 +49,7 @@ class MyCMSMonoLingual
      * Constructor
      *
      * @param array<array> $myCmsConf
+     * @throws Exception if logger not configured
      */
     public function __construct(array $myCmsConf = [])
     {
@@ -56,12 +59,9 @@ class MyCMSMonoLingual
             }
         }
         // Logger is obligatory
-        if (
-//            !is_object($this->logger) ||
-            !($this->logger instanceof LoggerInterface)
-        ) {
+        if (!($this->logger instanceof LoggerInterface)) {
             error_log("Error: MyCMS constructed without logger. (" . get_class($this->logger) . ")");
-            die('Fatal error - project is not configured.'); //@todo nicely formatted error page
+            throw new Exception('Fatal error - project is not configured.');
         }
         if (is_object($this->dbms) && is_a($this->dbms, '\GodsDev\MyCMS\LogMysqli')) {
             $this->dbms->query('SET NAMES UTF8 COLLATE "utf8_general_ci"');
@@ -74,6 +74,7 @@ class MyCMSMonoLingual
      * Add a new CSRF token in $_SESSION['token']
      * @param bool $checkOnly - add new token only if $_SESSION['token'] is empty
      * @todo - test fully
+     * @return void
      */
     public function csrfStart($checkOnly = false)
     {
@@ -118,6 +119,11 @@ class MyCMSMonoLingual
         return $this->dbms->fetchSingle($sql);
     }
 
+    /**
+     *
+     * @param string $sql
+     * @return array<array> array of associative arrays for each result row or empty array on error or no results
+     */
     public function fetchAll($sql)
     {
         return $this->dbms->fetchAll($sql);
@@ -125,8 +131,8 @@ class MyCMSMonoLingual
 
     /**
      *
-     * @param string $sql SQL to be executed
-     * @return array|false - either associative array, empty array on empty SELECT, or false on error
+     * @param string $sql SQL statement to be executed
+     * @return array<array|string>|false - either associative array, empty array on empty SELECT, or false on error
      */
     public function fetchAndReindex($sql)
     {
@@ -137,17 +143,18 @@ class MyCMSMonoLingual
      * Latte initialization & Mark-up output
      *
      * @param string $dirTemplateCache
-     * @param string $customFilters
-     * @param array $params
+     * @param callable $customFilters
+     * @param array<mixed> $params
+     * @return void
      */
     public function renderLatte($dirTemplateCache, $customFilters, array $params)
     {
         Debugger::getBar()->addPanel(
-            new \GodsDev\MyCMS\Tracy\BarPanelTemplate('Template: ' . $this->template, $this->context)
+            new BarPanelTemplate('Template: ' . $this->template, $this->context)
         );
         if (isset($_SESSION['user'])) {
             Debugger::getBar()->addPanel(
-                new \GodsDev\MyCMS\Tracy\BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION)
+                new BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION)
             );
         }
         $Latte = new \Latte\Engine();
@@ -159,7 +166,7 @@ class MyCMSMonoLingual
         unset($_SESSION['messages']);
         if (!empty($this->dbms->getStatementsArray())) {
             Debugger::getBar()->addPanel(
-                new \GodsDev\MyCMS\Tracy\BarPanelTemplate(
+                new BarPanelTemplate(
                     'SQL: ' . count($this->dbms->getStatementsArray()),
                     $this->dbms->getStatementsArray()
                 )

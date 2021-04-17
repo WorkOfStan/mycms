@@ -3,7 +3,7 @@
 # Invoked by locally installed PHPStan of library
 # Invoked by GitHub super-linter PHPStan of library
 parameters:
-    level: 5
+    level: 6
     excludePaths:
         analyse:
         #  - ../vendor
@@ -21,6 +21,7 @@ parameters:
           - ../vendor/nette
           - ../vendor/phpdocumentor
           - ../vendor/phpspec
+          - ../vendor/phpstan
           - ../vendor/phpunit
           - ../vendor/psr
           - ../vendor/robmorgan

@@ -6,9 +6,9 @@
         "php": "^5.6 || ^7.0",
         "latte/latte": "^2.4.6",
         "tracy/tracy": "^2.4.10",
-        "nette/utils": "^2.4.8",
+        "nette/utils": "^2.4.8|^3.2.2",
         "texy/texy": "^2.7.1",
-        "godsdev/tools": "^0.3.7",
+        "godsdev/tools": "^0.3.8",
         "godsdev/backyard": "^3.2.10",
         "ext-session": "*",
         "ext-mbstring": "*"
@@ -42,7 +42,10 @@
     "autoload": {
         "psr-4": {
             "GodsDev\\MyCMS\\": ["classes/"]
-        }
+        },
+        "files": [
+            "classes/ThrowableFunctions/ThrowablePHPFunctions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

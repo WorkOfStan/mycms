@@ -2,11 +2,15 @@
 
 namespace GodsDev\MyCMS;
 
+use Exception;
 use GodsDev\MyCMS\MyCMS;
 use GodsDev\MyCMS\Tracy\BarPanelTemplate;
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use Tracy\ILogger;
+
+use function GodsDev\MyCMS\ThrowableFunctions\glob;
+use function GodsDev\MyCMS\ThrowableFunctions\preg_replaceString;
 
 /**
  * Parent for deployed Admin instance
@@ -16,10 +20,10 @@ class MyAdmin extends MyCommon
 {
     use \Nette\SmartObject;
 
-    /** @var array */
+    /** @var array<array> */
     protected $agendas = [];
 
-    /** @var array */
+    /** @var array<string> */
     protected $ASSETS_SUBFOLDERS = [];
 
     /** @var array<array> client-side resources - css, js, fonts etc. */
@@ -50,7 +54,7 @@ class MyAdmin extends MyCommon
         'author' => '',
     ];
 
-    /** @var array tables and columns to search in admin */
+    /** @var array<array> tables and columns to search in admin */
     protected $searchColumns = [];
 
     /** @var MyTableAdmin */
@@ -598,6 +602,7 @@ class MyAdmin extends MyCommon
      *
      * @param string $keyword
      * @return string
+     * @throws Exception on preg_replace error
      */
     protected function outputSearchResults($keyword)
     {
@@ -624,7 +629,7 @@ class MyAdmin extends MyCommon
                     for ($i = 1; $i < count($row); $i++) {
                         $row[$i] = strip_tags($row[$i]);
                         if (($p = stripos($row[$i], $keyword)) !== false) {
-                            $row[$i] = preg_replace('~(' . preg_quote($keyword) . ')~six', '<b>${1}</b>', $row[$i]);
+                            $row[$i] = preg_replaceString('~(' . preg_quote($keyword) . ')~six', '<b>${1}</b>', $row[$i]);
                             $where .= '<li>…' . mb_substr($row[$i], max($p - 50, 0), strlen($keyword) + 100) . '…</li>' . PHP_EOL;
                         }
                     }
@@ -816,7 +821,6 @@ class MyAdmin extends MyCommon
                 . $this->outputAgendas() . '</nav>' . PHP_EOL;
         }
         $output .= '<main class="ml-3 ml-sm-auto col-md-9 pt-3" role="main" id="admin-main">'
-            // TODO will be fixed in next Tools version: fix Tools::showMessages void or array to always return string
             . Tools::showMessages(false);
         foreach (glob(DIR_ASSETS . '*', GLOB_ONLYDIR) as $value) {
             $this->ASSETS_SUBFOLDERS [] = substr($value, strlen(DIR_ASSETS));
@@ -855,6 +859,7 @@ class MyAdmin extends MyCommon
 
     /**
      * Get page title (used in the <title> element)
+     * @return string
      */
     public function getPageTitle()
     {

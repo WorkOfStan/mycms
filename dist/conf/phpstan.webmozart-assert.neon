@@ -1,0 +1,6 @@
+# The main configuration file in case `composer require --dev phpstan/phpstan-webmozart-assert` is used - makes difference if PHPStan level > 6
+includes:
+      - phpstan.app.neon
+      # to use https://github.com/phpstan/phpstan-webmozart-assert
+      # phpstan/phpstan-webmozart-assert requires this settings
+      - ../vendor/phpstan/phpstan-webmozart-assert/extension.neon

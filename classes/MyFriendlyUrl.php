@@ -2,6 +2,7 @@
 
 namespace GodsDev\MyCMS;
 
+use Exception;
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 
@@ -24,13 +25,13 @@ class MyFriendlyUrl extends MyCommon
      * accepted attributes:
      */
 
-    /** @var array */
+    /** @var array<mixed> content of $_GET and $_POST */
     protected $get;
 
     /**
      * used in friendlyIdentifyRedirect
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $session;
 
@@ -59,7 +60,7 @@ class MyFriendlyUrl extends MyCommon
      * Expect constants: PATH_MODULE, TAB_PREFIX
      *
      * @param MyCMS $MyCMS
-     * @param array $options overides default values of declared properties
+     * @param array<mixed> $options overides default values of declared properties
      */
     public function __construct(MyCMS $MyCMS, array $options = [])
     {
@@ -80,7 +81,7 @@ class MyFriendlyUrl extends MyCommon
      * @param string $url
      * @param string $barDumpTitle
      * @param int $httpCode
-     * @return array with redir string field
+     * @return array<mixed> with redir string field
      */
     protected function redirWrapper($url, $barDumpTitle, $httpCode = 301)
     {
@@ -88,7 +89,8 @@ class MyFriendlyUrl extends MyCommon
             'redir' => $this->verboseBarDump(
                 $this->applicationDir . $url,
                 'redir identified: ' . $barDumpTitle
-            ), 'httpCode' => $httpCode
+            ),
+            'httpCode' => $httpCode,
         ];
     }
 
@@ -106,13 +108,17 @@ class MyFriendlyUrl extends MyCommon
      * ]
      * matchResult = (1=pattern matches `PARSE_PATH_PATTERN`, 0=it does not, or FALSE=error)
      *
-     * @param array $options
-     * @return array|true `bool (true)` when `TEMPLATE_NOT_FOUND` || `array` with redir string field
+     * @param array<mixed> $options
+     * @return array<mixed>|true `bool (true)` when `TEMPLATE_NOT_FOUND` || `array` with redir string field
      *     || `array` with token string field and matches array field (see above)
+     * @throws Exception on malformed URL
      */
     protected function friendlyIdentifyRedirect(array $options = [])
     {
         $this->verboseBarDump($url = parse_url($options['REQUEST_URI']), 'friendlyIdentifyRedirect: parse_url');
+        if ($url === false || !array_key_exists('path', $url)) {
+            throw new Exception('Malformed url ' . (string) $options['REQUEST_URI']);
+        }
         $this->verboseBarDump($token = $this->MyCMS->escapeSQL(
             pathinfo(
                 $url['path'],
@@ -309,7 +315,7 @@ class MyFriendlyUrl extends MyCommon
      * TODO: simplify management of TEMPLATE_NOT_FOUND result as currently it is indicated
      * as self::TEMPLATE_NOT_FOUND || null || true
      *
-     * @param array $options OPTIONAL verbose==true bleeds info to standard output
+     * @param array<mixed> $options OPTIONAL verbose==true bleeds info to standard output
      * @return mixed `string` with name of the template when template determined
      *     || `array` with redir field when redirect || `bool (true)` when template set to `TEMPLATE_NOT_FOUND`
      */
@@ -351,9 +357,9 @@ class MyFriendlyUrl extends MyCommon
     /**
      * FRIENDLY URL & Redirect calculation
      *
-     * @param array $options for recursive determineTemplate call
+     * @param array<mixed> $options for recursive determineTemplate call
      * @param string $token calculated by friendlyIdentifyRedirect
-     * @param array $matches calculated by friendlyIdentifyRedirect
+     * @param array<string> $matches calculated by friendlyIdentifyRedirect
      * @return mixed `null` leads to self::TEMPLATE_NOT_FOUND
      *    || `string` with name of the template when template determined
      *    || `array` with redir field when redirect || `bool (true)` when template set to `TEMPLATE_NOT_FOUND`
@@ -463,7 +469,7 @@ class MyFriendlyUrl extends MyCommon
         $output2 = array_slice($output, 0, 1);
         // $output2 contains only the first parameter
         $output2Array = array_keys($output2);
-        $outputKey = reset($output2Array);
+        $outputKey = (string) reset($output2Array);
         $outputValue = (isset($this->MyCMS->templateAssignementParametricRules[$outputKey])
             && isset($this->MyCMS->templateAssignementParametricRules[$outputKey]['idcode'])
             && $this->MyCMS->templateAssignementParametricRules[$outputKey]['idcode'])
@@ -480,7 +486,7 @@ class MyFriendlyUrl extends MyCommon
     /**
      * $this->get may be changed and Controller needs to know
      *
-     * @return array
+     * @return array<mixed>
      */
     public function getGet()
     {

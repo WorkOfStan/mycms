@@ -27,7 +27,7 @@ class AdminProcess extends MyAdminProcess
      * accepted attributes:
      */
 
-    /** @var array */
+    /** @var array<array> */
     protected $agendas;
 
     /**
@@ -35,7 +35,7 @@ class AdminProcess extends MyAdminProcess
      * Commands with all required variables cause page redirection.
      * $_SESSION is manipulated by this function - mainly [messages] get added
      *
-     * @param array $post $_POST variable by reference
+     * @param array<string|array> $post $_POST by reference
      * @todo refactor, so that $this->endAdmin(); is called automatically
      *
      * @return void
@@ -127,6 +127,7 @@ class AdminProcess extends MyAdminProcess
                     . Tools::arrayListed(array_keys($edits), 8) . ')');
                 $i = 0;
                 foreach ($edits as $key => $value) {
+                    Assert::string($value);
                     $tmp = substr($value, 0, $strlen - PATH_MODULE)
                         . str_pad((string) (intval(substr($value, $strlen - PATH_MODULE, PATH_MODULE)) + (Tools::begins(
                             $value,
@@ -148,7 +149,7 @@ class AdminProcess extends MyAdminProcess
         // move product up/down
         if (
             isset($post['product-switch'], $post['id']) &&
-            ($product = $this->MyCMS->dbms->query(
+            ($product = $this->MyCMS->dbms->queryStrictObject(
                 'SELECT category_id,sort FROM ' . TAB_PREFIX . 'product WHERE id=' . (int) $post['id']
             )->fetch_assoc())
         ) {
@@ -165,8 +166,7 @@ class AdminProcess extends MyAdminProcess
             } else {
                 //Tools::addMessage('info', $this->tableAdmin->translate('Nothing to change.'));
             }
-            $this->redir();
-            return;
+            $this->redir(); // this method terminates
         }
         // loggin admin out
         $this->processLogout($post);
@@ -212,8 +212,7 @@ class AdminProcess extends MyAdminProcess
                 $post['referer'] = Tools::xorDecipher(base64_decode($post['referer']), $post['token']);
                 $this->redir($post['referer']);
             }
-            $this->redir();
-            return;
+            $this->redir(); // redir() method terminates
         }
         // delete a table record
         if (isset($post['record-delete'])) {
@@ -231,7 +230,7 @@ class AdminProcess extends MyAdminProcess
      * It is public for PHPUnit test
      *
      * @param string $agenda
-     * @return array
+     * @return array<array>
      */
     public function getAgenda($agenda)
     {
@@ -239,44 +238,46 @@ class AdminProcess extends MyAdminProcess
         if (!isset($this->agendas[$agenda])) {
             return $result;
         }
-        /** @var array $options array of agenda set in admin.php in $AGENDAS */
+        /** @var array<string|array> $options array of agenda set in admin.php in $AGENDAS */
         $options = $this->agendas[$agenda];
-        Tools::setifempty($options['table'], $agenda);
+        $optionsTable = (isset($options['table']) && is_string($options['table'])) ?
+            ($options['table'] ?: $agenda) : $agenda;
         Tools::setifempty($options['sort']);
         Tools::setifempty($options['path']);
-        $selectExpression = isset($options['path']) ?
-            'CONCAT(REPEAT("… ",LENGTH(' . $this->MyCMS->dbms->escapeDbIdentifier($options['path']) . ') / '
-            . PATH_MODULE . ' - 1),' . $options['table'] . '_' . DEFAULT_LANGUAGE . ')' :
-            (isset($options['column']) ? (
-                is_array($options['column']) ? ('CONCAT(' .
-                implode(
-                    ",'|',",
-                    array_map([$this->MyCMS->dbms, 'escapeDbIdentifier'], $options['column'])
-                ) . ')') :
-            $this->MyCMS->dbms->escapeDbIdentifier($options['column'])
-            ) : $this->MyCMS->dbms->escapeDbIdentifier($options['table'] . '_' . DEFAULT_LANGUAGE));
+        $selectExpression = (isset($options['path']) && is_string($options['path'])) ?
+            ('CONCAT(REPEAT("… ",LENGTH(' . $this->MyCMS->dbms->escapeDbIdentifier($options['path']) . ') / '
+            . PATH_MODULE . ' - 1),' . $optionsTable . '_' . DEFAULT_LANGUAGE . ')') :
+            (
+                isset($options['column']) ? (is_array($options['column']) ? (
+                    'CONCAT(' . implode(
+                        ",'|',",
+                        array_map([$this->MyCMS->dbms, 'escapeDbIdentifier'], $options['column'])
+                    ) . ')'
+                ) : $this->MyCMS->dbms->escapeDbIdentifier($options['column'])) :
+            $this->MyCMS->dbms->escapeDbIdentifier($optionsTable . '_' . DEFAULT_LANGUAGE)
+            );
+        Assert::nullOrString($options['sort']);
         $sql = 'SELECT id,' . $selectExpression . ' AS name'
             . Tools::wrap($options['sort'], ',', ' AS sort') . Tools::wrap($options['path'], ',', ' AS path')
-            . ' FROM ' . $this->MyCMS->dbms->escapeDbIdentifier(TAB_PREFIX . $options['table'])
+            . ' FROM ' . $this->MyCMS->dbms->escapeDbIdentifier(TAB_PREFIX . $optionsTable)
             . Tools::wrap(isset($options['where']) ? $options['where'] : '', ' WHERE ')
             . Tools::wrap(
                 $options['sort'] . ($options['sort'] && $options['path'] ? ',' : '') . $options['path'],
                 ' ORDER BY '
             )
             . ' LIMIT ' . $this::PROCESS_LIMIT;
-        $query = $this->MyCMS->dbms->query($sql);
-        if ($query) {
-            for ($i = 1; $row = $query->fetch_assoc(); $i++) {
-                $row['name'] = Tools::shortify(strip_tags($row['name']), 100);
-                $result [] = $row;
-                if ($agenda == 'product' && isset($row['sort']) && $row['sort'] != $i) {
-                    $correctOrder[$row['id']] = $i;
-                }
+        $query = $this->MyCMS->dbms->queryStrictObject($sql);
+        for ($i = 1; $row = $query->fetch_assoc(); $i++) {
+            $row['name'] = Tools::shortify(strip_tags($row['name']), 100);
+            $result [] = $row;
+            if ($agenda == 'product' && isset($row['sort']) && $row['sort'] != $i) {
+                $correctOrder[$row['id']] = $i;
             }
         }
+        // TODO does the next foreach have any impact on the returned value?
         foreach ($correctOrder as $key => $value) {
             $this->MyCMS->dbms->query('UPDATE `' . $this->MyCMS->dbms->escapeDbIdentifier(
-                TAB_PREFIX . $options['table']
+                TAB_PREFIX . $optionsTable
             ) . '` SET sort=' . (int) $value . ' WHERE id=' . (int) $key . ' LIMIT 1');
         }
         return $result;

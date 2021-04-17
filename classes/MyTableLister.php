@@ -2,7 +2,9 @@
 
 namespace GodsDev\MyCMS;
 
+use Exception;
 use GodsDev\Tools\Tools;
+use Webmozart\Assert\Assert;
 
 /**
  * Class that can list rows of a database table, with editable search/filter
@@ -22,13 +24,13 @@ class MyTableLister
     /** @var string table to list */
     protected $table;
 
-    /** @var array all tables in the database */
+    /** @var array<array> all tables in the database */
     public $tables;
 
-    /** @var array all fields in the table */
+    /** @var array<array> all fields in the table */
     public $fields;
 
-    /** @var array display options */
+    /** @var array<mixed> display options */
     protected $options;
 
     /** @var string JavaScript code gathered to show the listing */
@@ -77,7 +79,7 @@ class MyTableLister
         'en' => 'English'
     ];
 
-    /** @var array possible table settings, stored in its comment */
+    /** @var array<array> possible table settings, stored in its comment */
     public $tableContext = null;
 
     /**
@@ -85,7 +87,7 @@ class MyTableLister
      *
      * @param LogMysqli $dbms database management system already connected to wanted database
      * @param string $table to view
-     * @param array $options
+     * @param array<mixed> $options
      */
     public function __construct(LogMysqli $dbms, $table, array $options = [])
     {
@@ -101,11 +103,12 @@ class MyTableLister
      * Get all tables in the database (including comments) and store them to tables
      *
      * @return void
+     * @throws Exception on SQL statement not returning array
      */
     public function getTables()
     {
         $this->tables = [];
-        $query = $this->dbms->query('SELECT TABLE_NAME, TABLE_COMMENT FROM information_schema.TABLES '
+        $query = $this->dbms->queryStrictObject('SELECT TABLE_NAME, TABLE_COMMENT FROM information_schema.TABLES '
             . 'WHERE TABLE_SCHEMA = "' . $this->escapeSQL($this->database) . '"');
         while ($row = $query->fetch_row()) {
             if ($row[0] === TAB_PREFIX . 'admin') {
@@ -133,68 +136,67 @@ class MyTableLister
             return;
         }
         $this->table = $table;
-        if ($query = $this->dbms->query('SHOW FULL COLUMNS IN ' . $this->escapeDbIdentifier($this->table))) {
-            $result = [];
-            while ($row = $query->fetch_assoc()) {
-                $item = [
-                    'type' => $row['Type'],
-                    'null' => strtoupper($row['Null']) == 'YES',
-                    'default' => $row['Default'],
-                    'size' => null,
-                    'key' => $row['Key'],
-                    'comment' => $row['Comment'],
-                    'basictype' => $row['Type']
-                ];
-                if ($pos = strpos($row['Type'], '(')) {
-                    $item['basictype'] = $item['type'] = substr($row['Type'], 0, $pos);
-                    $item['size'] = rtrim(substr($row['Type'], $pos + 1), ')');
-                }
-                switch ($item['basictype']) {
-                    case 'int':
-                    case 'bigint':
-                    case 'smallint':
-                    case 'tinyint':
-                    case 'year':
-                    case 'bit':
-                        $item['basictype'] = 'integer';
-                        break;
-                    case 'float':
-                    case 'double':
-                    case 'decimal':
-                        $item['basictype'] = 'rational';
-                        break;
-                    case 'enum':
-                    case 'set':
-                        $item['basictype'] = 'choice';
-                        break;
-                    case 'binary':
-                    case 'varbinary':
-                    case 'tinyblob':
-                    case 'mediumblob':
-                    case 'longblob':
-                        $item['basictype'] = 'binary';
-                        break;
-                    default:
-                        // this includes date/time, geometry and other scarcely used types
-                        $item['basictype'] = 'text';
-                }
-                $result[$row['Field']] = $item;
-            }
-            $this->fields = $result;
-        } else {
+        try {
+            $query = $this->dbms->queryStrictObject('SHOW FULL COLUMNS IN ' . $this->escapeDbIdentifier($this->table));
+        } catch (Exception $e) {
             throw new \RunTimeException('Could not get columns from table ' . $this->table . '.');
         }
-        $query = $this->dbms->query(
+        $result = [];
+        while ($row = $query->fetch_assoc()) {
+            $item = [
+                'type' => $row['Type'],
+                'null' => strtoupper($row['Null']) == 'YES',
+                'default' => $row['Default'],
+                'size' => null,
+                'key' => $row['Key'],
+                'comment' => $row['Comment'],
+                'basictype' => $row['Type']
+            ];
+            if ($pos = strpos($row['Type'], '(')) {
+                $item['basictype'] = $item['type'] = substr($row['Type'], 0, $pos);
+                $item['size'] = rtrim(substr($row['Type'], $pos + 1), ')');
+            }
+            switch ($item['basictype']) {
+                case 'int':
+                case 'bigint':
+                case 'smallint':
+                case 'tinyint':
+                case 'year':
+                case 'bit':
+                    $item['basictype'] = 'integer';
+                    break;
+                case 'float':
+                case 'double':
+                case 'decimal':
+                    $item['basictype'] = 'rational';
+                    break;
+                case 'enum':
+                case 'set':
+                    $item['basictype'] = 'choice';
+                    break;
+                case 'binary':
+                case 'varbinary':
+                case 'tinyblob':
+                case 'mediumblob':
+                case 'longblob':
+                    $item['basictype'] = 'binary';
+                    break;
+                default:
+                    // this includes date/time, geometry and other scarcely used types
+                    $item['basictype'] = 'text';
+            }
+            $result[$row['Field']] = $item;
+        }
+        $this->fields = $result;
+        $query2 = $this->dbms->queryStrictObject(
             'SELECT COLUMN_NAME,REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME '
             . 'FROM information_schema.KEY_COLUMN_USAGE '
             . 'WHERE CONSTRAINT_NAME != "PRIMARY" AND CONSTRAINT_CATALOG = "def" AND TABLE_SCHEMA = "'
             . $this->escapeSQL($this->database) . '" AND TABLE_NAME = "' . $this->escapeSQL($this->table) . '"'
         );
-        if ($query) {
-            while ($row = $query->fetch_assoc()) {
-                $this->fields[$row['COLUMN_NAME']]['foreign_table'] = $row['REFERENCED_TABLE_NAME'];
-                $this->fields[$row['COLUMN_NAME']]['foreign_column'] = $row['REFERENCED_COLUMN_NAME'];
-            }
+        while ($row = $query2->fetch_assoc()) {
+            $this->fields[$row['COLUMN_NAME']]['foreign_table'] = $row['REFERENCED_TABLE_NAME'];
+            $this->fields[$row['COLUMN_NAME']]['foreign_column'] = $row['REFERENCED_COLUMN_NAME'];
         }
         $tmp = $this->dbms->fetchSingle('SELECT TABLE_COMMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA="'
             . $this->escapeSQL($this->database) . '" AND TABLE_NAME="' . $this->escapeSQL($this->table) . '"');
@@ -205,7 +207,7 @@ class MyTableLister
      * Compose a SELECT SQL statement with given columns and _GET variables
      *
      * @param array<string> $columns
-     * @param array $vars &$vars variables used to filter records
+     * @param array<mixed> $vars &$vars variables used to filter records
      * @return array<string|int> with these indexes: [join], [where], [sort], [sql], int[limit]
      */
     public function selectSQL($columns, &$vars)
@@ -227,7 +229,7 @@ class MyTableLister
                     . ' ON ' . $this->escapeDbIdentifier($this->table) . '.' . $this->escapeDbIdentifier($key)
                     . '=' . $this->escapeDbIdentifier($this->fields[$key]['foreign_table']) . '.' . $this->escapeDbIdentifier($this->fields[$key]['foreign_column']);
                 // try if column of the same name as the table exists (as a replacement for foreign table); use the first field in the table if it doesn't exist
-                $tmp = $this->dbms->query('SHOW FIELDS FROM ' . $this->escapeDbIdentifier($this->fields[$key]['foreign_table']))->fetch_all();
+                $tmp = $this->dbms->queryStrictObject('SHOW FIELDS FROM ' . $this->escapeDbIdentifier($this->fields[$key]['foreign_table']))->fetch_all();
                 foreach ($tmp as $k => $v) {
                     $tmp[$v[0]] = $v[0];
                     unset($tmp[$k]);
@@ -254,7 +256,7 @@ class MyTableLister
             unset($filterColumn[0]);
             foreach ($vars['col'] as $key => $value) {
                 if (isset($filterColumn[$value], $vars['val'][$key])) {
-                    $id = $this->escapeDbIdentifier($this->table) . '.' . $this->escapeDbIdentifier($filterColumn[$value]);
+                    $id = $this->escapeDbIdentifier($this->table) . '.' . $this->escapeDbIdentifier((string) $filterColumn[$value]);
                     $val = $vars['val'][$key];
                     $op = $this->WHERE_OPS[$vars['op'][$key]];
                     $result['where'] .= ' AND ';
@@ -308,7 +310,7 @@ class MyTableLister
      * Operation `original` means "leave the column as is" (i.e. don't use it in this SQL statement)
      * And for any other (=unknown) operation is the column ignored, i.e. is not used in this SQL statement.
      *
-     * @param array $vars &$vars variables used to filter records
+     * @param array<string,array> $vars &$vars variables used to filter records
      * @return string
      */
     public function bulkUpdateSQL(&$vars)
@@ -388,7 +390,7 @@ class MyTableLister
     /**
      * Output a customizable table to browse, search, page and pick its items for editing
      *
-     * @param array $options configuration array
+     * @param array<mixed> $options configuration array
      *   $options['form-action']=send.php - instead of <form action="">
      *   $options['read-only']=non-zero - no links to admin
      *   $options['no-sort']=non-zero - don't offer 'sorting' option
@@ -400,7 +402,7 @@ class MyTableLister
      *   $options['exclude']=array - columns to exclude
      *   $options['columns']=array - special treatment of columns
      *   $options['return-output']=non-zero - return output (instead of echo)
-     * @return mixed void||string (for $options['return-output'])
+     * @return void|string (string for $options['return-output'])
      */
     public function view(array $options = [])
     {
@@ -412,6 +414,7 @@ class MyTableLister
             return;
         }
         $sql = $this->selectSQL($columns, $_GET);
+        Assert::string($sql['sql']);
         $query = $this->dbms->query($sql['sql']);
         $options['total-rows'] = $this->dbms->fetchSingle('SELECT FOUND_ROWS()');
         $output = Tools::htmlInput('total-rows', '', $options['total-rows'], 'hidden');
@@ -420,14 +423,13 @@ class MyTableLister
         }
         $output .= $this->viewInputs($options);
         if ($options['total-rows']) {
+            Assert::integer($sql['limit']);
             $output .= $this->viewTable($query, $columns, $options)
                 . $this->pagination($sql['limit'], $options['total-rows'], null, $options);
         }
-        if (!$options['total-rows'] && isset($_GET['col'])) {
-            $output .= '<p class="alert alert-danger"><small>' . $this->translate('No records found.') . '</small></p>';
-        } else {
-            $output .= '<p class="text-info"><small>' . $this->translate('Total rows: ') . $options['total-rows'] . '.</small></p>';
-        }
+        $output .= (!$options['total-rows'] && isset($_GET['col'])) ?
+            ('<p class="alert alert-danger"><small>' . $this->translate('No records found.') . '</small></p>') :
+            ('<p class="text-info"><small>' . $this->translate('Total rows: ') . $options['total-rows'] . '.</small></p>');
         if (isset($options['return-output']) && $options['return-output']) {
             return $output;
         }
@@ -437,8 +439,8 @@ class MyTableLister
     /**
      * Part of the view() method to output the controls.
      *
-     * @param array $options as in view()
-     * @return mixed void||string (for $options['return-output'])
+     * @param array<mixed> $options as in view()
+     * @return void|string (string for $options['return-output'])
      */
     protected function viewInputs($options)
     {
@@ -519,12 +521,12 @@ class MyTableLister
     /**
      * Part of the view() method to output the content of selected table
      *
-     * @param \mysqli_result $query
-     * @param array $columns selected columns
-     * @param array $options as in view()
+     * @param \mysqli_result<object>|bool $query
+     * @param string[] $columns selected columns
+     * @param array<mixed> $options as in view()
      * @return mixed void or string (for $options['return-output'])
      */
-    protected function viewTable(\mysqli_result $query, array $columns, array $options)
+    protected function viewTable($query, array $columns, array $options)
     {
         Tools::setifnull($_GET['sort']);
         $output = '<form action="" method="post" enctype="multipart/form-data" data-rand="' . $this->rand . '">' . PHP_EOL
@@ -554,12 +556,13 @@ class MyTableLister
                     . '<small class="glyphicon glyphicon-edit fa fa-pencil fa-edit" aria-hidden="true"></small></a>';
                 $output .= '</td>';
                 foreach ($row as $key => $value) {
-                    if (Tools::ends($key, $this->DEFAULTS['FOREIGNLINK'])) {
+                    if (Tools::ends($key, (string) $this->DEFAULTS['FOREIGNLINK'])) {
                         continue;
                     }
                     $field = (array) $this->fields[$key];
                     $class = [];
                     if (isset($field['foreign_table'])) {
+                        Assert::integer($this->DEFAULTS['TEXTSIZE']);
                         $tmp = '<a href="?' . Tools::urlChange(['table' => $field['foreign_table'], 'where[id]' => $value]) . '" '
                             . 'title="' . Tools::h(mb_substr($row[$key . $this->DEFAULTS['FOREIGNLINK']], 0, $this->DEFAULTS['TEXTSIZE']) . (mb_strlen($row[$key . $this->DEFAULTS['FOREIGNLINK']]) > $this->DEFAULTS['TEXTSIZE'] ? '&hellip;' : '')) . '">'
                             . Tools::h($row[$key]) . '</a>';
@@ -571,7 +574,7 @@ class MyTableLister
                             // no break
                             case 'text':
                             default:
-                                $tmp = Tools::h(mb_substr($value, 0, $this->DEFAULTS['TEXTSIZE']));
+                                $tmp = Tools::h(mb_substr($value, 0, (int) $this->DEFAULTS['TEXTSIZE']));
                                 break;
                         }
                     }
@@ -623,8 +626,8 @@ class MyTableLister
      * @param int $rowsPerPage
      * @param int $totalRows
      * @param int $offset
-     * @param array $options as in view()
-     * @return mixed void or string (for $options['return-output'])
+     * @param array<mixed> $options as in view()
+     * @return void|string (string for $options['return-output'])
      */
     public function pagination($rowsPerPage, $totalRows, $offset = null, $options = [])
     {
@@ -639,7 +642,7 @@ class MyTableLister
             return;
         }
         $output = '<nav><ul class="pagination"><li class="page-item disabled"><a name="" class="page-link go-to-page non-page" data-pages="' . $pages . '" tabindex="-1">' . $this->translate('Page') . ':</a></li>';
-        if ($pages <= $this->DEFAULTS['PAGES_AROUND'] * 2 + 3) { // pagination with all pages
+        if ($pages <= (int) $this->DEFAULTS['PAGES_AROUND'] * 2 + 3) { // pagination with all pages
             if ($currentPage > 1) {
                 $output .= $this->addPage($currentPage - 1, $currentPage, $rowsPerPage, $this->translate('Previous'), $title);
             }
@@ -654,12 +657,13 @@ class MyTableLister
                 $output .= $this->addPage($currentPage - 1, $currentPage, $rowsPerPage, $this->translate('Previous'), $title);
             }
             $output .= $this->addPage(1, $currentPage, $rowsPerPage, null, $title);
-            $output .= ($currentPage - $this->DEFAULTS['PAGES_AROUND'] > 2 ? '<li><a name="" class="non-page">&hellip;</a></li>' : '');
-            for ($page = max($currentPage - $this->DEFAULTS['PAGES_AROUND'], 2); $page <= min($currentPage + $this->DEFAULTS['PAGES_AROUND'], $pages); $page++) {
+            $output .= ($currentPage - (int) $this->DEFAULTS['PAGES_AROUND'] > 2 ? '<li><a name="" class="non-page">&hellip;</a></li>' : '');
+            $page = max($currentPage - (int) $this->DEFAULTS['PAGES_AROUND'], 2);
+            for ($page; $page <= min($currentPage + (int) $this->DEFAULTS['PAGES_AROUND'], $pages); $page++) {
                 $output .= $this->addPage($page, $currentPage, $rowsPerPage, null, $title);
             }
-            $output .= ($currentPage < $pages - $this->DEFAULTS['PAGES_AROUND'] - 1 ? '<li><a name="" class="non-page">&hellip;</a></li>' : '');
-            if ($currentPage < $pages - $this->DEFAULTS['PAGES_AROUND']) {
+            $output .= ($currentPage < $pages - (int) $this->DEFAULTS['PAGES_AROUND'] - 1 ? '<li><a name="" class="non-page">&hellip;</a></li>' : '');
+            if ($currentPage < $pages - (int) $this->DEFAULTS['PAGES_AROUND']) {
                 $output .= $this->addPage($pages, $currentPage, $rowsPerPage, null, $title);
             }
             if ($currentPage < $pages) {
@@ -677,7 +681,7 @@ class MyTableLister
      * Return fields which are keys (indexes) of given type
      *
      * @param string $filterType key type, either "PRI", "MUL", "UNI" or ""
-     * @return array key names
+     * @return string[] key names
      */
     public function fieldKeys($filterType)
     {
@@ -693,11 +697,19 @@ class MyTableLister
         return $result;
     }
 
+    /**
+     *
+     * @return string
+     */
     public function getTable()
     {
         return $this->table;
     }
 
+    /**
+     *
+     * @return string
+     */
     public function getDatabase()
     {
         return $this->database;
@@ -705,6 +717,9 @@ class MyTableLister
 
     /**
      * Wrapper for $this->dbms->escapeSQL()
+     *
+     * @param string $string
+     * @return string
      */
     public function escapeSQL($string)
     {
@@ -713,6 +728,9 @@ class MyTableLister
 
     /**
      * Wrapper for $this->dbms->escapeDbIdentifier()
+     *
+     * @param string $string to escape
+     * @return string escaped identifier
      */
     public function escapeDbIdentifier($string)
     {
@@ -721,6 +739,8 @@ class MyTableLister
 
     /**
      * Wrapper for $this->dbms->errorDuplicateEntry()
+     *
+     * @return bool
      */
     public function errorDuplicateEntry()
     {
@@ -729,6 +749,9 @@ class MyTableLister
 
     /**
      * Wrapper for $this->dbms->checkIntervalFormat()
+     *
+     * @param string $interval
+     * @return int|false 1=yes, 0=no, false=error
      */
     public function checkIntervalFormat($interval)
     {
@@ -741,29 +764,32 @@ class MyTableLister
      * @param string $sql SQL to execute
      * @param string $successMessage message in case of success
      * @param string $errorMessage message in case of an error
-     * @param mixed $noChangeMessage optional message in case of no affected change
+     * @param false|string $noChangeMessage optional message in case of no affected change
      *   false = use $successMessage
      *
-     * @return bool|null true for success, false for failure of the query;
-     *   if the query is empty return null (with no messages)
+     * @return bool true for success, false for failure of the query;
      */
     public function resolveSQL($sql, $successMessage, $errorMessage, $noChangeMessage = false)
     {
-        if (!$sql) {
-            return null;
+        Assert::string($sql);
+        if ($this->dbms->query($sql)) {
+            Tools::addMessage(
+                'success',
+                strtr(
+                    $this->dbms->affected_rows == 0 && $noChangeMessage !== false ? $noChangeMessage : $successMessage,
+                    [
+                        '%insertId%' => (preg_match('/^\s*INSERT\s/i', $sql)) ? $this->dbms->insert_id : '',
+                        '%affectedRows%' => $this->dbms->affected_rows
+                    ]
+                )
+            );
+            return true;
         }
-        if ($result = $this->dbms->query($sql)) {
-            $insertId = $affectedRows = '';
-            if (preg_match('/^\s*INSERT\s/i', $sql)) {
-                $insertId = $this->dbms->insert_id;
-            }
-            $affectedRows = $this->dbms->affected_rows;
-            $message = $affectedRows == 0 && $noChangeMessage !== false ? $noChangeMessage : $successMessage;
-            Tools::addMessage('success', strtr($message, ['%insertId%' => $insertId, '%affectedRows%' => $affectedRows]));
-        } else {
-            Tools::addMessage('error', strtr($errorMessage, ['%error%' => $this->dbms->error, '%errno%' => $this->dbms->errno]));
-        }
-        return $result;
+        Tools::addMessage(
+            'error',
+            strtr($errorMessage, ['%error%' => $this->dbms->error, '%errno%' => $this->dbms->errno])
+        );
+        return false;
     }
 
     /**
@@ -830,8 +856,8 @@ class MyTableLister
      *
      * @param string $field
      * @param mixed $value field's value
-     * @param array $record
-     * @return bool - true = method was applied so don't proceed with the default, false = method wasn't applied
+     * @param array<string> $record
+     * @return bool|string - true = method was applied so don't proceed with the default, false = method wasn't applied
      */
     public function customInput($field, $value, array $record = [])
     {
@@ -843,7 +869,7 @@ class MyTableLister
      *
      * @param string $field
      * @param string $value
-     * @param array $record
+     * @param array<string> $record
      * @return string HTML
      */
     public function customInputBefore($field, $value, array $record = [])
@@ -856,7 +882,7 @@ class MyTableLister
      *
      * @param string $field
      * @param string $value
-     * @param array $record
+     * @param array<string> $record
      * @return string HTML
      */
     public function customInputAfter($field, $value, array $record = [])
@@ -867,7 +893,7 @@ class MyTableLister
     /**
      * Custom HTML to be show after detail's edit form but before action buttons
      *
-     * @param array $record
+     * @param array<string> $record
      * @return string
      */
     public function customRecordDetail(array $record)
@@ -878,7 +904,7 @@ class MyTableLister
     /**
      * Custom HTML to be show after standard action buttons of the detail's form
      *
-     * @param array $record
+     * @param array<string> $record
      * @return string
      */
     public function customRecordActions(array $record)
@@ -939,7 +965,7 @@ class MyTableLister
      * User-defined manipulating with column value of given table
      *
      * @param string $column
-     * @param array $row
+     * @param array<mixed> $row
      * @return mixed original or manipulated data
      */
     public function customValue($column, array $row)
@@ -960,7 +986,7 @@ class MyTableLister
         $query = $this->dbms->query('SELECT SQL_CALC_FOUND_ROWS ' . Tools::escapeDbIdentifier($options['type']) . ',COUNT(' . Tools::escapeDbIdentifier($options['type']) . ')'
             . ' FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $options['table'])
             . ' GROUP BY ' . Tools::escapeDbIdentifier($options['type']) . ' WITH ROLLUP LIMIT 100');
-        if (!$query) {
+        if (is_bool($query)) {
             return '';
         }
         $typeIndex = 0;
@@ -985,6 +1011,13 @@ class MyTableLister
 //        echo $output;
     }
 
+    /**
+     * Decode options in 'set' and 'enum' columns - specific to MySQL/MariaDb
+     *
+     * @param string $list list of options (e.g. "enum('single','married','divorced')"
+     *     or just "'single','married','divorced'")
+     * @return array<string>
+     */
     public function decodeChoiceOptions($list)
     {
         return $this->dbms->decodeChoiceOptions($list);
@@ -993,8 +1026,8 @@ class MyTableLister
     /**
      * Return keys to current table of a specified type(s)
      *
-     * @param array<string> $types type(s) - possible items: PRI, UNI, MUL (database specific)
-     * @return array filtered keys, e.g. ['id'=>'PRI', 'division'=>'MUL', 'document_id'=>'UNI']
+     * @param string[] $types type(s) - possible items: PRI, UNI, MUL (database specific)
+     * @return string[] filtered keys, e.g. ['id'=>'PRI', 'division'=>'MUL', 'document_id'=>'UNI']
      */
     public function filterKeys(array $types)
     {
@@ -1016,8 +1049,8 @@ class MyTableLister
      * Return a link (URL fragment) to a given row of the current table as an array.
      * To make a string of it, use implode("&", ...).
      *
-     * @param array $row
-     * @retun array URL fragment identifying current row, e.g. "where[id]=5"
+     * @param array<string|null> $row
+     * @return array<string> URL fragment identifying current row, e.g. "where[id]=5"
      */
     public function rowLink($row)
     {

@@ -10,14 +10,16 @@ use Tracy\IBarPanel;
  */
 class BarPanelTemplate implements IBarPanel
 {
+    /** @var string */
     protected $tabTitle;
 
+    /** @var array<mixed> */
     protected $panelDetails;
 
     /**
      *
      * @param string $tabTitle
-     * @param array $panelDetails
+     * @param array<mixed> $panelDetails
      */
     public function __construct($tabTitle, array $panelDetails)
     {
