@@ -5,6 +5,47 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Throwable/ThrowablePHPFunctions.php - replacement for PHP functions that returns false or null instead of the strict type. These functions throw an \Exception instead.
+    - filemtime, glob, json_encode, mb_eregi_replace, preg_match, preg_replace
+    - preg_replaceString accepts only string as $subject and returns only string (i.e. not string[])
+- dist/admin.php: HTTP POST panel
+- LogMysqli::queryStrictObject Logs SQL statement not starting with SELECT or SET. *Throws exception in case response isn't `\mysqli_result`*
+- LogMysqli::queryStrictBool Logs SQL statement not starting with SELECT or SET. *Throws exception in case response isn't `true`*
+- type hints (especially array iterable value types)
+- CHANGELOG.md 
+    - .markdown-lint.yml (to ignore same headings in CHANGELOG) replaces the default one, hence SHOULD include the original settings
+- '7.0', '7.1', '7.2' added to PHPStan matrix
+- dist phpstan includes phpstan/phpstan-webmozart-assert, therefore other PHPStan configuration file added in order to include proper extension.neon    
+
+### Changed
+- nette/utils allowed also in version ^3.2.2
+- godsdev/tools bumped to type strict version ^0.3.8
+- LogMysqli::fetchSingle Throws excepetion, when an SQL statement returns true.  
+- LogMysqli::fetchAndReindex Error for this function is also an SQL statement that returns true.
+- MyAdminProcess::redir make use of new option in GodsDev\Tools::redir and turns off  `session_write_close()` in order to pass info about redirect to Tracy
+- MyCMSMonoLingual if logger is not passed to the class, constructor will throw an Exception (instead of die)
+- MyTableAdmin::outputField fixesParameter 2 $label of static method GodsDev\Tools\Tools::htmlInput() expects string, false given. MUST be empty string to trigger label omitting.
+- MyTableAdmin methods (recordDelete) refactoring for better readability
+- MyTableLister::resolveSQL refactoring for better readability
+- ProjectCommon::localDate throws Exception if $stringOfTime is malformed
+- dist/AdminProcess::getAgenda refactoring for better static analysis
+- dist/Controller instatiates Mail only if `class_exists('Swift_SmtpTransport')` so that PHPUnit test run from root doesn't stupidly fail
+- dist/ProjectSpecific::getSitemap throws Exception if sitemap retrieval fails
+- `return;` statement after method with return never is not necessary
+- MyTableAdmin: removed zero value that is not accepted by ENUM. To set empty, use NULL option. TODO fix NULL option for ENUM to be saved in database
+- MyFriendlyURL::friendlyIdentifyRedirect throws Exception on seriously malformed URL
+
+### Fixed
+- Stricter code by type assertion, type casting, type hinting
+- Stricter code by return type specific LogMysqli::queryStrict methods and ThrowablePHPFunctions (i.e. Exception thrown instead of an unexpected type returned on error)
+- PHPStan level=6 => Error Zero
+- MyAdminProcess::processSubFolder fixed EXIF related condition so that if nothing is known $entry['info'] .= '';
+
+### Deprecated
+- MyTableAdmin::outputSelectPath() - is this function necessary?
+
+... and many more
 
 ## [0.3.15] - 2020-05-02
 ### Fixed
@@ -17,189 +58,124 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - classes Test in separate path so that `/godsdev/mycms/classes/Test/` are not part of `autoload_static.php`
 
 ## [0.3.13] - 2020-05-02
+### Changed
+- test related classes moved to autoload-dev section in order to prevent Ambiguous class resolution in `dist\autoload_static.php` from
+
+```php
+        'GodsDev\\mycmsprojectnamespace\\' =>
+        array (
+            0 => __DIR__ . '/../..' . '/classes',
+            1 => __DIR__ . '/..' . '/godsdev/mycms/dist/classes',
+        ),
+```
+to
+```php
+        'GodsDev\\mycmsprojectnamespace\\' =>
+        array (
+            0 => __DIR__ . '/../..' . '/classes',
+        ),
+```
 
 ## [0.3.12] - 2020-04-20
-
+### Fixed
+- fix test classes namespace and use statements to be PSR-4 compliant
 
 ## [0.3.11] - 2020-03-14
+- login and logout and various process fixes
+- Folder dist is a seed of a new project and works out of the box (incl. favicons for various browsers)
+- fix zobrazování tabulek s foreign key
+- fix řada konstant v conf/config.php je zde v MyCMS zřejmě zbytečně - zakomentovány, aby PHPUnit fungovalo s dist
+- testing: PHPunit tests both mycms and dist (aby se testovalo i jak se chová v jednoduchém nasazení projektu)
+- změny v dist/* aby se lépe nasazovaly nové projekty, např. dist/build.sh as a fast deployment script
+- MyCMS added to packagist https://packagist.org/packages/godsdev/mycms
+- fix backtick doubling
+- clean-up: `.htaccess` removed as MyCMS is used only as a library, so the application using it SHOULD implement `RedirectMatch 404 vendor\/` statement as proposed in `dist/.htaccess` to keep the library hidden from web access.
+- security change: LogMysqli: $logQuery optional default logging of database changing statement can be (for security reasons) turned off by value false
+- security change: MyAdminProcess: processUserChangePassword - password change is not logged
+- fix processActivity: undefined variable $tab replaced by the existing $tabs
+- MyFriendlyUrl was tested in A and F4T projects and it worked fine, so it may go to production
 
 ## [0.3.10] - 2019-01-31
-
+- processFilePack(), processFileUpload and processSubfolder() now test class_exist('ZipArchive')
+- MyTableAdmin.php - bugfix in recordSave()
 
 ## [0.3.9] - 2019-01-18
-
+- MyAdmin.php - bugfix in getPageTitle(); minor edits
+- MyAdminProcess.php - +processActivity()
+- MyTableAdmin.php - referer as hidden input field in outputForm()
+- MyTableLister.php - bugfix in selectSQL()
 
 ## [0.3.8] - 2018-12-12
+Merge branch 'develop' of https://github.com/GodsDev/mycms into develop
+# Conflicts:
+#	classes/MyTableAdmin.php
 
 ## [0.3.7] - 2018-10-08
-
+- fix LogMysqli::fetchSingle
+- new LogMysqli::values Extract data from an array and present it as values, field names, or pairs.
+- admin: getPageTitle
+- admin opraveno ukládání and small design fixes
 
 ## [0.3.6] - 2018-09-20
+- fix environment dependant CAST(AS)
 
 ## [0.3.5] - 2018-09-20
-
+- bump "godsdev/tools": "^0.3.1"
 
 ## [0.3.4] - 2018-05-27
+- fix i to i transformation
 
 ## [0.3.3] - 2018-06-01
+- ProjectCommon::correctLineBreak Replace spaces with \0160
 
 ## [0.3.2] - 2018-05-29
-
+- fix submit rename (bug 6691)
 
 ## [0.3.1] - 2018-05-07
+- some methods renamed
 
 ## [0.3.0] - 2018-05-07
-
+- Lot of improvements
+  - logging
+  - Tracy
+  - cusomized Css and Js
+  - dist folder contains an example project using MyCMS
 
 ## [0.2.5] - 2017-11-24
+- changed loadSettings separated from getSessionLanguage
+- added database manipulation fetchAll, fetchSingle, recordSave
+- changed TableAdmin.php manipulation with JSON columns
+- update TableLister.php translations and formatting
+
 ## [0.2.4] - 2017-11-07
+- +fetchSingle(), improved fetchAndReindex()
+
 ## [0.2.3] - 2017-11-05
+- TableAdmin update recordSave and outputForm
+
 ## [0.2.2] - 2017-11-05
+- options for project customization of getSessionLanguage
+- TableAdmin and TableLister improvements
+
 ## [0.2.1] - 2017-10-12
+- fix language in SQL statement
+
 ## [0.2.0] - 2017-10-12
+- PSR-3 logger
+- TableAdmin objectified
+- getSessionLanguage is made universal (it also includes langauge files and some database fields)
 
 ## [0.1] - 2017-10-06
+- Basic functions
+- Basic structure
 
-
-
-Types of changes
-
-    Added for new features.
-    Changed for changes in existing functionality.
-    Deprecated for soon-to-be removed features.
-    Removed for now removed features.
-    Fixed for any bug fixes.
-    Security in case of vulnerabilities.
-
-
-### Added
-- New visual identity by [@tylerfortune8](https://github.com/tylerfortune8).
-- Version navigation.
-- Links to latest released version in previous versions.
-- "Why keep a changelog?" section.
-- "Who needs a changelog?" section.
-- "How do I make a changelog?" section.
-- "Frequently Asked Questions" section.
-- New "Guiding Principles" sub-section to "How do I make a changelog?".
-- Simplified and Traditional Chinese translations from [@tianshuo](https://github.com/tianshuo).
-- German translation from [@mpbzh](https://github.com/mpbzh) & [@Art4](https://github.com/Art4).
-- Italian translation from [@azkidenz](https://github.com/azkidenz).
-- Swedish translation from [@magol](https://github.com/magol).
-- Turkish translation from [@karalamalar](https://github.com/karalamalar).
-- French translation from [@zapashcanon](https://github.com/zapashcanon).
-- Brazilian Portugese translation from [@Webysther](https://github.com/Webysther).
-- Polish translation from [@amielucha](https://github.com/amielucha) & [@m-aciek](https://github.com/m-aciek).
-- Russian translation from [@aishek](https://github.com/aishek).
-- Czech translation from [@h4vry](https://github.com/h4vry).
-- Slovak translation from [@jkostolansky](https://github.com/jkostolansky).
-- Korean translation from [@pierceh89](https://github.com/pierceh89).
-- Croatian translation from [@porx](https://github.com/porx).
-- Persian translation from [@Hameds](https://github.com/Hameds).
-- Ukrainian translation from [@osadchyi-s](https://github.com/osadchyi-s).
-
-### Changed
-- Start using "changelog" over "change log" since it's the common usage.
-- Start versioning based on the current English version at 0.3.0 to help
-translation authors keep things up-to-date.
-- Rewrite "What makes unicorns cry?" section.
-- Rewrite "Ignoring Deprecations" sub-section to clarify the ideal
-  scenario.
-- Improve "Commit log diffs" sub-section to further argument against
-  them.
-- Merge "Why can’t people just use a git log diff?" with "Commit log
-  diffs"
-- Fix typos in Simplified Chinese and Traditional Chinese translations.
-- Fix typos in Brazilian Portuguese translation.
-- Fix typos in Turkish translation.
-- Fix typos in Czech translation.
-- Fix typos in Swedish translation.
-- Improve phrasing in French translation.
-- Fix phrasing and spelling in German translation.
-
-### Removed
-- Section about "changelog" vs "CHANGELOG".
-
-## [0.3.0] - 2015-12-03
-### Added
-- RU translation from [@aishek](https://github.com/aishek).
-- pt-BR translation from [@tallesl](https://github.com/tallesl).
-- es-ES translation from [@ZeliosAriex](https://github.com/ZeliosAriex).
-
-## [0.2.0] - 2015-10-06
-### Changed
-- Remove exclusionary mentions of "open source" since this project can
-benefit both "open" and "closed" source projects equally.
-
-## [0.1.0] - 2015-10-06
-### Added
-- Answer "Should you ever rewrite a change log?".
-
-### Changed
-- Improve argument against commit logs.
-- Start following [SemVer](https://semver.org) properly.
-
-## [0.0.8] - 2015-02-17
-### Changed
-- Update year to match in every README example.
-- Reluctantly stop making fun of Brits only, since most of the world
-  writes dates in a strange way.
-
-### Fixed
-- Fix typos in recent README changes.
-- Update outdated unreleased diff link.
-
-## [0.0.7] - 2015-02-16
-### Added
-- Link, and make it obvious that date format is ISO 8601.
-
-### Changed
-- Clarified the section on "Is there a standard change log format?".
-
-### Fixed
-- Fix Markdown links to tag comparison URL with footnote-style links.
-
-## [0.0.6] - 2014-12-12
-### Added
-- README section on "yanked" releases.
-
-## [0.0.5] - 2014-08-09
-### Added
-- Markdown links to version tags on release headings.
-- Unreleased section to gather unreleased changes and encourage note
-keeping prior to releases.
-
-## [0.0.4] - 2014-08-09
-### Added
-- Better explanation of the difference between the file ("CHANGELOG")
-and its function "the change log".
-
-### Changed
-- Refer to a "change log" instead of a "CHANGELOG" throughout the site
-to differentiate between the file and the purpose of the file — the
-logging of changes.
-
-### Removed
-- Remove empty sections from CHANGELOG, they occupy too much space and
-create too much noise in the file. People will have to assume that the
-missing sections were intentionally left out because they contained no
-notable changes.
-
-## [0.0.3] - 2014-08-09
-### Added
-- "Why should I care?" section mentioning The Changelog podcast.
-
-## [0.0.2] - 2014-07-10
-### Added
-- Explanation of the recommended reverse chronological release ordering.
-
-## [0.0.1] - 2014-05-31
-### Added
-- This CHANGELOG file to hopefully serve as an evolving example of a
-  standardized open source project CHANGELOG.
-- CNAME file to enable GitHub Pages custom domain
-- README now contains answers to common questions about CHANGELOGs
-- Good examples and basic guidelines, including proper date formatting.
-- Counter-examples: "What makes unicorns cry?"
+## TODO - Add Types of changes
+-    Added for new features.
+-    Changed for changes in existing functionality.
+-    Deprecated for soon-to-be removed features.
+-    Removed for now removed features.
+-    Fixed for any bug fixes.
+-    Security in case of vulnerabilities.
 
 
 
@@ -227,15 +203,3 @@ notable changes.
 [0.2.1]: https://github.com/WorkOfStan/mycms/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/WorkOfStan/mycms/compare/v0.1...v0.2.0
 [0.1]: https://github.com/WorkOfStan/mycms/releases/tag/v0.1
-[1.0.0]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.3.0...v1.0.0
-[0.3.0]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.2.0...v0.3.0
-[0.2.0]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.8...v0.1.0
-[0.0.8]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.7...v0.0.8
-[0.0.7]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.6...v0.0.7
-[0.0.6]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.5...v0.0.6
-[0.0.5]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.4...v0.0.5
-[0.0.4]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.3...v0.0.4
-[0.0.3]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.2...v0.0.3
-[0.0.2]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.1...v0.0.2
-[0.0.1]: https://github.com/olivierlacan/keep-a-changelog/releases/tag/v0.0.1
