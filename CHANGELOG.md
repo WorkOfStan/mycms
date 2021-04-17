@@ -7,16 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Throwable/ThrowablePHPFunctions.php - replacement for PHP functions that returns false or null instead of the strict type. These functions throw an \Exception instead.
-    - filemtime, glob, json_encode, mb_eregi_replace, preg_match, preg_replace
-    - preg_replaceString accepts only string as $subject and returns only string (i.e. not string[])
+  - filemtime, glob, json_encode, mb_eregi_replace, preg_match, preg_replace
+  - preg_replaceString accepts only string as $subject and returns only string (i.e. not string[])
 - dist/admin.php: HTTP POST panel
 - LogMysqli::queryStrictObject Logs SQL statement not starting with SELECT or SET. *Throws exception in case response isn't `\mysqli_result`*
 - LogMysqli::queryStrictBool Logs SQL statement not starting with SELECT or SET. *Throws exception in case response isn't `true`*
 - type hints (especially array iterable value types)
-- CHANGELOG.md 
-    - .markdown-lint.yml (to ignore same headings in CHANGELOG) replaces the default one, hence SHOULD include the original settings
+- CHANGELOG.md
+  - .markdown-lint.yml (to ignore same headings in CHANGELOG) replaces the default one, hence SHOULD include the original settings
 - '7.0', '7.1', '7.2' added to PHPStan matrix
-- dist phpstan includes phpstan/phpstan-webmozart-assert, therefore other PHPStan configuration file added in order to include proper extension.neon    
+- dist phpstan includes phpstan/phpstan-webmozart-assert, therefore other PHPStan configuration file added in order to include proper extension.neon
 
 ### Changed
 - nette/utils allowed also in version ^3.2.2
@@ -87,7 +87,7 @@ to
 - fix řada konstant v conf/config.php je zde v MyCMS zřejmě zbytečně - zakomentovány, aby PHPUnit fungovalo s dist
 - testing: PHPunit tests both mycms and dist (aby se testovalo i jak se chová v jednoduchém nasazení projektu)
 - změny v dist/* aby se lépe nasazovaly nové projekty, např. dist/build.sh as a fast deployment script
-- MyCMS added to packagist https://packagist.org/packages/godsdev/mycms
+- MyCMS added to packagist <https://packagist.org/packages/godsdev/mycms>
 - fix backtick doubling
 - clean-up: `.htaccess` removed as MyCMS is used only as a library, so the application using it SHOULD implement `RedirectMatch 404 vendor\/` statement as proposed in `dist/.htaccess` to keep the library hidden from web access.
 - security change: LogMysqli: $logQuery optional default logging of database changing statement can be (for security reasons) turned off by value false
@@ -106,9 +106,7 @@ to
 - MyTableLister.php - bugfix in selectSQL()
 
 ## [0.3.8] - 2018-12-12
-Merge branch 'develop' of https://github.com/GodsDev/mycms into develop
-# Conflicts:
-#	classes/MyTableAdmin.php
+- Merge branch 'develop' of <https://github.com/GodsDev/mycms> into develop with Conflicts: classes/MyTableAdmin.php
 
 ## [0.3.7] - 2018-10-08
 - fix LogMysqli::fetchSingle
@@ -170,12 +168,12 @@ Merge branch 'develop' of https://github.com/GodsDev/mycms into develop
 - Basic structure
 
 ## TODO - Add Types of changes
--    Added for new features.
--    Changed for changes in existing functionality.
--    Deprecated for soon-to-be removed features.
--    Removed for now removed features.
--    Fixed for any bug fixes.
--    Security in case of vulnerabilities.
+- `Added` for new features.
+- `Changed` for changes in existing functionality.
+- `Deprecated` for soon-to-be removed features.
+- `Removed` for now removed features.
+- `Fixed` for any bug fixes.
+- `Security` in case of vulnerabilities.
 
 
 

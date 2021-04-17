@@ -581,6 +581,10 @@ class MyAdminProcess extends MyCommon
                              */
                             } elseif (substr($file, -4) == '.zip' && is_a($ZipArchive, '\ZipArchive')) {
                                 if ($ZipArchive->open($file)) {
+                                    // To fix `Access to an undefined property ZipArchive::$numFiles.` on GitHub:PHP/7.1
+                                    if (version_compare(phpversion(), '7.1', '==')) {
+                                        Assert::propertyExists($ZipArchive, 'numFiles');
+                                    }
                                     for ($i = 0; $i < min($ZipArchive->numFiles, 10); $i++) {
                                         $entry['info'] .= $ZipArchive->getNameIndex($i) . "\n";
                                     }
