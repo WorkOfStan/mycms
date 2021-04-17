@@ -111,7 +111,7 @@ class MyFriendlyUrl extends MyCommon
      * @param array<mixed> $options
      * @return array<mixed>|true `bool (true)` when `TEMPLATE_NOT_FOUND` || `array` with redir string field
      *     || `array` with token string field and matches array field (see above)
-     * @throw Exception on malformed URL
+     * @throws Exception on malformed URL
      */
     protected function friendlyIdentifyRedirect(array $options = [])
     {

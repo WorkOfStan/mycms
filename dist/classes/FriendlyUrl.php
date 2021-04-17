@@ -16,7 +16,7 @@ class FriendlyUrl extends MyFriendlyUrl
      * accepted attributes:
      */
 
-    /** @var array<mixed> content of $_GET and $_POST */
+    /** @var array<mixed> content of array_merge($_GET, $_POST) */
     protected $get;
 
     /** @var string */

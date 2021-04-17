@@ -3,6 +3,12 @@
 /**
  * Replacement for PHP functions that returns false or null instead of the strict type.
  * These function throw an \Exception instead.
+ * 
+ * Usage:
+ * put such line into a file declaration ...
+ * use function GodsDev\MyCMS\ThrowableFunctions\mb_eregi_replace;
+ * ... and mb_eregi_replace will refer to this Throwable function, while
+ * \mb_eregi_replace will refer to the PHP built-in function
  */
 
 namespace GodsDev\MyCMS\ThrowableFunctions;

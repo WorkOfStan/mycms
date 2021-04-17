@@ -99,7 +99,7 @@ class MyAdminProcess extends MyCommon
      * Process the "activity" action - update activity column of all admins, delete old tabs.
      *
      * @param array<string|array> $post $_POST by reference
-     * @return void and may output JSON as return never
+     * @return void (if engaged, outputs JSON and then return never)
      */
     public function processActivity(&$post)
     {
@@ -344,8 +344,8 @@ class MyAdminProcess extends MyCommon
      * New file name must keep the same extension and consist only of letters, digits or ( ) . _
      *
      * @param array<string|array> $post $_POST by reference
-     * @return void and may output array
-     *   JSON array containing indexes: "success" (bool), "messages" (string) and "data" (string) of renamed file, if successful
+     * @return void but if engaged return never and outputs JSON
+     *   containing indexes: "success" (bool), "messages" (string) and "data" (string) of renamed file, if successful
      */
     public function processFileRename(&$post)
     {
@@ -383,8 +383,7 @@ class MyAdminProcess extends MyCommon
             if (!$result['success']) {
                 $this->MyCMS->logger->warning('Error occured renaming the file. ' . $path . $post['old_name'] . ' --> ' . $newpath . $post['file_rename']);
             }
-            header('Content-type: application/json');
-            exit(json_encode($result));
+            $this->exitJson($result);
         }
     }
 
@@ -396,7 +395,7 @@ class MyAdminProcess extends MyCommon
      * 2) file size limitation
      *
      * @param array<string|array> $post $_POST by reference
-     * @return void and may output array
+     * @return void but if engaged return never and outputs JSON
      *   JSON array containing indexes: "success" (bool), "messages" (string), "processed-files" (int)
      */
     public function processFileUnpack(&$post)
@@ -427,8 +426,7 @@ class MyAdminProcess extends MyCommon
             } else {
                 $result['messages'] = $this->tableAdmin->translate('This function is not supported.');
             }
-            header('Content-type: application/json');
-            exit(json_encode($result));
+            $this->exitJson($result);
         }
     }
 

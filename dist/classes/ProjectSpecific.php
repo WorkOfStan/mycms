@@ -108,7 +108,7 @@ class ProjectSpecific extends ProjectCommon
         if (($pos = strpos($result['description'], '%SITEMAP%')) !== false) {
             $result['description'] = str_replace(
                 '%SITEMAP%',
-                ProjectSpecific::getSitemap($options),
+                ProjectSpecific::getSitemap($options), // TOOD use self:: instead of ProjectSpecific
                 $result['description']
             );
         }
@@ -236,8 +236,9 @@ class ProjectSpecific extends ProjectCommon
     /**
      * TODO: make this method useful for dist project as a demonstration
      *
-     * @param array<string> $options OPTIONAL
+     * @param array<string> $options OPTIONAL (fields language and PATH_HOME expected)
      * @return string
+     * @throws Exception if sitemap retrieval fails
      */
     public function getSitemap(array $options = [])
     {

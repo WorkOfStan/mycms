@@ -64,7 +64,6 @@ class LogMysqli extends BackyardMysqli
      * @param bool $logQuery optional default logging of database changing statement can be (for security reasons)
      *     turned off by value false
      * @return bool|\mysqli_result<object>
-     * @throws Exception on $sql mb_eregi_replace fail
      */
     public function query($sql, $errorLogOutput = 1, $logQuery = true)
     {
@@ -91,7 +90,7 @@ class LogMysqli extends BackyardMysqli
      * @param bool $logQuery optional default logging of database changing statement can be (for security reasons)
      *     turned off by value false
      * @return true
-     * @throw Exception if error with false or answer true
+     * @throws Exception if error indicated by `false` result or if result is \mysqli_result object
      */
     public function queryStrictBool($sql, $errorLogOutput = 1, $logQuery = true)
     {
@@ -107,7 +106,7 @@ class LogMysqli extends BackyardMysqli
     }
 
     /**
-     * Logs SQL statement not starting with SELECT or SET. Throws exception in case response isn't \mysqli_result
+     * Logs SQL statement not starting with SELECT or SET. Throws exception in case response isn't `\mysqli_result`
      *
      * @param string $sql SQL to execute
      * @param int $errorLogOutput optional default=1 turn-off=0
@@ -116,7 +115,7 @@ class LogMysqli extends BackyardMysqli
      * @param bool $logQuery optional default logging of database changing statement can be (for security reasons)
      *     turned off by value false
      * @return \mysqli_result<object>
-     * @throw Exception if error with false or answer true
+     * @throws Exception if error indicated by `false` result or if result is `true`
      */
     public function queryStrictObject($sql, $errorLogOutput = 1, $logQuery = true)
     {
@@ -273,13 +272,14 @@ class LogMysqli extends BackyardMysqli
      *
      * @param string $sql SQL to be executed
      * @return mixed first selected row (or its first column if only one column is selected), null on empty SELECT
-     * @throws Exception on error
+     * @throws Exception when a database error occurs or when an SQL statement returns true.
      */
     public function fetchSingle($sql)
     {
         $query = $this->query($sql);
         if ($query === true) {
-            return null;
+            //return null;
+            throw new Exception('SQL statement resulting in \mysqli_result<object> expected. True received.');
         }
         if ($query) {
             $row = $query->fetch_assoc();

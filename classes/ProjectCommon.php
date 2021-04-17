@@ -105,7 +105,7 @@ class ProjectCommon extends MyCommon
      * @param string $stringOfTime
      * @param string $language
      * @return string
-     * @throws Exception if applicationDir malformed
+     * @throws Exception if $stringOfTime is malformed
      */
     public static function localDate($stringOfTime, $language)
     {

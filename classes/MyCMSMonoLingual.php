@@ -49,7 +49,7 @@ class MyCMSMonoLingual
      * Constructor
      *
      * @param array<array> $myCmsConf
-     * @throw Exception if logger not configured
+     * @throws Exception if logger not configured
      */
     public function __construct(array $myCmsConf = [])
     {
