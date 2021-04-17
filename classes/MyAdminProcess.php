@@ -581,13 +581,27 @@ class MyAdminProcess extends MyCommon
                              */
                             } elseif (substr($file, -4) == '.zip' && is_a($ZipArchive, '\ZipArchive')) {
                                 if ($ZipArchive->open($file)) {
-                                    // To fix `Access to an undefined property ZipArchive::$numFiles.` on GitHub:PHP/7.1
-                                    if (version_compare(phpversion(), '7.1', '==')) {
-                                        Assert::propertyExists($ZipArchive, 'numFiles');
-                                    }
+                                    /**
+                                     * @phpstan-ignore-next-line
+                                     * https://bugs.php.net/bug.php?id=73803
+                                     * ZipArchive class has public properties, that are not visible via reflection.
+                                     * Therefore using tools like PHPStan generates error:
+                                     * Access to an undefined property ZipArchive::$numFiles.
+                                     *
+                                     * Relevant for PHP/7.1 only, then it was fixed
+                                     */
                                     for ($i = 0; $i < min($ZipArchive->numFiles, 10); $i++) {
                                         $entry['info'] .= $ZipArchive->getNameIndex($i) . "\n";
                                     }
+                                    /**
+                                     * @phpstan-ignore-next-line
+                                     * https://bugs.php.net/bug.php?id=73803
+                                     * ZipArchive class has public properties, that are not visible via reflection.
+                                     * Therefore using tools like PHPStan generates error:
+                                     * Access to an undefined property ZipArchive::$numFiles.
+                                     *
+                                     * Relevant for PHP/7.1 only, then it was fixed
+                                     */
                                     $entry['info'] .= ($ZipArchive->numFiles > 10 ? "…\n" : "") . $this->tableAdmin->translate('total') . ': ' . $ZipArchive->numFiles;
                                 }
                             }
