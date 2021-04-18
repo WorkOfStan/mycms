@@ -233,11 +233,11 @@ class AdminProcess extends MyAdminProcess
      * @return array<array>
      */
     public function getAgenda($agenda)
-    {
-        $result = $correctOrder = [];
+    {        
         if (!isset($this->agendas[$agenda])) {
-            return $result;
+            return [];
         }
+        $result = $correctOrder = [];
         /** @var array<string|array> $options array of agenda set in admin.php in $AGENDAS */
         $options = $this->agendas[$agenda];
         $optionsTable = (isset($options['table']) && is_string($options['table'])) ?
