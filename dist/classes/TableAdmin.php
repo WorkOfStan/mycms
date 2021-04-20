@@ -22,6 +22,11 @@ class TableAdmin extends MyTableAdmin
         parent::__construct($dbms, $table, $options);
         $this->TRANSLATIONS = $options['TRANSLATIONS'];
         if (Tools::setifempty($_SESSION['language'], 'en') == 'cs') {
+            // The union operator ( + ) might be more useful than array_merge.
+            // The array_merge function does not preserve numeric key values.
+            // If you need to preserve the numeric keys, then using + will do that.
+            // TODO: load localised yml insted of the array below
+            // Note: TRANSLATION is based on A project, rather than F project.
             $this->TRANSLATION += [
                 'Activate/deactivate' => 'Aktivovat/deaktivovat',
                 'Affected files: ' => 'Ovlivněných souborů: ',
@@ -317,12 +322,27 @@ class TableAdmin extends MyTableAdmin
         $fieldLang = '##';
         $fieldName = $field;
         if (substr($field, -3, 1) === '_' && in_array(substr($field, -2), array_keys($this->TRANSLATIONS))) {
-            // Localised fields may have language independant behaviour
+            // Localised fields may have language independant behaviour, so switch below handles type dependant code
+            // Language dependant conditions can however be added as well in separate switch
             $fieldLang = substr($field, -2); // language of the field
             $fieldName = substr($field, 0, -2) . '##';
         }
         switch (mb_substr($this->table, mb_strlen(TAB_PREFIX)) . "\\" . $fieldName) {
             //case "tableName\\fieldName": $result = ""; break; // SPECIMEN
+            //
+            // Selection list of parent_product_id
+            // TODO try this template in dist
+            case "product\\parent_product_id":
+                $result = $this->outputForeignId(
+                    "fields[$field]",
+                    'SELECT p.id,product_' . DEFAULT_LANGUAGE . ',division_' . DEFAULT_LANGUAGE .
+                    ' FROM ' . TAB_PREFIX . 'product p LEFT JOIN ' . TAB_PREFIX . 'division d ON p.division_id = d.id'
+                    . ' WHERE IFNULL(p.parent_product_id, 0) = 0 ORDER BY d.sort,p.sort',
+                    $value,
+                    ['class' => 'form-control', 'exclude' => (int) Tools::set($_GET['where']['id'])]
+                );
+                break;
+
             // URL fields have btn-webalize button
             case "content\\url_##":
                 $result = '<div class="input-group">'
@@ -345,12 +365,92 @@ class TableAdmin extends MyTableAdmin
                     . '<i class="fa fa-adjust" aria-hidden="true"></i></button>'
                     . '</span></div>';
                 break;
+
+            // Selection list of parent_product_id
+            // TODO try this template in dist
+            case "category\\image":
+            case "content\\image":
+            case "product\\image":
+                $result = '<div class="input-group">'
+                    . Tools::htmlInput("fields[$field]", '', $value, ['class' => 'form-control input-image', 'id' => $field . $this->rand])
+                    . '<span class="input-group-btn">'
+                    . '<button type="button" class="btn btn-secondary ImageSelector" data-target="#' . Tools::h($field . $this->rand) . '" title="' . $this->translate('Select') . '"><i class="fa fa-image" aria-hidden="true"></i></button>'
+                    . '</span></div>';
+                break;
+
+            // Selection list of category path
+            // TODO try this template in dist
+            case "category\\path":
+                $result = $this->translate('Parent category') . ':<br />'
+                    . Tools::htmlInput('path-original', '', $value, 'hidden')
+                    . '<select class="form-control" name="path-parent" id="path' . $this->rand . '"><option />';
+                $rows = $this->dbms->fetchAll('SELECT path,category_' . $_SESSION['language'] . ' AS category FROM ' . TAB_PREFIX . 'category ORDER BY path');
+                $tmp = substr($value, 0, -PATH_MODULE);
+                if (is_array($rows)) {
+                    foreach ($rows as $row) {
+                        $result .= Tools::htmlOption($row['path'], str_repeat('… ', max(strlen($row['path']) / PATH_MODULE - 1, 0)) . $row['category'], $tmp, Tools::begins($row['path'], $value));
+                    }
+                }
+                $result .= '</select>';
+                break;
+
+            // Selection list of relations to product
+            // TODO try this template in dist
+            case "content\\product_id":
+                $result = '<select class="form-control" name="fields[product_id]" id="' . $field . $this->rand . '"><option />';
+                $rows = $this->dbms->fetchAll('SELECT p.id,category_' . $_SESSION['language'] . ' AS category,product_' . $_SESSION['language'] . ' AS title FROM ' . TAB_PREFIX . 'product p LEFT JOIN ' . TAB_PREFIX . 'category c ON p.category_id = c.id ORDER BY c.path,p.sort');
+                if (is_array($rows)) {
+                    $tmp = null;
+                    foreach ($rows as $row) {
+                        if ($tmp != $row['category']) {
+                            $result .= (is_null($tmp) ? '' : '</optgroup>') . '<optgroup label="' . Tools::h($tmp = $row['category']) . '">' . PHP_EOL;
+                        }
+                        $result .= Tools::htmlOption($row['id'], $row['title'], $value) . PHP_EOL;
+                    }
+                    $result .= (is_null($tmp) ? '' : '</optgroup>');
+                }
+                $result .= '</select>';
+                break;
+        }
+        return $result;
+    }
+
+    /**
+     * Custom HTML showed after particular field (but still in the table row, in case of table display).
+     *
+     * @param string $field
+     * @param string $value
+     * @param array<string> $record
+     * @return string HTML
+     */
+    public function customInputAfter($field, $value, array $record = [])
+    {
+        $result = '';
+        switch ($this->table . "\\$field") {
+            // Show link to image after sort field
+            // TODO try this F template in dist
+            case TAB_PREFIX . "content\\sort":
+                $result .= '<div id="news-image">'
+                    . '<label for="picture-' . $this->rand . '">(' . $this->translate('image') . '):'
+                    . (Tools::set($record['type'], '') == 'news' && ($id = Tools::set($record['id'], '')) ?
+                    ' <a href="' . DIR_ASSETS . 'news/' . $id
+                    . '.jpg" target="_blank"><i class="fa fa-external-link"></i></a>' : '')
+                    . '</label><br>' . PHP_EOL
+                    . Tools::htmlInput(
+                        'picture',
+                        '',
+                        '',
+                        ['type' => 'file', 'class' => 'form-control mt-1', 'id' => 'picture-' . $this->rand]
+                    )
+                    . '</div>';
+                break;
         }
         return $result;
     }
 
     /**
      * Custom saving of a record. Record fields are in $_POST['fields'], other data in $_POST['database-table']
+     * TODO: the code in this method is based on A project, adapt to dist
      *
      * @return bool - true = method was applied so don't proceed with the default, false = method wasn't applied
      */
@@ -360,7 +460,6 @@ class TableAdmin extends MyTableAdmin
             return false;
         }
         // category.path - if admin changes the parent category (or picks it for a new record)
-        // @todo insert this into TableAdmin.php
         if (
             isset($_POST['table'], $_POST['path-original'], $_POST['path-parent'], $_POST['fields']['id']) &&
             $_POST['table'] == TAB_PREFIX . 'category' && (!Tools::begins(
@@ -418,6 +517,7 @@ class TableAdmin extends MyTableAdmin
 
     /**
      * Custom deletion of a record
+     * TODO: the code in this method is based on A project, adapt to dist
      *
      * @return bool - true = method was applied so don't proceed with the default, false = method wasn't applied
      */

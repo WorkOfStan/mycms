@@ -449,7 +449,7 @@ class MyTableAdmin extends MyTableLister
      * @param string $group
      * @param string|false $lastGroup
      * @param mixed $default
-     * @param array<string|array> $options
+     * @param array<array|int|string> $options
      * @return string HTML code
      */
     protected function addForeignOption($value, $text, $group, &$lastGroup, $default, $options)
@@ -473,7 +473,7 @@ class MyTableAdmin extends MyTableLister
      * @param string|array<string|array> $values either array of values for the <select>
      *        or string with the SQL SELECT statement
      * @param scalar $default original value
-     * @param array<string|array> $options additional options for the element rendition; plus
+     * @param array<array|int|string> $options additional options for the element rendition; plus
      *        [exclude] => value to exclude from select's options
      *        [class]
      *        [id]
