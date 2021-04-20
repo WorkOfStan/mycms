@@ -5,6 +5,7 @@ namespace GodsDev\mycmsprojectnamespace;
 use GodsDev\MyCMS\LogMysqli;
 use GodsDev\MyCMS\MyTableAdmin;
 use GodsDev\Tools\Tools;
+use Symfony\Component\Yaml\Yaml;
 use Webmozart\Assert\Assert;
 
 class TableAdmin extends MyTableAdmin
@@ -21,6 +22,13 @@ class TableAdmin extends MyTableAdmin
     {
         parent::__construct($dbms, $table, $options);
         $this->TRANSLATIONS = $options['TRANSLATIONS'];
+        $translationFile = 'conf/l10n/admin-'.Tools::setifempty($_SESSION['language'].'.yaml';
+        $value = 
+            // $thisTranslation +
+            file_exists($translationFile)? Yaml::parseFile($translationFile):[];
+        Debugger::barDump($value, 'yaml translation');
+
+
         if (Tools::setifempty($_SESSION['language'], 'en') == 'cs') {
             // The union operator ( + ) might be more useful than array_merge.
             // The array_merge function does not preserve numeric key values.
@@ -306,6 +314,7 @@ class TableAdmin extends MyTableAdmin
                 'Select your agenda, then particular row.' => 'Sélectionnez votre agenda, puis une ligne particulière.', // phpcs:ignore
             ];
         }
+        Assert::equal($this->TRANSLATION,$value);
     }
 
     /**
