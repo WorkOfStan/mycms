@@ -7,7 +7,7 @@ use GodsDev\MyCMS\ProjectCommon;
 use GodsDev\Tools\Tools;
 use Webmozart\Assert\Assert;
 
-use function GodsDev\MyCMS\ThrowableFunctions\preg_replaceString;
+//use function GodsDev\MyCMS\ThrowableFunctions\preg_replaceString;
 
 /**
  * functions specific to the project
@@ -22,49 +22,102 @@ class ProjectSpecific extends ProjectCommon
 
     /**
      * Search for specified text in the database, return results
-     * TODO: make this method useful for dist project as a demonstration
+     * TODO: make this method useful for dist project as a demonstration (inspired by A project)
      *
      * @param string $text being searched for
      * @param int $offset
+     * @param int $limit
      * @param string $totalRows //TODO or?? mixed $totalRows first selected row
      *     (or its first column if only one column is selected),
      *     null on empty SELECT, or false on error
      * @return array<array> search result
      */
-    public function searchResults($text, $offset = 0, &$totalRows = null)
+    public function searchResults($text, $offset = 0, $limit = 10, &$totalRows = null)
     {
         $result = [];
         $q = preg_quote($text);
-        $query = $this->MyCMS->dbms->queryStrictObject('SELECT CONCAT("?article&id=", id) AS link,'
-            . 'content_' . $this->language . ' AS title,LEFT(description_' . $this->language . ',1000) AS description
+//        if (!ELASTICSEARCH) {
+        $query = $this->MyCMS->dbms->queryStrictObject('SELECT '
+            . 'CONCAT("?article&id=", id) AS link' // for FriendlyUrl refactor with $this->getLinkSql
+            . ',content_' . $this->language . ' AS title,LEFT(description_' . $this->language . ',1000) AS description
             FROM ' . TAB_PREFIX . 'content WHERE active="1" AND type IN ("page", "news") AND (content_'
             . $this->language . ' LIKE "%' . $q . '%" OR description_' . $this->language . ' LIKE "%' . $q . '%")
             UNION
-            SELECT CONCAT("?category&id=", id) AS link,category_' . $this->language . ' AS title,LEFT(description_'
+            SELECT '
+            . 'CONCAT("?category&id=", id) AS link' // for FriendlyUrl refactor with $this->getLinkSql
+            . ',category_' . $this->language . ' AS title,LEFT(description_'
             . $this->language . ',1000) AS description
             FROM ' . TAB_PREFIX . 'category WHERE active="1" AND (category_' . $this->language
             . ' LIKE "%' . $q . '%" OR description_' . $this->language . ' LIKE "%' . $q . '%")
             UNION
-            SELECT CONCAT("?product=", id) AS link,product_' . $this->language
+            SELECT '
+            . 'CONCAT("?product=", id) AS link' // for FriendlyUrl refactor with $this->getLinkSql
+            . ',product_' . $this->language
             . ' AS title,LEFT(description_' . $this->language . ',200) AS description
             FROM ' . TAB_PREFIX . 'product WHERE product_' . $this->language
             // TODO Expected at least 1 space after "+"; 0 found ask CRS2
             . ' LIKE "%' . $q . '%" OR description_' . $this->language . ' LIKE "%' . $q . '%"
-            LIMIT 10 OFFSET ' . (int) $offset);
+            LIMIT ' . (int) $limit . ' OFFSET ' . (int) $offset);
         $totalRows = $this->MyCMS->fetchSingle('SELECT FOUND_ROWS()');
         while ($row = $query->fetch_assoc()) {
-            $row['description'] = strip_tags(preg_replaceString('~(</[a-z0-9]+>)~six', "$1 ", $row['description']));
-            if ($pos = mb_strpos(mb_strtolower($row['description']), mb_strtolower($text))) {
-                $row['description'] = mb_substr($row['description'], max(0, $pos - 20), 201);
-            }
+            /* Orig code
+              $row['description'] = strip_tags(preg_replaceString('~(</[a-z0-9]+>)~six', "$1 ", $row['description']));
+              if ($pos = mb_strpos(mb_strtolower($row['description']), mb_strtolower($text))) {
+              $row['description'] = mb_substr($row['description'], max(0, $pos - 20), 201);
+              }
+             *
+             */
+            //quick fix
+            $row['description'] = str_replace(
+                '&amp;',
+                '&',
+                str_replace('&nbsp;', ' ', strip_tags($row['description']))
+            );
             $result [] = $row;
         }
         return $result;
+//        }
+//        //ELASTICSEARCH as used in F project - code below requires class Search extends MyCommon
+//        $search = new Search($this->MyCMS, [
+//            'elasticsearchParams' => $this->elasticsearchParams,
+//            'contentQueries' => $this->contentQueriesSearch,
+//            'elasticsearchIndex' => $this->elasticsearchIndex,
+//        ]);
+//        $searchResult = $search->search($q, $this->language);
+//        $resultHits = $searchResult['hits']['hits'];
+//        if (!is_array($resultHits)) {
+//            $this->MyCMS->logger->alert('Is Elasticsearch active?');
+//        }
+//        $totalRows = count($resultHits);
+//        foreach ($resultHits as $resultId => $resultRow) {
+//            if (isset($resultRow['highlight'])) {
+//                $tempFirstField = reset($resultRow['highlight']);
+//                $tempContent = reset($tempFirstField);
+//            } else {
+//                $tempContent = '';
+//            }
+//            if (empty($tempContent)) {
+//                $tempContent = mb_substr(
+//                    $this->getFirstValue($resultRow['_source'], ['perex_cs', 'perex_en', 'intro_cs', 'intro_en',
+//                                'content_cs', 'content_en', 'description_cs', 'description_en']),
+//                    0,
+//                    1000
+//                );
+//            }
+//            $result[] = array(
+//                'score' => $resultRow['_score'],
+//                'title' => $this->getFirstValue($resultRow['_source'],
+//                   ['page_cs', 'product_cs', 'page_en', 'product_en']),
+//                'content' => $tempContent,
+//                'url' => $resultRow['_source']['url'],
+//            );
+//        }
+//        return array_slice($result, $offset, $limit);
     }
 
     /**
      * Fetch from database details of content of given id/code
-     * TODO: make this method useful for dist project as a demonstration
+     * TODO: make this method useful for dist project as a demonstration (inspired by A project)
      *
      * @param mixed $id of the content OPTIONAL
      * @param string $code OPTIONAL
@@ -114,10 +167,11 @@ class ProjectSpecific extends ProjectCommon
         }
         return $result;
     }
+    //public function processProductDescription($description, array $options) // in A project
 
     /**
      * Fetch from database details of category of given id/code
-     * TODO: make this method useful for dist project as a demonstration
+     * TODO: make this method useful for dist project as a demonstration (inspired by A project)
      *
      * @param mixed $id of the content OPTIONAL
      * @param string $code OPTIONAL
@@ -179,30 +233,29 @@ class ProjectSpecific extends ProjectCommon
     }
 
     /**
-     * TODO: make this method useful for dist project as a demonstration
+     * Generates array of url=>label for breadcrumbs on pages
+     * TODO: make this method useful for dist project as a demonstration (inspired by A project)
      *
      * @param string $path
-     * @param array<string> $options OPTIONAL
      * @return array<array|string>|false
      */
-    public function getBreadcrumbs($path, array $options = [])
+    public function getBreadcrumbs($path)
     {
-        $result = [];
-        if ($path) {
-            for ($i = 0, $l = strlen($path), $sql = ''; $i < $l; $i += PATH_MODULE) {
-                $sql .= ',"' . $this->MyCMS->escapeSQL(substr($path, 0, $i + PATH_MODULE)) . '"';
-            }
-            $result = $this->MyCMS->fetchAndReindex(
-                $sql = 'SELECT id,category_' . $options['language']
-                . ' AS category FROM ' . TAB_PREFIX . 'category WHERE active="1" AND path IN (' . substr($sql, 1) . ')'
-            );
+        if (!$path) {
+            return [];
         }
-        return $result;
+        for ($i = 0, $l = strlen($path), $sql = ''; $i < $l; $i += PATH_MODULE) {
+            $sql .= ',"' . $this->MyCMS->escapeSQL(substr($path, 0, $i + PATH_MODULE)) . '"';
+        }
+        return $this->MyCMS->fetchAndReindex('SELECT '
+                . $this->getLinkSql("?category&id=", $this->language)
+                . ' ,category_' . $this->language . ' AS category FROM ' . TAB_PREFIX . 'category'
+                . ' WHERE active="1" AND path IN (' . substr($sql, 1) . ')');
     }
 
     /**
      * Get "children" content to a specified category/ies
-     * TODO: make this method useful for dist project as a demonstration
+     * TODO: make this method useful for dist project as a demonstration (inspired by A project)
      *
      * @param int|array<int> $category_id category/ies to search, either int or array of integers
      * @param array<string> $options = []
@@ -224,17 +277,17 @@ class ProjectSpecific extends ProjectCommon
         } else {
             $category_id = [$category_id];
         }
-        $result = $this->MyCMS->fetchAndReindex('SELECT co.id, image,code, CONCAT("?article&id=", co.id) AS link,
-            content_' . $options['language'] . ' AS title,
-            perex_' . $options['language'] . ' AS description
+        return $this->MyCMS->fetchAndReindex('SELECT co.id, image,code, '
+                . $this->getLinkSql("?article&id=", $this->language) . ' ,
+            content_' . $this->language . ' AS title,
+            perex_' . $this->language . ' AS description
             FROM ' . TAB_PREFIX . 'content co LEFT JOIN ' . TAB_PREFIX . 'category ca ON co.category_id=ca.id
             WHERE co.active="1" AND category_id IN(' . Tools::arrayListed($category_id, 8) . ')'
-            . Tools::wrap(Tools::setifnull($options['except_id']), ' AND co.id<>'));
-        return $result;
+                . Tools::wrap(Tools::setifnull($options['except_id']), ' AND co.id<>'));
     }
 
     /**
-     * TODO: make this method useful for dist project as a demonstration
+     * TODO: make this method useful for dist project as a demonstration (inspired by A project)
      *
      * @param array<string> $options OPTIONAL (fields language and PATH_HOME expected)
      * @return string
