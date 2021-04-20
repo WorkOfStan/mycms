@@ -84,12 +84,13 @@ if (isset($_POST) && is_array($_POST) && !empty($_POST)) {
 $admin = new Admin($MyCMS, [
     'agendas' => $AGENDAS,
     'tableAdmin' => $tableAdmin,
-//        'clientSideResources' => array(
-//            'css' => array(
-//            ),
-//            'js' => array(
-//            )
-//        )
+    // to replace default CSS and/or JS in admin.php, uncomment the array below
+//    'clientSideResources' => [
+//        'css' => [
+//        ],
+//        'js' => [
+//        ]
+//    ]
     ]);
 echo $admin->outputAdmin();
 $admin->endAdmin();

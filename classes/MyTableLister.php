@@ -826,6 +826,15 @@ class MyTableLister
             } elseif (isset($this->TRANSLATION[mb_strtolower($text, $encoding)])) {
                 $text = $this->TRANSLATION[mb_strtolower($text, $encoding)];
                 $changeCase = -2;
+            } elseif (DEBUG_VERBOSE) {
+                // if text isn't present in TRANSLATION array, let's log it to be translated
+                error_log(
+                    '[' . date("d-M-Y H:i:s") . '] ' .
+                    (array_key_exists('language', $this->options) && is_string($this->options['language']) ?
+                        $this->options['language'] : '') . '\\' . $text . PHP_EOL,
+                    3,
+                    'log/translate_admin_missing.log'
+                );
             }
         }
         if ($changeCase) {
@@ -954,6 +963,7 @@ class MyTableLister
 
     /**
      * Called to optionally fill conditions to WHERE clause of the SQL statement selecting given table
+     *
      * @return void
      */
     public function customCondition()

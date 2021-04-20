@@ -2,7 +2,6 @@
 
 namespace GodsDev\MyCMS;
 
-use Exception;
 use GodsDev\MyCMS\MyCMS;
 use GodsDev\MyCMS\Tracy\BarPanelTemplate;
 use GodsDev\Tools\Tools;
@@ -76,7 +75,7 @@ class MyAdmin extends MyCommon
         // Todo to be obsoleted in next version (after 2020-10-25)
         if (!empty($this->TableAdmin)) {
             Debugger::log('Deprecated: TableAdmin. Replace by tableAdmin', ILogger::WARNING);
-            if (!empty($this->tableAdmin)) {
+            if (empty($this->tableAdmin)) {
                 $this->tableAdmin = $this->TableAdmin;
             }
         }
@@ -602,7 +601,6 @@ class MyAdmin extends MyCommon
      *
      * @param string $keyword
      * @return string
-     * @throws Exception on preg_replace error
      */
     protected function outputSearchResults($keyword)
     {
@@ -765,8 +763,7 @@ class MyAdmin extends MyCommon
                 $result .= Tools::htmlInput('check[]', '', $value, 'hidden') . PHP_EOL;
             }
         }
-        $result .= '</div></form>';
-        return $result;
+        return $result . '</div></form>';
     }
 
     /**
