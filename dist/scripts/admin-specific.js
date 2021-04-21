@@ -1,3 +1,5 @@
+/* global $ */
+
 /**
  * JavaScript client-side of MyCMS admin, additional project-specific code
  * dependent JS: admin.js
@@ -6,9 +8,9 @@
 
 $(document).ready(function(){
     standardDocumentReady();
-    
+
     // insert your code below instead of this one
-    
+
     $('details summary a').on('click', function(event) {
         location.href = $(this).prop('href');
     });

@@ -1,4 +1,4 @@
-/* global $, ASSETS_SUBFOLDERS, DIR_ASSETS, LISTED_FIELDS, TAB_PREFIX, TOKEN, TRANSLATE, WHERE_OPS  */
+/* global $, ASSETS_SUBFOLDERS, DIR_ASSETS, LISTED_FIELDS, TAB_PREFIX, TOKEN, TRANSLATE, WHERE_OPS */
 
 /**
  * JavaScript client-side of MyCMS admin
@@ -11,6 +11,7 @@ let searchIndex = 0;
 let imageSelectorTarget = '';
 let vDivider = 25;
 let vDividerMoving = false;
+let agendas = []; // globally used variable
 
 function prepareDatetimepicker(date, time) {
     let timeformat = (date ? 'dd-MM-yyyy' : '') + (date && time ? ' ' : '') + (time ? 'hh:mm:ss' : '');
@@ -268,7 +269,7 @@ function standardDocumentReady() {
     String.prototype.replaceAll = function (target, replacement) {
         return this.split(target).join(replacement);
     };
-    let agendas = localStorage.getItem("agendas"); //array of elements that were expanded
+    agendas = localStorage.getItem("agendas"); // array of elements that were expanded
     if (agendas) {
         agendas = agendas.split(' ');
     } else {
