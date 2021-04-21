@@ -181,6 +181,8 @@ where page resouces may be in folders `styles|assets|fonts|images|scripts` which
 
 If DEBUG_VERBOSE is true and admin UI uses untranslated string, it is logged to `log/translate_admin_missing.log` to be translated. (This log can be safely deleted.)
 
+Localised strings for admin UI are loaded from conf/l10n/admin-XX.yml (if present).
+
 #### Default language
 Default language set in [conf/config.php](conf/config.php) as constant `'DEFAULT_LANGUAGE' => 'cs',`
 is the language in which the web starts without any additional information about language

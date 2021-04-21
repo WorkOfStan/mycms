@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `return;` statement after method with return never is not necessary
 - MyTableAdmin: removed zero value that is not accepted by ENUM. To set empty, use NULL option. TODO fix NULL option for ENUM to be saved in database
 - MyFriendlyURL::friendlyIdentifyRedirect throws Exception on seriously malformed URL
+- dist/TableAdmin loads localised strings from conf/l10n/admin-XX.yml
 
 ### Fixed
 - Stricter code by type assertion, type casting, type hinting
