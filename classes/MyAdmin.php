@@ -767,7 +767,8 @@ class MyAdmin extends MyCommon
     }
 
     /**
-     * Return the HTML output of all administration page.
+     * Return the HTML output of the complete administration page.
+     * TODO: consider rewrite as Latte
      *
      * Expected global variables:
      * * $_GET

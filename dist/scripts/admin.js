@@ -236,20 +236,6 @@ function pad0(input, len) {
     return '0'.repeat(len - String(input).length) + input;
 }
 
-// toggles Export, Edit, Clone buttons based on row selection
-function updateNumberOfSelectedRows(element) {
-    var checked = $(element).closest('table').find('.multi-options input[type=checkbox]:checked').length;
-    let form = $(element).closest('form');
-    checked = form.find('.table-admin .multi-options input[type=checkbox]:checked').length;
-    form.find('.selected-rows .listed').text(checked);
-    form.find('.selected-rows button').attr('disabled', checked == 0 && !form.find('.selected-rows .total-rows').is(':checked'));
-    return checked;
-}
-
-function addMediaMessage(message) {
-    $('#media-file-feedback span:first').text(message).parent().show();
-}
-
 function moveCategory(element, up) {
     let prefix = $(element).data('prefix');
     let siblings = $(element).parent().find('details[data-prefix=' + prefix + ']');
@@ -263,6 +249,20 @@ function moveCategory(element, up) {
             break;
         }
     }
+}
+
+// toggles Export, Edit, Clone buttons based on row selection
+function updateNumberOfSelectedRows(element) {
+    var checked = $(element).closest('table').find('.multi-options input[type=checkbox]:checked').length;
+    let form = $(element).closest('form');
+    checked = form.find('.table-admin .multi-options input[type=checkbox]:checked').length;
+    form.find('.selected-rows .listed').text(checked);
+    form.find('.selected-rows button').attr('disabled', checked == 0 && !form.find('.selected-rows .total-rows').is(':checked'));
+    return checked;
+}
+
+function addMediaMessage(message) {
+    $('#media-file-feedback span:first').text(message).parent().show();
 }
 
 function standardDocumentReady() {

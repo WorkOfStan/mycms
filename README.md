@@ -72,6 +72,34 @@ For deployment look also to [Deployment chapter](dist/README.md#deployment) and 
 
 MyCMS is used only as a library, so the application using it SHOULD implement `RedirectMatch 404 vendor\/` statement as prepared in `dist/.htaccess` to keep the library hidden from web access.
 
+## Admin UI
+TODO describe according to MyAdmin::outputAdmin
+
+Structure:
+|Navigation|Search|
+|--|--|
+|Agendas|Workspace|
+
+Element overview:
+|Navigation = special + Media+User+Settings|Search|
+|--|--|
+|Agendas (defined in MyAdmin::$AGENDAS)|Messages<br>Body<br>Dashboard: List of tables|
+
+### Navigation
+- special 
+- default: Media+User+Settings
+
+### Search
+???
+
+### Agendas
+defined in MyAdmin::$AGENDAS
+
+### Workspace
+- Messages
+- Body
+- Dashboard: List of tables
+
 ## Admin notes
 
 ### Database
