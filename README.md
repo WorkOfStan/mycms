@@ -78,27 +78,36 @@ TODO describe according to MyAdmin::outputAdmin
 Structure:
 |Navigation|Search|
 |--|--|
-|Agendas|Workspace|
+|Agendas|Main|
 
 Element overview:
 |Navigation = special + Media+User+Settings|Search|
 |--|--|
-|Agendas (defined in MyAdmin::$AGENDAS)|Messages<br>Body<br>Dashboard: List of tables|
+|Agendas (defined in MyAdmin::$AGENDAS)|Messages<br>Workspace<br>Dashboard: List of tables|
 
 ### Navigation
-- special 
-- default: Media+User+Settings
+- special Admin::outputSpecialMenuLinks
+- default: Media+User+Settings MyAdmin::outputNavigation
 
 ### Search
 ???
 
 ### Agendas
-defined in MyAdmin::$AGENDAS
+- MyAdmin::outputAgendas
+- defined in MyAdmin::$AGENDAS
 
-### Workspace
+### Main
 - Messages
-- Body
-- Dashboard: List of tables
+- Workspace: one of the following
+  - $_GET['table'] => MyAdmin::outputTable
+    -- $_GET['where'] is array => Admin::outputTableBeforeEdit . MyAdmin::tableAdmin->outputForm . Admin::outputTableAfterEdit
+    -- $_POST['edit-selected'] => MyAdmin::outputTableEditSelected(false)
+    -- $_POST['clone-selected'] => MyAdmin::outputTableEditSelected(true)
+    -- else => Admin::outputTableBeforeListing . MyAdmin::tableAdmin->view . Admin::outputTableAfterListing
+  - $_GET['media'] => MyAdmin::outputMedia media upload etc.
+  - $_GET['user'] => MyAdmin::outputUser user operations (logout, change password, create user, delete user)
+  - Admin::projectSpecificSectionsCondition => Admin::projectSpecificSection project-specific admin sections
+- Dashboard: List of tables MyAdmin::outputDashboard
 
 ## Admin notes
 

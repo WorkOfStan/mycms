@@ -839,7 +839,7 @@ class MyAdmin extends MyCommon
             $output .= $this->outputUser();
         } elseif ($this->projectSpecificSectionsCondition()) { // project-specific admin sections
             $output .= $this->projectSpecificSections();
-        } else {
+            //} else {
             // no agenda selected, showing "dashboard"
         }
         if (isset($_SESSION['user'])) {

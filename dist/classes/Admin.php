@@ -57,13 +57,14 @@ class Admin extends MyAdmin
     /**
      * Output (in HTML) project-specific code before listing of a table
      * Selected tables are filtered by type field, i.e. type=SELECTION filter is pre-filled
+     * TODO: consider moving this code abstracted to MyAdmin
      *
      * @return string
      */
     protected function outputTableBeforeListing()
     {
         return (in_array(mb_substr($_GET['table'], mb_strlen(TAB_PREFIX)), ['content'])) ?
-            $this->tableAdmin->contentByType(['return-output' => true]) : '';
+            $this->tableAdmin->contentByType() : '';
     }
 
     /**
@@ -74,14 +75,16 @@ class Admin extends MyAdmin
     protected function outputTableAfterEdit()
     {
         // TO BE EXPLORED
+        return parent::outputTableAfterEdit();
     }
 
     /**
-     * @return string
+     * @return bool
      */
     protected function projectSpecificSectionsCondition()
     {
         // TO BE EXPLORED
+        return parent::projectSpecificSectionsCondition();
     }
 
     /**
@@ -92,16 +95,29 @@ class Admin extends MyAdmin
     protected function projectSpecificSections()
     {
         // to be explored
+        return parent::projectSpecificSections();
     }
 
+    /**
+     * Called from projectSpecificSections
+     *
+     * @return string
+     */
     protected function sectionDivisionsProducts()
     {
         // to be explored
+        return '';
     }
 
+    /**
+     * Called from projectSpecificSections
+     *
+     * @return string
+     */
     protected function sectionTranslations()
     {
         // to be explored
+        return '';
     }
 
     /**
