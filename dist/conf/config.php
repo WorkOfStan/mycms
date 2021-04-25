@@ -14,6 +14,19 @@ ini_set('display_errors', '0'); // errors only in the log; override it in your c
 define('DB_HOST', 'localhost');
 define('DB_PORT', ini_get('mysqli.default_port'));
 define('TAB_PREFIX', 'mycmsprojectspecific_'); // database tables' prefix - use also in phinx.yml as table_prefix field
+$phinxEnvironment = 'development';
+$phinxYml = ('phinx.yml');
+if(array_key_exists($phinxYml, $phinxEnvironment)){
+foreach( [
+'DB_USERNAME' => 'f',
+'DB_PASSWORD' =>'password'
+'DB_DATABASE' => 'db' ,
+] as $tempConst => $tempField){
+if(!defined($tempConst) && isset($phinxYml[$phinxEnvironment]){
+define ($tempConst, $phinxYml[$phinxEnvironment][$tempField]);
+}
+}
+}
 
 define('DIR_ASSETS', 'assets/');
 define('DIR_TEMPLATE', __DIR__ . '/../template'); // for Latte
