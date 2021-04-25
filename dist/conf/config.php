@@ -8,6 +8,8 @@
  *
  */
 
+use Symfony\Component\Yaml\Yaml;
+
 ini_set('session.use_strict_mode', '1');
 ini_set('display_errors', '0'); // errors only in the log; override it in your config.local.php if you need to
 
@@ -15,12 +17,23 @@ define('DB_HOST', 'localhost');
 define('DB_PORT', ini_get('mysqli.default_port'));
 define('TAB_PREFIX', 'mycmsprojectspecific_'); // database tables' prefix - use also in phinx.yml as table_prefix field
 $phinxEnvironment = 'development';
-$phinxYml = ('phinx.yml');
+$phinxYml = Yaml::parseFile('phinx.yml');
 if(array_key_exists($phinxYml, $phinxEnvironment)){
 foreach( [
-'DB_USERNAME' => 'f',
-'DB_PASSWORD' =>'password'
-'DB_DATABASE' => 'db' ,
+'DB_USERNAME' => 'user',
+'DB_PASSWORD' =>'pass'
+'DB_DATABASE' => 'name' ,
+/*
+host: localhost
+        name: MYCMSPROJECTSPECIFIC
+        user: root
+        pass: ''
+        port: 3306
+        charset: utf8
+        table_prefix: 'mycmsprojectspecific_'
+*/
+
+
 ] as $tempConst => $tempField){
 if(!defined($tempConst) && isset($phinxYml[$phinxEnvironment]){
 define ($tempConst, $phinxYml[$phinxEnvironment][$tempField]);
