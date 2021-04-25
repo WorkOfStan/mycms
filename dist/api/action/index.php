@@ -23,18 +23,16 @@ if (
 
 require_once './../../prepare.php';
 
-use Exception;
+use GodsDev\mycmsprojectnamespace\Controller;
 use Tracy\Debugger;
 
-Debugger::enable(Debugger::PRODUCTION, DIR_TEMPLATE . '/../log');
+$backyard->Json->outputJSON('{"action":"3-' . $_SESSION['language'] . '"}', true); // terminates
 
-$backyard->Json->outputJSON('{"action":"3-' . $_SESSION['language'] . '"}', true);
-
-// The code below is a real example
+// The code below is a real example, but not working in dist
 //
 // $this->get['article']) && (isset($this->get['id']
 //Debugger::barDump($MyCMS, 'MyCMS before controller');
-$controller = new GodsDev\mycmsprojectnamespace\Controller(
+$controller = new Controller(
     $MyCMS,
     [
     'get' => [
@@ -54,7 +52,7 @@ $controllerResult = $controller->controller();
 Debugger::barDump($controllerResult['context'], 'ControllerResult[context]');
 
 if (!is_array($controllerResult['context'])) {
-    throw new Exception('Article Description would be missing.');
+    throw new \Exception('Article Description would be missing.');
 }
 
 if (isset($_GET['wrap']) && $_GET['wrap'] === 'simple') {

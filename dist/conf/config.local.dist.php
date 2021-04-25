@@ -21,9 +21,7 @@ define('NOTIFY_FROM_NAME', 'Notifikátor');
 /**
  * Database
  */
-define('DB_USERNAME', 'username');
-define('DB_PASSWORD', 'password');
-define('DB_DATABASE', 'MYCMSPROJECTSPECIFIC');
+//$phinxEnvironment = 'development'; // redefine phinx.yml environment of database
 define('RECAPTCHA_SECRET', '...');
 
 /**

@@ -12,6 +12,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 use GodsDev\Backyard\Backyard;
 use GodsDev\MyCMS\LogMysqli;
 use GodsDev\mycmsprojectnamespace\MyCMSProject;
+use Symfony\Component\Yaml\Yaml;
 use Tracy\Debugger;
 
 //Tracy is able to show Debug bar and Bluescreens for AJAX and redirected requests.
@@ -23,6 +24,23 @@ $developmentEnvironment = (
 
 Debugger::enable($developmentEnvironment ? Debugger::DEVELOPMENT : Debugger::PRODUCTION, __DIR__ . '/log');
 Debugger::$email = EMAIL_ADMIN;
+
+$phinxYml = Yaml::parseFile(__DIR__ . '/phinx.yml');
+if (array_key_exists($phinxEnvironment, $phinxYml['environments'])) {
+    foreach (
+    [
+        'DB_HOST' => 'host',
+        'DB_DATABASE' => 'name',
+        'DB_USERNAME' => 'user',
+        'DB_PASSWORD' => 'pass',
+        'DB_PORT' => 'port', // ini_get('mysqli.default_port')
+        'TAB_PREFIX' => 'table_prefix', // database tables' prefix
+    ] as $tempConst => $tempField) {
+        if (!defined($tempConst) && isset($phinxYml['environments'][$phinxEnvironment][$tempField])) {
+            define($tempConst, $phinxYml['environments'][$phinxEnvironment][$tempField]);
+        }
+    }
+}
 
 $backyard = new Backyard($backyardConf);
 $myCmsConf['logger'] = $backyard->BackyardError;

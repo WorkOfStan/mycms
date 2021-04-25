@@ -8,40 +8,10 @@
  *
  */
 
-use Symfony\Component\Yaml\Yaml;
-
 ini_set('session.use_strict_mode', '1');
 ini_set('display_errors', '0'); // errors only in the log; override it in your config.local.php if you need to
 
-//define('DB_HOST', 'localhost');
-define('DB_PORT', ini_get('mysqli.default_port'));
-define('TAB_PREFIX', 'mycmsprojectspecific_'); // database tables' prefix - use also in phinx.yml as table_prefix field
-$phinxEnvironment = 'development';
-$phinxYml = Yaml::parseFile('phinx.yml');
-if(array_key_exists($phinxYml, $phinxEnvironment)){
-foreach( [
-'DB_HOST' => 'host',
-'DB_USERNAME' => 'user',
-'DB_PASSWORD' =>'pass'
-'DB_DATABASE' => 'name' ,
-'DB_PORT' => 'port', 
-/*
-host: localhost
-        name: MYCMSPROJECTSPECIFIC
-        user: root
-        pass: ''
-        port: 3306
-        charset: utf8
-        table_prefix: 'mycmsprojectspecific_'
-*/
-
-
-] as $tempConst => $tempField){
-if(!defined($tempConst) && isset($phinxYml[$phinxEnvironment][$tempField]){
-define ($tempConst, $phinxYml[$phinxEnvironment][$tempField]);
-}
-}
-}
+$phinxEnvironment = 'development'; // use this phinx.yml environment for database connection
 
 define('DIR_ASSETS', 'assets/');
 define('DIR_TEMPLATE', __DIR__ . '/../template'); // for Latte
