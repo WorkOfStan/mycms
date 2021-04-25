@@ -4,6 +4,7 @@ namespace GodsDev\mycmsprojectnamespace;
 
 use GodsDev\MyCMS\MyAdmin;
 use GodsDev\MyCMS\MyCMS;
+use GodsDev\Tools\Tools;
 
 class Admin extends MyAdmin
 {
@@ -57,7 +58,7 @@ class Admin extends MyAdmin
     /**
      * Output (in HTML) project-specific code before listing of a table
      * Selected tables are filtered by type field, i.e. type=SELECTION filter is pre-filled
-     * TODO: consider moving this code abstracted to MyAdmin
+     * TODO: consider moving this code (with parametric table name) to MyAdmin
      *
      * @return string
      */
@@ -68,14 +69,55 @@ class Admin extends MyAdmin
     }
 
     /**
-     * Output (in HTML) project-specific code after listing of a table
+     * Output (in HTML) project-specific code after editing a record from selected table
      *
      * @return string
      */
     protected function outputTableAfterEdit()
     {
-        // TO BE EXPLORED
-        return parent::outputTableAfterEdit();
+        $output = '';
+        if (isset($_GET['where']['id']) && $_GET['where']['id']) { //existing record
+            switch ($_GET['table']) {
+                case TAB_PREFIX . 'category':
+                    // Display related products and content elements labeled by either name or content fragmet (up to 100 characters)
+                    // TODO link content elements to category
+                    foreach (['content', 'product'] as $i) {
+                        if ($tmp = $this->MyCMS->fetchAndReindex(
+                            'SELECT id,IF(name_'. $_SESSION['language'] . ' NOT LIKE "",name_'.$_SESSION['language'].', content_' . $_SESSION['language'] . ') FROM ' . TAB_PREFIX . $i . ' WHERE category_id=' . (int)$_GET['where']['id']
+                        )) {
+                            $output .= '<hr /><details><summary>' . $this->tableAdmin->translate($i == 'content' ? 'Content linked to this category' : 'Products linked to this category') . ' <span class="badge badge-secondary">' . count($tmp) . '</span></summary>';
+                            foreach ($tmp as $key => $value) {
+                                $output .= '<a href="?table=' . TAB_PREFIX . $i . '&amp;where[id]=' . $key . '" target="_blank" title="' . $this->tableAdmin->translate('Link will open in a new window'). '">'
+                                    . '<i class="fas fa-external-link-alt"></i></a> ' . substr(Tools::h($value), 0, 100) . '<br />' . PHP_EOL;
+                            }
+                            $output .='</details>';
+                        }
+                    }
+                    break;
+                case TAB_PREFIX . 'product':
+                    // Display related content elements labeled by either name or content fragmet (up to 100 characters)
+                    // TODO link content elements to products
+                    $output .='<hr /><details class="product-linked-content"><summary>' . $this->tableAdmin->translate('Content linked to this product') . ' <span class="badge badge-secondary">';
+                    if ($tmp = $this->MyCMS->fetchAndReindex('SELECT id,content_' . $_SESSION['language'] . ' AS content,description_' . $_SESSION['language'] . ' AS description FROM ' . TAB_PREFIX . 'content WHERE product_id=' . (int)$_GET['where']['id'])) {
+                        $output .= count($tmp) . '</span></summary>';
+                        foreach ($tmp as $key => $row) {
+                            $output .= '<a href="?table=' . TAB_PREFIX . 'content&amp;where[id]=' . $key . '" target="_blank" title="' . $this->tableAdmin->translate('Link will open in a new window'). '">'
+                                . '<i class="fas fa-external-link-alt"></i> ' . Tools::h(mb_substr(strip_tags($row['content']), 0, 100)) . ' ' . Tools::h(mb_substr(strip_tags($row['description']), 0, 100)) . 'â€¦</a><br />' . PHP_EOL;
+                        }
+                    } else {
+                        $output .= '0</span></summary>';
+                    }
+                    $output .= '<footer>';
+                    foreach (['testimonial', 'claim', 'perex'] as $i) {
+                        $output .= '<a href="?table=' . TAB_PREFIX . 'content&amp;where[]=&amp;prefill[type]=' . $i . '&amp;prefill[product_id]=' . Tools::ifnull($_GET['where']['id'], '') . '" '
+                            . 'title="' . $this->tableAdmin->translate('New row') . ' (' . $this->tableAdmin->translate('Link will open in a new window') . ')" '
+                            . 'target="_blank"><i class="far fa-plus-square"></i> <i class="fas fa-external-link-alt"></i> ' . $i . '</a>';
+                    }
+                    $output .= '</footer></details>';
+                    break;
+            }
+        }
+        return $output;
     }
 
     /**

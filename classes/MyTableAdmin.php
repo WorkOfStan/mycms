@@ -202,6 +202,10 @@ class MyTableAdmin extends MyTableLister
             $field['type'] = null;
         }
         if (!is_null($field['type']) && Tools::set($comment['edit'], false) == 'json') {
+            if ($value === false) {
+                // non-present value should be displayed as JSON field to be populated
+                $value = '[]';
+            }
             Assert::string($value);
             $json = json_decode($value, true) ?: (Tools::among($value, '', '[]', '{}') ? [] : $value);
             $output .= '<div class="input-expanded">' . Tools::htmlInput($key . EXPAND_INFIX, '', 1, 'hidden');
