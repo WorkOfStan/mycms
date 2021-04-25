@@ -61,7 +61,7 @@ class AdminProcess extends MyAdminProcess
                 'agenda' => $post['agenda'],
                 'subagenda' => Tools::setifnull($this->agendas[$post['agenda']]['join']['table'])
             ];
-            $this->exitJson($result);
+            $this->exitJson($result); // terminates
         }
         // return files in /assets (sub)folder
         $this->processSubfolder($post);
@@ -82,6 +82,8 @@ class AdminProcess extends MyAdminProcess
             usleep(mt_rand(1000, 2000));
             return;
         }
+        // rename a file in DIR_ASSETS/* in F project but not A project??? EXPLORE
+        //
         // change current admin's password
         $this->processUserChangePassword($post);
         // upload a file to assets/
@@ -188,7 +190,7 @@ class AdminProcess extends MyAdminProcess
                             break;
                         }
                     }
-                    $this->redir('?' . Tools::urlChange(array('where' => array($where => $id))));
+                    $this->redir('?' . Tools::urlChange(['where' => [$where => $id]]));
                 } else {
                     Debugger::barDump($post['fields']['id'], 'record-save update only');
 //                  // project-specific: products 13 and 67 SHOULD have identical description
@@ -210,7 +212,7 @@ class AdminProcess extends MyAdminProcess
             }
             if (isset($post['after'], $post['referer']) && $post['after']) {
                 $post['referer'] = Tools::xorDecipher(base64_decode($post['referer']), $post['token']);
-                $this->redir($post['referer']);
+                $this->redir($post['referer']); // terminates
             }
             $this->redir(); // redir() method terminates
         }
@@ -220,7 +222,7 @@ class AdminProcess extends MyAdminProcess
                 $this->tableAdmin->recordDelete();
             }
             if (!isset($_SESSION['error']) || !$_SESSION['error']) {
-                $this->redir('?' . Tools::urlChange(array('where' => null)));
+                $this->redir('?' . Tools::urlChange(['where' => null]));
             }
         }
         //unset($_SESSION['token'][array_search($post['token'], $_SESSION['token'])]);
@@ -233,7 +235,7 @@ class AdminProcess extends MyAdminProcess
      * @return array<array>
      */
     public function getAgenda($agenda)
-    {        
+    {
         if (!isset($this->agendas[$agenda])) {
             return [];
         }
@@ -270,7 +272,7 @@ class AdminProcess extends MyAdminProcess
         for ($i = 1; $row = $query->fetch_assoc(); $i++) {
             $row['name'] = Tools::shortify(strip_tags($row['name']), 100);
             $result [] = $row;
-            if ($agenda == 'product' && isset($row['sort']) && $row['sort'] != $i) {
+            if ($agenda === 'product' && isset($row['sort']) && $row['sort'] != $i) {
                 $correctOrder[$row['id']] = $i;
             }
         }
