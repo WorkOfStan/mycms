@@ -204,6 +204,7 @@ $featureFlags = array_merge(
     [
         'console_log_list_values' => false,
         'offline_dev' => false,
+        'order_hierarchy' => false, // as used in A and F projects - just for testing before ready for Dist
     ],
     isset($featureFlags) ? $featureFlags : []
 ); // use default featureFlags even though nothing is set in `config.local.php`

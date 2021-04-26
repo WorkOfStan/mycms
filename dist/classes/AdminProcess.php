@@ -82,8 +82,39 @@ class AdminProcess extends MyAdminProcess
             usleep(mt_rand(1000, 2000));
             return;
         }
-        // rename a file in DIR_ASSETS/* in F project but not A project??? EXPLORE
-        //
+
+        /* TODO explore F project code
+        // rename a file in DIR_ASSETS/*
+        // Note: file name is checked against a basic RegEx; file extension must not be changed; overwriting existing files not allowed
+        if (isset($post['file_rename'], $post['old_name'], $post['subfolder'], $post['new_folder'])) {
+            $result = array('data' => $post['old_name'], 'success' => false);
+            $post['file_rename'] = pathinfo($post['file_rename'], PATHINFO_BASENAME);
+            $path = DIR_ASSETS . $post['subfolder'] . '/';
+            $newpath = DIR_ASSETS . $post['new_folder'] . '/';
+            if (!is_file($path . $post['old_name']) // @todo safety
+                || !is_dir($path)
+                || !is_dir($newpath)
+                || !preg_match('/^([-\.\w]+)$/', $post['file_rename']) // apply some basic regex pattern
+                || pathinfo($post['old_name'], PATHINFO_EXTENSION) != pathinfo($post['file_rename'], PATHINFO_EXTENSION) // old and new extension must be the same
+                ) {
+                $result['error'] = $this->tableAdmin->translate('Error occured renaming the file.');
+            } elseif (file_exists($newpath . $post['file_rename'])) {
+                $result['error'] = $this->tableAdmin->translate('File already exists.');
+            } elseif (!rename($path . $post['old_name'], $newpath . $post['file_rename'])) {
+                $result['error'] = $this->tableAdmin->translate('Error occured renaming the file.');
+            } else {
+                Tools::addMessage('success', $this->tableAdmin->translate('File renamed.') . ' (<a href="' . $newpath . $post['file_rename'] . '" target="_blank"><tt>' . Tools::h($newpath . $post['file_rename']) . '</tt></a>)');
+                $result = array('data' => $post['file_rename'], 'success' => true);
+            }
+            if (!$result['success']) {
+                $this->MyCMS->logger->warning("Neuspesne prejmenovani souboru $path{$post['old_name']} --> $newpath{$post['file_name']}.");
+            }
+            header('Content-type: application/json');
+            exit(json_encode($result));
+        }
+
+         *
+         */
         // change current admin's password
         $this->processUserChangePassword($post);
         // upload a file to assets/
@@ -150,6 +181,7 @@ class AdminProcess extends MyAdminProcess
         }
         // move product up/down
         if (
+            // Note: F code uses also $post['product-delta']
             isset($post['product-switch'], $post['id']) &&
             ($product = $this->MyCMS->dbms->queryStrictObject(
                 'SELECT category_id,sort FROM ' . TAB_PREFIX . 'product WHERE id=' . (int) $post['id']
@@ -172,8 +204,70 @@ class AdminProcess extends MyAdminProcess
         }
         // loggin admin out
         $this->processLogout($post);
+
+        // generate translations. Note: this rewrites the translation files language-xx.inc.php
+        if (isset($post['translations'])) {
+            foreach (array_keys($this->MyCMS->TRANSLATIONS) as $code) {
+                $fp = fopen("language-$code.inc.php", 'w+');
+                fwrite($fp, "<?php\n\n// MyCMS->getSessionLanguage expects \$translation=\n\$translation = [\n");
+                if ($post['new'][0]) {
+                    $post['tr'][$code][$post['new'][0]] = $post['new'][$code];
+                }
+                foreach ($post['tr'][$code] as $key => $value) {
+                    if ($key == $post['old_name']) {
+                        $key = $post['new_name'];
+                        $value = Tools::set($post['delete']) ? false : $value;
+                    }
+                    if ($value) {
+                        fwrite($fp, "    '" . strtr($key, array('&apos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
+                            . "' => '" . strtr($value, array('&appos;' => "\\'", "'" => "\\'", '&amp;' => '&')) . "',\n");
+                    }
+                }
+                fwrite($fp, "];\n");
+                fclose($fp);
+            }
+            Tools::addMessage('info', $this->tableAdmin->translate('Processed.'));
+            $this->redir();
+        }
+
         // export table rows
         $this->processExport($post, $_GET);
+
+        /**
+         * TODO to CSV (as in F project)
+         *
+        // table: export selected rows TO CSV
+        if (isset($post['table-export'], $post['database-table'])) {
+            $output = '';
+            Tools::setifnull($post['delimiter'], ';');
+            if (Tools::set($post['total-rows'])) {
+                if ($query = $this->MyCMS->dbms->query('SELECT * FROM ' . $this->MyCMS->dbms->escapeDbIdentifier($post['database-table']))) {
+                    header('Content-Type: text/csv; charset=utf-8');
+                    header('Content-Disposition: attachment;filename="export.csv"');
+                    header('Content-Transfer-Encoding: binary');
+                    $row = [];
+                    foreach ($query->fetch_fields() as $value) {
+                        $row [] = $value->name;
+                    }
+                    $output .= Tools::str_putcsv($row, $post['delimiter']);
+                    while ($row = $query->fetch_row()) {
+                        $output .= Tools::str_putcsv($row, $post['delimiter']);
+                    }
+                    header('Cache-Control: max-age=0');
+                    header('Connection: Close', true, 200);
+                    die($output);
+                } else {
+                    Tools::addMessage('error', $this->tableAdmin->translate('No records found.'));
+                }
+            } elseif (isset($post['check']) && is_array($post['check'])) {
+                //
+            } else {
+                Tools::addMessage('error', $this->tableAdmin->translate('No records found.'));
+            }
+        }
+         *
+         */
+
         // clone table rows
         $this->processClone($post);
         // save a table record
@@ -209,6 +303,20 @@ class AdminProcess extends MyAdminProcess
 //                      $this->tableAdmin->recordSave();
 //                 }
                 }
+                /* F code to be explored
+                if (Tools::set($post['table'], '') == TAB_PREFIX . 'content'
+                    && Tools::among(Tools::set($post['fields']['type'], ''), 'event', 'news')
+                    && isset($_FILES['picture']) && is_array($_FILES['picture'])
+                    && is_uploaded_file($_FILES['picture']['tmp_name'])
+                    && $_FILES['picture']['type'] == 'image/jpeg'
+                    && $_FILES['picture']['error'] === 0) {
+                    Tools::resolve(
+                        move_uploaded_file($_FILES['picture']['tmp_name'], $file = DIR_ASSETS . ($post['fields']['type'] == 'event' ? 'events' : 'news') . "/$id.jpg"),
+                        $this->tableAdmin->translate('File processed.') . ' (<a href="' . $file . '" target="_blank">' . $file . '</a>)',
+                        $this->tableAdmin->translate('Error processing the file.'));
+                }
+                 *
+                 */
             }
             if (isset($post['after'], $post['referer']) && $post['after']) {
                 $post['referer'] = Tools::xorDecipher(base64_decode($post['referer']), $post['token']);
@@ -225,6 +333,119 @@ class AdminProcess extends MyAdminProcess
                 $this->redir('?' . Tools::urlChange(['where' => null]));
             }
         }
+        // urls - Friendly URL - batch save
+        if (isset($post['urls-save'])) {
+            $stat = [0 /*successful*/, 0 /*unsuccessful*/];
+            foreach ($post as $key => $value) {
+                $url = explode('-', $key);
+                if (isset($url[0], $url[1], $url[2], $url[3]) && $url[0] == 'url') {
+                    $sql = 'UPDATE ' . $this->tableAdmin->escapeDbIdentifier(TAB_PREFIX . $url[1]) . '
+                        SET ' . $this->tableAdmin->escapeDbIdentifier('url_' . $url[3]) . '="' . $this->tableAdmin->escapeSQL($value) . '"
+                        WHERE id=' . (int)$url[2];
+                    $stat[$this->MyCMS->dbms->query($sql) ? 0 : 1]++;
+                }
+            }
+            Tools::addMessage('info', $this->tableAdmin->translate('Processed.') . ' '
+                . $this->tableAdmin->translate('successful') . ': ' . $stat[0] . ', '
+                . $this->tableAdmin->translate('unsuccessful') . ': ' . $stat[1] . '.');
+        }
+        /* F code to be explored
+        // save selected records
+        if (isset($post['save-selected'], $post['fields'])) do {
+            $where = $update = array();
+            if (!Tools::set($post['total-rows']) && !Tools::setarray($post['check'])) {
+                Tools::addMessage('warning', $this->tableAdmin->translate('Nothing to save.'));
+            } elseif (Tools::set($post['total-rows'])) {
+                $post['check'] = array();
+            } else {
+                foreach ($post['check'] as &$value) {
+                    parse_str($value, $value);
+                    $whereItem = array();
+                    foreach ((Tools::setarray($value['where']) ? $value['where'] : array()) as $whereKey => $whereValue) {
+                        $whereItem []= $this->tableAdmin->escapeDbIdentifier($whereKey) . '="' . $this->tableAdmin->escapeSQL($whereValue) . '"';
+                    }
+                    $where []= '(' . implode(' AND ', $whereItem) . ')';
+                }
+            }
+            foreach ($post['fields'] as $key => $value) {
+                if (!isset($post['op'][$key]) || !Tools::setarray($this->tableAdmin->fields[$key]) || $post['op'][$key] == 'original') {
+                    continue;
+                }
+                $updateItem = $this->tableAdmin->escapeDbIdentifier($key);
+                switch ($post['op'][$key]) {
+                    case 'value':
+                        if (Tools::set($this->tableAdmin->fields[$key]['type'], '') == 'set') {
+                            $tmp = 0;
+                            if (is_array($value)) {
+                                foreach ($value as $v) {
+                                    $tmp |= $v;
+                                }
+                            }
+                        }
+                        $updateItem .= ' = ' . (Tools::among($this->tableAdmin->fields[$key]['basictype'], 'integer', 'choice') ? (int)$value : '"' . $this->tableAdmin->escapeSQL($value) . '"');
+                        break;
+                    case '-': case '+':
+                        $updateItem .= ' = ' . $updateItem . ' ' . $post['op'][$key] . ' ' . (float)$value;
+                        break;
+                    case '+interval': case '-interval':
+                        if ($this->tableAdmin->checkIntervalFormat($value)) {
+                            $updateItem .= ' = ' . (substr($post['op'][$key], 0, 1) == '+' ? 'DATE_ADD(' : 'DATE_SUB(') . $updateItem . ', INTERVAL ' . $value . ')';
+                        } else {
+                            continue(2);
+                        }
+                        break;
+                    case 'addtime': case 'subtime':
+                        $updateItem .= ' = ' . strtoupper($post['op'][$key]) . '(' . $updateItem . ', "' . $this->tableAdmin->escapeSQL($value) . '")';
+                        break;
+                    case 'null':
+                        $updateItem .= ' = NULL';
+                        break;
+                    case 'now': case 'uuid':
+                        $updateItem .= ' = ' . strtoupper($post['op'][$key]) . '()';
+                        break;
+                    case 'md5': case 'sha1': case 'password': case 'encrypt':
+                        $updateItem .= ' = ' . strtoupper($post['op'][$key]) . '("' . $this->tableAdmin->escapeSQL($value) . '")';
+                        break;
+                    case 'random':
+                        $updateItem .= ' = RAND() * ' . (int)$this->tableAdmin->escapeSQL($value);
+                        break;
+                    case 'append':
+                        $updateItem .= ' = CONCAT(' . $updateItem . ', "' . $this->tableAdmin->escapeSQL($value) . '")';
+                        break;
+                    case 'prepend':
+                        $updateItem .= ' = CONCAT("' . $this->tableAdmin->escapeSQL($value) . '", ' . $updateItem . ')';
+                        break;
+                    case 'add': case 'remove':
+                        $tmp = 0;
+                        if (is_array($value)) {
+                            foreach ($value as $v) {
+                                $tmp |= $v;
+                            }
+                        }
+                        if (!$tmp) {
+                            continue(2);
+                        }
+                        $updateItem .= ' = ' . $updateItem . ($post['op'][$key] == 'add' ? ' | ' : ' & ~') . $tmp;
+                        break;
+                    default:
+                        // warning?
+                }
+                $update []= $updateItem;
+            }
+            $where = implode(' OR ', $where);
+            $update = implode(', ', $update);
+            if ($update) {
+                $sql = 'UPDATE ' . $this->tableAdmin->escapeDbIdentifier($post['database-table']) . ' SET ' . $update . Tools::wrap($where, ' WHERE ');
+                //Tools::dump($sql,$post);exit;
+                Tools::resolve($this->MyCMS->dbms->query($sql),
+                    $this->tableAdmin->translate('Selected records saved.'),
+                    $this->tableAdmin->translate('Could not save selected records.')
+                );
+            } else {
+                Tools::addMessage('warning', $this->tableAdmin->translate('Nothing to save.'));
+            }
+        } while (false);
+*/
         //unset($_SESSION['token'][array_search($post['token'], $_SESSION['token'])]);
     }
 
@@ -246,6 +467,7 @@ class AdminProcess extends MyAdminProcess
             ($options['table'] ?: $agenda) : $agenda;
         Tools::setifempty($options['sort']);
         Tools::setifempty($options['path']);
+        // Note: F code uses also ['join']
         $selectExpression = (isset($options['path']) && is_string($options['path'])) ?
             ('CONCAT(REPEAT("… ",LENGTH(' . $this->MyCMS->dbms->escapeDbIdentifier($options['path']) . ') / '
             . PATH_MODULE . ' - 1),' . $optionsTable . '_' . DEFAULT_LANGUAGE . ')') :

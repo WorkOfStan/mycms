@@ -284,7 +284,7 @@ class MyAdminProcess extends MyCommon
                 );
                 $result['success'] = $result['processed-files'] > 0;
             }
-            $this->exitJson($result);
+            $this->exitJson($result); // terminates
         }
     }
 

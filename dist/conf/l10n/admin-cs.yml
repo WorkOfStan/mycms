@@ -47,13 +47,16 @@ File: Soubor
 'File was uploaded to server.': 'Soubor byl nahrán na server.'
 filename: 'jméno souboru'
 Files: Soubory
+'Fill up': 'Vyplnit'
 'Filter records': 'Vyfiltrovat záznamy'
 Folder: Složka
 'For more detailed browsing with filtering etc. you may select one of the following tables…': 'Pro detailnější procházení tabulek s filtrováním, řazením atd. klikněte na jednu z následujících…'
+'Friendly URL': 'Přátelské URL'
 'go back': 'jít zpět'
 'go to page': 'Jít na stránku'
 'Change password': 'Změnit heslo'
 'Check all': 'Označit všechny'
+'Check up': 'Zkontrolovat'
 '--choose--': '--vyberte--'
 Image: Obrázek
 'Image selector': 'Výběr obrázku'
@@ -82,6 +85,7 @@ None: Žádné
 'Nothing to save.': 'Nic k uložení.'
 Now: Teď
 'Old password': 'Staré heslo'
+'only empty': 'pouze prázdné'
 'Order change processed.': 'Změna pořadí zpracována.'
 original: původní
 Other: Ostatní

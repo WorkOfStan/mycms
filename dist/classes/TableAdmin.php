@@ -76,7 +76,7 @@ class TableAdmin extends MyTableAdmin
                     )
                     . '<span class="input-group-btn">'
                     // btn-webalize referes to listener in admin.js
-                    // TODO webalize according to the first row on the page (i.e. name, not description)
+                    // TODO webalize according to the first row on the page (i.e. name, not description) like admin?urls
                     . '<button type="button" class="btn btn-secondary btn-webalize"'
                     . ' data-url="' . Tools::h($field . $this->rand) . '"'
                     . ' data-name="' . Tools::h(
