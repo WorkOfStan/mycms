@@ -5,15 +5,15 @@
  * I.e. index.php and admin.php and also e.g. testmail.php
  *
  */
-
 // The Composer auto-loader (official way to load Composer contents) to load external stuff automatically
 require_once __DIR__ . '/vendor/autoload.php';
 
 use GodsDev\Backyard\Backyard;
 use GodsDev\MyCMS\LogMysqli;
+use GodsDev\mycmsprojectnamespace\Init;
 use GodsDev\mycmsprojectnamespace\MyCMSProject;
-use Symfony\Component\Yaml\Yaml;
 use Tracy\Debugger;
+use Webmozart\Assert\Assert;
 
 //Tracy is able to show Debug bar and Bluescreens for AJAX and redirected requests.
 //You just have to start session before Tracy
@@ -25,22 +25,12 @@ $developmentEnvironment = (
 Debugger::enable($developmentEnvironment ? Debugger::DEVELOPMENT : Debugger::PRODUCTION, __DIR__ . '/log');
 Debugger::$email = EMAIL_ADMIN;
 
-$phinxYml = Yaml::parseFile(__DIR__ . '/phinx.yml');
-if (array_key_exists($phinxEnvironment, $phinxYml['environments'])) {
-    foreach (
-    [
-        'DB_HOST' => 'host',
-        'DB_DATABASE' => 'name',
-        'DB_USERNAME' => 'user',
-        'DB_PASSWORD' => 'pass',
-        'DB_PORT' => 'port', // ini_get('mysqli.default_port')
-        'TAB_PREFIX' => 'table_prefix', // database tables' prefix
-    ] as $tempConst => $tempField) {
-        if (!defined($tempConst) && isset($phinxYml['environments'][$phinxEnvironment][$tempField])) {
-            define($tempConst, $phinxYml['environments'][$phinxEnvironment][$tempField]);
-        }
-    }
+// Initialisation of database related constants
+if (!isset($phinxEnvironment)) {
+    throw new Exception('phinxEnvironment is not set');
 }
+Assert::string($phinxEnvironment);
+$init = new Init($phinxEnvironment);
 
 $backyard = new Backyard($backyardConf);
 $myCmsConf['logger'] = $backyard->BackyardError;

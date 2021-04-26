@@ -37,7 +37,7 @@ parameters:
     bootstrapFiles:
       - config.php
       #- config.local.dist.php # comment as debugging
-      #- ../.github/linters/conf/constants.php # uncomment if needed
+      - ../.github/linters/conf/constants.php
     scanDirectories:
       - ../classes
     ignoreErrors:
