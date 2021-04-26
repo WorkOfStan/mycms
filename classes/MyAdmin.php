@@ -535,7 +535,7 @@ class MyAdmin extends MyCommon
     }
 
     /**
-     * Return if a project-specific sections should be displayed in admin.
+     * Returns if a project-specific sections should be displayed in admin.
      *
      * @return bool
      */
@@ -545,7 +545,8 @@ class MyAdmin extends MyCommon
     }
 
     /**
-     * Output (in HTML) the project-specific sections
+     * Output (in HTML) the project-specific admin sections
+     * Usually only selects project specific section method that generates HTML
      *
      * @return string
      */
@@ -827,6 +828,7 @@ class MyAdmin extends MyCommon
         if (!isset($_SESSION['user'])) {
             $output .= $this->outputLogin();
         } elseif // search results
+        //TODO: can search results really be combined with table listing etc. below?
         (isset($_SESSION['user']) && Tools::set($_GET['search'])) {
             $output .= $this->outputSearchResults($_GET['search']);
         }

@@ -81,7 +81,7 @@ Admin UI is displayed by MyAdmin::outputAdmin in this structure:
 Element overview:
 |Navigation = SpecialMenuLinks + Media+User+Settings|Search|
 |--|--|
-|Agendas (as in $AGENDAS in admin.php)|Messages<br>Workspace<br>Dashboard: List of tables|
+|Agendas (as in $AGENDAS in admin.php)|Messages<br>Workspace: table/row/media/user/project-specific<br>Dashboard: List of tables|
 
 ### Navigation
 - special Admin::outputSpecialMenuLinks
@@ -97,6 +97,7 @@ TODO: fix and describe
 ### Main
 - Messages
 - Workspace: one of the following
+  - $_GET['search'] => MyAdmin::outputSearchResults
   - $_GET['table'] => MyAdmin::outputTable
     -- $_GET['where'] is array => Admin::outputTableBeforeEdit . MyAdmin::tableAdmin->outputForm . Admin::outputTableAfterEdit
     -- $_POST['edit-selected'] => MyAdmin::outputTableEditSelected(false)
