@@ -92,13 +92,18 @@ class Admin extends MyAdmin
                     foreach (['content', 'product'] as $i) {
                         if (
                             $tmp = $this->MyCMS->fetchAndReindex(
-                                'SELECT id,IF(name_' . $_SESSION['language'] . ' NOT LIKE "",name_' . $_SESSION['language'] . ', content_' . $_SESSION['language'] . ') FROM ' . TAB_PREFIX . $i . ' WHERE category_id=' . (int) $_GET['where']['id']
+                                'SELECT id,IF(name_' . $_SESSION['language'] . ' NOT LIKE "",name_' .
+                                $_SESSION['language'] . ', content_' . $_SESSION['language'] . ')'
+                                . ' FROM ' . TAB_PREFIX . $i . ' WHERE category_id=' . (int) $_GET['where']['id']
                             )
                         ) {
                             $output .= '<hr /><details><summary>' . $this->tableAdmin->translate($i == 'content' ? 'Content linked to this category' : 'Products linked to this category') . ' <span class="badge badge-secondary">' . count($tmp) . '</span></summary>';
                             foreach ($tmp as $key => $value) {
-                                $output .= '<a href="?table=' . TAB_PREFIX . $i . '&amp;where[id]=' . $key . '" target="_blank" title="' . $this->tableAdmin->translate('Link will open in a new window') . '">'
-                                    . '<i class="fas fa-external-link-alt"></i></a> ' . substr(Tools::h($value), 0, 100) . '<br />' . PHP_EOL;
+                                $output .= '<a href="?table=' . TAB_PREFIX . $i . '&amp;where[id]=' . $key .
+                                    '" target="_blank" title="' .
+                                    $this->tableAdmin->translate('Link will open in a new window') . '">'
+                                    . '<i class="fas fa-external-link-alt"></i></a> ' .
+                                    substr(Tools::h($value), 0, 100) . '<br />' . PHP_EOL;
                             }
                             $output .= '</details>';
                         }
@@ -229,9 +234,7 @@ class Admin extends MyAdmin
                     <button type="button" class="btn btn-sm btn-secondary" id="products-texts" title="' . $this->tableAdmin->translate('Toggle number of texts') . '">#<i class="far fa-file"></i></button>
                     <button type="button" class="btn btn-sm btn-secondary" id="products-images" title="' . $this->tableAdmin->translate('Toggle image thumbnails') . '"><i class="far fa-image"></i></button>
                 </footer></div>';
-        }
-        // pages // TODO make work in Dist
-        elseif (isset($_GET['pages'])) {
+        } elseif (isset($_GET['pages'])) { // pages // TODO make work in Dist
             $output .= '<h1>' . $this->tableAdmin->translate('Pages') . '</h1><div id="agenda-pages">';
             $categories = $this->MyCMS->fetchAndReindex('SELECT id,path,active,category_' . $_SESSION['language'] . ' AS category FROM ' . TAB_PREFIX . 'category'
                 . ' WHERE LEFT(path, ' . PATH_MODULE . ')="' . $this->MyCMS->escapeSQL($this->MyCMS->SETTINGS['PATH_HOME']) . '" ORDER BY path');
@@ -239,7 +242,8 @@ class Admin extends MyAdmin
                 FROM ' . TAB_PREFIX . 'content WHERE category_id > 0');
             foreach ($categories as $key => $category) {
                 $tmp = isset($articles[$key][0]) ? count($articles[$key]) : (isset($articles[$key]) ? 1 : 0);
-                $output .= '<details style="margin-left:' . (strlen($category['path']) / PATH_MODULE - 1) . 'em"' . ($category['active'] == 1 ? '' : ' class="inactive-item"') . '>
+                $output .= '<details style="margin-left:' . (strlen($category['path']) / PATH_MODULE - 1) . 'em"' .
+                    ($category['active'] == 1 ? '' : ' class="inactive-item"') . '>
                     <summary class="d-inline-block">'
                     . '<a href="?table=' . TAB_PREFIX . 'category&amp;where[id]=' . $key . '"><i class="fas fa-edit"></i></a> '
                     . '<a href="index.php?category&id=' . $key . '" target="_blank"><i class="fas fa-external-link-alt"></i></a> '
@@ -265,7 +269,8 @@ class Admin extends MyAdmin
                 FROM ' . TAB_PREFIX . 'content WHERE category_id IS NULL AND product_id IS NULL');
             if ($articles) {
                 $output .= '<details><summary><tt>NULL</tt></summary>';
-                if ($tmp = $this->MyCMS->fetchAndReindex('SELECT id,category_' . $_SESSION['language'] . ' AS category FROM ' . TAB_PREFIX . 'category WHERE path IS NULL')) {
+                if ($tmp = $this->MyCMS->fetchAndReindex('SELECT id,category_' . $_SESSION['language'] .
+                    ' AS category FROM ' . TAB_PREFIX . 'category WHERE path IS NULL')) {
                     foreach ($tmp as $key => $category) {
                         $output .= '<a href="?table=' . TAB_PREFIX . 'category&amp;where[id]=' . $key . '" class="ml-3"><i class="fa fa-edit"></i></a> ' . strip_tags($category) . '<br />' . PHP_EOL;
                     }
@@ -410,9 +415,9 @@ class Admin extends MyAdmin
             $this->tableAdmin->translate('Save') . '</button>
             <button name="delete" type="submit" class="btn btn-secondary" value="1"><i class="fa fa-dot-circle"></i>
             <i class="fa fa-trash"></i> ' . $this->tableAdmin->translate('Delete') . '</button>
-            <fieldset class="d-inline-block position-relative"><div class="input-group" id="rename-fieldset">'.
+            <fieldset class="d-inline-block position-relative"><div class="input-group" id="rename-fieldset">' .
             '<div class="input-group-prepend">
-              <button class="btn btn-secondary" type="submit"><i class="fa fa-dot-circle"></i> '.
+              <button class="btn btn-secondary" type="submit"><i class="fa fa-dot-circle"></i> ' .
             '<i class="fa fa-i-cursor"></i> ' . $this->tableAdmin->translate('Rename') . '</button>
             </div>'
             . Tools::htmlInput('new_name', '', '', array('class' => 'form-control', 'id' => 'new_name'))
