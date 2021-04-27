@@ -110,7 +110,7 @@ to
 - security change: LogMysqli: $logQuery optional default logging of database changing statement can be (for security reasons) turned off by value false
 - security change: MyAdminProcess: processUserChangePassword - password change is not logged
 - fix processActivity: undefined variable $tab replaced by the existing $tabs
-- MyFriendlyUrl was tested in A and F4T projects and it worked fine, so it may go to production
+- MyFriendlyUrl was tested in A and F projects and it worked fine, so it may go to production
 
 ## [0.3.10] - 2019-01-31
 - processFilePack(), processFileUpload and processSubfolder() now test class_exist('ZipArchive')

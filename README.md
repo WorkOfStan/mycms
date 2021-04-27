@@ -237,8 +237,8 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 ## TODO
 
 ### TODO Administration
-* 200314: administrace FriendlyURL je v F4T/classes/Admin::outputSpecialMenuLinks() a ::sectionUrls() .. zobecnit do MyCMS a zapnout pokud FRIENDLY_URL == true
-* 200314 v Admin.php mít příslušnou editační sekci FriendlyURL (dle F4T) .. pokud lze opravdu zobecnit
+* 200314: administrace FriendlyURL je v F/classes/Admin::outputSpecialMenuLinks() a ::sectionUrls() .. zobecnit do MyCMS a zapnout pokud FRIENDLY_URL == true
+* 200314 v Admin.php mít příslušnou editační sekci FriendlyURL (dle F project) .. pokud lze opravdu zobecnit
 * 200526: CMS: If Texy is used (see only in MyTableAdmin `($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : '')` then describe it. Otherwise remove it from composer.json, Latte\CustomFilters\, ProjectCommon, dist\index.php.
 
 ### TODO Governance
