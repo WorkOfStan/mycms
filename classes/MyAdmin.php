@@ -445,6 +445,7 @@ class MyAdmin extends MyCommon
             . 'DIR_ASSETS = ' . json_encode(DIR_ASSETS) . ';' . PHP_EOL
             . '$(document).ready(function(){' . PHP_EOL
             . $this->tableAdmin->script . PHP_EOL
+            // AdminRecordName displays changes in red next to the main h2
             . 'if (typeof(AdminRecordName) != "undefined") {' . PHP_EOL
             . '    $("h2 .AdminRecordName").text(AdminRecordName.replaceAll(/<\/?[a-z][^>]*>/i, "").substr(0, 50));' . PHP_EOL
             . '}' . PHP_EOL
