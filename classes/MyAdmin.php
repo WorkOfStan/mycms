@@ -532,7 +532,7 @@ class MyAdmin extends MyCommon
      */
     protected function outputFooter()
     {
-        return '<footer class="sticky-footer">&copy; GODS, s r.o. ' . $this->tableAdmin->translate('All rights reserved.') . '</footer>';
+        return '<footer class="sticky-footer">&copy; WorkOfStan &amp; CRS2 ' . $this->tableAdmin->translate('All rights reserved.') . '</footer>';
     }
 
     /**
