@@ -5,6 +5,7 @@
  * I.e. index.php and admin.php and also e.g. testmail.php
  *
  */
+
 // The Composer auto-loader (official way to load Composer contents) to load external stuff automatically
 require_once __DIR__ . '/vendor/autoload.php';
 

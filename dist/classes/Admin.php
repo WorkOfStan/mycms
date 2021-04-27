@@ -86,12 +86,15 @@ class Admin extends MyAdmin
         if (isset($_GET['where']['id']) && $_GET['where']['id']) { //existing record
             switch ($_GET['table']) {
                 case TAB_PREFIX . 'category':
-                    // Display related products and content elements labeled by either name or content fragmet (up to 100 characters)
+                    // Display related products and content elements labeled by either name
+                    // or content fragment (up to 100 characters)
                     // TODO link content elements to category
                     foreach (['content', 'product'] as $i) {
-                        if ($tmp = $this->MyCMS->fetchAndReindex(
-                            'SELECT id,IF(name_' . $_SESSION['language'] . ' NOT LIKE "",name_' . $_SESSION['language'] . ', content_' . $_SESSION['language'] . ') FROM ' . TAB_PREFIX . $i . ' WHERE category_id=' . (int) $_GET['where']['id']
-                        )) {
+                        if (
+                            $tmp = $this->MyCMS->fetchAndReindex(
+                                'SELECT id,IF(name_' . $_SESSION['language'] . ' NOT LIKE "",name_' . $_SESSION['language'] . ', content_' . $_SESSION['language'] . ') FROM ' . TAB_PREFIX . $i . ' WHERE category_id=' . (int) $_GET['where']['id']
+                            )
+                        ) {
                             $output .= '<hr /><details><summary>' . $this->tableAdmin->translate($i == 'content' ? 'Content linked to this category' : 'Products linked to this category') . ' <span class="badge badge-secondary">' . count($tmp) . '</span></summary>';
                             foreach ($tmp as $key => $value) {
                                 $output .= '<a href="?table=' . TAB_PREFIX . $i . '&amp;where[id]=' . $key . '" target="_blank" title="' . $this->tableAdmin->translate('Link will open in a new window') . '">'
@@ -387,20 +390,36 @@ class Admin extends MyAdmin
                 unset($found[$key]);
             }
         }
-        $output .= '<tr><td>' . Tools::htmlInput('new[0]', '', '', array('class' => 'form-control form-control-sm', 'title' => $this->tableAdmin->translate('New record'))) . '</td>';
+        $output .= '<tr><td>' . Tools::htmlInput(
+            'new[0]',
+            '',
+            '',
+            array('class' => 'form-control form-control-sm', 'title' => $this->tableAdmin->translate('New record'))
+        ) . '</td>';
         foreach ($this->MyCMS->TRANSLATIONS as $key => $value) {
-            $output .= '<td>' . Tools::htmlInput("new[$key]", '', '', array('class' => 'form-control form-control-sm', 'title' => $this->tableAdmin->translate('New record') . ' (' . $value . ')')) . '</td>';
+            $output .= '<td>' . Tools::htmlInput(
+                "new[$key]",
+                '',
+                '',
+                ['class' => 'form-control form-control-sm',
+                        'title' => $this->tableAdmin->translate('New record') . ' (' . $value . ')']
+            ) . '</td>';
         }
         $output .= '</tr></tbody></table>
-            <button name="translations" type="submit" class="btn btn-secondary"><i class="fa fa-save"></i> ' . $this->tableAdmin->translate('Save') . '</button>
-            <button name="delete" type="submit" class="btn btn-secondary" value="1"><i class="fa fa-dot-circle"></i> <i class="fa fa-trash"></i> ' . $this->tableAdmin->translate('Delete') . '</button>
-            <fieldset class="d-inline-block position-relative"><div class="input-group" id="rename-fieldset"><div class="input-group-prepend">
-              <button class="btn btn-secondary" type="submit"><i class="fa fa-dot-circle"></i> <i class="fa fa-i-cursor"></i> ' . $this->tableAdmin->translate('Rename') . '</button>
+            <button name="translations" type="submit" class="btn btn-secondary"><i class="fa fa-save"></i> ' .
+            $this->tableAdmin->translate('Save') . '</button>
+            <button name="delete" type="submit" class="btn btn-secondary" value="1"><i class="fa fa-dot-circle"></i>
+            <i class="fa fa-trash"></i> ' . $this->tableAdmin->translate('Delete') . '</button>
+            <fieldset class="d-inline-block position-relative"><div class="input-group" id="rename-fieldset">'.
+            '<div class="input-group-prepend">
+              <button class="btn btn-secondary" type="submit"><i class="fa fa-dot-circle"></i> '.
+            '<i class="fa fa-i-cursor"></i> ' . $this->tableAdmin->translate('Rename') . '</button>
             </div>'
             . Tools::htmlInput('new_name', '', '', array('class' => 'form-control', 'id' => 'new_name'))
             . '</div></fieldset>
             </form></div>' . PHP_EOL;
-        $output .= count($found) ? '<h2 class="mt-4">' . $this->tableAdmin->translate('Missing translations in templates') . '</h2><ul>' : '';
+        $output .= count($found) ? '<h2 class="mt-4">' .
+            $this->tableAdmin->translate('Missing translations in templates') . '</h2><ul>' : '';
         foreach ($found as $value) {
             $output .= '<li><code>' . Tools::h($value) . '</code></li>' . PHP_EOL;
         }
@@ -418,8 +437,10 @@ class Admin extends MyAdmin
     {
         // One place to set Friendly URL for all pages
         // originally code F (delete this line later)
-        $output = '<h1><i class="fa fa-link"></i> ' . $this->tableAdmin->translate('Friendly URL') . '</h1><div id="agenda-urls">'
-            . '<form action="" method="post" class="friendly-urls" onsubmit="return confirm(\'' . $this->tableAdmin->translate('Are you sure?') . '\')">'
+        $output = '<h1><i class="fa fa-link"></i> ' . $this->tableAdmin->translate('Friendly URL') .
+            '</h1><div id="agenda-urls">'
+            . '<form action="" method="post" class="friendly-urls" onsubmit="return confirm(\'' .
+            $this->tableAdmin->translate('Are you sure?') . '\')">'
             . Tools::htmlInput('urls', '', 1, ['type' => 'hidden'])
             . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden');
         $urls = []; // all URLs, all language versions with a link to what it links to (product, page, … id, etc.)
@@ -442,24 +463,42 @@ class Admin extends MyAdmin
         $lastType = false;
         foreach ($urls as $value) {
             if ($lastType != $value['_table'] . '-' . $value['type']) {
-                $output .= '<h3 class="lead">' . Tools::h($lastType = $value['_table'] . '-' . $value['type']) . '</h3>' . PHP_EOL;
+                $output .= '<h3 class="lead">' . Tools::h($lastType = $value['_table'] . '-' . $value['type']) .
+                    '</h3>' . PHP_EOL;
             }
-            $output .= '<div class="mb-3"><div><a href="?table=' . urlencode(TAB_PREFIX . $value['_table']) . '&where[id]=' . (int) $value['id'] . '" target="_blank">'
-                . '<i class="fa fa-external-link"></i></a> ' . (Tools::h($value['name_' . DEFAULT_LANGUAGE]) ?: '<i>N/A</i>') . '</div>';
+            $output .= '<div class="mb-3"><div><a href="?table=' . urlencode(TAB_PREFIX . $value['_table']) .
+                '&where[id]=' . (int) $value['id'] . '" target="_blank">'
+                . '<i class="fa fa-external-link"></i></a> ' .
+                (Tools::h($value['name_' . DEFAULT_LANGUAGE]) ?: '<i>N/A</i>') . '</div>';
             foreach ($langs as $key => $lang) {
                 // TODO should trailing slash be present?
-                $value['fill'] = rtrim('/' . Tools::wrap($TYPE2PATH[$lastType], '', '/') . /* $value['id'] . '-' . */ Tools::webalize($value["name_$lang"]), '-');
+                $value['fill'] = rtrim('/' . Tools::wrap($TYPE2PATH[$lastType], '', '/') .
+                    /* $value['id'] . '-' . */ Tools::webalize($value["name_$lang"]), '-');
                 $output .= '<div class="input-group input-group-sm">'
-                    . '<div class="input-group-prepend"><tt class="input-group-text btn" title="' . $this->tableAdmin->translate('Fill up') . '">' . $lang . '</tt></div>'
-                    . Tools::htmlInput('url-' . urlencode($value['_table']) . '-' . $value['id'] . '-' . $lang, '', $value["url_$lang"], array('class' => 'form-control monospace', 'data-fill' => $value['fill']))
+                    . '<div class="input-group-prepend"><tt class="input-group-text btn" title="' .
+                    $this->tableAdmin->translate('Fill up') . '">' . $lang . '</tt></div>'
+                    . Tools::htmlInput(
+                        'url-' . urlencode($value['_table']) . '-' . $value['id'] . '-' . $lang,
+                        '',
+                        $value["url_$lang"],
+                        array('class' => 'form-control monospace', 'data-fill' => $value['fill'])
+                    )
                     . '</div>' . PHP_EOL;
             }
             $output .= '</div>';
         }
-        $output .= '<p><button class="btn btn-primary mr-1" type="submit" name="urls-save"><i class="fa fa-save"></i> ' . $this->tableAdmin->translate('Save') . '</button>
-            <button class="btn btn-secondary btn-fill" type="button"><i class="fa fa-edit"></i> ' . $this->tableAdmin->translate('Fill up') . '</button>
-            ' . Tools::htmlInput('', $this->tableAdmin->translate('only empty'), '', array('type' => 'checkbox', 'id' => 'only-empty', 'label-after' => true, 'label-class' => 'mx-1')) . '
-            <button class="btn btn-secondary btn-check-up" type="button"><i class="fa fa-eye"></i> ' . $this->tableAdmin->translate('Check up') . '</button>
+        $output .= '<p><button class="btn btn-primary mr-1" type="submit" name="urls-save"><i class="fa fa-save"></i> '
+            . $this->tableAdmin->translate('Save') . '</button>
+            <button class="btn btn-secondary btn-fill" type="button"><i class="fa fa-edit"></i> '
+            . $this->tableAdmin->translate('Fill up') . '</button>
+            ' . Tools::htmlInput(
+                '',
+                $this->tableAdmin->translate('only empty'),
+                '',
+                array('type' => 'checkbox', 'id' => 'only-empty', 'label-after' => true, 'label-class' => 'mx-1')
+            ) . '
+            <button class="btn btn-secondary btn-check-up" type="button"><i class="fa fa-eye"></i> ' .
+            $this->tableAdmin->translate('Check up') . '</button>
             </p></form>';
 
         // Identify duplicit URLs
@@ -470,9 +509,10 @@ class Admin extends MyAdmin
         $urls = [];
         foreach (['category', 'content', 'product'] as $table) {
             foreach (array_keys($this->tableAdmin->TRANSLATIONS) as $i) {
-                $query = $this->MyCMS->fetchAll("SELECT COUNT(url_$i) AS _count, url_$i AS url FROM " . TAB_PREFIX . "$table GROUP BY url ORDER BY _count DESC");
+                $query = $this->MyCMS->fetchAll("SELECT COUNT(url_$i) AS _count, url_$i AS url"
+                    . " FROM " . TAB_PREFIX . "$table GROUP BY url ORDER BY _count DESC");
                 foreach ($query as $row) {
-                    // Tools::add($urls[$row['url']], $row['_count']); // this line replaced by next more static analysis friendly:
+                    // Tools::add($urls[$row['url']], $row['_count']); // next line is more static analysis friendly:
                     $urls[$row['url']] = (isset($urls[$row['url']]) ? $urls[$row['url']] : 0) + $row['_count'];
                 }
             }
@@ -487,10 +527,17 @@ class Admin extends MyAdmin
             foreach (['category', 'content', 'product'] as $table) {
                 $sql [] = "SELECT '$table' AS type,id,name" . '_' . $_SESSION['language'] .
                     " AS name FROM " . TAB_PREFIX . "$table WHERE " .
-                    Tools::arrayListed(array_keys($this->tableAdmin->TRANSLATIONS), 0, ' OR ', 'url_', '="' . $this->MyCMS->escapeSQL($url) . '"');
+                    Tools::arrayListed(
+                        array_keys($this->tableAdmin->TRANSLATIONS),
+                        0,
+                        ' OR ',
+                        'url_',
+                        '="' . $this->MyCMS->escapeSQL($url) . '"'
+                    );
             }
             $query = $this->MyCMS->fetchAll(implode(" UNION\n", $sql));
-            $output .= '<details><summary>' . Tools::h($url) . ' <sup class="badge badge-secondary">' . count($query) . '</sup></summary>';
+            $output .= '<details><summary>' . Tools::h($url) . ' <sup class="badge badge-secondary">' . count($query) .
+                '</sup></summary>';
             foreach ($query as $row) {
                 $output .= '<div class="ml-2"><a href="?table=' . TAB_PREFIX . $row['type'] . '&amp;where[id]=' .
                     $row['id'] . '"><i class="fa fa-table"></i> ' . Tools::h($row['name']) .
@@ -505,7 +552,9 @@ class Admin extends MyAdmin
         }
         $output .= (count($urls) ? '' : '<i>' . $this->tableAdmin->translate('None') . '</i>')
             . '</div><footer class="mt-2">'
-            . (count($urls) ? '<button type="button" class="btn btn-sm btn-secondary mr-2" id="urls-toggle" title="' . $this->tableAdmin->translate('Open/close') . '" data-open="1"><i class="fas fa-caret-right"></i> <i class="fas fa-caret-down"></i></button>' : '')
+            . (count($urls) ? '<button type="button" class="btn btn-sm btn-secondary mr-2" id="urls-toggle" title="' .
+            $this->tableAdmin->translate('Open/close') .
+            '" data-open="1"><i class="fas fa-caret-right"></i> <i class="fas fa-caret-down"></i></button>' : '')
             . '</footer>';
         return $output;
     }
