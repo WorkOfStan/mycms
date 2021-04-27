@@ -365,8 +365,7 @@ it tries to send a test email to `EMAIL_ADMIN`. One try allowed in 23 hours (as 
 
 ### TODO CMS
 * 200610: bool field show as on/off 1/0 true/false or something else more reasonable than int input box
-* 200712: when adding new Content automatically uncheck the NULL checkbox so that something is saved!
-* 200828: content_XX HTML field (for article) doesn't automatically uncheck null checkbox, therefore the UX is that you fill-in new text and it is not saved
+* 200712: when adding new Content automatically uncheck the NULL checkbox so that something is saved! content_XX HTML field (for article) doesn't automatically uncheck null checkbox, therefore the UX is that you fill-in new text and it is not saved (see `toggle null checkbox according to select/textarea content` in admin-specific.js)
 
 ### TODO SEO
 

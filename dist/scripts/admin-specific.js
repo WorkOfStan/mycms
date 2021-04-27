@@ -48,8 +48,22 @@ $(document).ready(function(){
             $('#' + agendas[i]).show();
         }
     }
-    $('.database select[name=fields\\[category_id\\]]').on('change', function(event) {selectWithNullOnChange(this, 'category_id');});
-    $('.database select[name=fields\\[product_id\\]]').on('change', function(event) {selectWithNullOnChange(this, 'product_id');});
+
+    // toggle null checkbox according to select/textarea content
+    // product category_id - just an example
+    $('.database select[name=fields\\[category_id\\]]').on('change', function(event) {
+        selectWithNullOnChange(this, 'category_id');
+    });
+    // content product_id - just an example
+    $('.database select[name=fields\\[product_id\\]]').on('change', function(event) {
+        selectWithNullOnChange(this, 'product_id');
+    });
+    // redirector new_url
+    $('.database textarea[name=fields\\[new_url\\]]').on('change keyup paste', function(event) {
+        selectWithNullOnChange(this, 'new_url'); // param 2 equals name of the field
+    });
+    //TODO: make this work for SummerText//$('.database textarea[name=fields\\[content_en\\]]').on('change keyup paste', function(event) {console.log('ta f ceid');selectWithNullOnChange(this, 'content_en');});
+
     // toggle buttons on "products" and "pages"
     $('#products-actives').on('click', function(){
         $('#agenda-products .inactive-item').toggle(); //product
