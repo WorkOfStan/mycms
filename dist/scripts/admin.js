@@ -29,6 +29,7 @@ function prepareDatetimepicker(date, time) {
     });
 }
 
+// sort control element in table view
 function addSortRow(target, field, descending)
 {
     field = parseInt(field);
@@ -41,12 +42,13 @@ function addSortRow(target, field, descending)
     }
     html += '</select>\n'
             + '<label data-toggle="tooltip" title="' + TRANSLATE['Descending'] + '"><input type="checkbox" name="desc[' + sortIndex + ']"' + (descending ? ' checked="checked"' : '') + ' /> '
-            + '<span class="glyphicon glyphicon-sort-by-attributes-alt fa fa-sort-amount-desc" aria-hidden="true"/></label></div>';
+            + '<span class="glyphicon glyphicon-sort-by-attributes-alt fa fa-sort-amount-down" aria-hidden="true"/></label></div>';
     $(target).append(html);
     sortIndex++;
     return true;
 }
 
+// search control element in table view
 function addSearchRow(target, field, op, value)
 {
     field = parseInt(field);
@@ -61,7 +63,7 @@ function addSearchRow(target, field, op, value)
     for (i in WHERE_OPS) {
         html += '<option value="' + i + '"' + (op == i ? ' selected="selected"' : '') + '>' + WHERE_OPS[i] + '</option>\n';
     }
-    html += '</select>\n<input type="search" name="val[' + searchIndex + ']" value="' + value + '" size="8" /></div>';
+    html += '</select>\n<input type="search" name="val[' + searchIndex + ']" value="' + value + '" size="8" class="form-control form-control-sm d-inline" /></div>';
     $(target).append(html);
     searchIndex++;
     return true;
@@ -132,6 +134,7 @@ function fillAgenda(data, options) {
     agenda.html(html + '<div class="m-1"><a href="?table=' + TAB_PREFIX + options.table + '&amp;where[]=' + prefill + '" class="pl-1"><i class="fa fa-plus-square" aria-hidden="true"></i></a> &nbsp; ' + TRANSLATE['New record'] + '</div>');
 }
 
+// content rows in agenda column
 function agendaRow(data, index, options) {
     let row = data.data[index];
     let result = '<div class="m-1" data-id="' + row.id + '" data-table="' + data.agenda + '">\n'
@@ -139,7 +142,7 @@ function agendaRow(data, index, options) {
             + ' class="btn btn-link btn-xs" title="edit"><i class="fa fa-pencil-alt" aria-hidden="true"></i></a>\n';
     if (row.sort) {
         result += '<button data-dir="-1" class="btn btn-secondary btn-xs btn-sort" title="move up" onclick="sortButtonOnClick(this)"' + (index == 0 ? ' disabled' : '') + '><i class="fa fa-long-arrow-up" aria-hidden="true"></i></button>\n'
-                + '<button data-dir="1" class="btn btn-secondary btn-xs btn-sort" title="move down" onclick="sortButtonOnClick(this)"' + (index == data.data.length - 1 ? ' disabled' : '') + '><i class="fa fa-long-arrow-down" aria-hidden="true"></i></button>\n'
+                + '<button data-dir="1" class="btn btn-secondary btn-xs btn-sort" title="move down" onclick="sortButtonOnClick(this)"' + (index == data.data.length - 1 ? ' disabled' : '') + '><i class="fa fa-long-arrow-down" aria-hidden="true"></i></button>\n';
     }
     if (data.subagenda) {
         result += '<a href="#" class="btn btn-xs btn-link btn-expand" data-toggle="collapse" data-target="#agenda-' + data.agenda + '-' + row.id + '" aria-expanded="false" aria-controls="agenda-' + data.agenda + '-' + row.id + '" title="expand"><i class="fa fa-caret-down" aria-hidden="true"></i></a>\n';
@@ -154,8 +157,8 @@ function agendaRow(data, index, options) {
             result += '<div data-id="' + row.join[j].id + '" data-table="' + data.subagenda + '">'
                     + '<a href="?table=' + TAB_PREFIX + data.subagenda + '&amp;where[id]=' + row.join[j]['id'] + '" class="btn btn-link btn-xs" title="edit"><i class="fa fa-pencil-alt" aria-hidden="true"></i></a>\n';
             if (row.join.sort && row.join.length > 1) {
-                result += '<button data-dir="-1" class="btn btn-secondary btn-xs btn-sort" title="move up" onclick="sortButtonOnClick(this)"' + (j == 0 ? ' disabled' : '') + '><i class="fa fa-long-arrow-up" aria-hidden="true"></i></button>\n'
-                        + '<button data-dir="1" class="btn btn-secondary btn-xs btn-sort" title="move down" onclick="sortButtonOnClick(this)"' + (j == row.join.length - 1 ? ' disabled' : '') + '><i class="fa fa-long-arrow-down" aria-hidden="true"></i></button>\n';
+                result += '<button data-dir="-1" class="btn btn-secondary btn-xs btn-sort" title="move up" onclick="sortButtonOnClick(this)"' + (j == 0 ? ' disabled' : '') + '><i class="fa fa-long-arrow-up" aria-hidden="true"></i></button>\n' // or <i class="fas fa-long-arrow-alt-up"></i>
+                        + '<button data-dir="1" class="btn btn-secondary btn-xs btn-sort" title="move down" onclick="sortButtonOnClick(this)"' + (j == row.join.length - 1 ? ' disabled' : '') + '><i class="fa fa-long-arrow-down" aria-hidden="true"></i></button>\n'; // or <i class="fas fa-long-arrow-alt-down"></i>
             }
             result += '<span class="item-name">' + row.join[j]['name'] + '</span></div>';
         }
@@ -165,13 +168,15 @@ function agendaRow(data, index, options) {
 }
 
 function updateImageSelector(ImageFolder, ImageFiles) {
-    $(ImageFiles).html('<img src="images/loader.gif" />');
+    console.log('updateImageSelector', ImageFolder, ImageFiles);
+    $(ImageFiles).html('<img src="images/loader.gif" />'); // or <i class="fas fa-spinner fa-spin"></i>
     $.ajax({
         url: '?keep-token',
         dataType: 'json',
         data: {
             'subfolder': $(ImageFolder).val(),
             'media-files': 1,
+            // 'info': 1, // TODO use this line or not??
             'token': TOKEN,
             'wildcard': '*.{jpg,gif,png}'
         },
@@ -180,9 +185,9 @@ function updateImageSelector(ImageFolder, ImageFiles) {
             if (data.success) {
                 let html = '';
                 for (i in data.data) {
-                    filename = data.data[i]['name'] + data.data[i]['extension'];
-                    src = data.subfolder + '/' + filename;
-                    html += '<a href="' + src + '" title="' + filename + '">'
+                    let filename = data.data[i]['name'] + data.data[i]['extension'];
+                    let src = data.subfolder + '/' + filename;
+                    html += '<a href="' + src + '" title="' + filename + (typeof(data.data[i]['info']) != "undefined" ? "\n" + data.data[i]['info'] : "") + '">'
                             + '<img src="' + src + '" data-src="' + src + '" />\n'
                             + '<span>' + filename + '</span></a>\n';
                 }
@@ -228,8 +233,15 @@ function jsonExpandedOnBlur(element) {
     }
 }
 
+// toggle null checkbox according to select/textarea content
 function selectWithNullOnChange(element, name) {
     $('.database input[name=fields-null\\[' + name + '\\]]').prop('checked', !$(element).val());
+}
+
+// toggle null checkbox according to "pure" content
+function selectWithNullOnChangeContent(contents, name) {
+    // '<p><br></p>' is returned with empty Summernote textarea
+    $('.database input[name=fields-null\\[' + name + '\\]]').prop('checked', contents === '<p><br></p>' || contents === '' );
 }
 
 function pad0(input, len) {
@@ -265,6 +277,65 @@ function addMediaMessage(message) {
     $('#media-file-feedback span:first').text(message).parent().show();
 }
 
+// TODO explore code A
+function changePasswordSubmit() {
+    let oldPass = $('#old-password').val();
+    let newPass = $('#new-password').val();
+    let retypePass = $('#retype-password').val();
+    let message = (!oldPass || !newPass || !retypePass ? 'Please, fill necessary data.' :
+        (newPass.length < 3 || newPass.length > 80 ? 'Wrong input' :
+            (newPass != retypePass ? 'Passwords don\'t match!' : '')
+        )
+    );
+    if (message) {
+        $('#change-password-message').text(TRANSLATE[message]).parent().show();
+        $('#old-password').focus();
+        return false;
+    }
+}
+
+// TODO explore code A
+function createUserSubmit() {
+    let user = $('#create-user').val();
+    let newPass = $('#create-password').val();
+    let retypePass = $('#create-retype-password').val();
+    let message = (!user || !newPass || !retypePass ? 'Please, fill necessary data.' :
+        (newPass.length < 3 || newPass.length > 80 ? 'Wrong input' :
+            (newPass != retypePass ? 'Passwords don\'t match!' : '')
+        )
+    );
+    if (message) {
+        $('#create-user-message').text(TRANSLATE[message]).parent().show();
+        $('#create-user').focus();
+        return false;
+    }
+}
+
+// TODO explore code A
+function adminActivity() {
+    let table = $('form.record-form input[type=hidden][name=table]').val();
+    let id = $('form.record-form input[name=fields\\[id\\]]').val();
+    if (table && id) {
+        $.ajax({
+            url: '?keep-token',
+            dataType: 'json',
+            data: {
+                'activity': 1,
+                'table': table,
+                'id': id,
+                'token': TOKEN
+            },
+            type: 'POST',
+            success: function (data) {
+                $('#realtime-message').data('content', 'abc').popover('show');
+                while (typeof($('#user-menu').children()[6]) == 'object') {
+                    $('#user-menu').children()[6].remove();
+                }
+            }
+        });
+    }
+}
+
 function standardDocumentReady() {
     String.prototype.replaceAll = function (target, replacement) {
         return this.split(target).join(replacement);
@@ -294,19 +365,36 @@ function standardDocumentReady() {
         }
         $(this).closest('table').data('order', $(this).data('order'));
     });
+    //@todo go to page
     $('#go-to-page').on('click', function () {
         let page = prompt('Stránka:');
         if (!isNaN(page) && page > 0 && page < $(this).data('pages')) {
             console.log('@todo go to page: ' + page);//...
         }
     });
+    //date/time picker
     prepareDatetimepicker(false, true);
+    //add 'column=...' condition to search fieldset // TODO explore A code
+    $('.table-admin thead tr th a.filter').on('click', function(event){
+        event.preventDefault();
+        var rand = $(this).parentsUntil(null, 'form').data('rand');
+        var search = $('#search-div' + rand);
+        search.show();
+        addSearchRow(search, 0, 0, '');
+        for (i = 0; i < search.find('div').length; i++) {
+            if (search.find('.select-search:nth(' + i + ')').val() == '') {
+                search.find('.select-search:nth(' + i + ')').val($(this).data('column'));
+                search.find('div:nth(' + i + ') input[type=search]').focus();
+                break;
+            }
+        }
+    });
     //summernote
     $('textarea.richtext').summernote({
         height: 300,
         minHeight: null,
         maxHeight: null,
-        focus: true,
+        focus: true, // set focus to editable area after initializing summernote
         lang: 'en-US',
         placeholder: 'Edit...',
         tabsize: 8,
@@ -315,17 +403,18 @@ function standardDocumentReady() {
             ['Text', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript']],
             ['Paragraph', ['ol', 'ul', 'paragraph', 'height']],
             ['Insert', ['picture', 'link', 'video', 'table', 'hr']],
-            ['Misc', ['undo', 'redo', 'codeview', 'fullscreen', 'help']],
+            ['Misc', ['undo', 'redo', 'codeview', 'fullscreen', 'help']]
         ],
         callbacks: {
             onInit: function () {
-                var myBtn = '<button id="mySummernoteTool" type="button" class="btn btn-default btn-sm btn-small" title="Custom button" data-event="something" tabindex="-1"><i class="fa fa-wrench"></i></button>';
-                var btnGroup = '<div class="note-Misc btn-group">' + myBtn + '</div>';
-                $(btnGroup).appendTo($('.note-toolbar'));
+                // add custom icons with events
+                //var myBtn = '<button id="mySummernoteTool" type="button" class="btn btn-default btn-sm btn-small" title="Custom button" data-event="something" tabindex="-1"><i class="fa fa-wrench"></i></button>';
+                //var btnGroup = '<div class="note-Misc btn-group">' + myBtn + '</div>';
+                //$(btnGroup).appendTo($('.note-toolbar'));
                 $('#mySummernoteTool').tooltip({container: 'body', placement: 'bottom'}); // Button tooltips
-                $('#mySummernoteTool').click(function (event) { // Button events
-                    // insert code
-                });
+                //$('#mySummernoteTool').click(function (event) { // Button events
+                //    // insert code
+                //});
             }
         }
     });
@@ -338,6 +427,7 @@ function standardDocumentReady() {
                 data: {
                     'subfolder': $(this).val(),
                     'media-files': 1,
+                    // 'info': 1, // TODO use this??
                     'token': TOKEN
                 },
                 type: 'POST',
@@ -363,21 +453,47 @@ function standardDocumentReady() {
                             + html + '</table>'
                             : '<i>' + TRANSLATE['No files'] + '</i>'
                         );
-                        $('#delete-media-files,#rename-fieldset').toggle(data.data.length > 0);
+                        $('#delete-media-files,#rename-fieldset,#file-rename-folder').toggle(data.data.length > 0);
+                        // $('#delete-media-files,#filename-fieldset,#file-rename-folder,#unpack-media-file').addClass('disabled'); // TODO instead of previous line??
                         $('#media-files .subfolder-files .multi-options input[type=radio][name=file]').on('change', function(event) {
                             $('#media-file-name').val($(this).val()).attr('title', $(this).val());
+                            // TODO explore A code below
+                            if ($(this).val()) {
+                                $('#rename-media-file').removeClass('disabled');
+                            } else {
+                                $('#rename-media-file').addClass('disabled');
+                            }
+                            if ($(this).val().substr(-4) == '.zip') {
+                                $('#unpack-media-file').removeClass('disabled');
+                            } else {
+                                $('#unpack-media-file').addClass('disabled');
+                            }
+                        });
+                        $('#media-files .subfolder-files .multi-options input[type=checkbox]').on('change', function(event) {
+                            if ($('#media-files .subfolder-files tr td input[type=checkbox]:checked').length) {
+                                $('#delete-media-files').removeClass('disabled');
+                                $('#pack-media-files').removeClass('disabled');
+                            } else {
+                                $('#delete-media-files').addClass('disabled');
+                                $('#pack-media-files').addClass('disabled');
+                            }
                         });
                     }
+                    $('#media-files').parent().find('summary small.badge').text($('#media-files table.subfolder-files tr').length - 1);
                 }
             });
+            $('#file-rename-folder').val($(this).val());
         }
     );
+    // rename a file
     $('#rename-media-file').on('click', function (event) {
         $('#file-rename-feedback').hide();
+        // $('#media-feedback').hide(); // TODO instead of the line above??
         var old_name = $('#media-files .subfolder-files .multi-options input[type=radio][name=file]:checked').val();
         var new_name = $('#media-file-name').val();
         if (!new_name || old_name == new_name) {
             $('#file-rename-feedback').text(TRANSLATE['Please, choose a new name.']).show();
+            // addMediaMessage(TRANSLATE['Please, choose a new name.']); // TODO instead of the line above??
             return false;
         }
         $.ajax({
@@ -387,6 +503,7 @@ function standardDocumentReady() {
                 'file_rename': new_name,
                 'old_name': old_name,
                 'subfolder': $('#subfolder').val(),
+                'new_folder': $('#file-rename-folder').val(), // TODO really use this line??
                 'token': TOKEN
             },
             type: 'POST',
@@ -395,10 +512,12 @@ function standardDocumentReady() {
                     location.reload();
                 } else {
                     $('#file-rename-feedback').text(data.error).show();
+                    // addMediaMessage(data.messages); // TODO instead of the line above??
                 }
             }
         });
     });
+    // delete file(s)
     $('#delete-media-files').on('click', function (event) {
         let files = [];
         $.each($('#media-files > table.subfolder-files input[type=checkbox]:checked'), function (index, value) {
@@ -406,6 +525,7 @@ function standardDocumentReady() {
         });
         if (files.length == 0) {
             alert(TRANSLATE['Select at least one file and try again.']);
+            // addMediaMessage(TRANSLATE['Select at least one file and try again.']); // TODO instead of the line above??
             return false;
         }
         if (!confirm(TRANSLATE['Really delete?'] + ' (' + files.length + ')')) {
@@ -423,6 +543,72 @@ function standardDocumentReady() {
             success: function (data) {
                 if (data.success) {
                     location.reload();
+                } else {
+                    addMediaMessage(data.messages);
+                }
+            }
+        });
+    });
+    // pack file(s)
+    $('#pack-media-files').on('click', function (event) {
+        let files = [];
+        $.each($('#media-files > table.subfolder-files input[type=checkbox]:checked'), function (index, value) {
+            files.push($(value).val());
+        });
+        if (files.length == 0) {
+            addMediaMessage(TRANSLATE['Select at least one file and try again.']);
+            return false;
+        }
+        if ($('#media-file-name').val().substr(-4) != '.zip') {
+            addMediaMessage(TRANSLATE['Please, fill up a valid file name.']);
+            $('#media-file-name').focus();
+            return false;
+        }
+        if (!confirm(TRANSLATE['Really?'] + ' (' + files.length + ')')) {
+            return false;
+        }
+        $.ajax({
+            url: '?keep-token',
+            dataType: 'json',
+            data: {
+                'subfolder': $('#subfolder').val(),
+                'archive': $('#media-file-name').val(),
+                'pack-files': files,
+                'token': TOKEN
+            },
+            type: 'POST',
+            success: function(data) {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    addMediaMessage(data.messages);
+                }
+            }
+        });
+    });
+    // unpack a file
+    $('#unpack-media-file').on('click', function(event) {
+        $('#media-feedback').hide();
+        var file_archive = $('#media-file-name').val();
+        if (!file_archive) {
+            addMediaMessage(TRANSLATE['Please, choose a new name.']);
+            return false;
+        }
+        $.ajax({
+            url: '?keep-token',
+            dataType: 'json',
+            data: {
+                'file_unpack': $('#media-file-name').val(),
+                'subfolder': $('#subfolder').val(),
+                'new_folder': $('#file-rename-folder').val(),
+                'token': TOKEN
+            },
+            type: 'POST',
+            success: function(data) {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    addMediaMessage(data.messages);
                 }
             }
         });
@@ -435,11 +621,11 @@ function standardDocumentReady() {
         });
         $('#change-password-form').on('submit', function () {
             if (!$('#old-password').val() || !$('#new-password').val() || !$('#retype-password').val()) {
-                alert(TRANSLATE['Please, fill necessary data.']);
+                alert(TRANSLATE['Please, fill necessary data.']); // TODO use addMediaMessage instead?
                 return false;
             }
             if ($('#new-password').val() != $('#retype-password').val()) {
-                alert(TRANSLATE["Passwords don't match!"]);
+                alert(TRANSLATE['Passwords don\'t match!']); // TODO use addMediaMessage instead?
                 return false;
             }
             $('#old-password').val($.sha1($('#old-password').val()));
@@ -449,11 +635,11 @@ function standardDocumentReady() {
         });
         $('.create-user-form').on('submit', function () {
             if (!$('#create-user').val() || !$('#create-password').val() || !$('#create-retype-password').val()) {
-                alert(TRANSLATE['Please, fill necessary data.']);
+                alert(TRANSLATE['Please, fill necessary data.']); // TODO use addMediaMessage instead?
                 return false;
             }
             if ($('#create-password').val() != $('#create-retype-password').val()) {
-                alert(TRANSLATE['Passwords don\'t match!']);
+                alert(TRANSLATE['Passwords don\'t match!']); // TODO use addMediaMessage instead?
                 return false;
             }
             $('#create-password').val($.sha1($('#create-password').val()));
@@ -461,6 +647,15 @@ function standardDocumentReady() {
             return true;
         });
     }
+    // record form - Ctrl+Enter in any <input> or <textarea> submits the form
+    $('.record-form input, .record-form textarea').on('keyup', function (event) {
+        if (event.key == 'Enter' && event.keyCode == 13 && event.ctrlKey) {
+            if (event.shiftKey) {
+                $(this).closest('form').find('.form-actions input[type=hidden][name=after]').val('return');
+            }
+            $(this).closest('form').find('.form-actions button[name=record-save]').click();
+        }
+    });
     // table form - indicate overflow in textareas with maxlength
     $('.database textarea[data-maxlength]').on('keyup', function (event) {
         $(this).toggleClass('is-invalid', (len = String($(this).val()).length) > (maxlen = $(this).data('maxlength')));
@@ -495,6 +690,8 @@ function standardDocumentReady() {
     });
     fillAssetsSubfolders($('#summernoteImageFolder'));
     fillAssetsSubfolders($('#modalImageFolder'));
+    fillAssetsSubfolders($('#file-rename-folder'));
+    $('#file-rename-folder').val($('#subfolder').val());
     $('#subfolder').change();
     $('button.ImageSelector').on('click', function (event) {
         event.preventDefault();
@@ -504,6 +701,10 @@ function standardDocumentReady() {
     $('#modalInsertImage').on('click', function (event) {
         $(imageSelectorTarget).val($('#modalImagePath').val());
         $('#image-selector').modal('hide');
+    });
+    // TODO explore A code
+    $('#modalReloadImages').on('click', function (event) {
+        updateImageSelector($('#modalImageFolder'), $(this).parentsUntil(null, '.modal-content').find('.ImageFiles'));
     });
     $('button.btn-webalize').on('click', function (event) {
         event.preventDefault();
@@ -567,6 +768,7 @@ function standardDocumentReady() {
             success: function (data) {
                 if (!data.success) {
                     $(checkbox).attr('checked', !$(checkbox).prop('checked'));
+                    $('#activate-user-message').text(data.messages).parent().show(); // TODO really use this?
                 }
             }
         });
@@ -598,6 +800,40 @@ function standardDocumentReady() {
     $('#agenda-translations form table input.translation').on('change', function (event) {
         $('#old_name,#new_name').val($(this).val());
     });
+    // division up/down // TODO make this F code work in Dist
+    $('#agenda-products button[name=division-up], #agenda-products button[name=division-down]').on('click', function(event) {
+        event.preventDefault();
+        $.ajax({
+            url: '?keep-token',
+            dataType: 'json',
+            data: {
+                'division-switch': $(this).val(),
+                'division-delta': $(this).prop('name') == 'division-up' ? -1.5 : 1.5,
+                'token': TOKEN
+            },
+            type: 'POST',
+            success: function(data) {
+                location.reload();
+            }
+        });
+    });
+    // product up/down // TODO make this F code work in Dist
+    $('#agenda-products button[name=product-up], #agenda-products button[name=product-down]').on('click', function(event) {
+        event.preventDefault();
+        $.ajax({
+            url: '?keep-token',
+            dataType: 'json',
+            data: {
+                'product-switch': $(this).val(),
+                'product-delta': $(this).prop('name') == 'product-up' ? -1.5 : 1.5,
+                'token': TOKEN
+            },
+            type: 'POST',
+            success: function(data) {
+                location.reload();
+            }
+        });
+    });            
     //vDivider
     $('#v-divider').on('mousedown', function(event){
         vDividerMoving = true;

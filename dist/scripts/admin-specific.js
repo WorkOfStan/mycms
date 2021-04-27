@@ -50,6 +50,7 @@ $(document).ready(function(){
     }
 
     // toggle null checkbox according to select/textarea content
+    // TODO do this automatically when the NULL checkbox is visible
     // product category_id - just an example
     $('.database select[name=fields\\[category_id\\]]').on('change', function(event) {
         selectWithNullOnChange(this, 'category_id');
@@ -58,11 +59,19 @@ $(document).ready(function(){
     $('.database select[name=fields\\[product_id\\]]').on('change', function(event) {
         selectWithNullOnChange(this, 'product_id');
     });
+    $('.database input[name=fields\\[url_en\\]]').on('change keyup paste', function(event) {selectWithNullOnChange(this, 'url_en');});
+    $('.database input[name=fields\\[url_cs\\]]').on('change keyup paste', function(event) {selectWithNullOnChange(this, 'url_cs');});
+    $('.database input[name=fields\\[url_de\\]]').on('change keyup paste', function(event) {selectWithNullOnChange(this, 'url_de');});
+    $('.database input[name=fields\\[url_fr\\]]').on('change keyup paste', function(event) {selectWithNullOnChange(this, 'url_fr');});
     // redirector new_url
     $('.database textarea[name=fields\\[new_url\\]]').on('change keyup paste', function(event) {
         selectWithNullOnChange(this, 'new_url'); // param 2 equals name of the field
     });
-    //TODO: make this work for SummerText//$('.database textarea[name=fields\\[content_en\\]]').on('change keyup paste', function(event) {console.log('ta f ceid');selectWithNullOnChange(this, 'content_en');});
+    // $('textarea.richtext').summernote
+    $('.database textarea[name=fields\\[content_en\\]]').on('summernote.change', function(we, contents) {selectWithNullOnChangeContent(contents, 'content_en');});
+    $('.database textarea[name=fields\\[content_cs\\]]').on('summernote.change', function(we, contents) {selectWithNullOnChangeContent(contents, 'content_cs');});
+    $('.database textarea[name=fields\\[content_de\\]]').on('summernote.change', function(we, contents) {selectWithNullOnChangeContent(contents, 'content_de');});
+    $('.database textarea[name=fields\\[content_fr\\]]').on('summernote.change', function(we, contents) {selectWithNullOnChangeContent(contents, 'content_fr');});
 
     // toggle buttons on "products" and "pages"
     $('#products-actives').on('click', function(){

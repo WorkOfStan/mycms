@@ -569,7 +569,7 @@ class MyTableAdmin extends MyTableLister
                 } elseif (Tools::set($_POST['fields-own'][$key])) {
                     $_POST['fields'][$key] = $_POST['fields-own'][$key];
                 }
-                if (!isset($_POST['fields'][$key])) {
+                if (!array_key_exists($key, $_POST['fields'])) { // !isset would trigger continue for null value
                     continue;
                 }
                 $value = $_POST['fields'][$key];
