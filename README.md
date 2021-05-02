@@ -88,7 +88,12 @@ Element overview:
 - default: Media+User+Settings MyAdmin::outputNavigation
 
 ### Search
-TODO: fix and describe
+- Admin class variable `$searchColumns` defines an array in format database_table => [id, list of fields to be searched in], e.g.
+```php
+    protected $searchColumns = [
+        'product' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
+    ];
+```
 
 ### Agendas
 - MyAdmin::outputAgendas

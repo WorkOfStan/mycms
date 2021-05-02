@@ -3,10 +3,12 @@ Activate/deactivate: Aktivovat/deaktivovat
 'Affected rows: ': 'Ovlivněných záznamů: '
 Agendas: Agendy
 'All rows': 'Všechny řádky'
+'All rights reserved.': 'Všechna práva vyhrazena.'
 append: 'přidat za'
-'Aren''t they too big?': 'Nejsou příliš velké?'
 'Archive created.': 'Archiv vytvořen.'
 'Archive unpacked.': 'Archiv rozbalen.'
+'Aren''t they too big?': 'Nejsou příliš velké?'
+'Are you sure?': 'Jste si jistý/jistá?'
 'Back to listing': 'Zpět na výpis'
 'By type': 'Podle typu'
 Clone: Klonovat
@@ -24,6 +26,8 @@ Delete: Smazat
 'Deleted files: ': 'Smazaných souborů: '
 descending: sestupně
 'descending order': 'sestupné řazení'
+'Divisions and products': 'Divize a produkty'
+'Duplicities may appear across languages.': 'Duplikáty tokenu se mohou objevit napříč jazyky.'
 Edit: Upravit
 'Edit selected': 'Upravit vybrané'
 empty: prázdná
@@ -69,6 +73,7 @@ Listing: Výpis
 Login: 'Přihlásit se'
 Logout: 'Odhlásit se'
 Media: Média
+'Missing translations in templates': 'Překlady chybějící v latte šablonách'
 modified: změněno
 name: jméno
 'New password': 'Nové heslo'
@@ -110,8 +115,10 @@ Rename: Přejmenovat
 'Rows per page': 'Řádek na stránku'
 Save: Uložit
 Search: Hledat
+'Search results': 'Výsledky vyhledávání'
 Select: Vyberte
 'Select at least one file and try again.': 'Označte alespoň jeden soubor a zkuste to ještě jednou.'
+'Select at least one record and try again.': 'Označte alespoň jeden záznam a zkuste to ještě jednou.'
 'Selected records': 'Vybrané záznamy'
 Settings: Nastavení
 Sidebar: 'Postranní panel'
@@ -127,11 +134,13 @@ total: celkem
 'Total of deleted files: ': 'Celkem smazaných souborů: '
 'Total of processed files: ': 'Celkem zpracovaných souborů: '
 'Total rows: ': 'Celkem řádků: '
+Translations: Překlad
 Type: Typ
 Unlock: Odemknout
 Unpack: Rozbalit
 Upload: 'Nahrát na server'
 'Uploaded files': 'Nahrané soubory'
+URL: URL
 User: Uživatel
 'User activated.': 'Uživatel aktivován.'
 'User added.': 'Uživatel přidán.'
@@ -205,14 +214,21 @@ Toggle: Zapnout/vypnout
 'column:category_en': 'název kategorie (anglicky)'
 'column:category_id': 'odkaz na kategorii'
 'column:code': 'rozlišovací kód'
-'column:content_cs': 'název (česky)'
-'column:content_en': 'název (anglicky)'
+'column:content_cs': 'obsah (česky)'
+'column:content_de': 'obsah (německy)'
+'column:content_en': 'obsah (anglicky)'
+'column:content_fr': 'obsah (francouzsky)'
 'column:context': kontext
 'column:description_cs': 'popis (česky)'
 'column:description_en': 'popis (anglicky)'
+'column:id': 'id'
 'column:image': obrázek
 'column:intro_cs': 'úvod (česky)'
 'column:intro_en': 'úvod (anglicky)'
+'column:name_cs': 'jméno (česky)'
+'column:name_de': 'jméno (německy)'
+'column:name_en': 'jméno (anglicky)'
+'column:name_fr': 'jméno (francouzsky)'
 'column:new_url': 'URL (nové)'
 'column:old_url': 'URL (staré)'
 'column:password_hashed': 'heslo (šifrované)'
@@ -226,5 +242,7 @@ Toggle: Zapnout/vypnout
 'column:sort': řazení
 'column:type': typ
 'column:url_cs': 'URL (česky)'
+'column:url_de': 'URL (německy)'
 'column:url_en': 'URL (anglicky)'
+'column:url_fr': 'URL (francouzsky)'
 'column:visits': 'počet návštěv'
