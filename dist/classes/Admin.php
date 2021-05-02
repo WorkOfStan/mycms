@@ -115,15 +115,15 @@ class Admin extends MyAdmin
                     // TODO link content elements to category
                     foreach (
                         [
-                            // 'content', // uncomment if content would be linked to a category
+                            // 'content', // uncomment if some content table rows would be linked to a category
                             'product'
                         ] as $i
                     ) {
                         if (
                             $tmp = $this->MyCMS->fetchAndReindex(
-                                'SELECT id,IF(name_' . $_SESSION['language'] . ' NOT LIKE "",name_' .
-                            $_SESSION['language'] . ', content_' . $_SESSION['language'] . ')'
-                            . ' FROM ' . TAB_PREFIX . $i . ' WHERE category_id=' . (int) $_GET['where']['id']
+                                'SELECT id,IF(name_' . $_SESSION['language'] . ' NOT LIKE "",name_'
+                                . $_SESSION['language'] . ', content_' . $_SESSION['language'] . ')'
+                                . ' FROM ' . TAB_PREFIX . $i . ' WHERE category_id=' . (int) $_GET['where']['id']
                             )
                         ) {
                             $output .= '<hr /><details><summary>' .
