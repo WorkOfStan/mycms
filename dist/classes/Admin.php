@@ -114,10 +114,11 @@ class Admin extends MyAdmin
                     // or content fragment (up to 100 characters)
                     // TODO link content elements to category
                     foreach (
-                    [
-                        // 'content', // uncomment if content would be linked to a category
-                        'product'
-                    ] as $i) {
+                        [
+                            // 'content', // uncomment if content would be linked to a category
+                            'product'
+                        ] as $i
+                    ) {
                         if (
                             $tmp = $this->MyCMS->fetchAndReindex(
                                 'SELECT id,IF(name_' . $_SESSION['language'] . ' NOT LIKE "",name_' .
@@ -254,8 +255,10 @@ class Admin extends MyAdmin
                 $i = 1;
                 foreach ($productLine as $product) {
                     if ($product['sort'] != $i) {
-                        if ($this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'product SET sort=' . $i .
-                                ' WHERE id=' . +$product['id'])) {
+                        if (
+                            $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'product SET sort=' . $i .
+                                ' WHERE id=' . +$product['id'])
+                        ) {
                             $product['sort'] = $i;
                         } else {
                             $this->MyCMS->logger->warning('No luck changing product order.'
@@ -365,8 +368,10 @@ class Admin extends MyAdmin
                 FROM ' . TAB_PREFIX . 'content WHERE category_id IS NULL AND product_id IS NULL');
             if ($articles) {
                 $output .= '<details><summary><tt>NULL</tt></summary>';
-                if ($tmp = $this->MyCMS->fetchAndReindex('SELECT id,name_' . $_SESSION['language'] .
-                    ' AS name FROM ' . TAB_PREFIX . 'category WHERE path IS NULL')) {
+                if (
+                    $tmp = $this->MyCMS->fetchAndReindex('SELECT id,name_' . $_SESSION['language'] .
+                    ' AS name FROM ' . TAB_PREFIX . 'category WHERE path IS NULL')
+                ) {
                     foreach ($tmp as $key => $category) {
                         $output .= '<a href="?table=' . TAB_PREFIX . 'category&amp;where[id]=' . $key .
                             '" class="ml-3"><i class="fa fa-edit"></i></a> ' . strip_tags($category) .
@@ -495,7 +500,7 @@ class Admin extends MyAdmin
             $_SESSION['division-delta'],
             $_SESSION['product-switch'],
             $_SESSION['product-delta']
-            );
+        );
         return $output;
     }
 
