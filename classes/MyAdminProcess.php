@@ -5,6 +5,7 @@ namespace GodsDev\MyCMS;
 use GodsDev\Tools\Tools;
 use GodsDev\MyCMS\MyCommon;
 use GodsDev\MyCMS\MyTableAdmin;
+use GodsDev\MyCMS\Tracy\BarPanelTemplate;
 use Tracy\Debugger;
 use Tracy\ILogger;
 use Webmozart\Assert\Assert;
@@ -44,7 +45,11 @@ class MyAdminProcess extends MyCommon
         }
         $sqlStatementsArray = $this->MyCMS->dbms->getStatementsArray();
         if (!empty($sqlStatementsArray)) {
-            Debugger::getBar()->addPanel(new \GodsDev\MyCMS\Tracy\BarPanelTemplate('SQL: ' . count($sqlStatementsArray), $sqlStatementsArray));
+            $sqlBarPanel = new BarPanelTemplate('SQL: ' . count($sqlStatementsArray), $sqlStatementsArray);
+            if ($this->MyCMS->dbms->getStatementsError()) {
+                $sqlBarPanel->setError();
+            }
+            Debugger::getBar()->addPanel($sqlBarPanel);
         }
 //        Debugger::barDump(debug_backtrace(), 'debug_backtrace');
     }

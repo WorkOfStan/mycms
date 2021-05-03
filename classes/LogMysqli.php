@@ -54,6 +54,9 @@ class LogMysqli extends BackyardMysqli
     /** @var array<string> */
     protected $sqlStatementsArray = [];
 
+    /** @var bool true if any of the SQL statements ended in an error state */
+    protected $sqlError = false;
+
     /**
      * Logs SQL statement not starting with SELECT or SET
      *
@@ -76,8 +79,12 @@ class LogMysqli extends BackyardMysqli
                 'log/sql' . date("Y-m-d") . '.log.sql'
             );
         }
-        $this->sqlStatementsArray[] = $sql;
-        return parent::query($sql, $errorLogOutput);
+        $result = parent::query($sql, $errorLogOutput);
+        $this->sqlStatementsArray[] = ($result === false ? 'fail => ' : '') . $sql;
+        if ($result === false) {
+            $this->sqlError = true;
+        }
+        return $result;
     }
 
     /**
@@ -128,15 +135,6 @@ class LogMysqli extends BackyardMysqli
             throw new Exception('Non-object answer on SQL statement (unexpectedly equals true)');
         }
         return $result;
-    }
-
-    /**
-     *
-     * @return array<string>
-     */
-    public function getStatementsArray()
-    {
-        return $this->sqlStatementsArray;
     }
 
     /**
@@ -354,6 +352,24 @@ class LogMysqli extends BackyardMysqli
             }
         }
         return $result;
+    }
+
+    /**
+     *
+     * @return bool
+     */
+    public function getStatementsError()
+    {
+        return $this->sqlError;
+    }
+
+    /**
+     *
+     * @return array<string>
+     */
+    public function getStatementsArray()
+    {
+        return $this->sqlStatementsArray;
     }
 
     /**

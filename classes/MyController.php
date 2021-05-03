@@ -145,13 +145,13 @@ class MyController extends MyCommon
         if (isset($_SESSION['user'])) {
             Debugger::getBar()->addPanel(new BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION));
         }
-        if (!empty($this->MyCMS->dbms->getStatementsArray())) {
-            Debugger::getBar()->addPanel(
-                new BarPanelTemplate(
-                    'SQL: ' . count($this->MyCMS->dbms->getStatementsArray()),
-                    $this->MyCMS->dbms->getStatementsArray()
-                )
-            );
+        $sqlStatementsArray = $this->MyCMS->dbms->getStatementsArray();
+        if (!empty($sqlStatementsArray)) {
+            $sqlBarPanel = new BarPanelTemplate('SQL: ' . count($sqlStatementsArray), $sqlStatementsArray);
+            if ($this->MyCMS->dbms->getStatementsError()) {
+                $sqlBarPanel->setError();
+            }
+            Debugger::getBar()->addPanel($sqlBarPanel);
         }
         $this->MyCMS->logger->info("Redir to {$redir} with SESSION[language]={$_SESSION['language']}");
         header("Location: {$redir}", true, $httpCode); // Note: for SEO 301 is much better than 303

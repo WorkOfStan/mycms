@@ -10,11 +10,15 @@ use Tracy\IBarPanel;
  */
 class BarPanelTemplate implements IBarPanel
 {
+
     /** @var string */
     protected $tabTitle;
 
     /** @var array<mixed> */
     protected $panelDetails;
+
+    /** @var bool false = info, true = error */
+    protected $errorPanel = false;
 
     /**
      *
@@ -33,7 +37,9 @@ class BarPanelTemplate implements IBarPanel
      */
     public function getTab()
     {
-        $style = '';
+        $style = $this->errorPanel ?
+            'display: block;background: #D51616;color: white;font-weight: bold;margin: -1px -.4em;padding: 1px .4em;' :
+            '';
         $icon = ''; // <img src="data:image/png;base64,<zakodovany obrazek>" />
         $label = '<span class="tracy-label" style="' . $style . '">' . $this->tabTitle . '</span>';
         return $icon . $label;
@@ -48,7 +54,6 @@ class BarPanelTemplate implements IBarPanel
         $title = "<h1>{$this->tabTitle}</h1>";
         $warning = '';
         $cntTable = '';
-
 
         foreach ($this->panelDetails as $id => $detail) {
             $cntTable .= "<tr><td>{$id}</td><td> ";
@@ -71,5 +76,17 @@ class BarPanelTemplate implements IBarPanel
             '</tbody></table>* Hover over field to see its full content.</div>';
 
         return $title . $warning . $content;
+    }
+
+    /**
+     * Set panel to be displayed as error.
+     * If to be sent to info again, try calling setError(false)
+     *
+     * @param bool $error OPTIONAL
+     * @return void
+     */
+    public function setError($error = true)
+    {
+        $this->errorPanel = (bool) $error;
     }
 }
