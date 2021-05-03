@@ -255,7 +255,6 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 * 200608: replace all `array(` by `[`
 * 200819: refactor FORCE_301, FRIENDLY_URL and REDIRECTOR_ENABLED to a variable, so that all scenarios can be PHPUnit tested
 * 200819: consider REQUEST_URI query vs \_GET - shouldn't just one source of truth be used?
-* 181228 <https://symfony.com/doc/current/components/yaml.html> -- pro načítání db spojení rovnou z yml namísto duplicitního zadávání do private.conf.php
 * 200921: for PHP/7.1.0+ version use protected for const in MyCommon, MyFriendlyUrl, MyAdminProcess.php
 * 210425: $option[return-output] might be obsolete as each method using it already returns string and doesn't echo the result (would result @return mixed void or string issue)
 
