@@ -11,6 +11,8 @@ parameters:
       - FORCE_301
       - FRIENDLY_URL
       - REDIRECTOR_ENABLED
+      # DEBUG_VERBOSE relevant for MyTableLister.php
+      - DEBUG_VERBOSE
     ignoreErrors:
       # The exceptions concerning always false/true compensate for environment dependent variables.
       -

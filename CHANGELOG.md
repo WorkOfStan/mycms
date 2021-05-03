@@ -19,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - not 7.1 as due to <https://bugs.php.net/bug.php?id=73803> ZipArchive class has public properties, that are not visible via reflection.
   - Therefore using tools like PHPStan generates error: Access to an undefined property ZipArchive::$numFiles. in class\MyAdminProcess
 - dist phpstan includes phpstan/phpstan-webmozart-assert, therefore other PHPStan configuration file added in order to include proper extension.neon
+- If DEBUG_VERBOSE is true and admin UI uses untranslated string, it is logged to `log/translate_admin_missing.log` to be translated
+- dist/TableAdmin templates for methods customInput and customInputAfter added
+- dist/Admin outputSpecialMenuLinks and projectSpecificSections etc overrides of MyAdmin methods added
+- featureFlags work also in Admin UI
+- Admin.php, AdminProcess.php, admin.js and admin.css now contains (almost) all the code from A and F projects - some is however not working (hence featureFlag 'order_hierarchy') TODO: simplify it and keep only the essential
+- Admin UI: Friendly URL: one place to set them all, identify duplicities
+- Admin UI: generate translations. Note: this rewrites the translation files language-xx.inc.php
 
 ### Changed
 - nette/utils allowed also in version ^3.2.2
@@ -37,17 +44,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `return;` statement after method with return never is not necessary
 - MyTableAdmin: removed zero value that is not accepted by ENUM. To set empty, use NULL option. TODO fix NULL option for ENUM to be saved in database
 - MyFriendlyURL::friendlyIdentifyRedirect throws Exception on seriously malformed URL
+- dist/TableAdmin loads localised strings from conf/l10n/admin-XX.yml
+- use only phinx.yml environment for database connection (instead of duplicating it in config.local.php)
+- **potential breaking change**: MyTableLister::contentByType ignores missing $options['return-output'] and always return string, never echo string
+- Bootstrap v4.0.0-beta -> Bootstrap v4.1.3, which is the highest version that works properly with Summernote 0.8.18 (background under buttons, but Full screen doesn't use background)
+- jQuery v3.2.1 -> jQuery v3.6.0
+- proper attribution: copyright of Admin UI to WorkOfStan & CRS2 (instead of GODS)
 
 ### Fixed
 - Stricter code by type assertion, type casting, type hinting
 - Stricter code by return type specific LogMysqli::queryStrict methods and ThrowablePHPFunctions (i.e. Exception thrown instead of an unexpected type returned on error)
 - PHPStan level=6 => Error Zero
 - MyAdminProcess::processSubFolder fixed EXIF related condition so that if nothing is known $entry['info'] .= '';
+- (maybe the bug wasn't present in 0.3.15) MyAdmin: fix tableAdmin prevails TableAdmin
+- when adding new content, automatically uncheck the NULL checkbox + save NULL value of checkbox
+- Admin::searchColumns searches within existing columns
 
 ### Deprecated
 - MyTableAdmin::outputSelectPath() - is this function necessary?
 
-... and many more
+... and many more between 2020-05-02 and 2021-04-17 (TODO to be added)
 
 ## [0.3.15] - 2020-05-02
 ### Fixed
@@ -95,7 +111,7 @@ to
 - security change: LogMysqli: $logQuery optional default logging of database changing statement can be (for security reasons) turned off by value false
 - security change: MyAdminProcess: processUserChangePassword - password change is not logged
 - fix processActivity: undefined variable $tab replaced by the existing $tabs
-- MyFriendlyUrl was tested in A and F4T projects and it worked fine, so it may go to production
+- MyFriendlyUrl was tested in A and F projects and it worked fine, so it may go to production
 
 ## [0.3.10] - 2019-01-31
 - processFilePack(), processFileUpload and processSubfolder() now test class_exist('ZipArchive')

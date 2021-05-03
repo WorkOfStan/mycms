@@ -53,9 +53,9 @@ script/autotrack.V.V.V.js and script/autotrack.V.V.V.js.map are manually taken f
 
 Create database with `Collation=utf8_general_ci`
 
-Create `conf/config.local.php` based on `config.local.dist.php` including the name of the database created above and change any settings you like.
-
 Create `phinx.yml` based on `phinx.dist.yml` including the name of the database created above
+
+Create `conf/config.local.php` based on `config.local.dist.php` including the phinx environment to be used and change any settings you like.
 
 Under construction mode may be turned on (for non admin IP adresses i.e. not in `$debugIpArray`) by adding
 ```php
@@ -91,8 +91,9 @@ vendor/bin/phinx migrate -e development # or production or testing
 3. `vendor/bin/phpunit` to always check the functionality
 4. `sass styles/index.sass styles/index.css` to keep order in the generated css
 
-Note: To work on low performing environments, the script accepts number of seconds as parameter to be used as a waiting time between steps.
-Note2: PHPUnit test of FaviconTest may uncover a need for RewriteBase configuration in .htaccess
+- Note: To work on low performing environments, the script accepts number of seconds as parameter to be used as a waiting time between steps.
+- Note2: PHPUnit test of FaviconTest may uncover a need for RewriteBase configuration in .htaccess
+- Note3: PHPUnit tests use phinx database environment `development` (TODO: consider using `testing`)
 
 ### reCAPTCHA
 
@@ -178,6 +179,10 @@ For each language a corresponding file `language-xx.inc.php` is expected.
 [.htaccess](.htaccess) is ready for languages `de|en|fr|sk|zh` to show content in the appropriate language folder
 (`cs` is considered as the default language, so it is accessible directly in application root),
 where page resouces may be in folders `styles|assets|fonts|images|scripts` which ignore the language directory.
+
+If DEBUG_VERBOSE is true and admin UI uses untranslated string, it is logged to `log/translate_admin_missing.log` to be translated. (This log can be safely deleted.)
+
+Localised strings for admin UI are loaded from conf/l10n/admin-XX.yml (if present).
 
 #### Default language
 Default language set in [conf/config.php](conf/config.php) as constant `'DEFAULT_LANGUAGE' => 'cs',`
@@ -355,13 +360,12 @@ it tries to send a test email to `EMAIL_ADMIN`. One try allowed in 23 hours (as 
 ## TODO
 
 ### TODO lokalizace
-* 200526: jazykový přepínač rovnou vybere správné URL, pokud pro daný jazky existuje
+* 200526: jazykový přepínač rovnou vybere správné URL, pokud pro daný jazyk existuje
 * 200608: describe scenario when no language is `default` in terms that all pages run within /iso-639-1/ folder
 
 ### TODO CMS
+* 210427: Summernote richtext full screen proper background
 * 200610: bool field show as on/off 1/0 true/false or something else more reasonable than int input box
-* 200712: when adding new Content automatically uncheck the NULL checkbox so that something is saved!
-* 200828: content_XX HTML field (for article) doesn't automatically uncheck null checkbox, therefore the UX is that you fill-in new text and it is not saved
 
 ### TODO SEO
 
@@ -383,3 +387,4 @@ it tries to send a test email to `EMAIL_ADMIN`. One try allowed in 23 hours (as 
 * 200802: test with 2 categories
 * 200802: image for product and category in assets
 * 200921: (MyCMS) properly fix message: '#Parameter #2 $newvalue of function ini_set expects string, true given.#'    path: /github/workspace/set-environment.php
+* 210427: admin.js now contains all the F and A code - TODO: simplify it and keep only the essential

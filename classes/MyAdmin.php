@@ -2,7 +2,6 @@
 
 namespace GodsDev\MyCMS;
 
-use Exception;
 use GodsDev\MyCMS\MyCMS;
 use GodsDev\MyCMS\Tracy\BarPanelTemplate;
 use GodsDev\Tools\Tools;
@@ -76,7 +75,7 @@ class MyAdmin extends MyCommon
         // Todo to be obsoleted in next version (after 2020-10-25)
         if (!empty($this->TableAdmin)) {
             Debugger::log('Deprecated: TableAdmin. Replace by tableAdmin', ILogger::WARNING);
-            if (!empty($this->tableAdmin)) {
+            if (empty($this->tableAdmin)) {
                 $this->tableAdmin = $this->TableAdmin;
             }
         }
@@ -446,6 +445,7 @@ class MyAdmin extends MyCommon
             . 'DIR_ASSETS = ' . json_encode(DIR_ASSETS) . ';' . PHP_EOL
             . '$(document).ready(function(){' . PHP_EOL
             . $this->tableAdmin->script . PHP_EOL
+            // AdminRecordName displays changes in red next to the main h2
             . 'if (typeof(AdminRecordName) != "undefined") {' . PHP_EOL
             . '    $("h2 .AdminRecordName").text(AdminRecordName.replaceAll(/<\/?[a-z][^>]*>/i, "").substr(0, 50));' . PHP_EOL
             . '}' . PHP_EOL
@@ -532,11 +532,11 @@ class MyAdmin extends MyCommon
      */
     protected function outputFooter()
     {
-        return '<footer class="sticky-footer">&copy; GODS, s r.o. ' . $this->tableAdmin->translate('All rights reserved.') . '</footer>';
+        return '<footer class="sticky-footer">&copy; WorkOfStan &amp; CRS2 ' . $this->tableAdmin->translate('All rights reserved.') . '</footer>';
     }
 
     /**
-     * Return if a project-specific sections should be displayed in admin.
+     * Returns if a project-specific sections should be displayed in admin.
      *
      * @return bool
      */
@@ -546,7 +546,8 @@ class MyAdmin extends MyCommon
     }
 
     /**
-     * Output (in HTML) the project-specific sections
+     * Output (in HTML) the project-specific admin sections
+     * Usually only selects project specific section method that generates HTML
      *
      * @return string
      */
@@ -602,7 +603,6 @@ class MyAdmin extends MyCommon
      *
      * @param string $keyword
      * @return string
-     * @throws Exception on preg_replace error
      */
     protected function outputSearchResults($keyword)
     {
@@ -765,12 +765,12 @@ class MyAdmin extends MyCommon
                 $result .= Tools::htmlInput('check[]', '', $value, 'hidden') . PHP_EOL;
             }
         }
-        $result .= '</div></form>';
-        return $result;
+        return $result . '</div></form>';
     }
 
     /**
-     * Return the HTML output of all administration page.
+     * Return the HTML output of the complete administration page.
+     * TODO: consider rewrite as Latte
      *
      * Expected global variables:
      * * $_GET
@@ -829,6 +829,7 @@ class MyAdmin extends MyCommon
         if (!isset($_SESSION['user'])) {
             $output .= $this->outputLogin();
         } elseif // search results
+        //TODO: can search results really be combined with table listing etc. below?
         (isset($_SESSION['user']) && Tools::set($_GET['search'])) {
             $output .= $this->outputSearchResults($_GET['search']);
         }
@@ -841,7 +842,7 @@ class MyAdmin extends MyCommon
             $output .= $this->outputUser();
         } elseif ($this->projectSpecificSectionsCondition()) { // project-specific admin sections
             $output .= $this->projectSpecificSections();
-        } else {
+            //} else {
             // no agenda selected, showing "dashboard"
         }
         if (isset($_SESSION['user'])) {

@@ -5,6 +5,7 @@ namespace GodsDev\mycmsprojectnamespace\Test;
 use GodsDev\Backyard\Backyard;
 use GodsDev\MyCMS\LogMysqli;
 use GodsDev\mycmsprojectnamespace\AdminProcess;
+use GodsDev\mycmsprojectnamespace\Init;
 use GodsDev\mycmsprojectnamespace\MyCMSProject;
 use Tracy\Debugger;
 
@@ -36,6 +37,7 @@ class AdminProcessTest extends \PHPUnit_Framework_TestCase
         error_reporting(E_ALL); // incl E_NOTICE
         Debugger::enable(Debugger::DEVELOPMENT, __DIR__ . '/../log');
         $backyard = new Backyard($backyardConf);
+        $init = new Init('development'); // set-up of constants for all tests // TODO parametric environment
         $mycmsOptions = [
             'TRANSLATIONS' => [
                 'en' => 'English',

@@ -37,7 +37,7 @@ parameters:
     bootstrapFiles:
       - config.php
       #- config.local.dist.php # comment as debugging
-      #- ../.github/linters/conf/constants.php # uncomment if needed
+      - ../.github/linters/conf/constants.php
     scanDirectories:
       - ../classes
     ignoreErrors:
@@ -49,10 +49,16 @@ parameters:
         message: '#Variable \$debugIpArray might not be defined.#'
         path: ../api/action/index.php
       -
+        message: '#Variable \$featureFlags might not be defined.#'
+        path: ../admin.php
+      -
         message: '#Variable \$MyCMS might not be defined.#'
         paths:
           - ../process.php
           - ../api/action/index.php
+      -
+        message: '#Undefined variable: \$translation#'
+        path: ../classes/Admin.php
       # The exceptions concerning always false/true compensate for environment dependent variables.
       -
         message: '#Right side of && is always false.#'
@@ -64,3 +70,7 @@ parameters:
       -
         message: '#Variable \$_POST in isset\(\) always exists and is not nullable#'
         path: ../process.php
+      # This as property is defined in MyCMSProject extends MyCMS
+      -
+        message: '#Access to an undefined property GodsDev\\MyCMS\\MyCMS::\$SETTINGS.#'
+        path: ../classes/Admin.php

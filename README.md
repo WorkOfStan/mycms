@@ -72,6 +72,47 @@ For deployment look also to [Deployment chapter](dist/README.md#deployment) and 
 
 MyCMS is used only as a library, so the application using it SHOULD implement `RedirectMatch 404 vendor\/` statement as prepared in `dist/.htaccess` to keep the library hidden from web access.
 
+## Admin UI
+Admin UI is displayed by MyAdmin::outputAdmin in this structure:
+|Navigation|Search|
+|--|--|
+|Agendas|Main|
+
+Element overview:
+|Navigation = SpecialMenuLinks + Media+User+Settings|Search|
+|--|--|
+|Agendas (as in $AGENDAS in admin.php)|Messages<br>Workspace: table/row/media/user/project-specific<br>Dashboard: List of tables|
+
+### Navigation
+- special Admin::outputSpecialMenuLinks
+- default: Media+User+Settings MyAdmin::outputNavigation
+
+### Search
+- Admin class variable `$searchColumns` defines an array in format database_table => [id, list of fields to be searched in], e.g.
+```php
+    protected $searchColumns = [
+        'product' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
+    ];
+```
+
+### Agendas
+- MyAdmin::outputAgendas
+- defined in $AGENDAS in admin.php
+
+### Main
+- Messages
+- Workspace: one of the following
+  - $_GET['search'] => MyAdmin::outputSearchResults
+  - $_GET['table'] => MyAdmin::outputTable
+    -- $_GET['where'] is array => Admin::outputTableBeforeEdit . MyAdmin::tableAdmin->outputForm . Admin::outputTableAfterEdit
+    -- $_POST['edit-selected'] => MyAdmin::outputTableEditSelected(false)
+    -- $_POST['clone-selected'] => MyAdmin::outputTableEditSelected(true)
+    -- else => Admin::outputTableBeforeListing . MyAdmin::tableAdmin->view . Admin::outputTableAfterListing
+  - $_GET['media'] => MyAdmin::outputMedia media upload etc.
+  - $_GET['user'] => MyAdmin::outputUser user operations (logout, change password, create user, delete user)
+  - Admin::projectSpecificSectionsCondition => Admin::projectSpecificSection project-specific admin sections
+- Dashboard: List of tables MyAdmin::outputDashboard
+
 ## Admin notes
 
 ### Database
@@ -201,8 +242,8 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 ## TODO
 
 ### TODO Administration
-* 200314: administrace FriendlyURL je v F4T/classes/Admin::outputSpecialMenuLinks() a ::sectionUrls() .. zobecnit do MyCMS a zapnout pokud FRIENDLY_URL == true
-* 200314 v Admin.php mít příslušnou editační sekci FriendlyURL (dle F4T) .. pokud lze opravdu zobecnit
+* 200314: administrace FriendlyURL je v F/classes/Admin::outputSpecialMenuLinks() a ::sectionUrls() .. zobecnit do MyCMS a zapnout pokud FRIENDLY_URL == true
+* 200314 v Admin.php mít příslušnou editační sekci FriendlyURL (dle F project) .. pokud lze opravdu zobecnit
 * 200526: CMS: If Texy is used (see only in MyTableAdmin `($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : '')` then describe it. Otherwise remove it from composer.json, Latte\CustomFilters\, ProjectCommon, dist\index.php.
 
 ### TODO Governance
@@ -214,6 +255,7 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 * 200819: consider REQUEST_URI query vs \_GET - shouldn't just one source of truth be used?
 * 181228 <https://symfony.com/doc/current/components/yaml.html> -- pro načítání db spojení rovnou z yml namísto duplicitního zadávání do private.conf.php
 * 200921: for PHP/7.1.0+ version use protected for const in MyCommon, MyFriendlyUrl, MyAdminProcess.php
+* 210425: $option[return-output] might be obsolete as each method using it already returns string and doesn't echo the result (would result @return mixed void or string issue)
 
 ### TODO SECURITY
 * 190723: pokud jsou v té samé doméně dvě různé instance MyCMS, tak přihlášením do jednoho admin.php jsem přihlášen do všech, i když ten uživatel tam ani neexistuje

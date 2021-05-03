@@ -202,6 +202,10 @@ class MyTableAdmin extends MyTableLister
             $field['type'] = null;
         }
         if (!is_null($field['type']) && Tools::set($comment['edit'], false) == 'json') {
+            if ($value === false) {
+                // non-present value should be displayed as JSON field to be populated
+                $value = '[]';
+            }
             Assert::string($value);
             $json = json_decode($value, true) ?: (Tools::among($value, '', '[]', '{}') ? [] : $value);
             $output .= '<div class="input-expanded">' . Tools::htmlInput($key . EXPAND_INFIX, '', 1, 'hidden');
@@ -449,7 +453,7 @@ class MyTableAdmin extends MyTableLister
      * @param string $group
      * @param string|false $lastGroup
      * @param mixed $default
-     * @param array<string|array> $options
+     * @param array<array|int|string> $options
      * @return string HTML code
      */
     protected function addForeignOption($value, $text, $group, &$lastGroup, $default, $options)
@@ -473,7 +477,7 @@ class MyTableAdmin extends MyTableLister
      * @param string|array<string|array> $values either array of values for the <select>
      *        or string with the SQL SELECT statement
      * @param scalar $default original value
-     * @param array<string|array> $options additional options for the element rendition; plus
+     * @param array<array|int|string> $options additional options for the element rendition; plus
      *        [exclude] => value to exclude from select's options
      *        [class]
      *        [id]
@@ -565,7 +569,7 @@ class MyTableAdmin extends MyTableLister
                 } elseif (Tools::set($_POST['fields-own'][$key])) {
                     $_POST['fields'][$key] = $_POST['fields-own'][$key];
                 }
-                if (!isset($_POST['fields'][$key])) {
+                if (!array_key_exists($key, $_POST['fields'])) { // !isset would trigger continue for null value
                     continue;
                 }
                 $value = $_POST['fields'][$key];

@@ -284,7 +284,7 @@ class MyAdminProcess extends MyCommon
                 );
                 $result['success'] = $result['processed-files'] > 0;
             }
-            $this->exitJson($result);
+            $this->exitJson($result); // terminates
         }
     }
 
@@ -473,6 +473,7 @@ class MyAdminProcess extends MyCommon
 
     /**
      * Process the "login" action.
+     * Also checks for CSRF
      *
      * @param array<string|array> $post $_POST by reference
      * @return void
@@ -595,7 +596,7 @@ class MyAdminProcess extends MyCommon
                 $result['subfolder'] = DIR_ASSETS . ($_SESSION['mediaSubfolder'] = '');
                 $result['success'] = false;
             }
-            $this->exitJson($result);
+            $this->exitJson($result); // terminates
         }
     }
 
@@ -614,7 +615,7 @@ class MyAdminProcess extends MyCommon
             ];
             $result['messages'] = $result['success'] ? ($post['active'] ? 'User activated.' : 'User deactivated.') : ($post['active'] ? 'Error activating the user.' : 'Error deactivating the user.');
             $result['messages'] = $this->tableAdmin->translate($result['messages']);
-            $this->exitJson($result);
+            $this->exitJson($result); // terminates
         }
     }
 

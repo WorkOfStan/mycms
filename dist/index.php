@@ -26,10 +26,13 @@ if (isset($_POST) && is_array($_POST) && !empty($_POST)) {
 }
 $MyCMS->csrfStart();
 
+use GodsDev\mycmsprojectnamespace\Controller;
+use GodsDev\mycmsprojectnamespace\Latte\CustomFilters;
+use GodsDev\mycmsprojectnamespace\ProjectSpecific;
 use Tracy\Debugger;
 
 DEBUG_VERBOSE and Debugger::barDump($MyCMS, 'MyCMS before controller');
-$controller = new \GodsDev\mycmsprojectnamespace\Controller($MyCMS, [
+$controller = new Controller($MyCMS, [
     'get' => Debugger::barDump(array_merge($_GET, $_POST), 'request'),
     'httpMethod' => $_SERVER['REQUEST_METHOD'], // TODO: pre-filter!
     'requestUri' => $_SERVER['REQUEST_URI'], // necessary for FriendlyURL feature
@@ -46,11 +49,11 @@ Debugger::barDump($controllerResult, 'ControllerResult', [Tracy\Dumper::DEPTH =>
 
 // texy initialization (@todo refactor) .. used in CustomFilters
 $Texy = null;
-\GodsDev\mycmsprojectnamespace\ProjectSpecific::prepareTexy();
+ProjectSpecific::prepareTexy();
 
 use GodsDev\Tools\Tools;
 
-$customFilters = new \GodsDev\mycmsprojectnamespace\Latte\CustomFilters($MyCMS);
+$customFilters = new CustomFilters($MyCMS);
 
 $MyCMS->renderLatte(
     DIR_TEMPLATE_CACHE,

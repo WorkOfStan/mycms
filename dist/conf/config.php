@@ -11,9 +11,7 @@
 ini_set('session.use_strict_mode', '1');
 ini_set('display_errors', '0'); // errors only in the log; override it in your config.local.php if you need to
 
-define('DB_HOST', 'localhost');
-define('DB_PORT', ini_get('mysqli.default_port'));
-define('TAB_PREFIX', 'mycmsprojectspecific_'); // database tables' prefix - use also in phinx.yml as table_prefix field
+$phinxEnvironment = 'development'; // use this phinx.yml environment for database connection
 
 define('DIR_ASSETS', 'assets/');
 define('DIR_TEMPLATE', __DIR__ . '/../template'); // for Latte
@@ -206,6 +204,7 @@ $featureFlags = array_merge(
     [
         'console_log_list_values' => false,
         'offline_dev' => false,
+        'order_hierarchy' => false, // as used in A and F projects - just for testing before ready for Dist
     ],
     isset($featureFlags) ? $featureFlags : []
 ); // use default featureFlags even though nothing is set in `config.local.php`
