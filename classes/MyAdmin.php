@@ -53,7 +53,10 @@ class MyAdmin extends MyCommon
         'author' => '',
     ];
 
-    /** @var array<array> tables and columns to search in admin */
+    /**
+     * @var array<array> tables and columns to search in admin
+     * table => [id, field1 to be searched in, field2 to be searched in...]
+     */
     protected $searchColumns = [];
 
     /** @var MyTableAdmin */
@@ -93,7 +96,11 @@ class MyAdmin extends MyCommon
         }
         $sqlStatementsArray = $this->MyCMS->dbms->getStatementsArray();
         if (!empty($sqlStatementsArray)) {
-            Debugger::getBar()->addPanel(new BarPanelTemplate('SQL: ' . count($sqlStatementsArray), $sqlStatementsArray));
+            $sqlBarPanel = new BarPanelTemplate('SQL: ' . count($sqlStatementsArray), $sqlStatementsArray);
+            if ($this->MyCMS->dbms->getStatementsError()) {
+                $sqlBarPanel->setError();
+            }
+            Debugger::getBar()->addPanel($sqlBarPanel);
         }
     }
 

@@ -164,13 +164,13 @@ class MyCMSMonoLingual
         Debugger::barDump($_SESSION, 'Session'); //mainly for  $_SESSION['language']
         $Latte->render('template/' . $this->template . '.latte', $params); //@todo make it configurable
         unset($_SESSION['messages']);
-        if (!empty($this->dbms->getStatementsArray())) {
-            Debugger::getBar()->addPanel(
-                new BarPanelTemplate(
-                    'SQL: ' . count($this->dbms->getStatementsArray()),
-                    $this->dbms->getStatementsArray()
-                )
-            );
+        $sqlStatementsArray = $this->dbms->getStatementsArray();
+        if (!empty($sqlStatementsArray)) {
+            $sqlBarPanel = new BarPanelTemplate('SQL: ' . count($sqlStatementsArray), $sqlStatementsArray);
+            if ($this->dbms->getStatementsError()) {
+                $sqlBarPanel->setError();
+            }
+            Debugger::getBar()->addPanel($sqlBarPanel);
         }
     }
 }

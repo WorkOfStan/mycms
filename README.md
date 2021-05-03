@@ -237,6 +237,8 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 
 ## TROUBLESHOOTING
 
+| Issue | Possible solution |
+|-------|-------------------|
 | Home page returns 404 Not found | `define('HOME_TOKEN', 'parent-directory');` in `config.local.php` |
 
 ## TODO
@@ -248,7 +250,7 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 
 ### TODO Governance
 * 190705: v classes\LogMysqli.php probíhá logování `'log/sql' . date("Y-m-d") . '.log.sql');` do aktuálního adresáře volajícího skriptu - což u API není výhodné. Jak vycházet z APP_ROOT?
-* 200526: update jquery 3.2.1 -> 3.5.1 and describe dependencies; and also other js libraries (maybe only in dist??)
+* 200526: describe jquery dependencies; and also other js libraries (maybe only in dist??)
 * 200529: Minimum of PHP 7.2 required now: PHPUnit latest + Phinx latest <https://github.com/cakephp/phinx/releases> .. planned for release 0.5.0
 * 200608: replace all `array(` by `[`
 * 200819: refactor FORCE_301, FRIENDLY_URL and REDIRECTOR_ENABLED to a variable, so that all scenarios can be PHPUnit tested

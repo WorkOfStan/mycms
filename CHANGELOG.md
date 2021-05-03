@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Admin.php, AdminProcess.php, admin.js and admin.css now contains (almost) all the code from A and F projects - some is however not working (hence featureFlag 'order_hierarchy') TODO: simplify it and keep only the essential
 - Admin UI: Friendly URL: one place to set them all, identify duplicities
 - Admin UI: generate translations. Note: this rewrites the translation files language-xx.inc.php
+- Tracy SQL BarPanel is red if some of the SQL statements end up in an error state. The failed one is prefixed by `fail =>`
 
 ### Changed
 - nette/utils allowed also in version ^3.2.2
