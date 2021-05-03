@@ -58,11 +58,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MyAdminProcess::processSubFolder fixed EXIF related condition so that if nothing is known $entry['info'] .= '';
 - (maybe the bug wasn't present in 0.3.15) MyAdmin: fix tableAdmin prevails TableAdmin
 - when adding new content, automatically uncheck the NULL checkbox + save NULL value of checkbox
+- Admin::searchColumns searches within existing columns
 
 ### Deprecated
 - MyTableAdmin::outputSelectPath() - is this function necessary?
 
-... and many more
+... and many more between 2020-05-02 and 2021-04-17 (TODO to be added)
 
 ## [0.3.15] - 2020-05-02
 ### Fixed
