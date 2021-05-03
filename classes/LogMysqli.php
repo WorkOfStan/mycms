@@ -80,7 +80,7 @@ class LogMysqli extends BackyardMysqli
             );
         }
         $result = parent::query($sql, $errorLogOutput);
-        $this->sqlStatementsArray[] = ($result === false?'fail => ':'') . $sql;
+        $this->sqlStatementsArray[] = ($result === false ? 'fail => ' : '') . $sql;
         if ($result === false) {
             $this->sqlError = true;
         }
