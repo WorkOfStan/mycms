@@ -321,7 +321,6 @@ GitHub Actions run PHPSTAN to identify errors
 * `phpstan.neon.dist` - for PHPSTAN of this app (dist folder)
 * `conf/phpstan.app.neon` - both for this app and mycms library test
 * `conf/phpstan.common.neon` - both for this app and mycms library test
-* Note: if your DEFAULT_BRANCH is not `develop`, change `.github/linters/phpstan.neon` accordingly
 * Note: when code becomes stable, change VALIDATE_ALL_CODEBASE to `false`
 
 * TODO: .eslintrc.yml and dist/.eslintrc.yml - keep or delete?

@@ -6,7 +6,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### TODO before release
-- nechť i vendor/godsdev je ignorováno ... ale ať zůstane někde v historii
 - fix/test/decribe htaccess: In rare ocassion, set `RewriteBase`, when The original request, and the substitution, are underneath an Alias, see <https://httpd.apache.org/docs/current/mod/mod_rewrite.html#rewritebase>
 - change namespace to WorkOfStan/MyCMS
 
@@ -56,7 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - godsdev/tools bumped to type strict version ^0.3.8
 - LogMysqli::fetchSingle Throws excepetion, when an SQL statement returns true.  
 - LogMysqli::fetchAndReindex Error for this function is also an SQL statement that returns true.
-- MyAdminProcess::redir make use of new option in GodsDev\Tools::redir and turns off  `session_write_close()` in order to pass info about redirect to Tracy
+- MyAdminProcess::redir make use of new option in GodsDev\Tools::redir and turns off `session_write_close()` in order to pass info about redirect to Tracy
 - MyCMSMonoLingual if logger is not passed to the class, constructor will throw an Exception (instead of die)
 - MyFriendlyURL::friendlyIdentifyRedirect throws Exception on seriously malformed URL
 - MyTableAdmin::outputField fixesParameter 2 $label of static method GodsDev\Tools\Tools::htmlInput() expects string, false given. MUST be empty string to trigger label omitting.
@@ -82,7 +81,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Coding style: <https://www.php-fig.org/psr/psr-12/> replaces PSR-2
 - Coding style: array() to [] (As of PHP 5.4)
 - Many elements ordered alphabetically for better readability
-- `return;` statement after method with return never is not necessary
+- `return;` statement after method with @return never is not necessary
 
 ### Fixed
 - Stricter code by type assertion, type casting, type hinting
