@@ -359,6 +359,13 @@ it tries to send a test email to `EMAIL_ADMIN`. One try allowed in 23 hours (as 
 ## Security
 - jquery.sha1.js hashes the login password before being POSTed to server
 
+## TROUBLESHOOTING
+
+| Issue | Possible solution |
+|-------|-------------------|
+| Home page returns 404 Not found | `define('HOME_TOKEN', 'parent-directory');` in `config.local.php` |
+| Friendly URL pages return 404 Not found | In rare ocassion, when The original request, and the substitution, are underneath an Alias, see <https://httpd.apache.org/docs/current/mod/mod_rewrite.html#rewritebase>. Solution: in .htaccess, uncomment and properly set RewriteBase "/path/mycms/dist/" |
+
 ## TODO
 
 ### TODO lokalizace

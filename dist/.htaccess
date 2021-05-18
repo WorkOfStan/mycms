@@ -6,7 +6,7 @@
 # Friendly URL
 RewriteEngine on
 # In rare ocassion, when The original request, and the substitution, are underneath an Alias, see https://httpd.apache.org/docs/current/mod/mod_rewrite.html#rewritebase
-RewriteBase "/gh1/mycms/dist/"
+#RewriteBase "/gh1/mycms/dist/"
 
 # Favicons in subfolder
 RewriteRule ^(android-icon-[0-9x]*\.png|apple-icon.*\.png|browserconfig.xml|favicon\.ico|favicon-[0-9x]*\.png|manifest\.json|ms-icon-[0-9x]*\.png) images/favicon/$1 [L,QSA]

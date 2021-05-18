@@ -235,12 +235,6 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 │   <──── redir or continue with calculated $controller->MyCMS->template
 ```
 
-## TROUBLESHOOTING
-
-| Issue | Possible solution |
-|-------|-------------------|
-| Home page returns 404 Not found | `define('HOME_TOKEN', 'parent-directory');` in `config.local.php` |
-
 ## TODO
 
 ### TODO Administration

@@ -6,7 +6,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### TODO before release
-- fix/test/decribe htaccess: In rare ocassion, set `RewriteBase`, when The original request, and the substitution, are underneath an Alias, see <https://httpd.apache.org/docs/current/mod/mod_rewrite.html#rewritebase>
 - change namespace to WorkOfStan/MyCMS
 
 ### Added
@@ -82,6 +81,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Coding style: array() to [] (As of PHP 5.4)
 - Many elements ordered alphabetically for better readability
 - `return;` statement after method with @return never is not necessary
+- dist: favicons moved to images/favicon subfolder
 
 ### Fixed
 - Stricter code by type assertion, type casting, type hinting
