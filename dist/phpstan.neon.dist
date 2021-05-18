@@ -1,4 +1,3 @@
-# Invoked by locally installed PHPStan of dist
 includes:
       - conf/phpstan.app.neon
 

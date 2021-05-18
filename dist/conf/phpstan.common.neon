@@ -1,36 +1,32 @@
-# Invoked by locally installed PHPStan of dist
-# Invoked by GitHub super-linter PHPStan of dist
-# Invoked by locally installed PHPStan of library
-# Invoked by GitHub super-linter PHPStan of library
 parameters:
     level: 6
     excludePaths:
         analyse:
-        #  - ../vendor
+          - ../vendor
         # temporary arrangement so that MyCMS can be debugged along MyCMS/dist
-          - ../vendor/bin
-          - ../vendor/cakephp
-          - ../vendor/composer
-          - ../vendor/doctrine
-          - ../vendor/egulias
-          - ../vendor/godsdev/backyard
-          - ../vendor/godsdev/mycms/dist
-          - ../vendor/godsdev/tools
-          - ../vendor/latte
-          - ../vendor/myclabs
-          - ../vendor/nette
-          - ../vendor/phpdocumentor
-          - ../vendor/phpspec
-          - ../vendor/phpstan
-          - ../vendor/phpunit
-          - ../vendor/psr
-          - ../vendor/robmorgan
-          - ../vendor/sebastian
-          - ../vendor/swiftmail
-          - ../vendor/symfony
-          - ../vendor/texy
-          - ../vendor/tracy
-          - ../vendor/webmozart
+        #  - ../vendor/bin
+        #  - ../vendor/cakephp
+        #  - ../vendor/composer
+        #  - ../vendor/doctrine
+        #  - ../vendor/egulias
+        #  - ../vendor/godsdev/backyard
+        #  - ../vendor/godsdev/mycms/dist
+        #  - ../vendor/godsdev/tools
+        #  - ../vendor/latte
+        #  - ../vendor/myclabs
+        #  - ../vendor/nette
+        #  - ../vendor/phpdocumentor
+        #  - ../vendor/phpspec
+        #  - ../vendor/phpstan
+        #  - ../vendor/phpunit
+        #  - ../vendor/psr
+        #  - ../vendor/robmorgan
+        #  - ../vendor/sebastian
+        #  - ../vendor/swiftmail
+        #  - ../vendor/symfony
+        #  - ../vendor/texy
+        #  - ../vendor/tracy
+        #  - ../vendor/webmozart
     dynamicConstantNames:
       - UNDER_CONSTRUCTION
       #- DEBUG_VERBOSE

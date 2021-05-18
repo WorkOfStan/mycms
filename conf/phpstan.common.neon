@@ -1,5 +1,3 @@
-# Invoked by GitHub super-linter PHPStan of library
-# Invoked by locally installed PHPStan of library
 parameters:
     excludePaths:
         analyse:
