@@ -5,7 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### TODO before release
+- nechť i vendor/godsdev je ignorováno ... ale ať zůstane někde v historii
+- fix/test/decribe htaccess: In rare ocassion, set `RewriteBase`, when The original request, and the substitution, are underneath an Alias, see <https://httpd.apache.org/docs/current/mod/mod_rewrite.html#rewritebase>
+- change namespace to WorkOfStan/MyCMS
+
 ### Added
+- notest branches ignored by GitHub actions (not to test partial online commits)
 - Throwable/ThrowablePHPFunctions.php - replacement for PHP functions that returns false or null instead of the strict type. These functions throw an \Exception instead.
   - filemtime, glob, json_encode, mb_eregi_replace, preg_match, preg_replace
   - preg_replaceString accepts only string as $subject and returns only string (i.e. not string[])
@@ -15,42 +21,68 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - type hints (especially array iterable value types)
 - CHANGELOG.md
   - .markdown-lint.yml (to ignore same headings in CHANGELOG) replaces the default one, hence SHOULD include the original settings
-- '7.0', '7.2' added to PHPStan matrix
+- '5.6', '7.0', '7.2', '7.3', '7.4' added to PHPStan matrix
   - not 7.1 as due to <https://bugs.php.net/bug.php?id=73803> ZipArchive class has public properties, that are not visible via reflection.
   - Therefore using tools like PHPStan generates error: Access to an undefined property ZipArchive::$numFiles. in class\MyAdminProcess
+- GitHub action job running time limited to 10 minutes
 - dist phpstan includes phpstan/phpstan-webmozart-assert, therefore other PHPStan configuration file added in order to include proper extension.neon
+- PHPStan online runs as a tool (not a composer required-dev library)
 - If DEBUG_VERBOSE is true and admin UI uses untranslated string, it is logged to `log/translate_admin_missing.log` to be translated
 - dist/TableAdmin templates for methods customInput and customInputAfter added
-- dist/Admin outputSpecialMenuLinks and projectSpecificSections etc overrides of MyAdmin methods added
+- dist/Admin outputSpecialMenuLinks and projectSpecificSections etc. overrides of MyAdmin methods added
 - featureFlags work also in Admin UI
 - Admin.php, AdminProcess.php, admin.js and admin.css now contains (almost) all the code from A and F projects - some is however not working (hence featureFlag 'order_hierarchy') TODO: simplify it and keep only the essential
 - Admin UI: Friendly URL: one place to set them all, identify duplicities
 - Admin UI: generate translations. Note: this rewrites the translation files language-xx.inc.php
+- admin.js: toggle Export, Edit, Clone buttons based on row selection
 - Tracy SQL BarPanel is red if some of the SQL statements end up in an error state. The failed one is prefixed by `fail =>`
+- MyAdminProcess::processUserChangePassword - ILogger::INFO of failed changing password
+- MyCommon::verboseBarDump - Dumps information about a variable in Tracy Debug Bar or is silent
+- MyController::redir - Redirects to $redir (incl. relative) and die
+- MyController::run - spuštění, které používá Controller::prepareTemplate a Controller::prepareTemplateAll
+- ProjectCommon::getLinkSql - Returns SQL fragment for column link ($fieldName) which construct either parametric URL or relative friendly URL
+- ProjectCommon::language - Returns or set the language
+- MyTableAdmin: fix if prefill value is not yet among the existing values, set as value for the own-value input box
+- View: latte may use $applicationDirLanguage to keep the selected language folder
+- View: FEATURE_FLAGS are available now in javascript
+- class Mail incl. test UI: class Mail works both on PHP/5.6 (tested on 5.6.40-0+deb8u12) and PHP/7.x (tested on 7.3.27-1~deb10u1) with test page available at the third tab
 
 ### Changed
+- WorkOfStan/MyCMS repository (TODO: change namespace)
+- Dist code: vast changes in order to have working application ready to install including data structure of pages and products including friendly URL routing in 4 languages (cs,de,en,fr) and redirector
+- MyFriendlyURL is a new routing part of Controller (of MVC) (Examples of behaviour explained in dist/README.md#seo are implemented in dist)
+- Controller is set by Controller::prepareTemplate a Controller::prepareTemplateAll and called by MyController::run (instead of MyController::controller, which still remains for backward compatibility)
 - nette/utils allowed also in version ^3.2.2
 - godsdev/tools bumped to type strict version ^0.3.8
 - LogMysqli::fetchSingle Throws excepetion, when an SQL statement returns true.  
 - LogMysqli::fetchAndReindex Error for this function is also an SQL statement that returns true.
 - MyAdminProcess::redir make use of new option in GodsDev\Tools::redir and turns off  `session_write_close()` in order to pass info about redirect to Tracy
 - MyCMSMonoLingual if logger is not passed to the class, constructor will throw an Exception (instead of die)
+- MyFriendlyURL::friendlyIdentifyRedirect throws Exception on seriously malformed URL
 - MyTableAdmin::outputField fixesParameter 2 $label of static method GodsDev\Tools\Tools::htmlInput() expects string, false given. MUST be empty string to trigger label omitting.
 - MyTableAdmin methods (recordDelete) refactoring for better readability
+- MyTableAdmin: removed zero value that is not accepted by ENUM. To set empty, use NULL option. TODO fix NULL option for ENUM to be saved in database
 - MyTableLister::resolveSQL refactoring for better readability
+- **potentially breaking change**: MyTableLister::contentByType ignores missing $options['return-output'] and always return string, never echo string
+- **potentially breaking change**: MyTableLister: filterKeys accepts strictly array<string>
 - ProjectCommon::localDate throws Exception if $stringOfTime is malformed
 - dist/AdminProcess::getAgenda refactoring for better static analysis
 - dist/Controller instatiates Mail only if `class_exists('Swift_SmtpTransport')` so that PHPUnit test run from root doesn't stupidly fail
 - dist/ProjectSpecific::getSitemap throws Exception if sitemap retrieval fails
-- `return;` statement after method with return never is not necessary
-- MyTableAdmin: removed zero value that is not accepted by ENUM. To set empty, use NULL option. TODO fix NULL option for ENUM to be saved in database
-- MyFriendlyURL::friendlyIdentifyRedirect throws Exception on seriously malformed URL
 - dist/TableAdmin loads localised strings from conf/l10n/admin-XX.yml
 - use only phinx.yml environment for database connection (instead of duplicating it in config.local.php)
-- **potential breaking change**: MyTableLister::contentByType ignores missing $options['return-output'] and always return string, never echo string
 - Bootstrap v4.0.0-beta -> Bootstrap v4.1.3, which is the highest version that works properly with Summernote 0.8.18 (background under buttons, but Full screen doesn't use background)
 - jQuery v3.2.1 -> jQuery v3.6.0
 - proper attribution: copyright of Admin UI to WorkOfStan & CRS2 (instead of GODS)
+- **potentially breaking change** admin.js: `let` when initializing variable
+- changed DATETIME (datatype) to TIMESTAMP for
+  a) better compatibility as the DEFAULT CURRENT_TIMESTAMP support for a DATETIME (datatype) was added in MySQL 5.6. In 5.5 and earlier versions, this applied only to TIMESTAMP (datatype) columns.
+  b) MySQL converts TIMESTAMP values from the current time zone to UTC for storage, and back from UTC to the current time zone for retrieval. (This does not occur for other types such as DATETIME.)”.
+  - An important difference is that DATETIME represents a date (as found in a calendar) and a time (as can be observed on a wall clock), while TIMESTAMP represents a well defined point in time. This could be very important if your application handles time zones.
+- Coding style: <https://www.php-fig.org/psr/psr-12/> replaces PSR-2
+- Coding style: array() to [] (As of PHP 5.4)
+- Many elements ordered alphabetically for better readability
+- `return;` statement after method with return never is not necessary
 
 ### Fixed
 - Stricter code by type assertion, type casting, type hinting
@@ -60,17 +92,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (maybe the bug wasn't present in 0.3.15) MyAdmin: fix tableAdmin prevails TableAdmin
 - when adding new content, automatically uncheck the NULL checkbox + save NULL value of checkbox
 - Admin::searchColumns searches within existing columns
+- Admin UI: Export selected rows
+- MyTableLister::selectSQL() should return array<string> but returns array<string, int|string>.
+- MyTableLister::bulkUpdateSQL() should return string but return statement is missing.
+- MyTableLister::contentByType() always returns string (as if $options['return-output'] === true). Performing echo is responsibility of the calling method.
+- process.php: \_SESSION and \_POST attributes processing fixed
 
 ### Deprecated
 - MyTableAdmin::outputSelectPath() - is this function necessary?
-
-... and many more between 2020-05-02 and 2021-04-17 (TODO to be added)
 
 ## [0.3.15] - 2020-05-02
 ### Fixed
 - bulkUpdateSQL: fix `continue` to `break` (not to `continue 2`)
 [as since PHP 7.3.0 continue within a switch that is attempting to act like a break statement for the switch will trigger an E_WARNING.]
-
 
 ## [0.3.14] - 2020-05-02
 ### Changed

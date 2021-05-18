@@ -80,7 +80,7 @@ class BarPanelTemplate implements IBarPanel
 
     /**
      * Set panel to be displayed as error.
-     * If to be sent to info again, try calling setError(false)
+     * If to be set to info again, try calling setError(false)
      *
      * @param bool $error OPTIONAL
      * @return void

@@ -357,6 +357,9 @@ When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in
 Third tab is `Email test` and if sending emails isn't forbidden by `define('MAIL_SENDING_ACTIVE', false);` in `config.local.php`
 it tries to send a test email to `EMAIL_ADMIN`. One try allowed in 23 hours (as a simple measure against SPAM).
 
+## Security
+- jquery.sha1.js hashes the login password before being POSTed to server
+
 ## TODO
 
 ### TODO lokalizace

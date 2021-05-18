@@ -4,6 +4,8 @@ namespace GodsDev\MyCMS;
 
 use Exception;
 use GodsDev\Backyard\BackyardMysqli;
+use GodsDev\MyCMS\Tracy\BarPanelTemplate;
+use Tracy\Debugger;
 
 use function GodsDev\MyCMS\ThrowableFunctions\mb_eregi_replace;
 
@@ -370,6 +372,20 @@ class LogMysqli extends BackyardMysqli
     public function getStatementsArray()
     {
         return $this->sqlStatementsArray;
+    }
+
+    /**
+     * @return void
+     */
+    public function showSqlBarPanel()
+    {
+        if (!empty($this->sqlStatementsArray)) {
+            $sqlBarPanel = new BarPanelTemplate('SQL: ' . count($this->sqlStatementsArray), $this->sqlStatementsArray);
+            if ($this->sqlError) {
+                $sqlBarPanel->setError();
+            }
+            Debugger::getBar()->addPanel($sqlBarPanel);
+        }
     }
 
     /**

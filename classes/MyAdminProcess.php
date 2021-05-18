@@ -41,16 +41,9 @@ class MyAdminProcess extends MyCommon
     public function endAdmin()
     {
         if (isset($_SESSION['user'])) {
-            Debugger::getBar()->addPanel(new \GodsDev\MyCMS\Tracy\BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION));
+            Debugger::getBar()->addPanel(new BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION));
         }
-        $sqlStatementsArray = $this->MyCMS->dbms->getStatementsArray();
-        if (!empty($sqlStatementsArray)) {
-            $sqlBarPanel = new BarPanelTemplate('SQL: ' . count($sqlStatementsArray), $sqlStatementsArray);
-            if ($this->MyCMS->dbms->getStatementsError()) {
-                $sqlBarPanel->setError();
-            }
-            Debugger::getBar()->addPanel($sqlBarPanel);
-        }
+        $this->MyCMS->dbms->showSqlBarPanel();
 //        Debugger::barDump(debug_backtrace(), 'debug_backtrace');
     }
 

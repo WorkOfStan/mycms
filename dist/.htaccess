@@ -22,13 +22,6 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(de/|en/|fr/|sk/|zh/)?(.*)$ index.php?language=$1&$2 [L,QSA]
 
-# TODO - compare stockpiler and check with MyCMS/dist that this part is relevant or it is eaten above
-# Friendly share URL
-#RewriteRule ^admin\.php(\?.*)?$ admin.php [L,QSA]
-#RewriteCond %{REQUEST_FILENAME} !-f
-#RewriteCond %{REQUEST_FILENAME} !-d
-#RewriteRule ^(.*)$ index.php/$1 [L,QSA]
-
 # Hide composer, logs
 # If mod_alias is not enabled, the Apache should fail to show anything in order to always hide the files in the section below
 #<IfModule mod_alias.c>
