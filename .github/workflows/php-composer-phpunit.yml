@@ -75,18 +75,19 @@ jobs:
         composer update --no-dev --prefer-dist --no-progress
         composer update --prefer-dist --no-progress
         # TODO: make dist ready for automated testing (database + htaccess)
-        cd .. # redundant as each run starts in the root
+        # `cd ..` redundant as each run starts in the root
+        cd ..
 
     # PHPStan works for PHP/7.1+ so it can't even be in composer.json
-    - name: "Composer + PHPStan (app)"
+    - name: "PHPStan (app)"
       if: ${{ matrix.php-version >= '7.1' }}
       run: |
         cd dist
-        #to fix `Constant DB_USERNAME not found.` etc
+        # to fix `Constant DB_USERNAME not found.` etc
         cp -p conf/config.local.dist.php conf/config.local.php
-        #todo look if only one thing added
+        # Only phpstan/phpstan-webmozart-assert + phpstan/phpstan added
         composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
-        #todo if above ok, then update also library+app
+        # Note that phpstan/phpstan is required above but not used below (as shivammathur/setup-php tool is used)
         phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
         cd ..
 
