@@ -45,7 +45,7 @@ jobs:
     - name: Install no-dev dependencies
       run: composer update --no-dev --prefer-dist --no-progress
 
-    - name: Install dependencies
+    - name: Install dev dependencies
       run: composer update --prefer-dist --no-progress
 
     # PHPunit is installed anyway, so it doesn't make sense to use tools: phpunit
@@ -68,32 +68,27 @@ jobs:
     # - name: Run test suite
     #   run: composer run-script test
 
-    - name: Switch to app
-      run: cd dist
-
-    - name: Validate composer.json (app)
-      run: composer validate
-
-    - name: Install no-dev dependencies (app)
-      run: composer update --no-dev --prefer-dist --no-progress
-
-    - name: Install dependencies (app)
-      run: composer update --prefer-dist --no-progress
-      # TODO: make dist ready for automated testing (database + htaccess)
+    - name: Validate composer.json + install no-dev, then dev dependencies (app)
+      run: |
+        cd dist
+        composer validate
+        composer update --no-dev --prefer-dist --no-progress
+        composer update --prefer-dist --no-progress
+        # TODO: make dist ready for automated testing (database + htaccess)
+        cd .. # redundant as each run starts in the root
 
     # PHPStan works for PHP/7.1+ so it can't even be in composer.json
     - name: "Composer + PHPStan (app)"
       if: ${{ matrix.php-version >= '7.1' }}
       run: |
+        cd dist
         #to fix `Constant DB_USERNAME not found.` etc
         cp -p conf/config.local.dist.php conf/config.local.php
         #todo look if only one thing added
         composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
         #todo if above ok, then update also library+app
         phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
-
-    - name: Switch back to library level
-      run: cd ..
+        cd ..
 
     - name: "PHPStan (library + app)"
       # alternative syntax # if: ${{ matrix.php-version != '5.3' && matrix.php-version != '5.6' }}
