@@ -11,7 +11,7 @@ parameters:
         #  - ../vendor/composer
         #  - ../vendor/doctrine
         #  - ../vendor/egulias
-        #  - ../vendor/godsdev/backyard
+        #  - ../vendor/workofstan/backyard
         #  - ../vendor/godsdev/mycms/dist
         #  - ../vendor/godsdev/tools
         #  - ../vendor/latte

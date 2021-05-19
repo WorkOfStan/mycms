@@ -333,7 +333,7 @@ Logs are in folder `log`:
 * `exception.log` contains fatal errors by Tracy\Debugger
 * `error.log` contains recoverable erros by Tracy\Debugger
 * `debug.log` contains debug info by Tracy\Debugger
-* `backyard-error.log.YYYY-MM.log` by PSR-3 logger implemented in GodsDev\Backyard\BackyardError
+* `backyard-error.log.YYYY-MM.log` by PSR-3 logger implemented in WorkOfStan\Backyard\BackyardError
 * `sqlYYYY-MM-DD.sql` contains content changes by CMS as SQL statements with timestamp
 
 ## Templating

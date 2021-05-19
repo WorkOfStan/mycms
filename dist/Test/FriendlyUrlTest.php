@@ -2,7 +2,7 @@
 
 namespace GodsDev\mycmsprojectnamespace\Test;
 
-use GodsDev\Backyard\Backyard;
+use WorkOfStan\Backyard\Backyard;
 use GodsDev\MyCMS\LogMysqli;
 use GodsDev\mycmsprojectnamespace\FriendlyUrl;
 use GodsDev\mycmsprojectnamespace\MyCMSProject;

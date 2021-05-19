@@ -45,7 +45,7 @@ jobs:
     - name: Install no-dev dependencies
       run: composer update --no-dev --prefer-dist --no-progress
 
-    - name: Install dependencies
+    - name: Install dev dependencies
       run: composer update --prefer-dist --no-progress
 
     # PHPunit is installed anyway, so it doesn't make sense to use tools: phpunit
@@ -68,16 +68,26 @@ jobs:
     # - name: Run test suite
     #   run: composer run-script test
 
+    - name: Validate composer.json + install no-dev, then dev dependencies (app)
+      run: |
+        cd dist
+        composer validate
+        composer update --no-dev --prefer-dist --no-progress
+        composer update --prefer-dist --no-progress
+        # TODO: make dist ready for automated testing (database + htaccess)
+        # `cd ..` redundant as each run starts in the root
+        cd ..
+
     # PHPStan works for PHP/7.1+ so it can't even be in composer.json
-    - name: "Composer + PHPStan (app)"
+    - name: "PHPStan (app)"
       if: ${{ matrix.php-version >= '7.1' }}
       run: |
-        #to fix `Constant DB_USERNAME not found.` etc
-        cp -p dist/conf/config.local.dist.php dist/conf/config.local.php
         cd dist
-        #maybe not needed?#composer update --prefer-dist --no-progress
+        # to fix `Constant DB_USERNAME not found.` etc
+        cp -p conf/config.local.dist.php conf/config.local.php
+        # Only phpstan/phpstan-webmozart-assert + phpstan/phpstan added
         composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
-        #todo if above ok, then update also library+app
+        # Note that phpstan/phpstan is required above but not used below (as shivammathur/setup-php tool is used)
         phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
         cd ..
 
@@ -85,11 +95,4 @@ jobs:
       # alternative syntax # if: ${{ matrix.php-version != '5.3' && matrix.php-version != '5.6' }}
       if: ${{ matrix.php-version >= '7.1' }}
       run: |
-        #to fix `Constant DB_USERNAME not found.` etc
-        #cp -p dist/conf/config.local.dist.php dist/conf/config.local.php
-        #composer require --dev phpstan/phpstan:^0.12
-        #vendor/bin/phpstan analyse --debug .
-        # If removal needed:
-        # composer remove --dev phpstan/phpstan
-        #phpstan -V
         phpstan analyse --no-interaction --no-progress .

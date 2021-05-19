@@ -9,7 +9,7 @@
 // The Composer auto-loader (official way to load Composer contents) to load external stuff automatically
 require_once __DIR__ . '/vendor/autoload.php';
 
-use GodsDev\Backyard\Backyard;
+use WorkOfStan\Backyard\Backyard;
 use GodsDev\MyCMS\LogMysqli;
 use GodsDev\mycmsprojectnamespace\Init;
 use GodsDev\mycmsprojectnamespace\MyCMSProject;

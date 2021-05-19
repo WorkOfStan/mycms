@@ -82,6 +82,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Many elements ordered alphabetically for better readability
 - `return;` statement after method with @return never is not necessary
 - dist: favicons moved to images/favicon subfolder
+- bump "godsdev/backyard": "^3.2.10" -> "workofstan/backyard": "^3.3.0" to use better tested code limited by php: ^5.3 || ^7.0
 
 ### Fixed
 - Stricter code by type assertion, type casting, type hinting
@@ -96,6 +97,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MyTableLister::bulkUpdateSQL() should return string but return statement is missing.
 - MyTableLister::contentByType() always returns string (as if $options['return-output'] === true). Performing echo is responsibility of the calling method.
 - process.php: \_SESSION and \_POST attributes processing fixed
+- dist require "symfony/yaml": "^3.4.47|^4|^5|^6" so that it is loaded not only as part of require-dev phpunit/phpunit
 
 ### Deprecated
 - MyTableAdmin::outputSelectPath() - is this function necessary?

@@ -3,7 +3,7 @@
 namespace GodsDev\MyCMS;
 
 use Exception;
-use GodsDev\Backyard\BackyardMysqli;
+use WorkOfStan\Backyard\BackyardMysqli;
 use GodsDev\MyCMS\Tracy\BarPanelTemplate;
 use Tracy\Debugger;
 
