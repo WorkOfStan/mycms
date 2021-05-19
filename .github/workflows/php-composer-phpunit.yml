@@ -79,10 +79,7 @@ jobs:
 
     - name: Install dependencies (app)
       run: composer update --prefer-dist --no-progress
-
-    # PHPunit is installed anyway, so it doesn't make sense to use tools: phpunit
-    - name: "PHPUnit tests (app)"
-      run: "vendor/bin/phpunit"
+      # TODO: make dist ready for automated testing (database + htaccess)
 
     # PHPStan works for PHP/7.1+ so it can't even be in composer.json
     - name: "Composer + PHPStan (app)"
