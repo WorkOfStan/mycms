@@ -2,7 +2,7 @@
 
 namespace GodsDev\mycmsprojectnamespace\Test;
 
-use GodsDev\Backyard\Backyard;
+use WorkOfStan\Backyard\Backyard;
 use Tracy\Debugger;
 
 require_once __DIR__ . '/../conf/config.php';

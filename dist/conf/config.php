@@ -24,7 +24,7 @@ define('PATH_MODULE', 10); // length of one node in category.path in digits
 define('RECAPTCHA_KEY', '............');
 define('URL_RECAPTCHA_VERIFY', 'https://www.google.com/recaptcha/api/siteverify');
 //
-//for godsdev/backyard
+//for workofstan/backyard
 $backyardConf = [
     'logging_level' => 3,
     'error_log_message_type' => 3,

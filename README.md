@@ -15,7 +15,7 @@ MyCMS is designed to be used with following technologies:
 - [Tracy](https://github.com/nette/tracy): for debugging
 - [Nette\SmartObject](https://doc.nette.org/en/3.0/smartobject): for ensuring strict PHP rules
 - [Psr\Log\LoggerInterface](https://www.php-fig.org/psr/psr-3/): for logging
-- [GodsDev\Backyard\BackyardMysqli](https://github.com/GodsDev/backyard/blob/master/GodsDev/Backyard/BackyardMysqli.php): for wrapping SQL layer
+- [WorkOfStan\Backyard\BackyardMysqli](https://github.com/WorkOfStan/backyard/blob/main/classes/BackyardMysqli.php): for wrapping SQL layer
 
 ## Installation
 Apache modules `mod_alias` (for hiding non-public files) and `mod_rewrite` (for friendly URL features) are expected.

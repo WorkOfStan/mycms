@@ -2,7 +2,7 @@
 
 namespace GodsDev\MyCMS\Test;
 
-use GodsDev\Backyard\Backyard;
+use WorkOfStan\Backyard\Backyard;
 use GodsDev\MyCMS\MyCMS;
 use GodsDev\MyCMS\ProjectCommon;
 use Tracy\Debugger;
