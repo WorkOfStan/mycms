@@ -1,0 +1,17 @@
+{layout '@layout.latte'}
+{block content}
+<div class="container">
+    {ifset $content['title']}{var $content['title'] = $content['title']}{else}{var $content['title'] = 'Welcome to MyCMS content'}{/ifset}
+    {ifset $content['image']}{var $content['image'] = $content['image'] ?: 'assets/green-grass.jpg'}
+    <img src="{stripslashes($content['image'])|noescape}" alt="{$content['title']}" title="{$content['title']}" class="w-100" />{/ifset}{* TODO image for product and category in assets *}
+</div>
+<div class="container content">
+    <h2 class="heading-main">{$content['title']}</h2>
+    {$content['description']}
+    {ifset $content[category_id]}
+        {include 'list.latte', paramName => 'product' , idGlue => '&id='}
+    {else}
+        {include 'list.latte', paramName => 'category' , idGlue => '='}
+    {/ifset}
+</div>
+{/block}

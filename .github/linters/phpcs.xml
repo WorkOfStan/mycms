@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<ruleset name="super-linter">
+    <description>The default coding standard for usage with GitHub Super-Linter. It just includes PSR12.</description>
+    <rule ref="PSR12">
+        <!-- TODO for PHP/7.1.0+ version remove this exception after fixing MyCommon, MyFriendlyUrl and MyAdminProcess -->
+        <exclude name="PSR12.Properties.ConstantVisibility"/>
+    </rule>
+    <rule ref="PSR1.Files.SideEffects">
+        <!-- exclude config files from SideEffect warning as combining define and ini_set etc. is there in order to set all settings in one place -->
+        <exclude-pattern>conf/config.php</exclude-pattern>
+        <exclude-pattern>conf/config.local.dist.php</exclude-pattern>
+        <!-- exclude Test files from SideEffect warning as config.php has to be required from outside -->
+        <exclude-pattern>Test/*.php</exclude-pattern>
+    </rule>
+    <rule ref="PSR1.Classes.ClassDeclaration">
+        <!-- Don't apply `each class is in a file by itself, and is in a namespace of at least one level: a top-level vendor name` to generated code -->
+        <exclude-pattern>db/migrations/*.php</exclude-pattern>
+    </rule>
+    <rule ref="Generic.Files.LineLength">
+        <!-- Don't apply `Line exceeds 120 characters` to SQL defining files -->
+        <exclude-pattern>db/migrations/*.php</exclude-pattern>
+        <!-- TODO Ignore `Line exceeds 120 characters` until fixed -->
+        <exclude-pattern>classes/My*Admin*.php</exclude-pattern>
+        <exclude-pattern>classes/MyTableLister.php</exclude-pattern>
+        <exclude-pattern>dist/classes/AdminProcess.php</exclude-pattern>
+        <exclude-pattern>dist/classes/TableAdmin.php</exclude-pattern>
+        <!-- Don't apply `Line exceeds 120 characters` to this parameter rich test -->
+        <exclude-pattern>Test/FriendlyUrlTest.php</exclude-pattern>
+    </rule>
+</ruleset>

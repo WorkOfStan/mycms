@@ -2,30 +2,29 @@
 <header class="header">
     <div class="container">
         <h1>
-            <a href="{dirname($_SERVER['SCRIPT_NAME'])}" title="{="Na úvodní stranu"|translate}">MYCMSPROJECTSPECIFIC homepage link</a>
+            <a href="{$applicationDirLanguage}" title="{="Na úvodní stranu"|translate}">MYCMSPROJECTSPECIFIC homepage link</a>
         </h1>
 
         <span class="hamburger"><i class="fa fa-bars"></i><i class="fa fa-times"></i></span>
         <ul class="menu">
-        {* TODO: expect TAB_PREFIX_category table to be populated *}
-        {*foreach $categories as $key => $value}
-            <li {if $key == $line || ($ref == 'product' && isset($product['category_id']) && $product['category_id'] == $key)} class="active"{/if}><a href="?line={$key}">{$value}</a></li>
-        {/foreach*}
-            <li class="active"><a href="?id=1">Item 1</a></li>
-            <li><a href="?id=2">Item 2</a></li>
-            <li><a href="?id=3">Item 3</a></li>
-            <li><a href="?id=4">Item 4</a></li>
+            {* example of a permanent menu item *}
+            <li{if $ref == 'home'} class="active"{/if}><a href="{$applicationDirLanguage}">{="Dashboard"|translate}</a></li>            
+        {* populated from config.php *}
+        {foreach $WEBSITE['menu'] as $key => $value}
+            {* Note: modify condition for active tab as needed *}
+            <li{if $ref == $value['activeTabTemplate']} class="active"{/if}><a href="{$applicationDirLanguage}{$value['relativeUrl']}">{$value['menuItemLabel']}</a></li>
+        {/foreach}
         </ul>
 
         <ul class="right-bar">
-            <li class="dropdown"><a href="?category&code=contacts" title="{="Kontakty"|translate}">{="Kontakty"|translate}</a></li>
+            <li class="dropdown"><a href="{$applicationDirLanguage}?article&code=contacts" title="{="Kontakty"|translate}">{="Kontakty"|translate}</a></li>
             {include 'language-selector.latte', selectorId => 'header'}
             <li><a href="#" class="toggleSearch" title="{="hledat"|translate|firstUpper}"><i class="fa fa-search"></i></a></li>
         </ul>
     </div>
 
     <div class="searchbar">
-        <form method="GET" action="{$_SERVER['REQUEST_URI']}">
+        <form method="GET" action="{$applicationDirLanguage}">
             <div class="container">
                 <input type="text" name="search" required>
                 <button type="submit" class="btn btn-secondary">{="hledat"|translate|firstUpper}</button>

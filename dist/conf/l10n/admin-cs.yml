@@ -1,0 +1,248 @@
+Activate/deactivate: Aktivovat/deaktivovat
+'Affected files: ': 'Ovlivněných souborů: '
+'Affected rows: ': 'Ovlivněných záznamů: '
+Agendas: Agendy
+'All rows': 'Všechny řádky'
+'All rights reserved.': 'Všechna práva vyhrazena.'
+append: 'přidat za'
+'Archive created.': 'Archiv vytvořen.'
+'Archive unpacked.': 'Archiv rozbalen.'
+'Aren''t they too big?': 'Nejsou příliš velké?'
+'Are you sure?': 'Jste si jistý/jistá?'
+'Back to listing': 'Zpět na výpis'
+'By type': 'Podle typu'
+Clone: Klonovat
+close: zavřít
+Columns: Sloupce
+Convert: Převést
+'Could not delete the record.': 'Záznam se nepodařilo smazat.'
+'Could not save the record.': 'Záznam se nepodařilo uložit.'
+Count: Počet
+'Create user': 'Vytvořit uživatele'
+current: aktuální
+Dashboard: 'Palubová deska'
+Delete: Smazat
+'Delete user': 'Smazat uživatele'
+'Deleted files: ': 'Smazaných souborů: '
+descending: sestupně
+'descending order': 'sestupné řazení'
+'Divisions and products': 'Divize a produkty'
+'Duplicities may appear across languages.': 'Duplikáty tokenu se mohou objevit napříč jazyky.'
+Edit: Upravit
+'Edit selected': 'Upravit vybrané'
+empty: prázdná
+'Error activating the user.': 'Uživatele se nepodařilo aktivovat.'
+'Error deactivating the user.': 'Uživatele se nepodařilo deaktivovat.'
+'Error occured adding the user.': 'Uživatele se nepodařilo přidat.'
+'Error occured automatically logging You in.': 'Při automatickém přihlašování nastala chyba.'
+'Error occured deleting the user.': 'Uživatele se nepodařilo smazat.'
+'Error occured changing password.': 'Při změně hesla došlo k chybě.'
+'Error occured logging You in.': 'Při přihlašování nastala chyba.'
+'Error occured opening the archive.': 'Nepodařilo se otevřít archiv.'
+'Error occured renaming the file.': 'Soubor se nepodařilo přesunout/přejmenovat.'
+'Error occured unpacking the archive.': 'Při rozbalování archivu nastala chyba.'
+'Error occured uploading the file to server.': 'Soubor se nepodařilo nahrát na server.'
+Export: Exportovat
+File: Soubor
+'File already exists.': 'Soubor již existuje.'
+'File does not exist.': 'Soubor neexistuje.'
+'File extensions must be the same.': 'Přípony souborů musejí být stejné.'
+'File renamed.': 'Soubor přejmenován.'
+'File was uploaded to server.': 'Soubor byl nahrán na server.'
+filename: 'jméno souboru'
+Files: Soubory
+'Fill up': 'Vyplnit'
+'Filter records': 'Vyfiltrovat záznamy'
+Folder: Složka
+'For more detailed browsing with filtering etc. you may select one of the following tables…': 'Pro detailnější procházení tabulek s filtrováním, řazením atd. klikněte na jednu z následujících…'
+'Friendly URL': 'Přátelské URL'
+'go back': 'jít zpět'
+'go to page': 'Jít na stránku'
+'Change password': 'Změnit heslo'
+'Check all': 'Označit všechny'
+'Check up': 'Zkontrolovat'
+'--choose--': '--vyberte--'
+Image: Obrázek
+'Image selector': 'Výběr obrázku'
+'Image URL': 'URL obrázku'
+Insert: Vložit
+'Insert NULL': 'Vložit hodnotu NULL'
+'Link will open in a new window': 'Odkaz se otevře v novém okně'
+links: odkazy
+Listing: Výpis
+Login: 'Přihlásit se'
+Logout: 'Odhlásit se'
+Media: Média
+'Missing translations in templates': 'Překlady chybějící v latte šablonách'
+modified: změněno
+name: jméno
+'New password': 'Nové heslo'
+'New record': 'Nový záznam'
+'New row': 'Nová řádka'
+'New value:': 'Nová hodnota:'
+Next: Další
+'No files': 'Žádné soubory'
+'No files selected.': 'Nebyly vybrány žádné soubory.'
+'No records found.': 'Nebyly nalezeny žádné záznamy.'
+'No records selected.': 'Nebyly vybrány žádné záznamy.'
+None: Žádné
+'Nothing to change.': 'Nic ke změně.'
+'Nothing to save.': 'Nic k uložení.'
+Now: Teď
+'Old password': 'Staré heslo'
+'only empty': 'pouze prázdné'
+'Order change processed.': 'Změna pořadí zpracována.'
+original: původní
+Other: Ostatní
+'Own value:': 'Vlastní hodnota:'
+Pack: Sbalit
+Page: Stránka
+Password: Heslo
+'Password was changed.': 'Heslo změněno.'
+'Passwords don''t match!': 'Hesla se neshodují!'
+'Please, fill necessary data.': 'Prosím, vyplňte potřebná data.'
+'Please, fill up a valid file name.': 'Prosím, zvolte platné jméno souboru.'
+'Please, choose a new name.': 'Prosím, vyberte nové jméno.'
+prepend: 'přidat před'
+Previous: Předchozí
+'Really delete?': 'Opravdu smazat?'
+'Really?': 'Opravdu?'
+'Record deleted.': 'Záznam smazán.'
+'Record saved.': 'Záznam uložen.'
+Reload: 'Znovu nahrát'
+Rename: Přejmenovat
+'Retype password': 'Opište heslo'
+'Rows per page': 'Řádek na stránku'
+Save: Uložit
+Search: Hledat
+'Search results': 'Výsledky vyhledávání'
+Select: Vyberte
+'Select at least one file and try again.': 'Označte alespoň jeden soubor a zkuste to ještě jednou.'
+'Select at least one record and try again.': 'Označte alespoň jeden záznam a zkuste to ještě jednou.'
+'Selected records': 'Vybrané záznamy'
+Settings: Nastavení
+Sidebar: 'Postranní panel'
+size: velikost
+Sort: Řadit
+'stay here': 'zůstat zde'
+'Text lengths': 'Délky textů'
+'The new password was not retyped correctly.': 'Nové heslo nebylo opsáno správně.'
+'The subfolder doesn''t exist.': 'Podsložka neexistuje.'
+'This function is not supported.': 'Tato funkce není podporována.'
+'Toggle sidebar': 'Zapnout/vypnout postranní panel'
+total: celkem
+'Total of deleted files: ': 'Celkem smazaných souborů: '
+'Total of processed files: ': 'Celkem zpracovaných souborů: '
+'Total rows: ': 'Celkem řádků: '
+Translations: Překlad
+Type: Typ
+Unlock: Odemknout
+Unpack: Rozbalit
+Upload: 'Nahrát na server'
+'Uploaded files': 'Nahrané soubory'
+URL: URL
+User: Uživatel
+'User activated.': 'Uživatel aktivován.'
+'User added.': 'Uživatel přidán.'
+'User already exists.': 'Uživatel již existuje.'
+'User deactivated.': 'Uživatel deaktivován.'
+'User deleted.': 'Uživatel smazán.'
+value: hodnota
+variable: proměnná
+View: Zobrazit
+'Whole resultset': 'Celý výsledek'
+'Wrong file name.': 'Chybné jméno souboru.'
+'Wrong input': 'Chybný vstup'
+'Wrong input parameter': 'Chybný vstupní parametr'
+'You are logged in.': 'Jste přihlášeni.'
+'You are logged out.': 'Jste odhlášeni.'
+# ZipArchive
+'ZipArchive::1': 'Multi-diskové zip archivy nejsou podporovány'
+'ZipArchive::2': 'Selhalo dočasné přejmenování souboru'
+'ZipArchive::3': 'Selhalo uzavření zip archivu'
+'ZipArchive::4': 'Chyba posunu ukazatele do souboru'
+'ZipArchive::5': 'Chyba čtení.'
+'ZipArchive::6': 'Chyba zápisu'
+'ZipArchive::7': 'Chyba CRC'
+'ZipArchive::8': 'Obsažený zip archiv byl zavřen'
+'ZipArchive::9': 'Neexistující soubor.'
+'ZipArchive::10': 'Archiv již existuje.'
+'ZipArchive::11': 'Soubor se nepodařilo otevřít.'
+'ZipArchive::12': 'Selhalo vytvoření dočasného souboru'
+'ZipArchive::13': 'Chyba knihovny Zlib'
+'ZipArchive::14': 'Selhání alokace paměti.'
+'ZipArchive::15': 'Položka byla změněna'
+'ZipArchive::16': 'Nepodporovaná kompresní metoda'
+'ZipArchive::17': 'Předčasný konec souboru'
+'ZipArchive::18': 'Neplatný parametr.'
+'ZipArchive::19': 'Není zip archiv.'
+'ZipArchive::21': 'Nekonzistentní zip archiv.'
+'ZipArchive::20': 'Interní chyba'
+'ZipArchive::22': 'Can''t remove file'
+'ZipArchive::23': 'Položka byla smazána'
+# project-specific
+anchors: kotvy
+Articles: Články
+Categories: Kategorie
+'Categories and products': 'Kategorie a produkty'
+category: kategorie
+content: obsah
+'Content linked to this category': 'Obsah spojený s touto kategorií'
+'Content linked to this product': 'Obsah spojený s tímto produktem'
+'Duplicit URL': 'Duplicitní URL'
+external: externí
+internal: interní
+'Move down': 'Posunout dolů'
+'Move up': 'Posunout nahoru'
+open: otevřít
+Open/close: otevřít/zavřít
+Pages: Stránky
+parametrical: parametrický
+'Parent category': 'Rodičovská kategorie'
+product: produkt
+Products: Produkty
+'Products linked to this category': 'Produkty spojené s touto kategorií'
+'Select your agenda, then particular row.': 'Vyberte agendu, poté záznam.'
+Toggle: Zapnout/vypnout
+'Toggle image thumbnails': 'Zapnout/vypnout náhledy obrázků'
+'Toggle inactive': 'Zapnout/vypnout neaktivní'
+'Toggle number of texts': 'Zapnout/vypnout počet textů'
+# column:XXXX
+'column:active': aktivní
+'column:added': přidáno
+'column:category_cs': 'název kategorie (česky)'
+'column:category_en': 'název kategorie (anglicky)'
+'column:category_id': 'odkaz na kategorii'
+'column:code': 'rozlišovací kód'
+'column:content_cs': 'obsah (česky)'
+'column:content_de': 'obsah (německy)'
+'column:content_en': 'obsah (anglicky)'
+'column:content_fr': 'obsah (francouzsky)'
+'column:context': kontext
+'column:description_cs': 'popis (česky)'
+'column:description_en': 'popis (anglicky)'
+'column:id': 'id'
+'column:image': obrázek
+'column:intro_cs': 'úvod (česky)'
+'column:intro_en': 'úvod (anglicky)'
+'column:name_cs': 'jméno (česky)'
+'column:name_de': 'jméno (německy)'
+'column:name_en': 'jméno (anglicky)'
+'column:name_fr': 'jméno (francouzsky)'
+'column:new_url': 'URL (nové)'
+'column:old_url': 'URL (staré)'
+'column:password_hashed': 'heslo (šifrované)'
+'column:path': 'cesta v hierarchii'
+'column:perex_cs': 'perex (česky)'
+'column:perex_en': 'perex (anglicky)'
+'column:product_cs': 'název produktu (česky)'
+'column:product_en': 'název produktu (anglicky)'
+'column:product_id': 'odkaz na produkt'
+'column:rights': práva
+'column:sort': řazení
+'column:type': typ
+'column:url_cs': 'URL (česky)'
+'column:url_de': 'URL (německy)'
+'column:url_en': 'URL (anglicky)'
+'column:url_fr': 'URL (francouzsky)'
+'column:visits': 'počet návštěv'

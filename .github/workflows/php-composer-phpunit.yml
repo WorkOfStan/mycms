@@ -1,0 +1,95 @@
+name: PHP Composer + PHPUnit + PHPStan
+
+on:
+  push:
+    branches-ignore:
+      # notest branches to ignore testing of partial online commits
+      - 'notest/**'
+  pull_request:
+    branches-ignore:
+      # notest branches to ignore testing of partial online commits
+      - 'notest/**'
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.operating-system }}
+    # Limit the running time
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        operating-system:
+          - "ubuntu-latest"
+        php-version: ['5.6', '7.0', '7.2', '7.3', '7.4']
+        # 7.1 is not checked, as due to https://bugs.php.net/bug.php?id=73803        
+        # ZipArchive class has public properties, that are not visible via reflection.
+        # Therefore using tools like PHPStan generates error: Access to an undefined property ZipArchive::$numFiles. in class\MyAdminProcess
+
+    steps:
+    - name: "Checkout"
+      uses: actions/checkout@v2
+
+    - name: "Install PHP ${{ matrix.php-version }} Test on ${{ matrix.operating-system }}"
+      uses: "shivammathur/setup-php@v2"
+      with:
+        php-version: "${{ matrix.php-version }}"
+        tools: composer:v2, phpstan
+        # Note: phpstan call fails for PHP<7.1
+      env:
+        # fixes Error: Could not authenticate against github.com
+        COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate
+
+    - name: Install no-dev dependencies
+      run: composer update --no-dev --prefer-dist --no-progress
+
+    - name: Install dependencies
+      run: composer update --prefer-dist --no-progress
+
+    # PHPunit is installed anyway, so it doesn't make sense to use tools: phpunit
+    - name: "PHPUnit tests"
+      run: "vendor/bin/phpunit --configuration phpunit-github-actions.xml"
+
+    #- name: PHPUnit (php-actions)
+    #  uses: php-actions/phpunit@v5
+    #  with:
+    #    # PHP included in ubuntu-latest does not support iconv //TRANSLIT flag as iconv implementation is unknown
+    #    # https://github.com/actions/virtual-environments/blob/ubuntu18/20201026.1/images/linux/Ubuntu1804-README.md
+    #    # therefore PHPUnit group iconvtranslit should be excluded.
+    #    # Also doesn't make sense to test MySQLi related tests until MySQLi environment is ready.
+    #    # Also HTTP requests to self can't work in CLI only environment.
+    #    configuration: phpunit-github-actions.xml
+
+    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
+    # Docs: https://getcomposer.org/doc/articles/scripts.md
+
+    # - name: Run test suite
+    #   run: composer run-script test
+
+    # PHPStan works for PHP/7.1+ so it can't even be in composer.json
+    - name: "Composer + PHPStan (app)"
+      if: ${{ matrix.php-version >= '7.1' }}
+      run: |
+        #to fix `Constant DB_USERNAME not found.` etc
+        cp -p dist/conf/config.local.dist.php dist/conf/config.local.php
+        cd dist
+        #maybe not needed?#composer update --prefer-dist --no-progress
+        composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
+        #todo if above ok, then update also library+app
+        phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
+        cd ..
+
+    - name: "PHPStan (library + app)"
+      # alternative syntax # if: ${{ matrix.php-version != '5.3' && matrix.php-version != '5.6' }}
+      if: ${{ matrix.php-version >= '7.1' }}
+      run: |
+        #to fix `Constant DB_USERNAME not found.` etc
+        #cp -p dist/conf/config.local.dist.php dist/conf/config.local.php
+        #composer require --dev phpstan/phpstan:^0.12
+        #vendor/bin/phpstan analyse --debug .
+        # If removal needed:
+        # composer remove --dev phpstan/phpstan
+        #phpstan -V
+        phpstan analyse --no-interaction --no-progress .

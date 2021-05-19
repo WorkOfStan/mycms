@@ -3,31 +3,47 @@
 # php_flag magic_quotes_gpc Off
 # php_flag magic_quotes_runtime Off
 
-# Friendly share URL
-# RewriteEngine on
-# RewriteRule !^(favicon\.ico|robots\.txt|index\.php|(styles|items|images|fonts|scripts)/?.*)$ index.php [L]
-# RewriteCond %{REQUEST_FILENAME}       !-f
-# RewriteCond %{REQUEST_FILENAME}       !-d
-# RewriteRule ^(.*)$ index.php/$1 [L,QSA]
+# Friendly URL
+RewriteEngine on
+# In rare ocassion, when The original request, and the substitution, are underneath an Alias, see https://httpd.apache.org/docs/current/mod/mod_rewrite.html#rewritebase
+#RewriteBase "/gh1/mycms/dist/"
+
+# Favicons in subfolder
+RewriteRule ^(android-icon-[0-9x]*\.png|apple-icon.*\.png|browserconfig.xml|favicon\.ico|favicon-[0-9x]*\.png|manifest\.json|ms-icon-[0-9x]*\.png) images/favicon/$1 [L,QSA]
+
+# redirect all requests to /en/assets* and /de/assets* to /assets*
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(de|en|fr|sk|zh)/(api|assets|favicon.ico|fonts|images|scripts|styles)(.*)$ $2$3 [L,QSA]
+
+# redirect all other requests to /en/* and /de/* and /zh/* etc.
+# to index.php and set the language parameter
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(de/|en/|fr/|sk/|zh/)?(.*)$ index.php?language=$1&$2 [L,QSA]
 
 # Hide composer, logs
-<IfModule mod_alias.c>
+# If mod_alias is not enabled, the Apache should fail to show anything in order to always hide the files in the section below
+#<IfModule mod_alias.c>
 RedirectMatch 404 /\.git
 RedirectMatch 404 vendor\/
 RedirectMatch 404 composer\.
 RedirectMatch 404 phpunit\.xml
 RedirectMatch 404 \.gitignore
+RedirectMatch 404 \.stylelintignore
 RedirectMatch 404 README\.md
+RedirectMatch 404 \/cache\/
 RedirectMatch 404 \/temp\/
-RedirectMatch 404 sql\/
 RedirectMatch 404 \/db\/
 RedirectMatch 404 \.yml
 RedirectMatch 404 \.sh$
 RedirectMatch 404 classes\/
 RedirectMatch 404 Test\/
 RedirectMatch 404 \/logs\/
-# RedirectMatch 404 data\/
 RedirectMatch 404 conf\/
 RedirectMatch 404 /VERSION$
 RedirectMatch 404 /\.sass-cache
-</IfModule>
+RedirectMatch 404 /package\.json
+RedirectMatch 404 /package\-lock\.json
+RedirectMatch 404 phpstan.neon.dist
+#</IfModule>

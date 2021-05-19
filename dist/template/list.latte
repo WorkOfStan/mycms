@@ -1,0 +1,30 @@
+{* required: $list[][id,title,added,perex] ; $paramName ; $idGlue is &id= or = ; media/$paramName/id.jpg ; $totalRows ; $limit *}
+{* TODO: generalize CSS class news, news__perex, news__heading, news__more, news__picture *}
+            {foreach $list as $listDetail}
+                <div class="news" data-aos="fade-up">
+                    <div class="media">
+                        <div class="news__perex media-body">
+                            <h2 class="news__heading"><a href="?{$paramName}{$idGlue}{$listDetail[id]}">{$listDetail[title]}</a></h2>
+                            <time>{$listDetail[added]}</time>
+                            {ifset $listDetail[perex]}<p>{$listDetail[perex]|noescape}</p>{/ifset}
+                            <div class="news__more">
+                                <a href="?{$paramName}{$idGlue}{$listDetail[id]}" class="button">{="Show more"|translate} <i class="fa fa-angle-double-right"></i></a>
+                            </div>
+                        </div>
+                        <img class="news__picture ml-3" src="media/{$paramName}/{$listDetail[id]}.jpg" alt="{$listDetail[title]}" title="{$listDetail[title]}">
+                    </div>
+                </div>
+            {/foreach}
+            {if !$list}
+                <p class="alert alert-info mt-2">{="No results."|translate}</p>
+            {elseif $totalRows > $limit}
+                <ul class="pagination">
+                    {for $i = 0; $i < $totalRows; $i += $limit}
+                        {if $offset == $i}
+                            <li class="page-item disabled"><a href="#" class="page-link">{$i / $limit + 1}</a></li>
+                        {else}
+                            <li class="page-item"><a href="?{$paramName}&amp;offset={$i}" class="page-link">{$i / $limit + 1}</a></li>
+                        {/if}
+                    {/for}
+                </ul>
+            {/if}

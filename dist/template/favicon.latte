@@ -1,4 +1,4 @@
-<link rel="shortcut icon" href="{dirname($_SERVER['SCRIPT_NAME'])}/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="{$applicationDir}favicon.ico" type="image/x-icon">
 {*<link rel="shortcut icon" href="favicon.png" type="image/png">*}
 
 {*<link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
@@ -8,18 +8,18 @@
 <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">*}
 {*<link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">*}
 
-<link rel="apple-touch-icon" href="{dirname($_SERVER['SCRIPT_NAME'])}/apple-icon-120x120.png">
-<link rel="apple-touch-icon" sizes="152x152" href="{dirname($_SERVER['SCRIPT_NAME'])}/apple-icon-152x152.png">
-<link rel="apple-touch-icon" sizes="180x180" href="{dirname($_SERVER['SCRIPT_NAME'])}/apple-icon-180x180.png">
+<link rel="apple-touch-icon" href="{$applicationDir}apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="152x152" href="{$applicationDir}apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="{$applicationDir}apple-icon-180x180.png">
 {* chybi 167x167*}
 
-<link rel="icon" type="image/png" sizes="16x16" href="{dirname($_SERVER['SCRIPT_NAME'])}/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="{dirname($_SERVER['SCRIPT_NAME'])}/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="96x96" href="{dirname($_SERVER['SCRIPT_NAME'])}/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="{$applicationDir}favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="{$applicationDir}favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="{$applicationDir}favicon-96x96.png">
 
-<link rel="icon" type="image/png" sizes="192x192"  href="{dirname($_SERVER['SCRIPT_NAME'])}/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="{$applicationDir}android-icon-192x192.png">
 
-<link rel="manifest" href="{dirname($_SERVER['SCRIPT_NAME'])}/manifest.json" crossorigin="use-credentials">{* for staging server that uses basic HTTP authentication to restrict access: crossOrigin="use-credentials" to allow the manifest fetch to use the previous authentication *}
+<link rel="manifest" href="{$applicationDir}manifest.json" crossorigin="use-credentials">{* for staging server that uses basic HTTP authentication to restrict access: crossOrigin="use-credentials" to allow the manifest fetch to use the previous authentication *}
 {*<meta name="msapplication-TileColor" content="#ffffff">*}
-<meta name="msapplication-TileImage" content="{dirname($_SERVER['SCRIPT_NAME'])}/ms-icon-144x144.png">
+<meta name="msapplication-TileImage" content="{$applicationDir}ms-icon-144x144.png">
 {*<meta name="theme-color" content="#ffffff">*}

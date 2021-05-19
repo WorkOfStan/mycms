@@ -184,11 +184,28 @@ details.product-linked-content footer a{
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.input-group-inline { /* TODO is this F code needed? */
+    display: inline-block;
+    position: relative;
+    top: 5px; 
+}
+#file-rename-fieldset { /* TODO is this F code needed? */
+    top: 2px;
+    width: initial;
+}
+#file-rename-folder { /* TODO is this F code needed? */
+    position: relative;
+    top: 10px;
+    width: initial;
+}
 #agenda-translations table td, #agenda-translations table th{
     padding: .25rem;
 }
 #agenda-translations table td label {
     margin-bottom: 0;
+}
+.uploaded-files #rename-fieldset { /* TODO is this F code needed? */
+    top: 10px;
 }
 .media-ops {
     margin-top: 1em;

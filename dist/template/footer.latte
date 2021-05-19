@@ -2,18 +2,18 @@
     <div class="footer__nav">
         <div class="container">
             <ul>
-                <li><a href="?page=unsubscribe">{="Unsubscribe from newsletter"|translate}</a></li>
-                <li><a href="?page=contact">{="Contacts"|translate}</a></li>
+                <li><a href="{$applicationDir}?page=unsubscribe">{="Unsubscribe from newsletter"|translate}</a></li>
+                <li><a href="{$applicationDir}?page=contact">{="Contacts"|translate}</a></li>
             </ul>
         </div>
     </div>
 
     <div class="footer__main">
         <div class="container">
-            <form method="POST" action="{dirname($_SERVER['SCRIPT_NAME'])}">
+            <form method="POST" action="{$applicationDir}">
                 {*<label for="newsletter-email"><i class="icon-newsletter"></i></label>*}
                 <h2><label for="newsletter-email">{="Subscribe to our Newsletter by email."|translate}</label></h2>
-                <input type="email" name="newsletter" id="newsletter-email" placeholder="{="Enter Your email here"|translate}" required>
+                <input type="email" name="newsletter" id="newsletter-email" placeholder="{="Zde uveďte Vaši e-mailovou adresu"|translate}" required>
                 <input type="hidden" name="token" value="{$token}">
                 <div class="submit-form">
                     <span><span>{="By subscribing you agree to our handling of your {personal data}."|translate|replace:'{':'<a href="?page=personal-data" target="_blank">'|replace:'}':'</a>'|noescape}</span></span>
@@ -30,12 +30,12 @@
             <div class="footer__links">
                 <h3>MYCMSPROJECTSPECIFIC footer h3</h3>
                 <ul>
-                    <li><a href="?category&amp;code=references">{="Reference"|translate}</a></li>
+                    <li><a href="{$applicationDirLanguage}?category&amp;code=references">{="Reference"|translate}</a></li>
                         {if $development}
-                        <li><a href="?article&amp;code=sitemap">{="Mapa stránek"|translate}</a></li>
+                        <li><a href="{$applicationDirLanguage}?article&amp;code=sitemap">{="Mapa stránek"|translate}</a></li>
                         {/if}
-                    <li><a href="?article&amp;code=terms">{="Pravidla pro užívání portálu"|translate}</a></li>
-                    <li><a href="?category&amp;code=contacts">{="Kontakty"|translate}</a></li>
+                    <li><a href="{$applicationDirLanguage}?article&amp;code=terms">{="Pravidla pro užívání portálu"|translate}</a></li>
+                    <li><a href="{$applicationDirLanguage}?category&amp;code=contacts">{="Kontakty"|translate}</a></li>
                 </ul>
             </div>
 

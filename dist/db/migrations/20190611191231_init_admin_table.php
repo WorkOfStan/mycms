@@ -1,11 +1,13 @@
 <?php
 
-
 use Phinx\Migration\AbstractMigration;
 
 class InitAdminTable extends AbstractMigration
 {
+
     /**
+     * Creates MyCMS administrators table with one default admin
+     *
      * Change Method.
      *
      * Write your reversible migrations using this method.
@@ -25,32 +27,31 @@ class InitAdminTable extends AbstractMigration
      *
      * Remember to call "create()" or "update()" and NOT "save()" when working
      * with the Table class.
+     *
+     * @return void
      */
     public function change()
     {
-        
-        $dump1 = <<<'MYSQLDUMP'
-SET NAMES utf8;
-SET time_zone = '+00:00';
-SET foreign_key_checks = 0;
-SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
+        $admin = $this->table('admin');
+        $admin
+            ->addColumn('admin', 'string', ['limit' => 50, 'comment' => 'Admin username', 'null' => false])
+            ->addIndex(['admin'], ['unique' => true])
+            ->addColumn('salt', 'biginteger', ['signed' => false, 'comment' => 'Security salt', 'null' => false])
+            ->addColumn('password_hashed', 'string', ['limit' => 40, 'comment' => 'Hashed password', 'null' => false])
+            ->addColumn('rights', 'integer', ['comment' => 'Permission group', 'null' => false])
+            ->addColumn('active', 'boolean', ['comment' => '0=inactive, 1=active', 'null' => false, 'default' => 1])
+            ->create();
 
-CREATE TABLE `MYCMSPROJECTSPECIFIC_admin` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `admin` varchar(50) NOT NULL,
-  `salt` bigint(20) unsigned NOT NULL,
-  `password_hashed` varchar(40) NOT NULL,
-  `rights` int(11) NOT NULL,
-  `active` enum('0','1') NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`admin`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+        $singleRow = [
+            'id' => 1,
+            'admin' => 'john',
+            'salt' => 141327478,
+            'password_hashed' => '0a9a3657709db688184b9eae1b86f3466775357a',
+            'rights' => 2,
+            'active' => '1',
+        ];
 
-INSERT INTO `MYCMSPROJECTSPECIFIC_admin` (`id`, `admin`, `salt`, `password_hashed`, `rights`, `active`) VALUES
-(1, 'john', 141327478, '0a9a3657709db688184b9eae1b86f3466775357a', 2, '1');
-MYSQLDUMP;
-
-        $this->execute($dump1);
-
+        $admin->insert($singleRow);
+        $admin->saveData();
     }
 }

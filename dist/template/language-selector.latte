@@ -1,11 +1,11 @@
 {* language-selector.latte requires $selectorId *}
 <div class="dropdown languageSelector">
     <a class="btn btn-secondary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink-{$selectorId}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{="Choose language"|translate}">
-        {$language == 'cs' ? 'CZ' : 'EN'} {* $translations[$language] *}
+        {$languageSelector[$language]}
     </a>
     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink-{$selectorId}" id="language_menu-{$selectorId}">
         {foreach $translations as $translation_key => $translation_value}
-            <a class="dropdown-item{if $language == $translation_key} active{/if}" href="{dirname($_SERVER['SCRIPT_NAME'])}/?language={$translation_key}">{$translation_value}</a>
+            <a class="dropdown-item{if $language == $translation_key} active{/if}" href="{$applicationDir}?language={$translation_key}">{$translation_value}</a>
         {/foreach}
     </div>
 </div>

@@ -1,7 +1,9 @@
-// scroll effects
-AOS.init();
+/* global $, AOS, FEATURE_FLAGS, ga, TOKEN */
 
-$(document).ready(function(){
+// scroll effects
+FEATURE_FLAGS['offline_dev'] || AOS.init();
+
+$(document).ready(function () {
     // carousel
     $('.owl-carousel').owlCarousel({
         items: 1,
@@ -12,12 +14,12 @@ $(document).ready(function(){
     });
 
     // menu
-    $('.hamburger').click(function(e) {
+    $('.hamburger').click(function () {
         $('.header').toggleClass('header--opened');
     });
 
     // language menu
-    $('#language-menu > a').on('click', function(event){
+    $('#language-menu > a').on('click', function (event) {
         event.preventDefault();
         if ($(this).hasClass('disabled')) {
             return false;
@@ -37,7 +39,7 @@ $(document).ready(function(){
             }
         });
     });
-    
+
     // header background
     $(window).scroll(() => {
         if ($(window).scrollTop() > 50) {
@@ -54,5 +56,5 @@ $(document).ready(function(){
         // TODO: test trigger Google Analytics event on search open
         ga('send', 'event', 'search', 'toggle');
     });
-    
+
 });

@@ -1,0 +1,18 @@
+# Taken from s project - TODO adapt do dist!
+
+# ignore SASS files, as it seems that stylelint is evaluating them the same way as CSS files resulting in e.g.
+# Expected single space before "{"                                                     block-opening-brace-space-before 
+# Expected a trailing semicolon                                                        declaration-block-trailing-semicolon
+styles/*.sass
+styles/components/*.sass
+
+# generated CSS
+/styles/index.css
+
+# 3rd party CSS
+scripts/lib/owlcarousel/assets/owl.*.css
+styles/bootstrap.css
+styles/bootstrap-datetimepicker.css
+styles/font-awesome.css
+styles/ie10-viewport-bug-workaround.css
+styles/summernote.css

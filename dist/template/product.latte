@@ -1,0 +1,12 @@
+{layout '@layout.latte'}
+{block content}
+<div class="container">
+    {ifset $product['title']}{var $product['title'] = $product['title']}{else}{var $product['title'] = 'Welcome to MyCMS product'}{/ifset}
+    {ifset $product['image']}{var $product['image'] = $product['image'] ?: 'assets/green-grass.jpg'}
+    <img src="{stripslashes($product['image'])|noescape}" alt="{$product['title']}" title="{$product['title']}" class="w-100" />{/ifset}
+</div>
+<div class="container content">
+    <h2 class="heading-main">{$product['title']}</h2>
+    {$product['description']|noescape}
+</div>
+{/block}

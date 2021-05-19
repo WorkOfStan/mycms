@@ -1,6 +1,10 @@
 <?php
+
+// MyCMS->getSessionLanguage expects $translation=
 $translation = [
-    'language:en' => 'english',
-    'language:cs' => 'česky',
     'Contact us' => 'Kontaktujte nás',
+    'Follow-us' => 'Sleduj nás',
+    'language:cs' => 'česky',
+    'language:en' => 'english',
+    'No results.' => 'Žádné výsledky.',
 ];
