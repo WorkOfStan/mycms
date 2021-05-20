@@ -7,6 +7,7 @@ use GodsDev\MyCMS\MyFriendlyUrl;
 use GodsDev\MyCMS\Tracy\BarPanelTemplate;
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
+use Tracy\ILogger;
 use Webmozart\Assert\Assert;
 
 /**
@@ -44,7 +45,7 @@ class MyController extends MyCommon
      * Friendly URL instance MAY be passsed from project Controller.
      * It is eventually instantiated in Controller in order to use project specific methods.
      *
-     * @var \GodsDev\MyCMS\MyFriendlyUrl
+     * @var MyFriendlyUrl
      */
     protected $friendlyUrl;
 
@@ -60,7 +61,7 @@ class MyController extends MyCommon
         $this->result = [
             'template' => self::TEMPLATE_DEFAULT,
             'context' => ($this->MyCMS->context ? $this->MyCMS->context : [
-            'pageTitle' => '',
+            'pageTitle' => '', // todo verify if it is used at output
             ])
         ];
         if (isset($this->friendlyUrl) && ($this->friendlyUrl instanceof MyFriendlyUrl)) {
@@ -87,6 +88,7 @@ class MyController extends MyCommon
      */
     public function controller()
     {
+        Debugger::log('Deprecated: controller. Use run instead.', ILogger::WARNING);
         return $this->result;
     }
 
