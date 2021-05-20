@@ -96,7 +96,8 @@ class MyController extends MyCommon
      */
     public function controller()
     {
-        $this->MyCMS->logger->warning('Deprecated method controller. Use method run instead. Called from ' . print_r(debug_backtrace()[1]['function'], true));
+        $this->MyCMS->logger->warning('Deprecated method controller. Use method run instead. Called from ' .
+            print_r(debug_backtrace()[1]['function'], true));
         return $this->result;
     }
 
