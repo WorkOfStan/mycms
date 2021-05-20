@@ -18,8 +18,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Security` in case of vulnerabilities
 
 ## [0.4.0] - 2021-05-21
+- Release v0.4.0 is expected to be mostly compatible with v0.3.15, but due to sheer volume of changes, let's not mark it as only a patch.
+- **Breaking change**: GodsDev\Backyard switched to WorkOfStan\Backyard - so either the namespace should be changed or original GodsDev\Backyard required instead as temporary fix.
+
 ### Added
-- notest branches ignored by GitHub actions (not to test partial online commits)
+- notest/* branches ignored by GitHub actions (not to test partial online commits)
 - Throwable/ThrowablePHPFunctions.php - replacement for PHP functions that returns false or null instead of the strict type. These functions throw an \Exception instead.
   - filemtime, glob, json_encode, mb_eregi_replace, preg_match, preg_replace
   - preg_replaceString accepts only string as $subject and returns only string (i.e. not string[])

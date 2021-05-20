@@ -10,7 +10,7 @@
     ],
     "require": {
         "php": "^5.6 || ^7.0",
-        "workofstan/mycms": "dev-feature/new-namespace",
+        "workofstan/mycms": "dev-main",
         "robmorgan/phinx": "^0.10.6|^0.12.3",
         "swiftmailer/swiftmailer": "^5.4|^6.2",
         "webmozart/assert": "^1.9.1",
