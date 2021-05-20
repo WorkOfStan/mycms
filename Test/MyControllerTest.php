@@ -33,6 +33,9 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
     {
         global $backyardConf;
         error_reporting(E_ALL); // incl E_NOTICE
+        if (!defined('DIR_TEMPLATE')) {
+            define('DIR_TEMPLATE', __DIR__ . '/../template'); // for Latte
+        }
         $backyard = new Backyard($backyardConf);
         $mycmsOptions = [
             'TRANSLATIONS' => [
