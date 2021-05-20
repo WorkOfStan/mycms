@@ -1,5 +1,11 @@
 <?php
 
+use GodsDev\mycmsprojectnamespace\Controller;
+use GodsDev\mycmsprojectnamespace\Latte\CustomFilters;
+use GodsDev\mycmsprojectnamespace\ProjectSpecific;
+use GodsDev\Tools\Tools;
+use Tracy\Debugger;
+
 require './set-environment.php';
 
 // TODO move class path to header as use statement for easy replacement in a project
@@ -26,11 +32,6 @@ if (isset($_POST) && is_array($_POST) && !empty($_POST)) {
 }
 $MyCMS->csrfStart();
 
-use GodsDev\mycmsprojectnamespace\Controller;
-use GodsDev\mycmsprojectnamespace\Latte\CustomFilters;
-use GodsDev\mycmsprojectnamespace\ProjectSpecific;
-use Tracy\Debugger;
-
 DEBUG_VERBOSE and Debugger::barDump($MyCMS, 'MyCMS before controller');
 $controller = new Controller($MyCMS, [
     'get' => Debugger::barDump(array_merge($_GET, $_POST), 'request'),
@@ -50,8 +51,6 @@ Debugger::barDump($controllerResult, 'ControllerResult', [Tracy\Dumper::DEPTH =>
 // texy initialization (@todo refactor) .. used in CustomFilters
 $Texy = null;
 ProjectSpecific::prepareTexy();
-
-use GodsDev\Tools\Tools;
 
 $customFilters = new CustomFilters($MyCMS);
 

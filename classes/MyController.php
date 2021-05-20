@@ -50,6 +50,13 @@ class MyController extends MyCommon
     protected $friendlyUrl;
 
     /**
+     * Whether Friendly URL is set and instanceof MyFriendlyUrl
+     *
+     * @var bool
+     */
+    protected $friendlyUrlInstantiated;
+
+    /**
      *
      * @param MyCMS $MyCMS
      * @param array<mixed> $options that overrides default values within constructor
@@ -64,7 +71,8 @@ class MyController extends MyCommon
             'pageTitle' => '', // todo verify if it is used at output
             ])
         ];
-        if (isset($this->friendlyUrl) && ($this->friendlyUrl instanceof MyFriendlyUrl)) {
+        $this->friendlyUrlInstantiated = isset($this->friendlyUrl) && ($this->friendlyUrl instanceof MyFriendlyUrl);
+        if ($this->friendlyUrlInstantiated) {
             if (substr($this->friendlyUrl->applicationDir, -1) === '/') {
                 throw new Exception('applicationDir MUST NOT end with slash');
             }
@@ -172,36 +180,45 @@ class MyController extends MyCommon
         Assert::isArray($this->result['context']);
         $this->MyCMS->context = $this->result['context'];
 
-        $options = ['REQUEST_URI' => $this->requestUri,];
+        $options = ['REQUEST_URI' => $this->requestUri];
 
         // prepare variables and set templates for each kind of request
-        // Note: $this->MyCMS->template = 'home'; already set in MyControler
-        $templateDetermined = $this->friendlyUrl->determineTemplate($options);
-        // so that the FriendlyURL translation to parametric URL is taken into account
-        $this->get = $this->friendlyUrl->getGet();
-        // Note: $_SESSION['language'] je potřeba, protože to nastavuje stav jazyka pro browser
-        // Note: $this->session je potřeba, protože je ekvivalentní proměnné $_SESSION,
-        // která je vstupem MyCMS->getSessionLanguage
-        // Note: $this->language je potřeba, protože nastavuje jazyk v rámci instance Controller
-        $this->session['language'] = $this->language = $this->friendlyUrl->getLanguage();
-        $_SESSION['language'] = $this->MyCMS->getSessionLanguage(
-            Tools::ifset($this->get, []),
-            Tools::ifset($this->session, []),
-            true // Language is finally determined, therefore make the include creating TRANSLATION
-        );
-        $this->MyCMS->context['applicationDirLanguage'] = $this->MyCMS->context['applicationDir']
+        if ($this->friendlyUrlInstantiated) {
+            // Note: $this->MyCMS->template = 'home'; already set in MyControler
+            $templateDetermined = $this->friendlyUrl->determineTemplate($options);
+            // so that the FriendlyURL translation to parametric URL is taken into account
+            $this->get = $this->friendlyUrl->getGet();
+            // Note: $_SESSION['language'] je potřeba, protože to nastavuje stav jazyka pro browser
+            // Note: $this->session je potřeba, protože je ekvivalentní proměnné $_SESSION,
+            // která je vstupem MyCMS->getSessionLanguage
+            // Note: $this->language je potřeba, protože nastavuje jazyk v rámci instance Controller
+            $this->session['language'] = $this->language = $this->friendlyUrl->getLanguage();
+            $_SESSION['language'] = $this->MyCMS->getSessionLanguage(
+                Tools::ifset($this->get, []),
+                Tools::ifset($this->session, []),
+                true // Language is finally determined, therefore make the include creating TRANSLATION
+            );
+            $this->MyCMS->context['applicationDirLanguage'] = $this->MyCMS->context['applicationDir']
             . (($_SESSION['language'] === DEFAULT_LANGUAGE) ? '' : ($_SESSION['language'] . '/'));
-        $this->MyCMS->logger->info("After determineTemplate: this->language={$this->language}, "
+            $this->MyCMS->logger->info("After determineTemplate: this->language={$this->language}, "
             . "this->session['language']={$this->session['language']}, _SESSION['language']={$_SESSION['language']} "
             . "this->get[language]=" . (isset($this->get['language']) ? $this->get['language'] : 'n/a'));
-        $this->verboseBarDump([
+            $this->verboseBarDump([
             'get' => $this->get,
-            'templateDetermined' => $templateDetermined, 'friendlyUrl->get' => $this->friendlyUrl->getGet()
+            'templateDetermined' => $templateDetermined,
+            'friendlyUrl->get' => $this->friendlyUrl->getGet()
             ], 'get in controller after determineTemplate');
-        if (is_string($templateDetermined)) {
-            $this->MyCMS->template = $templateDetermined;
-        } elseif (is_array($templateDetermined) && isset($templateDetermined['redir'])) {
-            $this->redir($templateDetermined['redir'], $templateDetermined['httpCode']);
+            if (is_string($templateDetermined)) {
+                $this->MyCMS->template = $templateDetermined;
+            } elseif (is_array($templateDetermined) && isset($templateDetermined['redir'])) {
+                $this->redir($templateDetermined['redir'], $templateDetermined['httpCode']);
+            }
+        } else {
+            $this->language = $_SESSION['language'] = $this->MyCMS->getSessionLanguage(
+                Tools::ifset($this->get, []),
+                Tools::ifset($this->session, []),
+                true // Language is finally determined, therefore make the include creating TRANSLATION
+            );
         }
 
         // PROJECT SPECIFIC CHANGE OF OPTIONS AFTER LANGUAGE IS DETERMINED
