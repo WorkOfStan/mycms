@@ -52,6 +52,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
                 DB_DATABASE,
                 $backyard->BackyardError
             ), //@todo - use test db instead. Or use other TAB_PREFIX !
+            'templateAssignementParametricRules' => [],
         ];
         $this->myCms = new MyCMSProject($mycmsOptions);
 
@@ -80,8 +81,8 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function testControllerNoContext()
     {
-        $this->object = new Controller($this->myCms, ['language' => $this->language]);
-        $controller = $this->object->controller();
+        $this->object = new Controller($this->myCms, ['language' => $this->language, 'httpMethod' => 'GET']);
+        $controller = $this->object->run();
         $this->assertArraySubset(['template' => 'home', 'context' => []], $controller);
     }
 
@@ -93,10 +94,10 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     public function testControllerContext()
     {
         $this->myCms->context = ['1' => '2', '3' => '4', 'c'];
-        $this->object = new Controller($this->myCms);
+        $this->object = new Controller($this->myCms, ['httpMethod' => 'GET']);
         $this->assertArraySubset(
             ['template' => 'home', 'context' => $this->myCms->context],
-            $this->object->controller()
+            $this->object->run()
         );
     }
 
@@ -111,8 +112,9 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             'get' => [
                 'about' => '',
             ],
+            'httpMethod' => 'GET',
         ]);
-        $controller = $this->object->controller();
+        $controller = $this->object->run();
         $this->assertArrayHasKey('template', $controller);
         $this->assertInternalType('string', $controller['template']);
         $this->assertEquals('home', $controller['template']);
