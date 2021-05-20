@@ -1,9 +1,7 @@
 <?php
 
-namespace GodsDev\mycmsprojectnamespace;
+namespace WorkOfStan\mycmsprojectnamespace;
 
-use GodsDev\MyCMS\MyCMS;
-use GodsDev\MyCMS\MyCommon;
 use Psr\Log\LoggerInterface;
 use Swift_SmtpTransport;
 use Swift_Mailer;
@@ -11,7 +9,13 @@ use Swift_Message;
 use Tracy\Debugger;
 //TODO check if beberlei/assert was successfully replaced by Webmozart, check 2 Assert::email below
 use Webmozart\Assert\Assert;
+use WorkOfStan\MyCMS\MyCMS;
+use WorkOfStan\MyCMS\MyCommon;
 
+/**
+ * Ready-made mail component
+ * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
+ */
 class Mail extends MyCommon
 {
     use \Nette\SmartObject;

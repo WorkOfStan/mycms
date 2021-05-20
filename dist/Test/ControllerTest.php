@@ -1,11 +1,11 @@
 <?php
 
-namespace GodsDev\mycmsprojectnamespace\Test;
+namespace WorkOfStan\mycmsprojectnamespace\Test;
 
 use WorkOfStan\Backyard\Backyard;
-use GodsDev\MyCMS\LogMysqli;
-use GodsDev\mycmsprojectnamespace\Controller;
-use GodsDev\mycmsprojectnamespace\MyCMSProject;
+use WorkOfStan\MyCMS\LogMysqli;
+use WorkOfStan\mycmsprojectnamespace\Controller;
+use WorkOfStan\mycmsprojectnamespace\MyCMSProject;
 use Tracy\Debugger;
 
 require_once __DIR__ . '/../conf/config.php';
@@ -75,7 +75,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\mycmsprojectnamespace\Controller::controller
+     * @covers WorkOfStan\mycmsprojectnamespace\Controller::controller
      *
      * @return void
      */
@@ -87,7 +87,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\mycmsprojectnamespace\Controller::controller
+     * @covers WorkOfStan\mycmsprojectnamespace\Controller::controller
      *
      * @return void
      */
@@ -102,7 +102,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\mycmsprojectnamespace\Controller::controller
+     * @covers WorkOfStan\mycmsprojectnamespace\Controller::controller
      *
      * @return void
      */
@@ -123,7 +123,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\mycmsprojectnamespace\Controller::getVars
+     * @covers WorkOfStan\mycmsprojectnamespace\Controller::getVars
      *
      * @return void
      */

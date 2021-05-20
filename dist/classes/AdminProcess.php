@@ -6,16 +6,20 @@
  * * TableAdmin.php
  */
 
-namespace GodsDev\mycmsprojectnamespace;
+namespace WorkOfStan\mycmsprojectnamespace;
 
-use GodsDev\MyCMS\MyAdminProcess;
-use GodsDev\mycmsprojectnamespace\TableAdmin;
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use Webmozart\Assert\Assert;
+use WorkOfStan\MyCMS\MyAdminProcess;
+use WorkOfStan\mycmsprojectnamespace\TableAdmin;
 
 define('PROCESS_LIMIT', 100); // used in self::getAgenda
 
+/**
+ * AJAX for Admin UI
+ * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
+ */
 class AdminProcess extends MyAdminProcess
 {
     use \Nette\SmartObject;

@@ -1,5 +1,5 @@
 {
-    "name": "godsdev/mycms",
+    "name": "workofstan/mycms",
     "description": "MyCMS - Brief MVC framework for interactive websites including general administration.",
     "type": "library",
     "require": {
@@ -35,13 +35,13 @@
     ],
     "support": {
         "email": "rejthar@stanislavrejthar.com",
-        "issues": "https://github.com/GodsDev/mycms/issues",
-        "source": "https://github.com/GodsDev/mycms"
+        "issues": "https://github.com/WorkOfStan/mycms/issues",
+        "source": "https://github.com/WorkOfStan/mycms"
     },
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
-            "GodsDev\\MyCMS\\": ["classes/"]
+            "WorkOfStan\\MyCMS\\": ["classes/"]
         },
         "files": [
             "classes/ThrowableFunctions/ThrowablePHPFunctions.php"
@@ -49,8 +49,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "GodsDev\\MyCMS\\Test\\": ["Test/"],
-            "GodsDev\\mycmsprojectnamespace\\": ["dist/classes/"]
+            "WorkOfStan\\MyCMS\\Test\\": ["Test/"],
+            "WorkOfStan\\mycmsprojectnamespace\\": ["dist/classes/"]
         }
     }
 }

@@ -9,12 +9,12 @@
 // The Composer auto-loader (official way to load Composer contents) to load external stuff automatically
 require_once __DIR__ . '/vendor/autoload.php';
 
-use WorkOfStan\Backyard\Backyard;
-use GodsDev\MyCMS\LogMysqli;
-use GodsDev\mycmsprojectnamespace\Init;
-use GodsDev\mycmsprojectnamespace\MyCMSProject;
 use Tracy\Debugger;
 use Webmozart\Assert\Assert;
+use WorkOfStan\Backyard\Backyard;
+use WorkOfStan\MyCMS\LogMysqli;
+use WorkOfStan\mycmsprojectnamespace\Init;
+use WorkOfStan\mycmsprojectnamespace\MyCMSProject;
 
 //Tracy is able to show Debug bar and Bluescreens for AJAX and redirected requests.
 //You just have to start session before Tracy

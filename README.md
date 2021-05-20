@@ -1,12 +1,12 @@
 # MyCMS
-[![Total Downloads](https://img.shields.io/packagist/dt/godsdev/mycms.svg)](https://packagist.org/packages/godsdev/mycms)
-[![Latest Stable Version](https://img.shields.io/packagist/v/godsdev/mycms.svg)](https://packagist.org/packages/godsdev/mycms)
-[![Lint Code Base](https://github.com/GodsDev/mycms/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/GodsDev/mycms/actions?query=workflow%3A%22Lint+Code+Base%22)
-[![PHP Composer + PHPUnit](https://github.com/GodsDev/mycms/workflows/PHP%20Composer%20+%20PHPUnit/badge.svg)](https://github.com/GodsDev/mycms/actions?query=workflow%3A%22PHP+Composer+%2B+PHPUnit%22)
+[![Total Downloads](https://img.shields.io/packagist/dt/workofstan/mycms.svg)](https://packagist.org/packages/workofstan/mycms)
+[![Latest Stable Version](https://img.shields.io/packagist/v/workofstan/mycms.svg)](https://packagist.org/packages/workofstan/mycms)
+[![Lint Code Base](https://github.com/WorkOfStan/mycms/actions/workflows/linter.yml/badge.svg)](https://github.com/WorkOfStan/mycms/actions/workflows/linter.yml)
+[![PHP Composer + PHPUnit + PHPStan](https://github.com/WorkOfStan/mycms/actions/workflows/php-composer-phpunit.yml/badge.svg)](https://github.com/WorkOfStan/mycms/actions/workflows/php-composer-phpunit.yml)
 
 Brief MVC framework for interactive websites including general administration.
 Works as a devstack which you install and then write your classes specific for the project.
-The boilerplate project is prepared in `dist` folder to be adapted as needed and it uses this `GodsDev\MyCMS` library out-of-the-box.
+The boilerplate project is prepared in `dist` folder to be adapted as needed and it uses this `WorkOfStan\MyCMS` library out-of-the-box.
 
 MyCMS is designed to be used with following technologies:
 - [jQuery](https://jquery.org/) and [Bootstrap (version 4)](https://getbootstrap.com/docs/4.0/components/): for presentation
@@ -20,23 +20,15 @@ MyCMS is designed to be used with following technologies:
 ## Installation
 Apache modules `mod_alias` (for hiding non-public files) and `mod_rewrite` (for friendly URL features) are expected.
 
-Require MyCMS in [`composer.json`](https://getcomposer.org/).
-```json
-{
-    ...
-    "required": {
-        "GodsDev/mycms": "^0.3.15" //or the latest version
-        ...
-    }
-}
+Once [composer](https://getcomposer.org/) is installed, execute the following command in your project root to install this library:
+```sh
+composer require workofstan/mycms:^0.4.0
 ```
-The `composer install` command will load the library's files into `./vendor/godsdev/mycms/`. The library's classes are in `./vendor/godsdev/mycms/classes/`
-and most of them use prefix `My`.
-
+Most of library's classes use prefix `My`.
 To customize the project, create your own classes as children inheriting MyCMS' classes in the `./classes/` directory and name them without the initial `My` in its name.  
 
 ```php
-$MyCMS = new \GodsDev\MyCMS\MyCMS(
+$MyCMS = new \WorkOfStan\MyCMS\MyCMS(
     [
         // compulsory
         'logger' => $logger, // object \Psr\Log\LoggerInterface
@@ -45,7 +37,7 @@ $MyCMS = new \GodsDev\MyCMS\MyCMS(
 );
 
 //Finish with Latte initialization & Mark-up output
-$MyCMS->renderLatte(DIR_TEMPLATE_CACHE, "\\GodsDev\\ProjectName\\Latte\\CustomFilters::common", $params);
+$MyCMS->renderLatte(DIR_TEMPLATE_CACHE, "\\vendor\\ProjectName\\Latte\\CustomFilters::common", $params);
 ```
 
 Files `process.php` and `admin-process.php` MUST exist and process forms.
@@ -173,7 +165,7 @@ Note that `dist` folder contains the starting MyCMS based project deployment and
 so for development, the environment has to be set up for `dist` as well.
 
 Note: running `vendor/bin/phpunit` from root will result in using MyCMS classes from the root Classes even from `mycms/dist/Test`.
-While running `vendor/bin/phpunit` from `dist` will result in using MyCMS classes from the `dist/vendor/godsdev/mycms/classes`.
+While running `vendor/bin/phpunit` from `dist` will result in using MyCMS classes from the `dist/vendor/workofstan/mycms/classes`.
 
 GitHub actions' version of PHPUnit uses config file [phpunit-github-actions.xml](phpunit-github-actions.xml) that ignores `Distribution Test Suite`
 because MySQLi environment isn't prepared (yet) and HTTP requests to self can't work in CLI only environment.

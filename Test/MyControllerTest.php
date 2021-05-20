@@ -1,10 +1,10 @@
 <?php
 
-namespace GodsDev\MyCMS\Test;
+namespace WorkOfStan\MyCMS\Test;
 
 use WorkOfStan\Backyard\Backyard;
-use GodsDev\MyCMS\MyCMS;
-use GodsDev\MyCMS\MyController;
+use WorkOfStan\MyCMS\MyCMS;
+use WorkOfStan\MyCMS\MyController;
 
 require_once __DIR__ . '/../conf/config.php';
 
@@ -60,7 +60,7 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MyCMS\MyController::controller
+     * @covers WorkOfStan\MyCMS\MyController::controller
      *
      * @return void
      */
@@ -74,7 +74,7 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MyCMS\MyController::controller
+     * @covers WorkOfStan\MyCMS\MyController::controller
      *
      * @return void
      */
@@ -86,7 +86,7 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MyCMS\MyController::getVars
+     * @covers WorkOfStan\MyCMS\MyController::getVars
      *
      * @return void
      */

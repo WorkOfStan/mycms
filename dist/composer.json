@@ -1,5 +1,5 @@
 {
-    "name": "godsdev/mycmsprojectnamespace",
+    "name": "workofstan/mycmsprojectnamespace",
     "description": "MYCMSPROJECTSPECIFIC xyz website 202x",
     "type": "project",
     "repositories": [
@@ -10,7 +10,7 @@
     ],
     "require": {
         "php": "^5.6 || ^7.0",
-        "godsdev/mycms": "dev-main",
+        "workofstan/mycms": "dev-feature/new-namespace",
         "robmorgan/phinx": "^0.10.6|^0.12.3",
         "swiftmailer/swiftmailer": "^5.4|^6.2",
         "webmozart/assert": "^1.9.1",
@@ -38,12 +38,12 @@
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
-            "GodsDev\\mycmsprojectnamespace\\": ["classes/"]
+            "WorkOfStan\\mycmsprojectnamespace\\": ["classes/"]
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "GodsDev\\mycmsprojectnamespace\\Test\\": ["Test/"]
+            "WorkOfStan\\mycmsprojectnamespace\\Test\\": ["Test/"]
         }
     }
 }

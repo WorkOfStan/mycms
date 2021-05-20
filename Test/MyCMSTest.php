@@ -1,9 +1,9 @@
 <?php
 
-namespace GodsDev\MyCMS\Test;
+namespace WorkOfStan\MyCMS\Test;
 
 use WorkOfStan\Backyard\Backyard;
-use GodsDev\MyCMS\MyCMS;
+use WorkOfStan\MyCMS\MyCMS;
 
 require_once __DIR__ . '/../conf/config.php';
 
@@ -48,7 +48,7 @@ class MyCMSTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MyCMS\MyCMS::getSessionLanguage
+     * @covers WorkOfStan\MyCMS\MyCMS::getSessionLanguage
      *
      * @return void
      */
@@ -77,7 +77,7 @@ class MyCMSTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MyCMS\MyCMS::getSessionLanguage
+     * @covers WorkOfStan\MyCMS\MyCMS::getSessionLanguage
      *
      * @return void
      */
@@ -116,7 +116,7 @@ class MyCMSTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MyCMS\MyCMS::fetchAndReindex
+     * @covers WorkOfStan\MyCMS\MyCMS::fetchAndReindex
      * @todo   Implement testFetchAndReindex().
      *
      * @return void
@@ -130,7 +130,7 @@ class MyCMSTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MyCMS\MyCMS::translate
+     * @covers WorkOfStan\MyCMS\MyCMS::translate
      * @todo   Implement testTranslate().
      *
      * @return void

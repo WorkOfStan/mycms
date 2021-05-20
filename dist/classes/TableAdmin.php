@@ -1,13 +1,17 @@
 <?php
 
-namespace GodsDev\mycmsprojectnamespace;
+namespace WorkOfStan\mycmsprojectnamespace;
 
-use GodsDev\MyCMS\LogMysqli;
-use GodsDev\MyCMS\MyTableAdmin;
 use GodsDev\Tools\Tools;
 use Symfony\Component\Yaml\Yaml;
 use Webmozart\Assert\Assert;
+use WorkOfStan\MyCMS\LogMysqli;
+use WorkOfStan\MyCMS\MyTableAdmin;
 
+/**
+ * Project specific adaptations of database tables in Admin UI
+ * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
+ */
 class TableAdmin extends MyTableAdmin
 {
     use \Nette\SmartObject;

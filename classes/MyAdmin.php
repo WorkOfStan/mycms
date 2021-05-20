@@ -1,15 +1,15 @@
 <?php
 
-namespace GodsDev\MyCMS;
+namespace WorkOfStan\MyCMS;
 
-use GodsDev\MyCMS\MyCMS;
-use GodsDev\MyCMS\Tracy\BarPanelTemplate;
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use Tracy\ILogger;
+use WorkOfStan\MyCMS\MyCMS;
+use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
 
-use function GodsDev\MyCMS\ThrowableFunctions\glob;
-use function GodsDev\MyCMS\ThrowableFunctions\preg_replaceString;
+use function WorkOfStan\MyCMS\ThrowableFunctions\glob;
+use function WorkOfStan\MyCMS\ThrowableFunctions\preg_replaceString;
 
 /**
  * Parent for deployed Admin instance

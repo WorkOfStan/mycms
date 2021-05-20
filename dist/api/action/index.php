@@ -23,7 +23,7 @@ if (
 
 require_once './../../prepare.php';
 
-use GodsDev\mycmsprojectnamespace\Controller;
+use WorkOfStan\mycmsprojectnamespace\Controller;
 use Tracy\Debugger;
 
 $backyard->Json->outputJSON('{"action":"3-' . $_SESSION['language'] . '"}', true); // terminates

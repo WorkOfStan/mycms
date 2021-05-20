@@ -61,7 +61,7 @@ $featureFlags = [
 //$debugIpArray[] = '192.168.1.145'; // add other IP addresses to see full errors
 
 // Example below for app entry page https://localhost:9090/mycmsprojectnamespace/
-// 'web_domain' for GodsDev\mycmsprojectnamespace\Test\FriendlyUrlTest::testPageStatusOverHttp without trailing `/`
+// 'web_domain' for WorkOfStan\mycmsprojectnamespace\Test\FriendlyUrlTest::testPageStatusOverHttp without trailing `/`
 $backyardConf['web_domain'] = 'https://localhost:9090';
-// 'web_path' for GodsDev\mycmsprojectnamespace\Test\FriendlyUrlTest::testPageStatusOverHttp including trailing `/`
+// 'web_path' for WorkOfStan\mycmsprojectnamespace\Test\FriendlyUrlTest::testPageStatusOverHttp including trailing `/`
 $backyardConf['web_path'] = '/mycmsprojectnamespace/';

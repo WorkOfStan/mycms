@@ -1,10 +1,10 @@
 <?php
 
-use GodsDev\mycmsprojectnamespace\Controller;
-use GodsDev\mycmsprojectnamespace\Latte\CustomFilters;
-use GodsDev\mycmsprojectnamespace\ProjectSpecific;
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
+use WorkOfStan\mycmsprojectnamespace\Controller;
+use WorkOfStan\mycmsprojectnamespace\Latte\CustomFilters;
+use WorkOfStan\mycmsprojectnamespace\ProjectSpecific;
 
 require './set-environment.php';
 

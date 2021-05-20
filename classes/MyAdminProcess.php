@@ -1,18 +1,18 @@
 <?php
 
-namespace GodsDev\MyCMS;
+namespace WorkOfStan\MyCMS;
 
 use GodsDev\Tools\Tools;
-use GodsDev\MyCMS\MyCommon;
-use GodsDev\MyCMS\MyTableAdmin;
-use GodsDev\MyCMS\Tracy\BarPanelTemplate;
 use Tracy\Debugger;
 use Tracy\ILogger;
 use Webmozart\Assert\Assert;
+use WorkOfStan\MyCMS\MyCommon;
+use WorkOfStan\MyCMS\MyTableAdmin;
+use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
 
-use function GodsDev\MyCMS\ThrowableFunctions\filemtime;
-use function GodsDev\MyCMS\ThrowableFunctions\glob;
-use function GodsDev\MyCMS\ThrowableFunctions\json_encode;
+use function WorkOfStan\MyCMS\ThrowableFunctions\filemtime;
+use function WorkOfStan\MyCMS\ThrowableFunctions\glob;
+use function WorkOfStan\MyCMS\ThrowableFunctions\json_encode;
 
 /**
  * Class to process standard operations in MyCMS

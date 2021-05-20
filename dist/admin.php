@@ -1,16 +1,17 @@
 <?php
 
-use GodsDev\mycmsprojectnamespace\Admin;
-use GodsDev\mycmsprojectnamespace\AdminProcess;
-use GodsDev\mycmsprojectnamespace\TableAdmin;
 use Tracy\Debugger;
+use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
+use WorkOfStan\mycmsprojectnamespace\Admin;
+use WorkOfStan\mycmsprojectnamespace\AdminProcess;
+use WorkOfStan\mycmsprojectnamespace\TableAdmin;
 
 // Admin
 require_once './set-environment.php';
 require_once './prepare.php';
 
 if (isset($_POST) && !empty($_POST)) {
-    Debugger::getBar()->addPanel(new \GodsDev\MyCMS\Tracy\BarPanelTemplate('HTTP POST', $_POST));
+    Debugger::getBar()->addPanel(new BarPanelTemplate('HTTP POST', $_POST));
 }
 
 //$AGENDAS is used in AdminProcess.php. If $_SESSION['language'] is used in it, set it after prepare.php,

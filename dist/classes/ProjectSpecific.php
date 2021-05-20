@@ -1,16 +1,17 @@
 <?php
 
-namespace GodsDev\mycmsprojectnamespace;
+namespace WorkOfStan\mycmsprojectnamespace;
 
 use Exception;
-use GodsDev\MyCMS\ProjectCommon;
 use GodsDev\Tools\Tools;
 use Webmozart\Assert\Assert;
+use WorkOfStan\MyCMS\ProjectCommon;
 
-//use function GodsDev\MyCMS\ThrowableFunctions\preg_replaceString;
+//use function WorkOfStan\MyCMS\ThrowableFunctions\preg_replaceString;
 
 /**
- * functions specific to the project
+ * Functions specific to the project (that are not in its own model)
+ * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
  */
 class ProjectSpecific extends ProjectCommon
 {
@@ -140,7 +141,7 @@ class ProjectSpecific extends ProjectCommon
                 . ' co.perex_' . $options['language'] . ' AS perex,'
                 . ' co.description_' . $options['language'] . ' AS description '
                 . ' FROM ' . TAB_PREFIX . 'content co LEFT JOIN ' . TAB_PREFIX . 'category ca ON co.category_id=ca.id '
-                // TODO Parameter #1 $string of method GodsDev\MyCMS\MyCMSMonoLingual::escapeSQL() expects string,
+                // TODO Parameter #1 $string of method WorkOfStan\MyCMS\MyCMSMonoLingual::escapeSQL() expects string,
                 //  string|null given.
                 . ' WHERE co.active="1"' . Tools::wrap($this->MyCMS->escapeSQL($code), ' AND co.code="', '"')
                 . Tools::wrap(intval($id), ' AND co.id=') . ' LIMIT 1');
@@ -189,7 +190,7 @@ class ProjectSpecific extends ProjectCommon
             . ' content_' . $options['language'] . ' AS description'
             . ' FROM ' . TAB_PREFIX . 'category WHERE active="1"'
             . Tools::wrap(
-                // TODO Parameter #1 $string of method GodsDev\MyCMS\MyCMSMonoLingual::escapeSQL() expects string,
+                // TODO Parameter #1 $string of method WorkOfStan\MyCMS\MyCMSMonoLingual::escapeSQL() expects string,
                 //  string|null given.
                 $this->MyCMS->escapeSQL($code),
                 ' AND code="',
@@ -312,11 +313,11 @@ class ProjectSpecific extends ProjectCommon
     }
     /**
      * If there is no function at all in this class, PHPSTAN would return errors that cannot be hidden:
-     * Class WorkOfStan\Stockpiler\ProjectSpecific extends unknown class GodsDev\MyCMS\ProjectCommon.
+     * Class WorkOfStan\Stockpiler\ProjectSpecific extends unknown class WorkOfStan\MyCMS\ProjectCommon.
      * Class WorkOfStan\Stockpiler\ProjectSpecific uses unknown trait Nette\SmartObject.
      *
      * If any function exists it returns an error that can be put in ignoreErrors section of phpstan.neon:
-     * Reflection error: GodsDev\MyCMS\ProjectCommon not found.
+     * Reflection error: WorkOfStan\MyCMS\ProjectCommon not found.
      *
      * TODO: consider PR for phpstan project
      *

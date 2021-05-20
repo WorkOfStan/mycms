@@ -1,10 +1,10 @@
 <?php
 
-namespace GodsDev\MyCMS;
+namespace WorkOfStan\MyCMS;
 
 use Exception;
 
-use function GodsDev\MyCMS\ThrowableFunctions\preg_replaceString;
+use function WorkOfStan\MyCMS\ThrowableFunctions\preg_replaceString;
 
 class ProjectCommon extends MyCommon
 {

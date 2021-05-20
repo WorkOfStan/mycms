@@ -1,11 +1,15 @@
 <?php
 
-namespace GodsDev\mycmsprojectnamespace;
+namespace WorkOfStan\mycmsprojectnamespace;
 
-use GodsDev\MyCMS\MyAdmin;
-use GodsDev\mycmsprojectnamespace\MyCMSProject;
 use GodsDev\Tools\Tools;
+use WorkOfStan\MyCMS\MyAdmin;
+use WorkOfStan\mycmsprojectnamespace\MyCMSProject;
 
+/**
+ * Admin UI
+ * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
+ */
 class Admin extends MyAdmin
 {
     use \Nette\SmartObject;

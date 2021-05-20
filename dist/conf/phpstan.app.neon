@@ -12,7 +12,7 @@ parameters:
         #  - ../vendor/doctrine
         #  - ../vendor/egulias
         #  - ../vendor/workofstan/backyard
-        #  - ../vendor/godsdev/mycms/dist
+        #  - ../vendor/workofstan/mycms/dist
         #  - ../vendor/godsdev/tools
         #  - ../vendor/latte
         #  - ../vendor/myclabs
@@ -124,5 +124,5 @@ parameters:
         path: ../process.php
       # This as property is defined in MyCMSProject extends MyCMS
       -
-        message: '#Access to an undefined property GodsDev\\MyCMS\\MyCMS::\$SETTINGS.#'
+        message: '#Access to an undefined property WorkOfStan\\MyCMS\\MyCMS::\$SETTINGS.#'
         path: ../classes/Admin.php

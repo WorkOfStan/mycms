@@ -5,9 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### TODO before release
-- change namespace to WorkOfStan/MyCMS
+### `Added` for new features
 
+### `Changed` for changes in existing functionality
+
+### `Deprecated` for soon-to-be removed features
+
+### `Removed` for now removed features
+
+### `Fixed` for any bug fixes
+
+### `Security` in case of vulnerabilities
+
+## [0.4.0] - 2021-05-21
 ### Added
 - notest branches ignored by GitHub actions (not to test partial online commits)
 - Throwable/ThrowablePHPFunctions.php - replacement for PHP functions that returns false or null instead of the strict type. These functions throw an \Exception instead.
@@ -44,8 +54,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - View: latte may use $applicationDirLanguage to keep the selected language folder
 - View: FEATURE_FLAGS are available now in javascript
 - class Mail incl. test UI: class Mail works both on PHP/5.6 (tested on 5.6.40-0+deb8u12) and PHP/7.x (tested on 7.3.27-1~deb10u1) with test page available at the third tab
+- Recommendation: if you change boilerplate classes, update also info `(Last MyCMS/dist revision: 2021-05-20, v0.4.0)`, so that it is more clear what to update in case of MyCMS core upgrade.
 
 ### Changed
+- **breaking change** namespace GodsDev\MyCMS to WorkOfStan\MyCMS
+- **breaking change** namespace GodsDev\mycmsprojectnamespace to WorkOfStan\mycmsprojectnamespace
 - WorkOfStan/MyCMS repository (TODO: change namespace)
 - Dist code: vast changes in order to have working application ready to install including data structure of pages and products including friendly URL routing in 4 languages (cs,de,en,fr) and redirector
 - MyFriendlyURL is a new routing part of Controller (of MVC) (Examples of behaviour explained in dist/README.md#seo are implemented in dist)
@@ -224,17 +237,10 @@ to
 - Basic functions
 - Basic structure
 
-## TODO - Add Types of changes
-- `Added` for new features.
-- `Changed` for changes in existing functionality.
-- `Deprecated` for soon-to-be removed features.
-- `Removed` for now removed features.
-- `Fixed` for any bug fixes.
-- `Security` in case of vulnerabilities.
 
 
-
-[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.3.15...HEAD
+[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/WorkOfStan/mycms/compare/v0.3.15...v0.4.0
 [0.3.15]: https://github.com/WorkOfStan/mycms/compare/v0.3.14...v0.3.15
 [0.3.14]: https://github.com/WorkOfStan/mycms/compare/v0.3.13...v0.3.14
 [0.3.13]: https://github.com/WorkOfStan/mycms/compare/v0.3.12...v0.3.13

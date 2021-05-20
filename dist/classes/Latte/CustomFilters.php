@@ -1,29 +1,30 @@
 <?php
 
-namespace GodsDev\mycmsprojectnamespace\Latte;
+namespace WorkOfStan\mycmsprojectnamespace\Latte;
 
 use GodsDev\Tools\Tools;
-//use GodsDev\mycmsprojectnamespace\ProjectSpecific;
-//use GodsDev\mycmsprojectnamespace\Template;
-use GodsDev\MyCMS\MyCMS;
 use Webmozart\Assert\Assert;
+//use WorkOfStan\mycmsprojectnamespace\ProjectSpecific;
+//use WorkOfStan\mycmsprojectnamespace\Template;
+use WorkOfStan\MyCMS\MyCMS;
 
 /**
  * Custom project-specific filters for Latte.
+ * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
  */
 class CustomFilters
 {
     use \Nette\SmartObject;
 
-    /** @var \GodsDev\MyCMS\MyCMS */
+    /** @var MyCMS */
     protected $MyCMS;
 
-    /** @var \GodsDev\mycmsprojectnamespace\ProjectSpecific */
+    /** @var ProjectSpecific */
 //    private $projectSpecific;
 
     /**
      *
-     * @param \GodsDev\MyCMS\MyCMS $MyCMS
+     * @param MyCMS $MyCMS
      */
     public function __construct(MyCMS $MyCMS)
     {

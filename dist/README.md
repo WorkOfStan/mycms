@@ -1,6 +1,6 @@
 # MYCMSPROJECTSPECIFIC
 XYZ web
-(Folder *dist* is an instant seed of new project.)
+(Folder *dist* is an instant seed of a new project.)
 
 ## Stack
 
@@ -64,6 +64,8 @@ define('UNDER_CONSTRUCTION', true);
 to `conf/config.local.php`.
 
 Best practice: Management often uses iPhone or Mac, therefore don't forget to test on Apple devices as well!
+
+Recommendation: if you change boilerplate classes, update also info `(Last MyCMS/dist revision: 2021-05-20, v0.4.0)`, so that it is more clear what to update in case of MyCMS core upgrade.
 
 ### Adding new type of content to be displayed
 | Add to this place | Why |
@@ -139,7 +141,7 @@ Given that
 | |  **`/alfa?product&id=2` redirects to `/?product&id=2`** |  **`/alfa?product&id=2` redirects to `/beta`** |
 | |  ProjectCommon->getLinkSql() generates link to `/?product&id=1` |  ProjectCommon->getLinkSql() generates link to `/alfa`  |
 
-Inner workings of friendly URL mechanism are described in [MyCMS/README.md](https://github.com/GodsDev/mycms#how-does-friendly-url-works-within-controller)
+Inner workings of friendly URL mechanism are described in [MyCMS/README.md](https://github.com/WorkOfStan/mycms#how-does-friendly-url-works-within-controller)
 
 TODO: make more clear
 * Tabulky `#_content`, `#_product` musí mít sloupce `url_##` (## = dvoumístný kód pro všechny jazykové verze).

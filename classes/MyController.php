@@ -1,13 +1,13 @@
 <?php
 
-namespace GodsDev\MyCMS;
+namespace WorkOfStan\MyCMS;
 
 use Exception;
-use GodsDev\MyCMS\MyFriendlyUrl;
-use GodsDev\MyCMS\Tracy\BarPanelTemplate;
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use Webmozart\Assert\Assert;
+use WorkOfStan\MyCMS\MyFriendlyUrl;
+use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
 
 /**
  * Controller ascertain what the request is

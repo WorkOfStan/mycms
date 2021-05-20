@@ -1,6 +1,6 @@
 <?php
 
-namespace GodsDev\MyCMS;
+namespace WorkOfStan\MyCMS;
 
 use GodsDev\Tools\Tools;
 use Webmozart\Assert\Assert;
@@ -601,7 +601,7 @@ class MyTableAdmin extends MyTableLister
                 }
             }
             $command = 'UPDATE';
-            // todo fix Parameter #1 $types of method GodsDev\MyCMS\MyTableLister::filterKeys() expects array, string given.
+            // todo fix Parameter #1 $types of method WorkOfStan\MyCMS\MyTableLister::filterKeys() expects array, string given.
             $unique = ($this->filterKeys(['PRI']) ?: $this->filterKeys(['UNI'])) ?: array_flip(array_keys($this->fields));
             foreach (array_keys($unique) as $key) {
                 $field = $this->fields[$key];
@@ -630,7 +630,7 @@ class MyTableAdmin extends MyTableLister
             }
         } else {
             Tools::addMessage('info', $this->translate('Nothing to save.'));
-            // todo ask CRS2  Method GodsDev\MyCMS\MyTableAdmin::recordSave() should return bool but returns int.
+            // todo ask CRS2  Method WorkOfStan\MyCMS\MyTableAdmin::recordSave() should return bool but returns int.
             return 0;
         }
     }
