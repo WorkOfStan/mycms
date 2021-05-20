@@ -7,7 +7,6 @@ use GodsDev\MyCMS\MyFriendlyUrl;
 use GodsDev\MyCMS\Tracy\BarPanelTemplate;
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
-use Tracy\ILogger;
 use Webmozart\Assert\Assert;
 
 /**
