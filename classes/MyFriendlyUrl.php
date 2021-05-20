@@ -1,6 +1,6 @@
 <?php
 
-namespace GodsDev\MyCMS;
+namespace WorkOfStan\MyCMS;
 
 use Exception;
 use GodsDev\Tools\Tools;

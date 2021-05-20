@@ -6,12 +6,12 @@
  *
  * Usage:
  * put such line into a file declaration ...
- * use function GodsDev\MyCMS\ThrowableFunctions\mb_eregi_replace;
+ * use function WorkOfStan\MyCMS\ThrowableFunctions\mb_eregi_replace;
  * ... and mb_eregi_replace will refer to this Throwable function, while
  * \mb_eregi_replace will refer to the PHP built-in function
  */
 
-namespace GodsDev\MyCMS\ThrowableFunctions;
+namespace WorkOfStan\MyCMS\ThrowableFunctions;
 
 use Exception;
 

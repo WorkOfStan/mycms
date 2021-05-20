@@ -1,12 +1,12 @@
 <?php
 
-namespace GodsDev\MyCMS;
+namespace WorkOfStan\MyCMS;
 
 use Exception;
-use GodsDev\MyCMS\LogMysqli;
-use GodsDev\MyCMS\Tracy\BarPanelTemplate;
 use Psr\Log\LoggerInterface;
 use Tracy\Debugger;
+use WorkOfStan\MyCMS\LogMysqli;
+use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
 
 /**
  * Class for a MyCMS object without translations.
@@ -41,7 +41,7 @@ class MyCMSMonoLingual
     public $context = [];
 
     /**
-     * Logger SHOULD by available to the application using mycms
+     * Logger SHOULD by available to the application using MyCMS
      * @var LoggerInterface
      */
     public $logger;
@@ -64,7 +64,8 @@ class MyCMSMonoLingual
             error_log("Error: MyCMS constructed without logger. (" . get_class($this->logger) . ")");
             throw new Exception('Fatal error - project is not configured.');
         }
-        if (is_object($this->dbms) && is_a($this->dbms, '\GodsDev\MyCMS\LogMysqli')) { // class MUST use long form here
+        // as a 2nd parameter of is_a class MUST use long form
+        if (is_object($this->dbms) && is_a($this->dbms, '\WorkOfStan\MyCMS\LogMysqli')) {
             $this->dbms->query('SET NAMES UTF8 COLLATE "utf8_general_ci"');
         } else {
             $this->logger->info("No database connection set!");
@@ -162,8 +163,8 @@ class MyCMSMonoLingual
         $Latte->setTempDirectory($dirTemplateCache);
         $Latte->addFilter(null, $customFilters);
         Debugger::barDump($params, 'Params');
-        Debugger::barDump($_SESSION, 'Session'); //mainly for  $_SESSION['language']
-        $Latte->render('template/' . $this->template . '.latte', $params); //@todo make it configurable
+        Debugger::barDump($_SESSION, 'Session'); // mainly for $_SESSION['language']
+        $Latte->render('template/' . $this->template . '.latte', $params); // @todo make it configurable
         unset($_SESSION['messages']);
         $this->dbms->showSqlBarPanel();
     }

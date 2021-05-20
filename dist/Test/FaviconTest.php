@@ -1,6 +1,6 @@
 <?php
 
-namespace GodsDev\mycmsprojectnamespace\Test;
+namespace WorkOfStan\mycmsprojectnamespace\Test;
 
 use WorkOfStan\Backyard\Backyard;
 use Tracy\Debugger;

@@ -1,6 +1,6 @@
 <?php
 
-namespace GodsDev\MyCMS\Tracy;
+namespace WorkOfStan\MyCMS\Tracy;
 
 use Tracy\IBarPanel;
 

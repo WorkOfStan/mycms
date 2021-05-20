@@ -1,6 +1,6 @@
 <?php
 
-namespace GodsDev\MyCMS;
+namespace WorkOfStan\MyCMS;
 
 /**
  * Extension of a MyCMS object with translations.

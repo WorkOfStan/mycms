@@ -1,11 +1,11 @@
 <?php
 
-namespace GodsDev\mycmsprojectnamespace\Test;
+namespace WorkOfStan\mycmsprojectnamespace\Test;
 
 use WorkOfStan\Backyard\Backyard;
-use GodsDev\MyCMS\LogMysqli;
-use GodsDev\mycmsprojectnamespace\FriendlyUrl;
-use GodsDev\mycmsprojectnamespace\MyCMSProject;
+use WorkOfStan\MyCMS\LogMysqli;
+use WorkOfStan\mycmsprojectnamespace\FriendlyUrl;
+use WorkOfStan\mycmsprojectnamespace\MyCMSProject;
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 
@@ -88,7 +88,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\mycmsprojectnamespace\Controller::controller
+     * @covers WorkOfStan\mycmsprojectnamespace\Controller::controller
      *
      * @return void
      */
@@ -305,7 +305,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\mycmsprojectnamespace\Controller::controller
+     * @covers WorkOfStan\mycmsprojectnamespace\Controller::controller
      *
      * @return void
      */
@@ -692,7 +692,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\mycmsprojectnamespace\FriendlyUrl::friendlyfyUrl
+     * @covers WorkOfStan\mycmsprojectnamespace\FriendlyUrl::friendlyfyUrl
      *
      * @return void
      */

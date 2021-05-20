@@ -1,13 +1,17 @@
 <?php
 
-namespace GodsDev\mycmsprojectnamespace;
+namespace WorkOfStan\mycmsprojectnamespace;
 
-use GodsDev\MyCMS\MyCMS;
-use GodsDev\MyCMS\MyFriendlyUrl;
-use GodsDev\mycmsprojectnamespace\ProjectSpecific;
 use Tracy\Debugger;
 use Tracy\ILogger;
+use WorkOfStan\MyCMS\MyCMS;
+use WorkOfStan\MyCMS\MyFriendlyUrl;
+use WorkOfStan\mycmsprojectnamespace\ProjectSpecific;
 
+/**
+ * Friendly URL set-up
+ * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
+ */
 class FriendlyUrl extends MyFriendlyUrl
 {
     use \Nette\SmartObject;

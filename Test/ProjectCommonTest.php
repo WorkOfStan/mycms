@@ -1,10 +1,10 @@
 <?php
 
-namespace GodsDev\MyCMS\Test;
+namespace WorkOfStan\MyCMS\Test;
 
 use WorkOfStan\Backyard\Backyard;
-use GodsDev\MyCMS\MyCMS;
-use GodsDev\MyCMS\ProjectCommon;
+use WorkOfStan\MyCMS\MyCMS;
+use WorkOfStan\MyCMS\ProjectCommon;
 use Tracy\Debugger;
 
 require_once __DIR__ . '/../conf/config.php';
@@ -61,7 +61,7 @@ class ProjectCommonTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MyCMS\ProjectCommon::dump
+     * @covers WorkOfStan\MyCMS\ProjectCommon::dump
      * @todo   Implement testDump().
      *
      * @return void
@@ -75,7 +75,7 @@ class ProjectCommonTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MyCMS\ProjectCommon::prepareTexy
+     * @covers WorkOfStan\MyCMS\ProjectCommon::prepareTexy
      * @todo   Implement testPrepareTexy().
      *
      * @return void
@@ -89,7 +89,7 @@ class ProjectCommonTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MyCMS\ProjectCommon::localDate
+     * @covers WorkOfStan\MyCMS\ProjectCommon::localDate
      * @todo   Implement testLocalDate().
      *
      * @return void
@@ -103,7 +103,7 @@ class ProjectCommonTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\MyCMS\ProjectCommon::correctLineBreak
+     * @covers WorkOfStan\MyCMS\ProjectCommon::correctLineBreak
      *
      * @return void
      */

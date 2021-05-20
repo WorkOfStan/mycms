@@ -1,17 +1,21 @@
 <?php
 
-namespace GodsDev\mycmsprojectnamespace;
+namespace WorkOfStan\mycmsprojectnamespace;
 
-use GodsDev\MyCMS\MyCMS;
-use GodsDev\MyCMS\MyController;
-use GodsDev\mycmsprojectnamespace\FriendlyUrl;
-use GodsDev\mycmsprojectnamespace\Mail;
-use GodsDev\mycmsprojectnamespace\ProjectSpecific;
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use Tracy\ILogger;
 use Webmozart\Assert\Assert;
+use WorkOfStan\MyCMS\MyCMS;
+use WorkOfStan\MyCMS\MyController;
+use WorkOfStan\mycmsprojectnamespace\FriendlyUrl;
+use WorkOfStan\mycmsprojectnamespace\Mail;
+use WorkOfStan\mycmsprojectnamespace\ProjectSpecific;
 
+/**
+ * Controller (of MVC)
+ * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
+ */
 class Controller extends MyController
 {
     use \Nette\SmartObject;

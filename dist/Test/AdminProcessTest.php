@@ -1,12 +1,12 @@
 <?php
 
-namespace GodsDev\mycmsprojectnamespace\Test;
+namespace WorkOfStan\mycmsprojectnamespace\Test;
 
 use WorkOfStan\Backyard\Backyard;
-use GodsDev\MyCMS\LogMysqli;
-use GodsDev\mycmsprojectnamespace\AdminProcess;
-use GodsDev\mycmsprojectnamespace\Init;
-use GodsDev\mycmsprojectnamespace\MyCMSProject;
+use WorkOfStan\MyCMS\LogMysqli;
+use WorkOfStan\mycmsprojectnamespace\AdminProcess;
+use WorkOfStan\mycmsprojectnamespace\Init;
+use WorkOfStan\mycmsprojectnamespace\MyCMSProject;
 use Tracy\Debugger;
 
 require_once __DIR__ . '/../conf/config.php';
@@ -87,7 +87,7 @@ class AdminProcessTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\mycmsprojectnamespace\AdminProcess::adminProcess
+     * @covers WorkOfStan\mycmsprojectnamespace\AdminProcess::adminProcess
      * @todo   Implement testAdminProcess().
      *
      * @return void
@@ -101,7 +101,7 @@ class AdminProcessTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\mycmsprojectnamespace\AdminProcess::getAgenda
+     * @covers WorkOfStan\mycmsprojectnamespace\AdminProcess::getAgenda
      * @todo Depends on the web structure
      *
      * @return void

@@ -1,13 +1,13 @@
 <?php
 
-namespace GodsDev\mycmsprojectnamespace;
+namespace WorkOfStan\mycmsprojectnamespace;
 
-use GodsDev\MyCMS\MyCMS;
+use WorkOfStan\MyCMS\MyCMS;
 
 /**
  * Class for a MyCMS object.
- * It holds all variables needed for the used project.
- * Among others, it translates multilingual texts.
+ * It holds all specific variables needed for this application.
+ * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
  */
 class MyCMSProject extends MyCMS
 {

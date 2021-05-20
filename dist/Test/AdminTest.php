@@ -1,12 +1,12 @@
 <?php
 
-namespace GodsDev\mycmsprojectnamespace\Test;
+namespace WorkOfStan\mycmsprojectnamespace\Test;
 
 use WorkOfStan\Backyard\Backyard;
-use GodsDev\MyCMS\LogMysqli;
-use GodsDev\mycmsprojectnamespace\Admin;
-use GodsDev\mycmsprojectnamespace\MyCMSProject;
-use GodsDev\mycmsprojectnamespace\TableAdmin;
+use WorkOfStan\MyCMS\LogMysqli;
+use WorkOfStan\mycmsprojectnamespace\Admin;
+use WorkOfStan\mycmsprojectnamespace\MyCMSProject;
+use WorkOfStan\mycmsprojectnamespace\TableAdmin;
 use Tracy\Debugger;
 
 require_once __DIR__ . '/../conf/config.php';
@@ -83,7 +83,7 @@ class AdminTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers GodsDev\mycmsprojectnamespace\Admin::outputAdmin
+     * @covers WorkOfStan\mycmsprojectnamespace\Admin::outputAdmin
      *
      * @return void
      */

@@ -1,13 +1,13 @@
 <?php
 
-namespace GodsDev\MyCMS;
+namespace WorkOfStan\MyCMS;
 
 use Exception;
-use WorkOfStan\Backyard\BackyardMysqli;
-use GodsDev\MyCMS\Tracy\BarPanelTemplate;
 use Tracy\Debugger;
+use WorkOfStan\Backyard\BackyardMysqli;
+use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
 
-use function GodsDev\MyCMS\ThrowableFunctions\mb_eregi_replace;
+use function WorkOfStan\MyCMS\ThrowableFunctions\mb_eregi_replace;
 
 /**
  * class with logging specific to this application

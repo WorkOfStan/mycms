@@ -1,10 +1,14 @@
 <?php
 
-namespace GodsDev\mycmsprojectnamespace;
+namespace WorkOfStan\mycmsprojectnamespace;
 
 use Symfony\Component\Yaml\Yaml;
 use Webmozart\Assert\Assert;
 
+/**
+ * Populating constants from phinx.yml
+ * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
+ */
 class Init
 {
     use \Nette\SmartObject;
