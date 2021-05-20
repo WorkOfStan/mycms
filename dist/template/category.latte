@@ -7,7 +7,7 @@
 </div>
 <div class="container content">
     <h2 class="heading-main">{$content['title']}</h2>
-    {$content['description']}
+    {$content['description']|noescape}<br>
     {ifset $content[category_id]}
         {include 'list.latte', paramName => 'product' , idGlue => '&id='}
     {else}

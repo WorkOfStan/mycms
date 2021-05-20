@@ -33,6 +33,9 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
     {
         global $backyardConf;
         error_reporting(E_ALL); // incl E_NOTICE
+        if (!defined('DIR_TEMPLATE')) {
+            define('DIR_TEMPLATE', __DIR__ . '/../dist/template'); // for Latte
+        }
         $backyard = new Backyard($backyardConf);
         $mycmsOptions = [
             'TRANSLATIONS' => [
@@ -67,7 +70,7 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['template' => 'home', 'context' => [
                 'pageTitle' => '',
 //                'applicationDir' => dirname($_SERVER['PHP_SELF']) . '/',
-            ]], $this->object->controller());
+            ]], $this->object->run());
     }
 
     /**
@@ -79,7 +82,7 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
     {
         $this->myCms->context = ['1' => '2', '3' => '4', 'c'];
         $this->object = new MyController($this->myCms);
-        $this->assertEquals(['template' => 'home', 'context' => $this->myCms->context], $this->object->controller());
+        $this->assertEquals(['template' => 'home', 'context' => $this->myCms->context], $this->object->run());
     }
 
     /**

@@ -77,7 +77,8 @@ class MyCMS extends MyCMSMonoLingual
             if (!file_exists($languageFile)) {
                 throw new \Exception("Missing expected language file {$languageFile}");
             }
-            include_once $languageFile; //MUST contain $translation = [...];
+            // include (as include_once triggers error in PHPUnit tests because of attempted repeated includes)
+            include $languageFile; // MUST contain $translation = [...];
             // TODO instead of PHP file with array $translation, let's put localized texts into yaml.
             /** @phpstan-ignore-next-line */
             if (!(isset($translation) && is_array($translation))) {
