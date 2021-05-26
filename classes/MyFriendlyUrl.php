@@ -252,7 +252,7 @@ class MyFriendlyUrl extends MyCommon
     {
         //template assigned based on 'templateAssignementParametricRules' and id/code presence checked
         foreach ($this->MyCMS->templateAssignementParametricRules as $getParam => $assignement) {
-            if (!isset($this->get[$getParam])) { // skip irrelevant rules
+            if (!isset($this->get[$getParam]) && !isset($this->get[$getParam . '/'])) { // skip irrelevant rules
                 continue;
             }
             $this->MyCMS->logger->info(print_r(
