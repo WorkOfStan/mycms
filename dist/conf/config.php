@@ -71,6 +71,9 @@ $myCmsConf = [
     'WEBSITE' => [], // this will be filled with $WEBSITE['cs'] or $WEBSITE['en'] according to the current language
     /**
      * RULES for switchParametric are configured in 'templateAssignementParametricRules': map GET parameters to template
+     * (Note: 'param' also catches 'param/', so that if server configuration 301 /api/item?id=14 => /api/item/?id=14 ,
+     * the request still is assigned the same template.)
+     *
      * Handles not only param=value but also param&id=value or param&code=value
      * (Note: code value can't be numeric as it would be treated only as id.)
      * (int) id or (string) code are taken into account only if 'idcode' subfield of templateAssignementParametricRules

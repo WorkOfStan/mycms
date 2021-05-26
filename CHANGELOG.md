@@ -6,12 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### `Added` for new features
-- dist HTTP POST BarPanel for Tracy (both web and admin)
 
 ### `Changed` for changes in existing functionality
-- api/noun (api/noun/) construct is used instead of separate code in api/noun folders (therefore also sql logs are created in a stadard folder e.g. log/sql*.log.sql instead of within api/apiName/log/sql*.log.sql)
-- dist notest/* branch doesn't trigger GitHub Action tests
-- dist/process.php $_POST['newsletter'] related process uses new $sessionWriteClose parameter 3 of method Tools::redir, that turns off `session_write_close();` so that e.g. Tracy gets info about redirect.
 
 ### `Deprecated` for soon-to-be removed features
 
@@ -20,6 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Fixed` for any bug fixes
 
 ### `Security` in case of vulnerabilities
+
+## [0.4.1] - 2021-05-26
+### `Added`
+- dist HTTP POST BarPanel for Tracy (both web and admin)
+
+### `Changed`
+- api/noun (api/noun/) construct is used instead of separate code in api/noun folders (therefore also sql logs are created in a stadard folder e.g. log/sql*.log.sql instead of within api/apiName/log/sql*.log.sql)
+- dist notest/* branch doesn't trigger GitHub Action tests
+- dist/process.php $_POST['newsletter'] related process uses new $sessionWriteClose parameter 3 of method Tools::redir, that turns off `session_write_close();` so that e.g. Tracy gets info about redirect.
 
 ## [0.4.0] - 2021-05-21
 - Release v0.4.0 is expected to be mostly compatible with v0.3.15, but due to sheer volume of changes, let's not mark it as only a patch.
@@ -246,7 +251,8 @@ to
 
 
 
-[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/WorkOfStan/mycms/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/WorkOfStan/mycms/compare/v0.3.15...v0.4.0
 [0.3.15]: https://github.com/WorkOfStan/mycms/compare/v0.3.14...v0.3.15
 [0.3.14]: https://github.com/WorkOfStan/mycms/compare/v0.3.13...v0.3.14
