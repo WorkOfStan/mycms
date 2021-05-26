@@ -17,7 +17,7 @@ use WorkOfStan\mycmsprojectnamespace\TableAdmin;
 define('PROCESS_LIMIT', 100); // used in self::getAgenda
 
 /**
- * AJAX for Admin UI
+ * AJAX and form handling for Admin UI
  * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
  */
 class AdminProcess extends MyAdminProcess
@@ -76,7 +76,7 @@ class AdminProcess extends MyAdminProcess
                 'data' => Tools::webalize($post['webalize']),
                 'success' => true
             ];
-            $this->exitJson($result);
+            $this->exitJson($result); // terminates
         }
         // further commands require token
         if (!isset($post['token']) || !$this->MyCMS->csrfCheck($post['token'])) {
@@ -204,7 +204,7 @@ class AdminProcess extends MyAdminProcess
             } else {
                 //Tools::addMessage('info', $this->tableAdmin->translate('Nothing to change.'));
             }
-            $this->redir(); // this method terminates
+            $this->redir(); // terminates
         }
         // loggin admin out
         $this->processLogout($post);

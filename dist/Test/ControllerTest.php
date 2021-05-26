@@ -2,25 +2,21 @@
 
 namespace WorkOfStan\mycmsprojectnamespace\Test;
 
+use Tracy\Debugger;
 use WorkOfStan\Backyard\Backyard;
 use WorkOfStan\MyCMS\LogMysqli;
 use WorkOfStan\mycmsprojectnamespace\Controller;
 use WorkOfStan\mycmsprojectnamespace\MyCMSProject;
-use Tracy\Debugger;
 
 require_once __DIR__ . '/../conf/config.php';
 
 class ControllerTest extends \PHPUnit_Framework_TestCase
 {
 
-    /**
-     * @var MyCMSProject
-     */
+    /** @var MyCMSProject */
     protected $myCms;
 
-    /**
-     * @var Controller
-     */
+    /** @var Controller */
     protected $object;
 
     /** @var string */

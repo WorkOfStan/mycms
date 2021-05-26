@@ -82,6 +82,7 @@ $myCmsConf = [
      * 'portfolio' => ['template' => 'portfolio'],
      */
     'templateAssignementParametricRules' => [
+        // TODO add api/examples
         'article' => ['template' => 'article', 'idcode' => true], // general articles
         'category' => ['template' => 'category'], // categories of products
         'item-1' => ['template' => 'item-1'], // custom template
@@ -90,7 +91,7 @@ $myCmsConf = [
         'item-4' => ['template' => 'item-4'], // custom template
         'product' => ['template' => 'product', 'idcode' => true], // products
     ],
-    // FriendlyUrl::findFriendlyUrlToken maps content types to database tables where they are stored
+    // FriendlyUrl::findFriendlyUrlToken maps content types with url_XX tokens to database tables where they are stored
     'typeToTableMapping' => [
         'article' => 'content',
         'category' => 'category',

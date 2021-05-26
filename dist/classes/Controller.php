@@ -106,8 +106,8 @@ class Controller extends MyController
             ['template' => $this->MyCMS->template, 'language' => $this->language],
             'template used to prepareTemplate switch'
         );
-        Assert::inArray($this->httpMethod, ['GET', 'POST',], 'Unauthorized HTTP method %s');
-        Debugger::barDump($requestMethod = $this->httpMethod, 'REQUEST_METHOD');
+        Assert::inArray($this->httpMethod, ['GET', 'POST', 'DELETE'], 'Unauthorized HTTP method %s');
+        Debugger::barDump($this->httpMethod, 'REQUEST_METHOD');
         // language is already properly set, so set it to ProjectSpecific object
         $this->projectSpecific = new ProjectSpecific($this->MyCMS, ['language' => $this->language]);
         switch ($this->MyCMS->template) {
@@ -261,7 +261,7 @@ class Controller extends MyController
                     $this->MyCMS->context['pageTitle'] = $this->MyCMS->context['product']['title'];
                 }
                 return true;
-            case 'search-results': //search _GET[search] contains the search phrase
+            case 'search-results': //search _GET[search] contains the search phrase // TODO make search work
                 $this->MyCMS->context['limit'] = PAGINATION_LIMIT;
                 $this->MyCMS->context['offset'] = isset($this->get['offset']) ? filter_var(
                     $this->get['offset'],

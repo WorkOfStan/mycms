@@ -28,6 +28,8 @@ in the `/etc/apache2/apache2.conf`, there has to be this setting:
         Options FollowSymLinks # not! Options Indexes FollowSymLinks which allows directory browsing
 ```
 
+- jquery.sha1.js hashes the login password before being POSTed to server
+
 ## Content
 
 ## Web analytics
@@ -85,7 +87,7 @@ For this deployment scenarion only (because otherwise it would be a vulnerabilit
 
 
 ### `build.sh` runs the following commands
-1. `composer update`
+1. `composer update -a`
 2. Note: All changes in database (structure) SHOULD be made by phinx migrations. Create your local `phinx.yml` as a copy of `phinx.dist.yml` to make it work, where you set your database connection into *development* section.
 ```bash
 vendor/bin/phinx migrate -e development # or production or testing
@@ -314,6 +316,16 @@ Note phpunit is only require-dev, so `webmozart/assert` MUST be required in the 
 
 Note: `header("Content-type: application/json");` in outputJSON hides Tracy
 
+That's how it works and how to set an API:
+- It is possible to combine api/noun constructs (conf/config) and api/noun/ folders (e.g. api/dummy - for this, there are exceptions in phpstan.neon.dist)
+- scripts/index.js: `let API_BASE_DIR = API_BASE + 'api/';` to which folder API calls are targeted
+- .htaccess contains api in `RewriteRule ^(de|en|zh)/(api|assets|favicon.ico|fonts|images|scripts|styles)(.*)$ $2$3 [L,QSA]` in order to use api/ even in e.g. de/ context (and not de/api/)
+- SET TEMPLATE FOR EACH API: conf/config.php $myCmsConf['templateAssignementParametricRules'][] = ['api/amount' => ['template' => 'apiAmount']; etc. sets in which template the API call should be terminated
+- index.php $controller = new Controller($MyCMS, ['requestUri'] => preg_replace necessary for FriendlyURL feature: /api/item?id=14 => ?api-item&id=14
+- EACH API TEMPLATE MUST CREATE JSON FIELD: Controller::prepareTemplate creates ['context']['json'] as array to be returned as json by an API
+- index.php: if (array_key_exists('json', $MyCMS->context)) $MyCMS->renderJson
+- MyCMSProject::renderJson renders JSON for an API
+
 ## Coding style and linting
 
 GitHub Actions run PHPSTAN to identify errors
@@ -322,7 +334,6 @@ GitHub Actions run PHPSTAN to identify errors
 * and where to look for present classes (scanDirectories), hence following files:
 * `phpstan.neon.dist` - for PHPSTAN of this app (dist folder)
 * `conf/phpstan.app.neon` - both for this app and mycms library test
-* `conf/phpstan.common.neon` - both for this app and mycms library test
 * Note: when code becomes stable, change VALIDATE_ALL_CODEBASE to `false`
 
 * TODO: .eslintrc.yml and dist/.eslintrc.yml - keep or delete?
@@ -358,8 +369,10 @@ When changing index.css, index.js or admin.js, update `PAGE_RESOURCE_VERSION` in
 Third tab is `Email test` and if sending emails isn't forbidden by `define('MAIL_SENDING_ACTIVE', false);` in `config.local.php`
 it tries to send a test email to `EMAIL_ADMIN`. One try allowed in 23 hours (as a simple measure against SPAM).
 
-## Security
-- jquery.sha1.js hashes the login password before being POSTed to server
+## Development
+Use $featureFlags in `conf/config.php` to convey the default status of a feature for production,
+while in `conf/config.local.php` the flag can be turned on/off as needed on any particular environment.
+Feature flag is propagated to Class Admin, Controller, to JS and to Latte.
 
 ## TROUBLESHOOTING
 

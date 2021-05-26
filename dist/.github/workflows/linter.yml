@@ -16,8 +16,8 @@ name: Lint Code Base
 on:
   push:
     branches-ignore:
-      - 'master'
-      - 'main'
+      # notest branches to ignore testing of partial online commits
+      - 'notest/**'
 
 ###############
 # Set the Job #
@@ -55,5 +55,5 @@ jobs:
           VALIDATE_ANSIBLE: false
           VALIDATE_CSS: false
           # PHPStan run in matrix strategy in php-composer-phpunit.yml
-          #TODO: VALIDATE_PHP_PHPSTAN: false
+          VALIDATE_PHP_PHPSTAN: false
           VALIDATE_PHP_PSALM: false
