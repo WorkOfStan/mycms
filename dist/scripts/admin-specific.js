@@ -109,7 +109,7 @@ $(document).ready(function(){
             type: 'POST'
         }).always(function (data) {
             location.reload();
-        })
+        });
     });
     // product up/down
     $('#agenda-products button.product-switch').on('click', function(event) {
@@ -125,6 +125,6 @@ $(document).ready(function(){
             type: 'POST'
         }).always(function (data) {
             location.reload();
-        })
+        });
     });
 });

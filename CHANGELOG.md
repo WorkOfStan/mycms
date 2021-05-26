@@ -6,8 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### `Added` for new features
+- dist HTTP POST BarPanel for Tracy (both web and admin)
 
 ### `Changed` for changes in existing functionality
+- api/noun (api/noun/) construct is used instead of separate code in api/noun folders (therefore also sql logs are created in a stadard folder e.g. log/sql*.log.sql instead of within api/apiName/log/sql*.log.sql)
+- dist notest/* branch doesn't trigger GitHub Action tests
+- dist/process.php $_POST['newsletter'] related process uses new $sessionWriteClose parameter 3 of method Tools::redir, that turns off `session_write_close();` so that e.g. Tracy gets info about redirect.
 
 ### `Deprecated` for soon-to-be removed features
 
@@ -62,7 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **breaking change** namespace GodsDev\MyCMS to WorkOfStan\MyCMS
 - **breaking change** namespace GodsDev\mycmsprojectnamespace to WorkOfStan\mycmsprojectnamespace
-- WorkOfStan/MyCMS repository (TODO: change namespace)
+- WorkOfStan/MyCMS repository instead of GodsDev\MyCMS repository
 - Dist code: vast changes in order to have working application ready to install including data structure of pages and products including friendly URL routing in 4 languages (cs,de,en,fr) and redirector
 - MyFriendlyURL is a new routing part of Controller (of MVC) (Examples of behaviour explained in dist/README.md#seo are implemented in dist)
 - Controller is set by Controller::prepareTemplate a Controller::prepareTemplateAll and called by MyController::run (instead of MyController::controller, which still remains for backward compatibility)

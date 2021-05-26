@@ -168,7 +168,7 @@ function agendaRow(data, index, options) {
 }
 
 function updateImageSelector(ImageFolder, ImageFiles) {
-    console.log('updateImageSelector', ImageFolder, ImageFiles);
+    //console.log('updateImageSelector', ImageFolder, ImageFiles);
     $(ImageFiles).html('<img src="images/loader.gif" />'); // or <i class="fas fa-spinner fa-spin"></i>
     $.ajax({
         url: '?keep-token',
@@ -369,7 +369,7 @@ function standardDocumentReady() {
     $('#go-to-page').on('click', function () {
         let page = prompt('Stránka:');
         if (!isNaN(page) && page > 0 && page < $(this).data('pages')) {
-            console.log('@todo go to page: ' + page);//...
+            //TODO debug//console.log('@todo go to page: ' + page);//...
         }
     });
     //date/time picker

@@ -2,26 +2,22 @@
 
 namespace WorkOfStan\mycmsprojectnamespace\Test;
 
+use Tracy\Debugger;
 use WorkOfStan\Backyard\Backyard;
 use WorkOfStan\MyCMS\LogMysqli;
 use WorkOfStan\mycmsprojectnamespace\Admin;
 use WorkOfStan\mycmsprojectnamespace\MyCMSProject;
 use WorkOfStan\mycmsprojectnamespace\TableAdmin;
-use Tracy\Debugger;
 
 require_once __DIR__ . '/../conf/config.php';
 
 class AdminTest extends \PHPUnit_Framework_TestCase
 {
 
-    /**
-     * @var MyCMSProject
-     */
+    /** @var MyCMSProject */
     protected $myCms;
 
-    /**
-     * @var Admin
-     */
+    /** @var Admin */
     protected $object;
 
     /**

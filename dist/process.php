@@ -3,6 +3,7 @@
 /**
  * Actions to be taken for a form processing.
  * Many of these below are project specific.
+ * (Last MyCMS/dist revision: 2021-05-23, v0.4.1)
  */
 
 use GodsDev\Tools\Tools;
@@ -38,5 +39,5 @@ if (isset($_POST['newsletter']) && $_POST['newsletter']) {
         Tools::addMessage('error', $MyCMS->translate('Váš e-mail se nepodařilo přidat k odběru.'));
         $MyCMS->logger->error("Odběratele {$_POST['newsletter']} se nepodařilo přidat k odběru.");
     }
-    Tools::redir();
+    Tools::redir('', 303, false);
 }
