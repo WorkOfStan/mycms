@@ -213,6 +213,7 @@ class AdminProcess extends MyAdminProcess
         if (isset($post['translations'])) {
             foreach (array_keys($this->MyCMS->TRANSLATIONS) as $code) {
                 $fp = fopen("language-$code.inc.php", 'w+');
+                Assert::resource($fp);
                 fwrite($fp, "<?php\n\n// MyCMS->getSessionLanguage expects \$translation=\n\$translation = [\n");
                 if ($post['new'][0]) {
                     $post['tr'][$code][$post['new'][0]] = $post['new'][$code];
@@ -485,6 +486,7 @@ class AdminProcess extends MyAdminProcess
             $this->MyCMS->dbms->escapeDbIdentifier($optionsTable . '_' . DEFAULT_LANGUAGE)
             );
         Assert::nullOrString($options['sort']);
+        Assert::nullOrString($options['path']);
         $sql = 'SELECT id,' . $selectExpression . ' AS name'
             . Tools::wrap($options['sort'], ',', ' AS sort') . Tools::wrap($options['path'], ',', ' AS path')
             . ' FROM ' . $this->MyCMS->dbms->escapeDbIdentifier(TAB_PREFIX . $optionsTable)
