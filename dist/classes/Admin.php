@@ -8,7 +8,7 @@ use WorkOfStan\mycmsprojectnamespace\MyCMSProject;
 
 /**
  * Admin UI
- * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
+ * (Last MyCMS/dist revision: 2021-05-28, v0.4.2)
  */
 class Admin extends MyAdmin
 {
@@ -614,6 +614,7 @@ class Admin extends MyAdmin
             . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden');
         $urls = []; // all URLs, all language versions with a link to what it links to (product, page, … id, etc.)
         $langs = array_keys($this->MyCMS->TRANSLATIONS);
+        // Todo queryStrictArray
         $query = $this->MyCMS->dbms->queryStrictObject(
             'SELECT id,"content" AS _table,type,' . Tools::arrayListed($langs, 0, ',', 'url_') . ',' .
             Tools::arrayListed($langs, 0, ',', 'name_') . ' FROM ' . TAB_PREFIX . 'content WHERE type IN ('
@@ -701,7 +702,7 @@ class Admin extends MyAdmin
                         0,
                         ' OR ',
                         'url_',
-                        '="' . $this->MyCMS->escapeSQL($url) . '"'
+                        '="' . $this->MyCMS->escapeSQL((string)$url) . '"'
                     );
             }
             $query = $this->MyCMS->fetchAll(implode(" UNION\n", $sql));
@@ -709,7 +710,7 @@ class Admin extends MyAdmin
                 '</sup></summary>';
             foreach ($query as $row) {
                 $output .= '<div class="ml-2"><a href="?table=' . TAB_PREFIX . $row['type'] . '&amp;where[id]=' .
-                    $row['id'] . '"><i class="fa fa-table"></i> ' . Tools::h($row['name']) .
+                    $row['id'] . '"><i class="fa fa-table"></i> ' . Tools::h((string) $row['name']) .
                     ' (' .
 //                    $this->tableAdmin->translate(
                     $row['type']
