@@ -710,7 +710,9 @@ class Admin extends MyAdmin
                 '</sup></summary>';
             foreach ($query as $row) {
                 $output .= '<div class="ml-2"><a href="?table=' . TAB_PREFIX . $row['type'] . '&amp;where[id]=' .
-                    $row['id'] . '"><i class="fa fa-table"></i> ' . Tools::h((string) $row['name']) .
+                    $row['id'] . '"><i class="fa fa-table"></i> ' . Tools::h(
+//(string) //typecasting in wrong h?
+$row['name']) .
                     ' (' .
 //                    $this->tableAdmin->translate(
                     $row['type']
