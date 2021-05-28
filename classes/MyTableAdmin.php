@@ -104,7 +104,6 @@ class MyTableAdmin extends MyTableLister
                     . Tools::htmlInput('after', '', '', 'hidden') . PHP_EOL
                     . Tools::htmlInput('referer', '', base64_encode(Tools::xorCipher(isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '?table=' . TAB_PREFIX . $_GET['table'], end($_SESSION['token']))), 'hidden') . PHP_EOL;
             }
-            // TODO will be fixed in next Tools version: fix Tools::htmlSelect .. default is mixed not string!
             $output .= '<label><i class="fa fa-location-arrow"></i> ' . Tools::htmlSelect(
                 'after',
                 [$this->translate('stay here'), $this->translate('go back')],
@@ -216,7 +215,6 @@ class MyTableAdmin extends MyTableLister
                 }
                 $output .= '</table>';
             } else {
-                // TODO ask CRS2 if replacing #3 $cols and #4 $rows false,false by 60,5 as int is expected is the right correction
                 Assert::string($field['type']);
                 $output .= Tools::htmlTextarea("fields[$key]", $value, 60, 5, [
                         'id' => $key . $this->rand, 'data-maxlength' => $field['size'],
@@ -318,7 +316,7 @@ class MyTableAdmin extends MyTableLister
                 $input = ($options['layout-row'] ? '<br>' : '') . implode(', ', $input) . '<br>';
                 break;
             case 'set':
-                Assert::string($field['size']); // TODO explore if type casting to string shouldn't be rather used
+                Assert::string($field['size']);
                 $choices = $this->dbms->decodeSetOptions($field['size']);
                 $tmp = [];
                 Assert::string($value);
@@ -482,7 +480,6 @@ class MyTableAdmin extends MyTableLister
      */
     public function outputForeignId($field, $values, $default = null, $options = [])
     {
-//        \Tracy\Debugger::barDump($values, 'OUTPUT FOREIGN ID, baby');
         Assert::string($options['class']);
         Assert::string($options['id']);
         $result = '<select name="' . Tools::h($field)
@@ -501,14 +498,9 @@ class MyTableAdmin extends MyTableLister
                 $result .= $this->addForeignOption($key, $value, $group, $lastGroup, $default, $options);
             }
         } elseif (is_string($values)) { // string - SELECT id,name FROM ...
-//            \Tracy\Debugger::barDump($values, 'OFI value');
             // TODO if there are troubles with queryStrict go back to `if ($query = $this->dbms->query($values))` syntax
-//            if (
             $query = $this->dbms->queryStrictObject($values);
-            //) { //TODO queryStrictObject might be better choice; is false really to be ignored or throw exception is the way to go?
-//            \Tracy\Debugger::barDump($query, 'OFI query');
             while ($row = $query->fetch_row()) {
-//                \Tracy\Debugger::barDump($row, 'OFI row');
                 $result .= $this->addForeignOption(
                     $row[0],
                     $row[1],
@@ -518,7 +510,6 @@ class MyTableAdmin extends MyTableLister
                     $options
                 );
             }
-//            }
         }
         return $result . ($lastGroup === false ? '' : '</optgroup>') . '</select>';
     }
@@ -609,7 +600,6 @@ class MyTableAdmin extends MyTableLister
                 }
             }
             $command = 'UPDATE';
-            // todo fix Parameter #1 $types of method WorkOfStan\MyCMS\MyTableLister::filterKeys() expects array, string given.
             $unique = ($this->filterKeys(['PRI']) ?: $this->filterKeys(['UNI'])) ?: array_flip(array_keys($this->fields));
             foreach (array_keys($unique) as $key) {
                 $field = $this->fields[$key];
@@ -638,8 +628,7 @@ class MyTableAdmin extends MyTableLister
             }
         } else {
             Tools::addMessage('info', $this->translate('Nothing to save.'));
-            // todo ask CRS2  Method WorkOfStan\MyCMS\MyTableAdmin::recordSave() should return bool but returns int.
-            return 0;
+            return 0; // no records to save (e.g. in case no checkboxes checked in a form)
         }
     }
 

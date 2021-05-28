@@ -22,7 +22,7 @@ Apache modules `mod_alias` (for hiding non-public files) and `mod_rewrite` (for 
 
 Once [composer](https://getcomposer.org/) is installed, execute the following command in your project root to install this library:
 ```sh
-composer require workofstan/mycms:^0.4.0
+composer require workofstan/mycms:^0.4.1
 ```
 Most of library's classes use prefix `My`.
 To customize the project, create your own classes as children inheriting MyCMS' classes in the `./classes/` directory and name them without the initial `My` in its name.  
@@ -169,6 +169,15 @@ While running `vendor/bin/phpunit` from `dist` will result in using MyCMS classe
 
 GitHub actions' version of PHPUnit uses config file [phpunit-github-actions.xml](phpunit-github-actions.xml) that ignores `Distribution Test Suite`
 because MySQLi environment isn't prepared (yet) and HTTP requests to self can't work in CLI only environment.
+
+### PHPStan
+
+Till PHP<7.1 is supported, `phpstan/phpstan-webmozart-assert` can't be required-dev in composer.json.
+Therefore, to properly take into account Assert statements by PHPStan (relevant for level>6), do a temporary (i.e. without commiting it to repository)
+```sh
+composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
+```
+and use [conf/phpstan.webmozart-assert.neon](conf/phpstan.webmozart-assert.neon) to allow for `phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse . --memory-limit 300M`.
 
 ## How does Friendly URL works within Controller
 

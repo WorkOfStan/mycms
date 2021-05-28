@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - LogMysqli::queryStrictNonEmptyArray
 - MyCMSMonoLingual::fetchAndReindexStrictArray
 - ThrowableFunctions/ThrowablePHPFunctions.php preg_match_all
-- many assertions and few type castings to eliminate PHPStan level max errors
+- many assertions and few type castings and queryStrictObject (instead of query) to eliminate PHPStan level max errors
 
 ### `Changed` for changes in existing functionality
 - **potentially breaking change** MyTableAdmin::outputForm, MyTableLister::pagination, MyTableLister::view, MyTableLister::viewInputs, MyTableLister::viewTable - ignores not-presence of parameter $options['return-output'] and always returns string, never echo string (would result @return mixed void or string issue)
@@ -24,7 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Removed` for now removed features
 
 ### `Fixed` for any bug fixes
-- MyAdminProcess.php::processUserCreate $salt typecasted as string
+- dist ProjectSpecific::getContent,::getCategory - code|id are used by the SQL statement only if they are present
+- MyAdminProcess::processUserCreate $salt typecasted as string
 - MyTableAdmin::recordSave and MyTableAdmin::recordDelete - resolveSQL call treated $messageSuccess and $messageError as strings while they are bool
 
 ### `Security` in case of vulnerabilities
