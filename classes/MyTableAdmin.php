@@ -273,9 +273,8 @@ class MyTableAdmin extends MyTableLister
                 break;
             case 'datetime':
             case 'timestamp':
-                Assert::string($value);
                 // changes '2021-03-12 22:11:59' to '2021-03-12T22:11:59' // TODO but why?
-                if (strlen($value) >= 10 && substr($value, 10, 1) === ' ') {
+                if (is_string($value) && strlen($value) >= 10 && substr($value, 10, 1) === ' ') {
                     $value = substr($value, 0, 10) . 'T' . substr($value, 11);
                 }
                 Assert::isArray($input);

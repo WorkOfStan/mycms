@@ -150,3 +150,14 @@ function preg_replaceString($pattern, $replacement, $subject, $limit = -1, &$cou
 {
     return throwOnNull(\preg_replace($pattern, $replacement, $subject, $limit, $count));
 }
+
+/**
+ *
+ * @param string $datetime if it is not string, an Exception is thrown
+ * @param int|null $baseTimestamp
+ * @return int
+ */
+function strtotime($datetime, $baseTimestamp = null)
+{
+    return throwOnFalse(\strtotime($datetime, is_null($baseTimestamp) ? time() : $baseTimestamp));
+}

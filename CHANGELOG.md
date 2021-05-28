@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### `Added` for new features
+- ThrowableFunctions/ThrowablePHPFunctions::strtotime
 
 ### `Changed` for changes in existing functionality
 
@@ -14,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Removed` for now removed features
 
 ### `Fixed` for any bug fixes
+- MyTableAdmin::outputField case timestamp $value doesn't have to be string
 
 ### `Security` in case of vulnerabilities
 
