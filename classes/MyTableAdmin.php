@@ -275,9 +275,10 @@ class MyTableAdmin extends MyTableLister
                 break;
             case 'datetime':
             case 'timestamp':
-                //Assert::isArray($value); // TODO explore Call to static method Webmozart\Assert\Assert::isArray() with bool|float|int|string will always evaluate to false.
-                if (isset($value[10]) && $value[10] == ' ') {
-                    $value[10] = 'T';
+                Assert::string($value);
+                // changes '2021-03-12 22:11:59' to '2021-03-12T22:11:59' // TODO but why?
+                if (strlen($value) >= 10 && substr($value, 10, 1) === ' ') {
+                    $value = substr($value, 0, 10) . 'T' . substr($value, 11);
                 }
                 Assert::isArray($input);
                 $input['type'] = 'datetime-local';
@@ -360,13 +361,11 @@ class MyTableAdmin extends MyTableLister
                 if (Tools::among($field['type'], 'char', 'varchar') && ($field['size'] < 256 || Tools::set($comment['edit'], false) == 'input') && Tools::set($comment['edit'], false) != 'textarea') {
                     break;
                 }
-                //Assert::string($value); // TODO fix Expected a string. Got: boolean
                 Assert::string($field['type']);
                 $input = '<div class="TableAdminTextarea">'
-                    // TODO ask CRS2 if replacing #3 $cols and #4 $rows false,false by 60,5 as int is expected is the right correction
                     . Tools::htmlTextarea(
                         "fields[$key]",
-                        $value,
+                        (string) $value, // false is casted to ''
                         60,
                         5,
                         ['id' => $key . $this->rand, 'data-maxlength' => $field['size'],
@@ -483,13 +482,15 @@ class MyTableAdmin extends MyTableLister
      */
     public function outputForeignId($field, $values, $default = null, $options = [])
     {
+//        \Tracy\Debugger::barDump($values, 'OUTPUT FOREIGN ID, baby');
         Assert::string($options['class']);
         Assert::string($options['id']);
         $result = '<select name="' . Tools::h($field)
             . '" class="' . Tools::h(isset($options['class']) ? $options['class'] : '')
             . '" id="' . Tools::h(isset($options['id']) ? $options['id'] : '') . '">'
             . '<option value=""></option>';
-        $options['exclude'] = isset($options['exclude']) ? (is_array($options['exclude']) ? $options['exclude'] : [$options['exclude']]) : [];
+        $options['exclude'] = isset($options['exclude']) ? (is_array($options['exclude']) ?
+            $options['exclude'] : [$options['exclude']]) : [];
         $group = $lastGroup = false;
         if (is_array($values)) { // array - just output them as <option>s
             foreach ($values as $key => $value) {
@@ -500,11 +501,24 @@ class MyTableAdmin extends MyTableLister
                 $result .= $this->addForeignOption($key, $value, $group, $lastGroup, $default, $options);
             }
         } elseif (is_string($values)) { // string - SELECT id,name FROM ...
-            if ($query = $this->dbms->query($values)) { //TODO queryStrictObject might be better choice; is false really to be ignored or throw exception is the way to go?
-                while ($row = $query->fetch_row()) {
-                    $result .= $this->addForeignOption($row[0], $row[1], isset($row[2]) ? $row[2] : false, $lastGroup, $default, $options);
-                }
+//            \Tracy\Debugger::barDump($values, 'OFI value');
+            // TODO if there are troubles with queryStrict go back to `if ($query = $this->dbms->query($values))` syntax
+//            if (
+            $query = $this->dbms->queryStrictObject($values);
+            //) { //TODO queryStrictObject might be better choice; is false really to be ignored or throw exception is the way to go?
+//            \Tracy\Debugger::barDump($query, 'OFI query');
+            while ($row = $query->fetch_row()) {
+//                \Tracy\Debugger::barDump($row, 'OFI row');
+                $result .= $this->addForeignOption(
+                    $row[0],
+                    $row[1],
+                    isset($row[2]) ? $row[2] : false,
+                    $lastGroup,
+                    $default,
+                    $options
+                );
             }
+//            }
         }
         return $result . ($lastGroup === false ? '' : '</optgroup>') . '</select>';
     }

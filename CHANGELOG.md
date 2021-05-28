@@ -5,16 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- PHPStan level=max ... Error Zero
+
 ### `Added` for new features
 - [conf/phpstan.webmozart-assert.neon](conf/phpstan.webmozart-assert.neon) to allow for `phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse . --memory-limit 300M` in GitHub automated testing
 - LogMysqli::queryStrictNonEmptyArray
 - MyCMSMonoLingual::fetchAndReindexStrictArray
 - ThrowableFunctions/ThrowablePHPFunctions.php preg_match_all
-- many assertions to reduce PHPStan level max errors
+- many assertions and few type castings to eliminate PHPStan level max errors
 
 ### `Changed` for changes in existing functionality
 - **potentially breaking change** MyTableAdmin::outputForm, MyTableLister::pagination, MyTableLister::view, MyTableLister::viewInputs, MyTableLister::viewTable - ignores not-presence of parameter $options['return-output'] and always returns string, never echo string (would result @return mixed void or string issue)
 - MyTableLister::customInputBefore and MyTableLister::customInputAfter - parameter 2 is mixed type (not a string)
+- MyTableAdmin::outputField case:timestamp replaced old way of addressing characters in a string `$value[10]` by more modern `substr($value, 10, 1)`
 
 ### `Deprecated` for soon-to-be removed features
 

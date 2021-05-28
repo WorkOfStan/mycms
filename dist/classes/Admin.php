@@ -139,7 +139,7 @@ class Admin extends MyAdmin
                                     'Products linked to this category') .
                                 ' <span class="badge badge-secondary">' . count($tmp) . '</span></summary>';
                             foreach ($tmp as $key => $value) {
-                                Assert::string($value);
+                                Assert::nullOrString($value);
                                 $output .= '<a href="?table=' . TAB_PREFIX . $i . '&amp;where[id]=' . $key .
                                     '" target="_blank" title="' .
                                     $this->tableAdmin->translate('Link will open in a new window') . '">'
