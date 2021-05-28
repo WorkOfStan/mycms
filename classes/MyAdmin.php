@@ -507,8 +507,7 @@ class MyAdmin extends MyCommon
                     'layout-row' => true,
                     'prefill' => isset($_GET['prefill']) && is_array($_GET['prefill']) ? $_GET['prefill'] : [],
                     'original' => true,
-                    'tabs' => $tabs,
-                    'return-output' => 1
+                    'tabs' => $tabs
                 ])
                 . $this->outputTableAfterEdit();
         } elseif (isset($_POST['edit-selected'])) {
@@ -519,7 +518,7 @@ class MyAdmin extends MyCommon
             // table listing
             $result .= '<h2 class="sub-header">' . $this->tableAdmin->translate('Listing') . '</h2>'
                 . $this->outputTableBeforeListing()
-                . $this->tableAdmin->view(['return-output' => 1])
+                . $this->tableAdmin->view()
                 . $this->outputTableAfterListing();
         }
         return $result;

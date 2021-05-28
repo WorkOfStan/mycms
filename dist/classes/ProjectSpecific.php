@@ -11,7 +11,7 @@ use WorkOfStan\MyCMS\ProjectCommon;
 
 /**
  * Functions specific to the project (that are not in its own model)
- * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
+ * (Last MyCMS/dist revision: 2021-05-28, v0.4.2)
  */
 class ProjectSpecific extends ProjectCommon
 {
@@ -141,10 +141,10 @@ class ProjectSpecific extends ProjectCommon
                 . ' co.perex_' . $options['language'] . ' AS perex,'
                 . ' co.description_' . $options['language'] . ' AS description '
                 . ' FROM ' . TAB_PREFIX . 'content co LEFT JOIN ' . TAB_PREFIX . 'category ca ON co.category_id=ca.id '
-                // TODO Parameter #1 $string of method WorkOfStan\MyCMS\MyCMSMonoLingual::escapeSQL() expects string,
-                //  string|null given.
-                . ' WHERE co.active="1"' . Tools::wrap($this->MyCMS->escapeSQL($code), ' AND co.code="', '"')
-                . Tools::wrap(intval($id), ' AND co.id=') . ' LIMIT 1');
+                . ' WHERE co.active="1"'
+                . (is_null($code) ? '' : Tools::wrap($this->MyCMS->escapeSQL($code), ' AND co.code="', '"'))
+                . (is_null($id) ? '' : Tools::wrap(intval($id), ' AND co.id=')) .
+                ' LIMIT 1');
             if ($result) {
                 $result['context'] = json_decode($result['context'], true) ?: [];
                 $result['added'] = Tools::localeDate($result['added'], $options['language'], false);
@@ -189,13 +189,8 @@ class ProjectSpecific extends ProjectCommon
             . ' name_' . $options['language'] . ' AS title,'
             . ' content_' . $options['language'] . ' AS description'
             . ' FROM ' . TAB_PREFIX . 'category WHERE active="1"'
-            . Tools::wrap(
-                // TODO Parameter #1 $string of method WorkOfStan\MyCMS\MyCMSMonoLingual::escapeSQL() expects string,
-                //  string|null given.
-                $this->MyCMS->escapeSQL($code),
-                ' AND code="',
-                '"'
-            ) . Tools::wrap(intval($id), ' AND id=') . ' LIMIT 1'
+            . (is_null($code) ? '' : Tools::wrap($this->MyCMS->escapeSQL($code), ' AND code="', '"'))
+            . (is_null($id) ? '' : Tools::wrap(intval($id), ' AND id=')) . ' LIMIT 1'
         );
         if ((!is_null($id) || !is_null($code)) && $result) {
             $result['context'] = json_decode($result['context'], true) ?: [];

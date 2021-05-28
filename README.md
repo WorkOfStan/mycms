@@ -22,7 +22,7 @@ Apache modules `mod_alias` (for hiding non-public files) and `mod_rewrite` (for 
 
 Once [composer](https://getcomposer.org/) is installed, execute the following command in your project root to install this library:
 ```sh
-composer require workofstan/mycms:^0.4.0
+composer require workofstan/mycms:^0.4.2
 ```
 Most of library's classes use prefix `My`.
 To customize the project, create your own classes as children inheriting MyCMS' classes in the `./classes/` directory and name them without the initial `My` in its name.  
@@ -170,6 +170,15 @@ While running `vendor/bin/phpunit` from `dist` will result in using MyCMS classe
 GitHub actions' version of PHPUnit uses config file [phpunit-github-actions.xml](phpunit-github-actions.xml) that ignores `Distribution Test Suite`
 because MySQLi environment isn't prepared (yet) and HTTP requests to self can't work in CLI only environment.
 
+### PHPStan
+
+Till PHP<7.1 is supported, `phpstan/phpstan-webmozart-assert` can't be required-dev in composer.json.
+Therefore, to properly take into account Assert statements by PHPStan (relevant for level>6), do a temporary (i.e. without commiting it to repository)
+```sh
+composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
+```
+and use [conf/phpstan.webmozart-assert.neon](conf/phpstan.webmozart-assert.neon) to allow for `phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse . --memory-limit 300M`.
+
 ## How does Friendly URL works within Controller
 
 [SEO settings details including language management in `dist` folder](dist/README.md#seo)
@@ -242,7 +251,6 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 * 200819: refactor FORCE_301, FRIENDLY_URL and REDIRECTOR_ENABLED to a variable, so that all scenarios can be PHPUnit tested
 * 200819: consider REQUEST_URI query vs \_GET - shouldn't just one source of truth be used?
 * 200921: for PHP/7.1.0+ version use protected for const in MyCommon, MyFriendlyUrl, MyAdminProcess.php
-* 210425: $option[return-output] might be obsolete as each method using it already returns string and doesn't echo the result (would result @return mixed void or string issue)
 
 ### TODO SECURITY
 * 190723: pokud jsou v té samé doméně dvě různé instance MyCMS, tak přihlášením do jednoho admin.php jsem přihlášen do všech, i když ten uživatel tam ani neexistuje

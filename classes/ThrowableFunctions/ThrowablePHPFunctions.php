@@ -55,7 +55,6 @@ function filemtime($filename)
     return throwOnFalse(\filemtime($filename));
 }
 
-
 /**
  *
  * @param string $pattern
@@ -107,6 +106,20 @@ function mb_eregi_replace($pattern, $replacement, $string, $options = null)
 function preg_match($pattern, $subject, array &$matches = null, $flags = 0, $offset = 0)
 {
     return throwOnFalse(\preg_match($pattern, $subject, $matches, $flags, $offset));
+}
+
+/**
+ *
+ * @param string $pattern
+ * @param string $subject
+ * @param string[] $matches
+ * @param int $flags
+ * @param int $offset
+ * @return int
+ */
+function preg_match_all($pattern, $subject, array &$matches = null, $flags = 0, $offset = 0)
+{
+    return throwOnFalse(\preg_match_all($pattern, $subject, $matches, $flags, $offset));
 }
 
 /**

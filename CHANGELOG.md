@@ -17,6 +17,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Security` in case of vulnerabilities
 
+## [0.4.2] - 2021-05-28
+- PHPStan level=max ... Error Zero
+
+### Added
+- [conf/phpstan.webmozart-assert.neon](conf/phpstan.webmozart-assert.neon) to allow for `phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse . --memory-limit 300M` in GitHub automated testing
+- LogMysqli::queryStrictNonEmptyArray
+- MyCMSMonoLingual::fetchAndReindexStrictArray
+- ThrowableFunctions/ThrowablePHPFunctions.php preg_match_all
+- many assertions and few type castings and queryStrictObject (instead of query) to eliminate PHPStan level max errors
+
+### Changed
+- **potentially breaking change** MyTableAdmin::outputForm, MyTableLister::pagination, MyTableLister::view, MyTableLister::viewInputs, MyTableLister::viewTable - ignores not-presence of parameter $options['return-output'] and always returns string, never echo string (would result @return mixed void or string issue)
+- MyTableLister::customInputBefore and MyTableLister::customInputAfter - parameter 2 is mixed type (not a string)
+- MyTableAdmin::outputField case:timestamp replaced old way of addressing characters in a string `$value[10]` by more modern `substr($value, 10, 1)`
+
+### Fixed
+- dist ProjectSpecific::getContent,::getCategory - code|id are used by the SQL statement only if they are present
+- MyAdminProcess::processUserCreate $salt typecasted as string
+- MyTableAdmin::recordSave and MyTableAdmin::recordDelete - resolveSQL call treated $messageSuccess and $messageError as strings while they are bool
+
 ## [0.4.1] - 2021-05-26
 ### `Added`
 - dist HTTP POST BarPanel for Tracy (both web and admin)
@@ -251,7 +271,8 @@ to
 
 
 
-[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.4.1...HEAD
+[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.4.2...HEAD
+[0.4.2]: https://github.com/WorkOfStan/mycms/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/WorkOfStan/mycms/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/WorkOfStan/mycms/compare/v0.3.15...v0.4.0
 [0.3.15]: https://github.com/WorkOfStan/mycms/compare/v0.3.14...v0.3.15

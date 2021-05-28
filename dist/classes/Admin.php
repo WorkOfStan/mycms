@@ -3,12 +3,16 @@
 namespace WorkOfStan\mycmsprojectnamespace;
 
 use GodsDev\Tools\Tools;
+use Webmozart\Assert\Assert;
 use WorkOfStan\MyCMS\MyAdmin;
 use WorkOfStan\mycmsprojectnamespace\MyCMSProject;
 
+use function WorkOfStan\MyCMS\ThrowableFunctions\glob;
+use function WorkOfStan\MyCMS\ThrowableFunctions\preg_match_all;
+
 /**
  * Admin UI
- * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
+ * (Last MyCMS/dist revision: 2021-05-28, v0.4.2)
  */
 class Admin extends MyAdmin
 {
@@ -135,6 +139,7 @@ class Admin extends MyAdmin
                                     'Products linked to this category') .
                                 ' <span class="badge badge-secondary">' . count($tmp) . '</span></summary>';
                             foreach ($tmp as $key => $value) {
+                                Assert::nullOrString($value);
                                 $output .= '<a href="?table=' . TAB_PREFIX . $i . '&amp;where[id]=' . $key .
                                     '" target="_blank" title="' .
                                     $this->tableAdmin->translate('Link will open in a new window') . '">'
@@ -231,9 +236,9 @@ class Admin extends MyAdmin
                 ' AND LEFT(path,' . PATH_MODULE . ')="' .
                 $this->MyCMS->escapeSQL($this->MyCMS->SETTINGS['PATH_CATEGORY']) . '"
                 ORDER BY path');
-            $products = $this->MyCMS->fetchAndReindex('SELECT category_id,id,product_' . $_SESSION['language'] .
-                ' AS product,image,sort,active FROM ' . TAB_PREFIX . 'product ORDER BY sort');
-            $perex = $this->MyCMS->fetchAndReindex('SELECT product_id,id,type,active,TRIM(CONCAT(content_' .
+            $products = $this->MyCMS->fetchAndReindexStrictArray('SELECT category_id,id,product_' .
+                $_SESSION['language'] . ' AS product,image,sort,active FROM ' . TAB_PREFIX . 'product ORDER BY sort');
+            $perex = $this->MyCMS->fetchAndReindexStrictArray('SELECT product_id,id,type,active,TRIM(CONCAT(content_' .
                 $_SESSION['language'] . ', " ", CONCAT(LEFT(description_' .
                 $_SESSION['language'] . ', 50), "…"))) AS content
                 FROM ' . TAB_PREFIX . 'content
@@ -253,6 +258,7 @@ class Admin extends MyAdmin
                     . Tools::h($category['category'] ?: 'N/A') . '</h4>' . PHP_EOL;
                 $productLine = isset($products[$category['id']]) ? (isset($products[$category['id']][0]) ?
                     $products[$category['id']] : [$products[$category['id']]]) : [];
+                Assert::isArray($productLine);
                 uasort($productLine, function ($a, $b) {
                     return $a['sort'] == $b['sort'] ? 0 : ($a['sort'] < $b['sort'] ? -1 : 1);
                 });
@@ -321,17 +327,19 @@ class Admin extends MyAdmin
                     <button type="button" class="btn btn-sm btn-secondary" id="products-images" title="' .
                 $this->tableAdmin->translate('Toggle image thumbnails') . '"><i class="far fa-image"></i></button>
                 </footer></div>';
-        } elseif (isset($_GET['pages'])) { // pages // TODO make work in Dist
+        } elseif (isset($_GET['pages'])) { // pages // TODO make it work in Dist
             $output .= '<h1>' . $this->tableAdmin->translate('Pages') . '</h1><div id="agenda-pages">';
-            $categories = $this->MyCMS->fetchAndReindex('SELECT id,path,active,category_' . $_SESSION['language'] .
-                ' AS category FROM ' . TAB_PREFIX . 'category'
-                . ' WHERE LEFT(path, ' . PATH_MODULE . ')="' .
+            $categories = $this->MyCMS->fetchAndReindexStrictArray('SELECT id,path,active,category_' .
+                $_SESSION['language'] . ' AS category FROM ' . TAB_PREFIX . 'category' .
+                ' WHERE LEFT(path, ' . PATH_MODULE . ')="' .
                 $this->MyCMS->escapeSQL($this->MyCMS->SETTINGS['PATH_HOME']) . '" ORDER BY path');
-            $articles = $this->MyCMS->fetchAndReindex($sql = 'SELECT category_id,id,active,IF(content_' .
+            $articles = $this->MyCMS->fetchAndReindexStrictArray('SELECT category_id,id,active,IF(content_' .
                 $_SESSION['language'] . ' = "", LEFT(CONCAT(code, " ", description_' .
                 $_SESSION['language'] . '), 100),content_' . $_SESSION['language'] . ') AS content
                 FROM ' . TAB_PREFIX . 'content WHERE category_id > 0');
             foreach ($categories as $key => $category) {
+                Assert::isArray($category);
+                Assert::isCountable($articles[$key]);
                 $tmp = isset($articles[$key][0]) ? count($articles[$key]) : (isset($articles[$key]) ? 1 : 0);
                 $output .= '<details style="margin-left:' . (strlen($category['path']) / PATH_MODULE - 1) . 'em"' .
                     ($category['active'] == 1 ? '' : ' class="inactive-item"') . '>
@@ -351,6 +359,7 @@ class Admin extends MyAdmin
                     . '<div class="ml-3">';
                 if (isset($articles[$key])) {
                     $tmp = isset($articles[$key][0]) ? $articles[$key] : [$articles[$key]];
+                    Assert::isArray($tmp);
                     foreach ($tmp as $article) {
                         $output .= '<div' . ($article['active'] == 1 ? '' : ' class="inactive-item"') . '>'
                             . '<a href="?table=' . TAB_PREFIX . 'content&amp;where[id]=' . $article['id'] .
@@ -377,11 +386,13 @@ class Admin extends MyAdmin
                     ' AS name FROM ' . TAB_PREFIX . 'category WHERE path IS NULL')
                 ) {
                     foreach ($tmp as $key => $category) {
+                        Assert::string($category);
                         $output .= '<a href="?table=' . TAB_PREFIX . 'category&amp;where[id]=' . $key .
                             '" class="ml-3"><i class="fa fa-edit"></i></a> ' . strip_tags($category) .
                             '<br />' . PHP_EOL;
                     }
                 }
+                Assert::isIterable($articles[0]);
                 foreach ($articles[0] as $article) {
                     $output .= '<a href="?table=' . TAB_PREFIX . 'content&amp;where[id]=' . $article['id'] .
                         '" class="ml-3"><i class="far fa-file"></i></a> ' . strip_tags($article['content']) .
@@ -408,21 +419,22 @@ class Admin extends MyAdmin
     protected function sectionDivisionsProducts()
     {
         $output = '<h1>' . $this->tableAdmin->translate('Divisions and products') . '</h1><div id="agenda-products">';
-        $divisions = $this->MyCMS->fetchAndReindex($sql1 = 'SELECT id,division_' . $_SESSION['language'] .
+        $divisions = $this->MyCMS->fetchAndReindexStrictArray('SELECT id,division_' . $_SESSION['language'] .
             ' AS division,' . ($tmp = 'sort+IF(id=' . Tools::set($_SESSION['division-switch'], 0) . ',' .
             Tools::set($_SESSION['division-delta'], 0) . ',0)') . ' AS sort,active FROM ' . TAB_PREFIX .
             'division ORDER BY ' . $tmp);
-        $parents = $this->MyCMS->fetchAll($sql2 = 'SELECT division_id,id,product_' . $_SESSION['language'] .
+        $parents = $this->MyCMS->fetchAll('SELECT division_id,id,product_' . $_SESSION['language'] .
             ' AS product,' . ($tmp = 'sort+IF(id=' . Tools::set($_SESSION['product-switch'], 0) . ',' .
             Tools::set($_SESSION['product-delta'], 0) . ',0)') . ' AS sort,active FROM ' . TAB_PREFIX .
             'product WHERE parent_product_id = 0 ORDER BY division_id,' . $tmp);
-        $children = $this->MyCMS->fetchAll($sql3 = 'SELECT parent_product_id,id,product_' . $_SESSION['language'] .
+        $children = $this->MyCMS->fetchAll('SELECT parent_product_id,id,product_' . $_SESSION['language'] .
             ' AS product,' . ($tmp = 'sort+IF(id=' . Tools::set($_SESSION['product-switch'], 0) . ',' .
             Tools::set($_SESSION['product-delta'], 0) . ',0)') . ' AS sort,active'
             . ' FROM ' . TAB_PREFIX . 'product WHERE parent_product_id <> 0 ORDER BY parent_product_id,' . $tmp);
         $sort = array(0, 0, 0);
         $correctOrder = array();
         foreach ($divisions as $divisionId => $division) {
+            Assert::isArray($division);
             $output .= '<details open><summary class="d-inline-block"><big' .
                 ($division['active'] == 1 ? '' : ' class="inactive"') . '><a href="?table=' . TAB_PREFIX .
                 'division&amp;where[id]=' . $divisionId . '" title="' . $this->tableAdmin->translate('Edit') . '">'
@@ -496,7 +508,7 @@ class Admin extends MyAdmin
             . '<button name="export-offline" type="submit" class="btn btn-sm invisible">Export off-line</button>'
             . '</form>';
         foreach ($correctOrder as $value) {
-            $this->MyCMS->dbms->query($sql = 'UPDATE ' . TAB_PREFIX . (count($value) == 3 ? 'division' : 'product') .
+            $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . (count($value) == 3 ? 'division' : 'product') .
                 ' SET sort = ' . $value[1] . ' WHERE id = ' . $value[0]);
         }
         unset(
@@ -516,9 +528,11 @@ class Admin extends MyAdmin
      */
     protected function sectionTranslations()
     {
-        $found = []; //translations found in templates
+        $found = []; // translations found in latte templates
         foreach (glob('template/*.latte') as $file) {
-            preg_match_all('~\{=("([^"]+)"|\'([^\']+)\')\|translate\}~i', file_get_contents($file), $matches);
+            $tempFileContents = file_get_contents($file);
+            Assert::string($tempFileContents);
+            preg_match_all('~\{=("([^"]+)"|\'([^\']+)\')\|translate\}~i', $tempFileContents, $matches);
             $found = array_merge($found, $matches[2]);
         }
         $found = array_unique($found);
@@ -545,7 +559,7 @@ class Admin extends MyAdmin
         foreach ($keys as $key) {
             $output .= '<tr><th>' .
                 Tools::htmlInput('one', '', $key, array('type' => 'radio', 'class' => 'translation')) . ' ' .
-                Tools::h($key) . '</th>';
+                Tools::h((string) $key) . '</th>';
             foreach ($this->MyCMS->TRANSLATIONS as $code => $value) {
                 $output .= '<td>' . Tools::htmlInput(
                     "tr[$code][$key]",
@@ -614,7 +628,8 @@ class Admin extends MyAdmin
             . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden');
         $urls = []; // all URLs, all language versions with a link to what it links to (product, page, … id, etc.)
         $langs = array_keys($this->MyCMS->TRANSLATIONS);
-        $query = $this->MyCMS->dbms->queryStrictObject(
+        // Todo queryStrictArray
+        $query = $this->MyCMS->dbms->queryStrictNonEmptyArray(
             'SELECT id,"content" AS _table,type,' . Tools::arrayListed($langs, 0, ',', 'url_') . ',' .
             Tools::arrayListed($langs, 0, ',', 'name_') . ' FROM ' . TAB_PREFIX . 'content WHERE type IN ('
             . '"article", "page", "news"' // list of types to be listed for Friendly URL settings
@@ -701,12 +716,12 @@ class Admin extends MyAdmin
                         0,
                         ' OR ',
                         'url_',
-                        '="' . $this->MyCMS->escapeSQL($url) . '"'
+                        '="' . $this->MyCMS->escapeSQL((string) $url) . '"'
                     );
             }
             $query = $this->MyCMS->fetchAll(implode(" UNION\n", $sql));
-            $output .= '<details><summary>' . Tools::h($url) . ' <sup class="badge badge-secondary">' . count($query) .
-                '</sup></summary>';
+            $output .= '<details><summary>' . Tools::h((string) $url) . ' <sup class="badge badge-secondary">' .
+                count($query) . '</sup></summary>';
             foreach ($query as $row) {
                 $output .= '<div class="ml-2"><a href="?table=' . TAB_PREFIX . $row['type'] . '&amp;where[id]=' .
                     $row['id'] . '"><i class="fa fa-table"></i> ' . Tools::h($row['name']) .

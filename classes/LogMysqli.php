@@ -90,6 +90,24 @@ class LogMysqli extends BackyardMysqli
     }
 
     /**
+     * Make a MySQL query and if the result is non empty,
+     * transforms the query result into a two dimensional array.
+     * If it is empty or database call fails, throws Exception.
+     *
+     * @param string $sql
+     * @return array[]
+     * @throws Exception
+     */
+    public function queryStrictNonEmptyArray($sql)
+    {
+        $result = $this->queryArray($sql, false); // returns two dimensional array
+        if ($result === false) {
+            throw new Exception('Empty result or database error');
+        }
+        return $result;
+    }
+
+    /**
      * Logs SQL statement not starting with SELECT or SET. Throws exception in case response isn't \mysqli_result
      *
      * @param string $sql SQL to execute

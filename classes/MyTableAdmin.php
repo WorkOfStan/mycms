@@ -27,9 +27,7 @@ class MyTableAdmin extends MyTableLister
      *      [prefill] - assoc. array with initial field values (only when inserting new record)
      *      [original] - keep original values (to update only changed fields)
      *      [tabs] - divide fields into Bootstrap tabs, e.g. [null, 'English'=>'/^.+_en$/i', 'Chinese'=>'/^.+_cn$/i']
-     *      [return-output] - non-zero: return output (instead of echo $output)
-     * @return mixed void or string if $option[return-output] is non-zero
-     *      TODO can't be void|string, as it wouldn't be possible to make string operations on void result
+     * @return string
      */
     public function outputForm($where, array $options = [])
     {
@@ -106,7 +104,6 @@ class MyTableAdmin extends MyTableLister
                     . Tools::htmlInput('after', '', '', 'hidden') . PHP_EOL
                     . Tools::htmlInput('referer', '', base64_encode(Tools::xorCipher(isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '?table=' . TAB_PREFIX . $_GET['table'], end($_SESSION['token']))), 'hidden') . PHP_EOL;
             }
-            // TODO will be fixed in next Tools version: fix Tools::htmlSelect .. default is mixed not string!
             $output .= '<label><i class="fa fa-location-arrow"></i> ' . Tools::htmlSelect(
                 'after',
                 [$this->translate('stay here'), $this->translate('go back')],
@@ -114,11 +111,7 @@ class MyTableAdmin extends MyTableLister
                 ['class' => 'form-control form-control-sm w-initial d-inline-block']
             ) . '</label></div>';
         }
-        $output .= (isset($options['exclude-form']) && $options['exclude-form'] ? '' : '</fieldset></form>') . PHP_EOL;
-        if (isset($options['return-output']) && $options['return-output']) {
-            return $output;
-        }
-        echo $output;
+        return $output . (isset($options['exclude-form']) && $options['exclude-form'] ? '' : '</fieldset></form>') . PHP_EOL;
     }
 
     /**
@@ -222,7 +215,6 @@ class MyTableAdmin extends MyTableLister
                 }
                 $output .= '</table>';
             } else {
-                // TODO ask CRS2 if replacing #3 $cols and #4 $rows false,false by 60,5 as int is expected is the right correction
                 Assert::string($field['type']);
                 $output .= Tools::htmlTextarea("fields[$key]", $value, 60, 5, [
                         'id' => $key . $this->rand, 'data-maxlength' => $field['size'],
@@ -281,9 +273,10 @@ class MyTableAdmin extends MyTableLister
                 break;
             case 'datetime':
             case 'timestamp':
-                //Assert::isArray($value); // TODO explore Call to static method Webmozart\Assert\Assert::isArray() with bool|float|int|string will always evaluate to false.
-                if (isset($value[10]) && $value[10] == ' ') {
-                    $value[10] = 'T';
+                Assert::string($value);
+                // changes '2021-03-12 22:11:59' to '2021-03-12T22:11:59' // TODO but why?
+                if (strlen($value) >= 10 && substr($value, 10, 1) === ' ') {
+                    $value = substr($value, 0, 10) . 'T' . substr($value, 11);
                 }
                 Assert::isArray($input);
                 $input['type'] = 'datetime-local';
@@ -323,7 +316,7 @@ class MyTableAdmin extends MyTableLister
                 $input = ($options['layout-row'] ? '<br>' : '') . implode(', ', $input) . '<br>';
                 break;
             case 'set':
-                Assert::string($field['size']); // TODO explore if type casting to string shouldn't be rather used
+                Assert::string($field['size']);
                 $choices = $this->dbms->decodeSetOptions($field['size']);
                 $tmp = [];
                 Assert::string($value);
@@ -366,13 +359,11 @@ class MyTableAdmin extends MyTableLister
                 if (Tools::among($field['type'], 'char', 'varchar') && ($field['size'] < 256 || Tools::set($comment['edit'], false) == 'input') && Tools::set($comment['edit'], false) != 'textarea') {
                     break;
                 }
-                //Assert::string($value); // TODO fix Expected a string. Got: boolean
                 Assert::string($field['type']);
                 $input = '<div class="TableAdminTextarea">'
-                    // TODO ask CRS2 if replacing #3 $cols and #4 $rows false,false by 60,5 as int is expected is the right correction
                     . Tools::htmlTextarea(
                         "fields[$key]",
-                        $value,
+                        (string) $value, // false is casted to ''
                         60,
                         5,
                         ['id' => $key . $this->rand, 'data-maxlength' => $field['size'],
@@ -495,7 +486,8 @@ class MyTableAdmin extends MyTableLister
             . '" class="' . Tools::h(isset($options['class']) ? $options['class'] : '')
             . '" id="' . Tools::h(isset($options['id']) ? $options['id'] : '') . '">'
             . '<option value=""></option>';
-        $options['exclude'] = isset($options['exclude']) ? (is_array($options['exclude']) ? $options['exclude'] : [$options['exclude']]) : [];
+        $options['exclude'] = isset($options['exclude']) ? (is_array($options['exclude']) ?
+            $options['exclude'] : [$options['exclude']]) : [];
         $group = $lastGroup = false;
         if (is_array($values)) { // array - just output them as <option>s
             foreach ($values as $key => $value) {
@@ -506,10 +498,17 @@ class MyTableAdmin extends MyTableLister
                 $result .= $this->addForeignOption($key, $value, $group, $lastGroup, $default, $options);
             }
         } elseif (is_string($values)) { // string - SELECT id,name FROM ...
-            if ($query = $this->dbms->query($values)) { //TODO queryStrictObject might be better choice; is false really to be ignored or throw exception is the way to go?
-                while ($row = $query->fetch_row()) {
-                    $result .= $this->addForeignOption($row[0], $row[1], isset($row[2]) ? $row[2] : false, $lastGroup, $default, $options);
-                }
+            // TODO if there are troubles with queryStrict go back to `if ($query = $this->dbms->query($values))` syntax
+            $query = $this->dbms->queryStrictObject($values);
+            while ($row = $query->fetch_row()) {
+                $result .= $this->addForeignOption(
+                    $row[0],
+                    $row[1],
+                    isset($row[2]) ? $row[2] : false,
+                    $lastGroup,
+                    $default,
+                    $options
+                );
             }
         }
         return $result . ($lastGroup === false ? '' : '</optgroup>') . '</select>';
@@ -601,7 +600,6 @@ class MyTableAdmin extends MyTableLister
                 }
             }
             $command = 'UPDATE';
-            // todo fix Parameter #1 $types of method WorkOfStan\MyCMS\MyTableLister::filterKeys() expects array, string given.
             $unique = ($this->filterKeys(['PRI']) ?: $this->filterKeys(['UNI'])) ?: array_flip(array_keys($this->fields));
             foreach (array_keys($unique) as $key) {
                 $field = $this->fields[$key];
@@ -619,8 +617,8 @@ class MyTableAdmin extends MyTableLister
             if (
                 $this->resolveSQL(
                     $sql,
-                    $messageSuccess ?: $this->translate('Record saved.'),
-                    $messageError ?: $this->translate('Could not save the record.') . ' #%errno%: %error%'
+                    $this->translate('Record saved.'),
+                    $this->translate('Could not save the record.') . ' #%errno%: %error%'
                 )
             ) {
                 return true;
@@ -630,8 +628,7 @@ class MyTableAdmin extends MyTableLister
             }
         } else {
             Tools::addMessage('info', $this->translate('Nothing to save.'));
-            // todo ask CRS2  Method WorkOfStan\MyCMS\MyTableAdmin::recordSave() should return bool but returns int.
-            return 0;
+            return 0; // no records to save (e.g. in case no checkboxes checked in a form)
         }
     }
 
@@ -654,8 +651,8 @@ class MyTableAdmin extends MyTableLister
             }
             return $this->resolveSQL(
                 'DELETE FROM ' . Tools::escapeDbIdentifier($_GET['table']) . ' WHERE ' . implode(' AND ', $sql),
-                $messageSuccess ?: $this->translate('Record deleted.'),
-                $messageError ?: $this->translate('Could not delete the record.') . '#%errno%: %error%'
+                $this->translate('Record deleted.'),
+                $this->translate('Could not delete the record.') . '#%errno%: %error%'
             );
         }
         return false;

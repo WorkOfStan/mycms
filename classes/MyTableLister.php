@@ -401,8 +401,7 @@ class MyTableLister
      *   $options['include']=array - columns to include
      *   $options['exclude']=array - columns to exclude
      *   $options['columns']=array - special treatment of columns
-     *   $options['return-output']=non-zero - return output (instead of echo)
-     * @return void|string (string for $options['return-output'])
+     * @return string
      */
     public function view(array $options = [])
     {
@@ -411,7 +410,7 @@ class MyTableLister
         }
         // find out what columns to include/exclude
         if (!($columns = $this->getColumns($options))) {
-            return;
+            return '';
         }
         $sql = $this->selectSQL($columns, $_GET);
         Assert::string($sql['sql']);
@@ -427,20 +426,16 @@ class MyTableLister
             $output .= $this->viewTable($query, $columns, $options)
                 . $this->pagination($sql['limit'], $options['total-rows'], null, $options);
         }
-        $output .= (!$options['total-rows'] && isset($_GET['col'])) ?
+        return $output . (!$options['total-rows'] && isset($_GET['col'])) ?
             ('<p class="alert alert-danger"><small>' . $this->translate('No records found.') . '</small></p>') :
             ('<p class="text-info"><small>' . $this->translate('Total rows: ') . $options['total-rows'] . '.</small></p>');
-        if (isset($options['return-output']) && $options['return-output']) {
-            return $output;
-        }
-        echo $output;
     }
 
     /**
      * Part of the view() method to output the controls.
      *
      * @param array<mixed> $options as in view()
-     * @return void|string (string for $options['return-output'])
+     * @return string
      */
     protected function viewInputs($options)
     {
@@ -511,11 +506,7 @@ class MyTableLister
         $this->script .= '$(\'#toggle-div' . $this->rand . '\').hide();' . PHP_EOL
             . 'addSortRow($(\'#sort-div' . $this->rand . '\'), null, false);' . PHP_EOL
             . 'addSearchRow($(\'#search-div' . $this->rand . '\'), null, 0, "");' . PHP_EOL;
-        $output .= '</script>' . PHP_EOL;
-        if (isset($options['return-output']) && $options['return-output']) {
-            return $output;
-        }
-        echo $output;
+        return $output . '</script>' . PHP_EOL;
     }
 
     /**
@@ -524,7 +515,7 @@ class MyTableLister
      * @param \mysqli_result<object>|bool $query
      * @param string[] $columns selected columns
      * @param array<mixed> $options as in view()
-     * @return mixed void or string (for $options['return-output'])
+     * @return string
      */
     protected function viewTable($query, array $columns, array $options)
     {
@@ -594,13 +585,9 @@ class MyTableLister
                 <button name="clone-selected" value="1" class="btn btn-sm ml-1" disabled="disabled"><i class="far fa-clone"></i> ' . $this->translate('Clone') . '</button>
                 </div>';
         }
-        $output .= Tools::htmlInput('database-table', '', $this->table, 'hidden')
+        return $output . Tools::htmlInput('database-table', '', $this->table, 'hidden')
             . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden')
             . '</form>' . PHP_EOL;
-        if (isset($options['return-output']) && $options['return-output']) {
-            return $output;
-        }
-        echo $output;
     }
 
     /**
@@ -627,7 +614,7 @@ class MyTableLister
      * @param int $totalRows
      * @param int $offset
      * @param array<mixed> $options as in view()
-     * @return void|string (string for $options['return-output'])
+     * @return string
      */
     public function pagination($rowsPerPage, $totalRows, $offset = null, $options = [])
     {
@@ -639,7 +626,7 @@ class MyTableLister
         $pages = (int) ceil($totalRows / $rowsPerPage);
         $currentPage = (int) floor($offset / $rowsPerPage) + 1;
         if ($pages <= 1) {
-            return;
+            return '';
         }
         $output = '<nav><ul class="pagination"><li class="page-item disabled"><a name="" class="page-link go-to-page non-page" data-pages="' . $pages . '" tabindex="-1">' . $this->translate('Page') . ':</a></li>';
         if ($pages <= (int) $this->DEFAULTS['PAGES_AROUND'] * 2 + 3) { // pagination with all pages
@@ -670,11 +657,7 @@ class MyTableLister
                 $output .= $this->addPage($currentPage + 1, $currentPage, $rowsPerPage, $this->translate('Next'), $title);
             }
         }
-        $output .= '</ul></nav>' . PHP_EOL;
-        if (isset($options['return-output']) && $options['return-output']) {
-            return $output;
-        }
-        echo $output;
+        return $output . '</ul></nav>' . PHP_EOL;
     }
 
     /**
@@ -877,7 +860,7 @@ class MyTableLister
      * Custom HTML showed before particular field (but after its label).
      *
      * @param string $field
-     * @param string $value
+     * @param mixed $value
      * @param array<string> $record
      * @return string HTML
      */
@@ -890,7 +873,7 @@ class MyTableLister
      * Custom HTML showed after particular field (but still in the table row, in case of table display).
      *
      * @param string $field
-     * @param string $value
+     * @param mixed $value
      * @param array<string> $record
      * @return string HTML
      */
@@ -1014,11 +997,7 @@ class MyTableLister
             $output .= '<tr><td><a href="' . ($url = '?table=' . urlencode(TAB_PREFIX . $options['table']) . '&amp;col[0]=' . $typeIndex . '&amp;op[0]=0&amp;val[0]=' . urlencode($row[0])) . '" title="' . $this->translate('Filter records') . '">' . ($row[0] ? Tools::h($row[0]) : ($row[0] === '' ? '<i class="insipid">(' . $this->translate('empty') . ')</i>' : '<big>&Sum;</big>')) . '</a>'
                 . '</td><td class="text-right"><a href="' . $url . '" title="' . $this->translate('Filter records') . '">' . (int) $row[1] . '</td></tr>' . PHP_EOL;
         }
-        $output .= '</table></details>';
-//        if (isset($options['return-output']) && $options['return-output']) {
-        return $output;
-//        }
-//        echo $output;
+        return $output . '</table></details>';
     }
 
     /**
