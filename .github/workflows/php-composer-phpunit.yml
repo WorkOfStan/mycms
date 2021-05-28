@@ -95,4 +95,7 @@ jobs:
       # alternative syntax # if: ${{ matrix.php-version != '5.3' && matrix.php-version != '5.6' }}
       if: ${{ matrix.php-version >= '7.1' }}
       run: |
-        phpstan analyse --no-interaction --no-progress .
+        # Only phpstan/phpstan-webmozart-assert + phpstan/phpstan added
+        composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
+        # Note that phpstan/phpstan is required above but not used below (as shivammathur/setup-php tool is used)
+        phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .

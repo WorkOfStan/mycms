@@ -6,6 +6,7 @@ use GodsDev\Tools\Tools;
 use Webmozart\Assert\Assert;
 use WorkOfStan\MyCMS\MyAdmin;
 use WorkOfStan\mycmsprojectnamespace\MyCMSProject;
+
 use function WorkOfStan\MyCMS\ThrowableFunctions\glob;
 use function WorkOfStan\MyCMS\ThrowableFunctions\preg_match_all;
 
@@ -235,8 +236,8 @@ class Admin extends MyAdmin
                 ' AND LEFT(path,' . PATH_MODULE . ')="' .
                 $this->MyCMS->escapeSQL($this->MyCMS->SETTINGS['PATH_CATEGORY']) . '"
                 ORDER BY path');
-            $products = $this->MyCMS->fetchAndReindexStrictArray('SELECT category_id,id,product_' . $_SESSION['language'] .
-                ' AS product,image,sort,active FROM ' . TAB_PREFIX . 'product ORDER BY sort');
+            $products = $this->MyCMS->fetchAndReindexStrictArray('SELECT category_id,id,product_' .
+                $_SESSION['language'] . ' AS product,image,sort,active FROM ' . TAB_PREFIX . 'product ORDER BY sort');
             $perex = $this->MyCMS->fetchAndReindexStrictArray('SELECT product_id,id,type,active,TRIM(CONCAT(content_' .
                 $_SESSION['language'] . ', " ", CONCAT(LEFT(description_' .
                 $_SESSION['language'] . ', 50), "…"))) AS content
@@ -326,11 +327,11 @@ class Admin extends MyAdmin
                     <button type="button" class="btn btn-sm btn-secondary" id="products-images" title="' .
                 $this->tableAdmin->translate('Toggle image thumbnails') . '"><i class="far fa-image"></i></button>
                 </footer></div>';
-        } elseif (isset($_GET['pages'])) { // pages // TODO make work in Dist
+        } elseif (isset($_GET['pages'])) { // pages // TODO make it work in Dist
             $output .= '<h1>' . $this->tableAdmin->translate('Pages') . '</h1><div id="agenda-pages">';
-            $categories = $this->MyCMS->fetchAndReindexStrictArray('SELECT id,path,active,category_' . $_SESSION['language'] .
-                ' AS category FROM ' . TAB_PREFIX . 'category'
-                . ' WHERE LEFT(path, ' . PATH_MODULE . ')="' .
+            $categories = $this->MyCMS->fetchAndReindexStrictArray('SELECT id,path,active,category_' .
+                $_SESSION['language'] . ' AS category FROM ' . TAB_PREFIX . 'category' .
+                ' WHERE LEFT(path, ' . PATH_MODULE . ')="' .
                 $this->MyCMS->escapeSQL($this->MyCMS->SETTINGS['PATH_HOME']) . '" ORDER BY path');
             $articles = $this->MyCMS->fetchAndReindexStrictArray('SELECT category_id,id,active,IF(content_' .
                 $_SESSION['language'] . ' = "", LEFT(CONCAT(code, " ", description_' .

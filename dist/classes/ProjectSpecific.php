@@ -141,11 +141,9 @@ class ProjectSpecific extends ProjectCommon
                 . ' co.perex_' . $options['language'] . ' AS perex,'
                 . ' co.description_' . $options['language'] . ' AS description '
                 . ' FROM ' . TAB_PREFIX . 'content co LEFT JOIN ' . TAB_PREFIX . 'category ca ON co.category_id=ca.id '
-                //xx TODO Parameter #1 $string of method WorkOfStan\MyCMS\MyCMSMonoLingual::escapeSQL() expects string,
-                //xx  string|null given.
-                . ' WHERE co.active="1"' . 
-                (is_null($code)?'':Tools::wrap($this->MyCMS->escapeSQL($code), ' AND co.code="', '"'))
-                . (is_null($id)?'':Tools::wrap(intval($id), ' AND co.id=')) . 
+                . ' WHERE co.active="1"'
+                . (is_null($code) ? '' : Tools::wrap($this->MyCMS->escapeSQL($code), ' AND co.code="', '"'))
+                . (is_null($id) ? '' : Tools::wrap(intval($id), ' AND co.id=')) .
                 ' LIMIT 1');
             if ($result) {
                 $result['context'] = json_decode($result['context'], true) ?: [];
@@ -191,14 +189,8 @@ class ProjectSpecific extends ProjectCommon
             . ' name_' . $options['language'] . ' AS title,'
             . ' content_' . $options['language'] . ' AS description'
             . ' FROM ' . TAB_PREFIX . 'category WHERE active="1"'
-            . (is_null($code)?'':Tools::wrap(
-                //xx TODO Parameter #1 $string of method WorkOfStan\MyCMS\MyCMSMonoLingual::escapeSQL() expects string,
-                //xx  string|null given.
-                $this->MyCMS->escapeSQL($code),
-                ' AND code="',
-                '"'
-            )) . 
-            (is_null($id)?'':Tools::wrap(intval($id), ' AND id=')) . ' LIMIT 1'
+            . (is_null($code) ? '' : Tools::wrap($this->MyCMS->escapeSQL($code), ' AND code="', '"'))
+            . (is_null($id) ? '' : Tools::wrap(intval($id), ' AND id=')) . ' LIMIT 1'
         );
         if ((!is_null($id) || !is_null($code)) && $result) {
             $result['context'] = json_decode($result['context'], true) ?: [];

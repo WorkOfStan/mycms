@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### `Added` for new features
+- [conf/phpstan.webmozart-assert.neon](conf/phpstan.webmozart-assert.neon) to allow for `phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse .` in GitHub automated testing
+- LogMysqli::queryStrictNonEmptyArray
+- MyCMSMonoLingual::fetchAndReindexStrictArray
+- ThrowableFunctions/ThrowablePHPFunctions.php preg_match_all
+- many assertions to reduce PHPStan level max errors
 
 ### `Changed` for changes in existing functionality
 
