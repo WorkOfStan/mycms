@@ -6,9 +6,10 @@ use Webmozart\Assert\Assert;
 use WorkOfStan\Backyard\Backyard;
 
 /**
- * Description of Utils
+ * Frequently used methods that are candidates to become part of MyCMS library as MyCMS\Utils
+ * (Last MyCMS/dist revision: 2021-05-28, v0.4.2)
  *
- * @author rejth
+ * @author rejthar@stanislavrejthar.com
  */
 class Utils
 {
