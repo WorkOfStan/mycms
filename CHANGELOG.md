@@ -6,19 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### `Added` for new features
-- [conf/phpstan.webmozart-assert.neon](conf/phpstan.webmozart-assert.neon) to allow for `phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse .` in GitHub automated testing
+- [conf/phpstan.webmozart-assert.neon](conf/phpstan.webmozart-assert.neon) to allow for `phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse . --memory-limit 300M` in GitHub automated testing
 - LogMysqli::queryStrictNonEmptyArray
 - MyCMSMonoLingual::fetchAndReindexStrictArray
 - ThrowableFunctions/ThrowablePHPFunctions.php preg_match_all
 - many assertions to reduce PHPStan level max errors
 
 ### `Changed` for changes in existing functionality
+- **potentially breaking change** MyTableAdmin::outputForm, MyTableLister::pagination, MyTableLister::view, MyTableLister::viewInputs, MyTableLister::viewTable - ignores not-presence of parameter $options['return-output'] and always returns string, never echo string (would result @return mixed void or string issue)
+- MyTableLister::customInputBefore and MyTableLister::customInputAfter - parameter 2 is mixed type (not a string)
 
 ### `Deprecated` for soon-to-be removed features
 
 ### `Removed` for now removed features
 
 ### `Fixed` for any bug fixes
+- MyAdminProcess.php::processUserCreate $salt typecasted as string
+- MyTableAdmin::recordSave and MyTableAdmin::recordDelete - resolveSQL call treated $messageSuccess and $messageError as strings while they are bool
 
 ### `Security` in case of vulnerabilities
 

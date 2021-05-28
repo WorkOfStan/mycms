@@ -27,9 +27,7 @@ class MyTableAdmin extends MyTableLister
      *      [prefill] - assoc. array with initial field values (only when inserting new record)
      *      [original] - keep original values (to update only changed fields)
      *      [tabs] - divide fields into Bootstrap tabs, e.g. [null, 'English'=>'/^.+_en$/i', 'Chinese'=>'/^.+_cn$/i']
-     *      [return-output] - non-zero: return output (instead of echo $output)
-     * @return mixed void or string if $option[return-output] is non-zero
-     *      TODO can't be void|string, as it wouldn't be possible to make string operations on void result
+     * @return string
      */
     public function outputForm($where, array $options = [])
     {
@@ -114,11 +112,7 @@ class MyTableAdmin extends MyTableLister
                 ['class' => 'form-control form-control-sm w-initial d-inline-block']
             ) . '</label></div>';
         }
-        $output .= (isset($options['exclude-form']) && $options['exclude-form'] ? '' : '</fieldset></form>') . PHP_EOL;
-        if (isset($options['return-output']) && $options['return-output']) {
-            return $output;
-        }
-        echo $output;
+        return $output . (isset($options['exclude-form']) && $options['exclude-form'] ? '' : '</fieldset></form>') . PHP_EOL;
     }
 
     /**
@@ -619,8 +613,8 @@ class MyTableAdmin extends MyTableLister
             if (
                 $this->resolveSQL(
                     $sql,
-                    $messageSuccess ?: $this->translate('Record saved.'),
-                    $messageError ?: $this->translate('Could not save the record.') . ' #%errno%: %error%'
+                    $this->translate('Record saved.'),
+                    $this->translate('Could not save the record.') . ' #%errno%: %error%'
                 )
             ) {
                 return true;
@@ -654,8 +648,8 @@ class MyTableAdmin extends MyTableLister
             }
             return $this->resolveSQL(
                 'DELETE FROM ' . Tools::escapeDbIdentifier($_GET['table']) . ' WHERE ' . implode(' AND ', $sql),
-                $messageSuccess ?: $this->translate('Record deleted.'),
-                $messageError ?: $this->translate('Could not delete the record.') . '#%errno%: %error%'
+                $this->translate('Record deleted.'),
+                $this->translate('Could not delete the record.') . '#%errno%: %error%'
             );
         }
         return false;

@@ -548,7 +548,7 @@ class MyAdminProcess extends MyCommon
                     $ZipArchive = new \ZipArchive();
                 }
                 Assert::string($post['subfolder']);
-//                Assert::string($post['wildcard']); // TODO fix Expected a string. Got: NULL
+                Assert::string($post['wildcard'], 'Expected a string. Got: %s');
                 foreach (
                     glob(
                         DIR_ASSETS . $post['subfolder'] . '/' . (isset($post['wildcard']) ? $post['wildcard'] : '*.*'),
@@ -666,10 +666,13 @@ class MyAdminProcess extends MyCommon
     {
         if (isset($post['create-user'], $post['user'], $post['password'], $post['retype-password']) && $post['user'] && $post['password'] && $post['retype-password']) {
             Assert::string($post['user']);
+            Assert::string($post['password']);
             $salt = mt_rand((int) 1e8, (int) 1e9);
             Tools::resolve(
                 $this->MyCMS->dbms->queryStrictBool(
-                    'INSERT INTO ' . TAB_PREFIX . 'admin SET admin="' . $this->MyCMS->escapeSQL($post['user']) . '", password_hashed="' . $this->MyCMS->escapeSQL(sha1($post['password'] . $salt)) . '", salt=' . $salt . ', rights=2',
+                    'INSERT INTO ' . TAB_PREFIX . 'admin SET admin="' . $this->MyCMS->escapeSQL($post['user']) .
+                    '", password_hashed="' . $this->MyCMS->escapeSQL(sha1($post['password'] . (string) $salt)) .
+                    '", salt=' . (string) $salt . ', rights=2',
                     1,
                     false
                 ),
