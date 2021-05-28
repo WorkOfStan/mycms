@@ -5,6 +5,7 @@ namespace WorkOfStan\MyCMS;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Tracy\Debugger;
+use Webmozart\Assert\Assert;
 use WorkOfStan\MyCMS\LogMysqli;
 use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
 
@@ -139,6 +140,19 @@ class MyCMSMonoLingual
     public function fetchAndReindex($sql)
     {
         return $this->dbms->fetchAndReindex($sql);
+    }
+
+    /**
+     *
+     * @param string $sql SQL statement to be executed
+     * @return array<array|string> - either associative array, empty array on empty SELECT
+     *   Exception on error
+     */
+    public function fetchAndReindexStrictArray($sql)
+    {
+        $result = $this->dbms->fetchAndReindex($sql);
+        Assert::isArray($result);
+        return $result;
     }
 
     /**

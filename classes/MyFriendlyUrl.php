@@ -154,7 +154,7 @@ class MyFriendlyUrl extends MyCommon
                 'friendlyIdentifyRedirect: friendlyUrl'
             ))
         ) {
-            if (($friendlyUrl != ('?' . $url['query']))) {
+            if (isset($url['query']) && ($friendlyUrl != ('?' . $url['query']))) {
                 // other than default language should have its directory
                 $this->verboseBarDump(
                     $addLanguageDirectory = ($this->language != DEFAULT_LANGUAGE)
