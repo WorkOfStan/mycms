@@ -7,8 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### `Added` for new features
 - ThrowableFunctions/ThrowablePHPFunctions::strtotime
+- phpcbf* branch (no slash allowed) triggers commit of auto PHPCS fixes, controlled by [phpcbf.yml](.github/workflows/phpcbf.yml)
 
 ### `Changed` for changes in existing functionality
+- to Check PHP syntax errors uses: overtrue/phplint@3.0.2 (instead of obsoleted michaelw90/PHP-Lint@master)
 
 ### `Deprecated` for soon-to-be removed features
 
@@ -18,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MyTableAdmin::outputField case timestamp $value doesn't have to be string
 
 ### `Security` in case of vulnerabilities
+- dist/.htaccess: no markdown file can be available on web
 
 ## [0.4.2] - 2021-05-28
 - PHPStan level=max ... Error Zero
