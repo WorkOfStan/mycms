@@ -36,7 +36,7 @@ pre {
     line-height: 1;
     border-radius: 0.2rem;
 }
-#navbar ul li a .fa, 
+#navbar ul li a .fa,
 #navbar ul li ul li a .fa {
     margin-right: 5px;
 }
@@ -75,7 +75,7 @@ fieldset.form-context {
 table.database input[type=number] {
     width: 7em;
     text-align: right;
-} 
+}
 
 table.database {
     width: 100%;
@@ -144,7 +144,7 @@ ul.nav.nav-sidebar.tables li {
 }
 /* Sidebar navigation */
 .nav-sidebar {
-    margin: 1ex -20px 20px -21px; 
+    margin: 1ex -20px 20px -21px;
 }
 .nav-sidebar > li > a {
     padding-right: 10px;

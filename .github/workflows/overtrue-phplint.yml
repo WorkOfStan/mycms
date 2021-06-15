@@ -1,4 +1,4 @@
-name: PHP Linting
+name: PHP Linting (Overtrue)
 on:
   push:
     branches-ignore:
@@ -15,5 +15,11 @@ jobs:
     # Limit the running time
     timeout-minutes: 10
     steps:
-        - uses: actions/checkout@v2
-        - uses: michaelw90/PHP-Lint@master
+        - name: Checkout
+          uses: actions/checkout@v2
+
+        # obsolete
+        #- uses: michaelw90/PHP-Lint@master
+
+        - name: Check PHP syntax errors
+          uses: overtrue/phplint@3.0.2
