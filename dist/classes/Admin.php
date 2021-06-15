@@ -267,7 +267,7 @@ class Admin extends MyAdmin
                     if ($product['sort'] != $i) {
                         if (
                             $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'product SET sort=' . $i .
-                                ' WHERE id=' . +$product['id'])
+                                ' WHERE id=' . + $product['id'])
                         ) {
                             $product['sort'] = $i;
                         } else {

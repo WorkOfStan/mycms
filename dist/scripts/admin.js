@@ -13,7 +13,8 @@ let vDivider = 25;
 let vDividerMoving = false;
 let agendas = []; // globally used variable
 
-function prepareDatetimepicker(date, time) {
+function prepareDatetimepicker(date, time)
+{
     let timeformat = (date ? 'dd-MM-yyyy' : '') + (date && time ? ' ' : '') + (time ? 'hh:mm:ss' : '');
     $('input.input-' + (date ? 'date' : '') + (time ? 'time' : '')).each(function () {
         let div = $('<div class="input-append date">' + $(this).attr('data-format', timeformat)[0].outerHTML
@@ -69,7 +70,8 @@ function addSearchRow(target, field, op, value)
     return true;
 }
 
-function urlChange(changes) {
+function urlChange(changes)
+{
     let pairs = location.search.substr(1).split('&');
     let tmp = {};
     for (i in pairs) {
@@ -92,7 +94,8 @@ function urlChange(changes) {
     return '?' + result.substr(1);
 }
 
-function toggleTableColumn(/*element*/table, /*int*/column, /*bool*/show) {
+function toggleTableColumn(/*element*/table, /*int*/column, /*bool*/show)
+{
     var rows = $(table).find('tr');
     $(rows).each(function (row) {
         if (typeof (rows[row].cells[column]) != "undefined") {
@@ -101,7 +104,8 @@ function toggleTableColumn(/*element*/table, /*int*/column, /*bool*/show) {
     });
 }
 
-function getAgenda(agenda, options) {
+function getAgenda(agenda, options)
+{
     var option = options;
     $.ajax({
         url: '?keep-token',
@@ -119,7 +123,8 @@ function getAgenda(agenda, options) {
     });
 }
 
-function fillAgenda(data, options) {
+function fillAgenda(data, options)
+{
     let prefill = '';
     let html = '';
     for (i in data.data) {
@@ -135,7 +140,8 @@ function fillAgenda(data, options) {
 }
 
 // content rows in agenda column
-function agendaRow(data, index, options) {
+function agendaRow(data, index, options)
+{
     let row = data.data[index];
     let result = '<div class="m-1" data-id="' + row.id + '" data-table="' + data.agenda + '">\n'
             + '<a href="?table=' + TAB_PREFIX + (options['table'] || data.agenda) + '&amp;where[id]=' + row.id + '"'
@@ -167,7 +173,8 @@ function agendaRow(data, index, options) {
     return result + '</div>\n';
 }
 
-function updateImageSelector(ImageFolder, ImageFiles) {
+function updateImageSelector(ImageFolder, ImageFiles)
+{
     //console.log('updateImageSelector', ImageFolder, ImageFiles);
     $(ImageFiles).html('<img src="images/loader.gif" />'); // or <i class="fas fa-spinner fa-spin"></i>
     $.ajax({
@@ -203,7 +210,8 @@ function updateImageSelector(ImageFolder, ImageFiles) {
     });
 }
 
-function fillAssetsSubfolders(element) {
+function fillAssetsSubfolders(element)
+{
     $(element).append($('<option>', {value: '', text: DIR_ASSETS}));
     for (i in ASSETS_SUBFOLDERS) {
         $(element).append($('<option>', {
@@ -213,13 +221,15 @@ function fillAssetsSubfolders(element) {
     }
 }
 
-function jsonExpandedTableAddRow(table) {
+function jsonExpandedTableAddRow(table)
+{
     let html = '<tr><td class="first w-25"><input class="form-control form-control-sm" type="text" name="' + EXPAND_INFIX + 'context[]" onblur="jsonExpandedOnBlur(this)" placeholder="' + TRANSLATE['variable'] + '"></td>'
             + '<td class="second w-75"><input class="form-control form-control-sm" type="text" name="' + EXPAND_INFIX + EXPAND_INFIX + 'context[]" onblur="jsonExpandedOnBlur(this)" placeholder="' + TRANSLATE['value'] + '"></td></tr>';
     $(html).appendTo(table);
 }
 
-function jsonExpandedOnBlur(element) {
+function jsonExpandedOnBlur(element)
+{
     let tr = $(element).parent().parent();
     let first = tr.find('.first input');
     let second = tr.find('.second input');
@@ -234,21 +244,25 @@ function jsonExpandedOnBlur(element) {
 }
 
 // toggle null checkbox according to select/textarea content
-function selectWithNullOnChange(element, name) {
+function selectWithNullOnChange(element, name)
+{
     $('.database input[name=fields-null\\[' + name + '\\]]').prop('checked', !$(element).val());
 }
 
 // toggle null checkbox according to "pure" content
-function selectWithNullOnChangeContent(contents, name) {
+function selectWithNullOnChangeContent(contents, name)
+{
     // '<p><br></p>' is returned with empty Summernote textarea
-    $('.database input[name=fields-null\\[' + name + '\\]]').prop('checked', contents === '<p><br></p>' || contents === '' );
+    $('.database input[name=fields-null\\[' + name + '\\]]').prop('checked', contents === '<p><br></p>' || contents === '');
 }
 
-function pad0(input, len) {
+function pad0(input, len)
+{
     return '0'.repeat(len - String(input).length) + input;
 }
 
-function moveCategory(element, up) {
+function moveCategory(element, up)
+{
     let prefix = $(element).data('prefix');
     let siblings = $(element).parent().find('details[data-prefix=' + prefix + ']');
     for (i in siblings) {
@@ -264,7 +278,8 @@ function moveCategory(element, up) {
 }
 
 // toggles Export, Edit, Clone buttons based on row selection
-function updateNumberOfSelectedRows(element) {
+function updateNumberOfSelectedRows(element)
+{
     var checked = $(element).closest('table').find('.multi-options input[type=checkbox]:checked').length;
     let form = $(element).closest('form');
     checked = form.find('.table-admin .multi-options input[type=checkbox]:checked').length;
@@ -273,12 +288,14 @@ function updateNumberOfSelectedRows(element) {
     return checked;
 }
 
-function addMediaMessage(message) {
+function addMediaMessage(message)
+{
     $('#media-file-feedback span:first').text(message).parent().show();
 }
 
 // TODO explore code A
-function changePasswordSubmit() {
+function changePasswordSubmit()
+{
     let oldPass = $('#old-password').val();
     let newPass = $('#new-password').val();
     let retypePass = $('#retype-password').val();
@@ -295,7 +312,8 @@ function changePasswordSubmit() {
 }
 
 // TODO explore code A
-function createUserSubmit() {
+function createUserSubmit()
+{
     let user = $('#create-user').val();
     let newPass = $('#create-password').val();
     let retypePass = $('#create-retype-password').val();
@@ -312,7 +330,8 @@ function createUserSubmit() {
 }
 
 // TODO explore code A
-function adminActivity() {
+function adminActivity()
+{
     let table = $('form.record-form input[type=hidden][name=table]').val();
     let id = $('form.record-form input[name=fields\\[id\\]]').val();
     if (table && id) {
@@ -336,7 +355,8 @@ function adminActivity() {
     }
 }
 
-function standardDocumentReady() {
+function standardDocumentReady()
+{
     String.prototype.replaceAll = function (target, replacement) {
         return this.split(target).join(replacement);
     };
@@ -375,7 +395,7 @@ function standardDocumentReady() {
     //date/time picker
     prepareDatetimepicker(false, true);
     //add 'column=...' condition to search fieldset // TODO explore A code
-    $('.table-admin thead tr th a.filter').on('click', function(event){
+    $('.table-admin thead tr th a.filter').on('click', function (event) {
         event.preventDefault();
         var rand = $(this).parentsUntil(null, 'form').data('rand');
         var search = $('#search-div' + rand);
@@ -419,8 +439,9 @@ function standardDocumentReady() {
         }
     });
     // media - show files on subfolder change
-    $('#subfolder').on('change',
-        function() {
+    $('#subfolder').on(
+        'change',
+        function () {
             $.ajax({
                 url: '?keep-token',
                 dataType: 'json',
@@ -431,7 +452,7 @@ function standardDocumentReady() {
                     'token': TOKEN
                 },
                 type: 'POST',
-                success: function(data) {
+                success: function (data) {
                     if (data.success) {
                         let path = $('#subfolder option:first-child').text() + $('#subfolder').val() + '/';
                         let html = '';
@@ -451,11 +472,10 @@ function standardDocumentReady() {
                             + '<th class="text-right">' + TRANSLATE['size'] + '</th>'
                             + '<th class="text-right">' + TRANSLATE['modified'] + '</th></tr></thead>'
                             + html + '</table>'
-                            : '<i>' + TRANSLATE['No files'] + '</i>'
-                        );
+                            : '<i>' + TRANSLATE['No files'] + '</i>');
                         $('#delete-media-files,#rename-fieldset,#file-rename-folder').toggle(data.data.length > 0);
                         // $('#delete-media-files,#filename-fieldset,#file-rename-folder,#unpack-media-file').addClass('disabled'); // TODO instead of previous line??
-                        $('#media-files .subfolder-files .multi-options input[type=radio][name=file]').on('change', function(event) {
+                        $('#media-files .subfolder-files .multi-options input[type=radio][name=file]').on('change', function (event) {
                             $('#media-file-name').val($(this).val()).attr('title', $(this).val());
                             // TODO explore A code below
                             if ($(this).val()) {
@@ -469,7 +489,7 @@ function standardDocumentReady() {
                                 $('#unpack-media-file').addClass('disabled');
                             }
                         });
-                        $('#media-files .subfolder-files .multi-options input[type=checkbox]').on('change', function(event) {
+                        $('#media-files .subfolder-files .multi-options input[type=checkbox]').on('change', function (event) {
                             if ($('#media-files .subfolder-files tr td input[type=checkbox]:checked').length) {
                                 $('#delete-media-files').removeClass('disabled');
                                 $('#pack-media-files').removeClass('disabled');
@@ -577,7 +597,7 @@ function standardDocumentReady() {
                 'token': TOKEN
             },
             type: 'POST',
-            success: function(data) {
+            success: function (data) {
                 if (data.success) {
                     location.reload();
                 } else {
@@ -587,7 +607,7 @@ function standardDocumentReady() {
         });
     });
     // unpack a file
-    $('#unpack-media-file').on('click', function(event) {
+    $('#unpack-media-file').on('click', function (event) {
         $('#media-feedback').hide();
         var file_archive = $('#media-file-name').val();
         if (!file_archive) {
@@ -604,7 +624,7 @@ function standardDocumentReady() {
                 'token': TOKEN
             },
             type: 'POST',
-            success: function(data) {
+            success: function (data) {
                 if (data.success) {
                     location.reload();
                 } else {
@@ -665,7 +685,8 @@ function standardDocumentReady() {
         }
     });
     // toggles Export, Edit, Clone buttons based on row selection
-    $('table.table-admin thead input[type=checkbox].check-all').on('change', function () { // "check all" checkbox
+    $('table.table-admin thead input[type=checkbox].check-all').on('change', function () {
+ // "check all" checkbox
         $(this).closest('table').find('tr td.multi-options input[type=checkbox]').prop('checked', $(this).prop('checked'));
         updateNumberOfSelectedRows(this);
     });
@@ -801,7 +822,7 @@ function standardDocumentReady() {
         $('#old_name,#new_name').val($(this).val());
     });
     // division up/down // TODO make this F code work in Dist
-    $('#agenda-products button[name=division-up], #agenda-products button[name=division-down]').on('click', function(event) {
+    $('#agenda-products button[name=division-up], #agenda-products button[name=division-down]').on('click', function (event) {
         event.preventDefault();
         $.ajax({
             url: '?keep-token',
@@ -812,13 +833,13 @@ function standardDocumentReady() {
                 'token': TOKEN
             },
             type: 'POST',
-            success: function(data) {
+            success: function (data) {
                 location.reload();
             }
         });
     });
     // product up/down // TODO make this F code work in Dist
-    $('#agenda-products button[name=product-up], #agenda-products button[name=product-down]').on('click', function(event) {
+    $('#agenda-products button[name=product-up], #agenda-products button[name=product-down]').on('click', function (event) {
         event.preventDefault();
         $.ajax({
             url: '?keep-token',
@@ -829,26 +850,26 @@ function standardDocumentReady() {
                 'token': TOKEN
             },
             type: 'POST',
-            success: function(data) {
+            success: function (data) {
                 location.reload();
             }
         });
-    });            
+    });
     //vDivider
-    $('#v-divider').on('mousedown', function(event){
+    $('#v-divider').on('mousedown', function (event) {
         vDividerMoving = true;
         if (event.buttons & 1) {
             event.preventDefault();
         }
     });
-    $('#v-divider').on('mouseup', function(event){
+    $('#v-divider').on('mouseup', function (event) {
         $('#v-divider').css('left', vDivider + '%');
         $('#admin-sidebar').css('max-width', vDivider + '%');
         $('#admin-main').css('max-width', 'calc(' + (100 - vDivider) + '% - 15px)').css('flex', '0 0 ' + (100 - vDivider) + '%');
         vDividerMoving = false;
         localStorage.setItem('vDivider', vDivider);
     });
-    $('body > div.container-fluid.row').on('mousemove', function(event){
+    $('body > div.container-fluid.row').on('mousemove', function (event) {
         if (vDividerMoving) {
             vDivider = event.clientX * 100 / event.delegateTarget.offsetWidth;
             vDivider = Math.max(Math.min(vDivider, 80), 5);
@@ -856,7 +877,7 @@ function standardDocumentReady() {
         }
     });
     vDivider = (localStorage.getItem('vDivider') || vDivider) - 0;
-    $('#v-divider').trigger('mouseup', {'buttons': 1, 'preventDefault': function(){}});
+    $('#v-divider').trigger('mouseup', {'buttons': 1, 'preventDefault': function (){}});
     // save content of summernote editor even if in codeView
     $('.note-codable').on('blur', function () {
         $(this).closest('.TableAdminTextarea').find('textarea:first-child').val($(this).val());
@@ -869,7 +890,7 @@ function standardDocumentReady() {
     $('.database .form-control').on('change', function (event) {
         $('#null-' + $(this).attr('id')).prop('checked', false);
     });
-    $('#agenda-translations form table input.translation').on('change', function(event) {
+    $('#agenda-translations form table input.translation').on('change', function (event) {
         $('#old_name,#new_name').val($(this).val());
     });
     // toggles Export, Edit, Clone buttons based on row selection
@@ -910,23 +931,23 @@ function standardDocumentReady() {
         }
     });
     // input.mycms-password --> input group with button to toggle
-    $('input.mycms-password').each(function(){
+    $('input.mycms-password').each(function () {
         $(this).removeClass('mycms-password');
         $(this)[0].outerHTML = '<div class="input-group">' + $(this)[0].outerHTML + '<div class="input-group-append"><button class="btn btn-secondary mycms-password-toggle" type="button"><i class="fa fa-eye-slash"></i></button></div>';
     });
-    $('.mycms-password-toggle').on('click', function(event){
+    $('.mycms-password-toggle').on('click', function (event) {
         event.preventDefault();
         let password = $(this).parent().parent().find('input.form-control');
         $(password).attr('type', password.prop('type') == 'password' ? 'text' : 'password');
         $(this).find('i.fa').removeClass('fa-eye').removeClass('fa-eye-slash').addClass(password.prop('type') == 'password' ? 'fa-eye-slash' : 'fa-eye');
     });
     // friendly URLs, fill up an url
-    $('form.friendly-urls .input-group .input-group-text.btn').on('click', function() {
+    $('form.friendly-urls .input-group .input-group-text.btn').on('click', function () {
         let url = $(this).parent().parent().find('input[type=text]');
         $(url).val($(url).data('fill'));
     });
     // friendly URLs, fill up all empty urls
-    $('form.friendly-urls button.btn-fill').on('click', function() {
+    $('form.friendly-urls button.btn-fill').on('click', function () {
         let urls = $('form.friendly-urls .input-group input[type=text].form-control');
         for (i in urls) {
             if (($(urls[i]).val() == '' || $('form.friendly-urls input#only-empty').is(':checked')) && $(urls[i]).data('fill')) {
@@ -934,7 +955,7 @@ function standardDocumentReady() {
             }
         }
     });
-    $('form.friendly-urls button.btn-check-up').on('click', function() {
+    $('form.friendly-urls button.btn-check-up').on('click', function () {
         let urls = $('form.friendly-urls input[type=text]');
         $(urls).removeClass('is-invalid');
         let unique = {};
