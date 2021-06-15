@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Fixed` for any bug fixes
 - MyTableAdmin::outputField case timestamp $value doesn't have to be string
+- phpcbf automatically fixed style in styles/admin.css, dist/styles/admin.css, dist/scripts/admin-specific.js, dist/scripts/admin.js, dist/classes/Admin.php
 
 ### `Security` in case of vulnerabilities
 - dist/.htaccess: no markdown file can be available on web
