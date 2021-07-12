@@ -22,4 +22,4 @@ jobs:
         #- uses: michaelw90/PHP-Lint@master
 
         - name: Check PHP syntax errors
-          uses: overtrue/phplint@3.0.2
+          uses: overtrue/phplint@3.0.3
