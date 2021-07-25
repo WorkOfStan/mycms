@@ -26,6 +26,7 @@ MyCMS::InitDatabase class to read database configuration from (dist/)phinx.yml
 - MyTableAdmin::outputField case timestamp $value doesn't have to be string
 - phpcbf automatically fixed style in styles/admin.css, dist/styles/admin.css, dist/scripts/admin-specific.js, dist/scripts/admin.js, dist/classes/Admin.php
 - assert array as argument of array_shift in LogMysqli::fetchAndReindex
+- dist/images/favicon/manifest.json 12x fixed error  Unnecessary escape character: \/  jsonc/no-useless-escape
 
 ### `Security` in case of vulnerabilities
 - dist/.htaccess: no markdown file can be available on web
