@@ -5,12 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+MyCMS::InitDatabase class to read database configuration from (dist/)phinx.yml
+
 ### `Added` for new features
 - ThrowableFunctions/ThrowablePHPFunctions::strtotime
 - phpcbf* branch (no slash allowed) triggers commit of auto PHPCS fixes, controlled by [phpcbf.yml](.github/workflows/phpcbf.yml)
+- InitDatabase class to read database configuration from (dist/)phinx.yml
+- cache for composer downloaded libraries into vendor folder for GitHub automated testing
 
 ### `Changed` for changes in existing functionality
-- to Check PHP syntax errors uses: overtrue/phplint@3.0.2 (instead of obsoleted michaelw90/PHP-Lint@master)
+- to Check PHP syntax errors uses: overtrue/phplint@3.0.3 (instead of obsoleted michaelw90/PHP-Lint@master)
+- dist/build.sh uses composer update -a **--prefer-dist --no-progress**
 
 ### `Deprecated` for soon-to-be removed features
 
@@ -19,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Fixed` for any bug fixes
 - MyTableAdmin::outputField case timestamp $value doesn't have to be string
 - phpcbf automatically fixed style in styles/admin.css, dist/styles/admin.css, dist/scripts/admin-specific.js, dist/scripts/admin.js, dist/classes/Admin.php
+- assert array as argument of array_shift in LogMysqli::fetchAndReindex
 
 ### `Security` in case of vulnerabilities
 - dist/.htaccess: no markdown file can be available on web
@@ -277,7 +284,8 @@ to
 
 
 
-[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.4.2...HEAD
+[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.4.3...HEAD
+[0.4.3]: https://github.com/WorkOfStan/mycms/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/WorkOfStan/mycms/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/WorkOfStan/mycms/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/WorkOfStan/mycms/compare/v0.3.15...v0.4.0
