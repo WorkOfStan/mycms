@@ -162,6 +162,10 @@ class ProjectCommon extends MyCommon
             '/Industry 4.0/' => 'Industry 4.0',
             ], $addReplacePatterns);
         // Parameter #1 $pattern of function preg_replaceString expects array<string>|string
-        return preg_replaceString($this->assertStringArray(array_keys($replacePatterns)), array_values($replacePatterns), $text);
+        return preg_replaceString(
+            $this->assertStringArray(array_keys($replacePatterns)),
+            array_values($replacePatterns),
+            $text
+        );
     }
 }
