@@ -3,6 +3,7 @@
 namespace WorkOfStan\MyCMS;
 
 use Exception;
+use Webmozart\Assert\Assert;
 
 use function WorkOfStan\MyCMS\ThrowableFunctions\preg_replaceString;
 
@@ -147,6 +148,11 @@ class ProjectCommon extends MyCommon
             '/ an /' => ' an ',
             '/Industry 4.0/' => 'Industry 4.0',
             ], $addReplacePatterns);
-        return preg_replaceString(array_keys($replacePatterns), array_values($replacePatterns), $text);
+        // Parameter #1 $pattern of function preg_replaceString expects array<string>|string
+        $arrayKeys = array_keys($replacePatterns);
+        foreach ($arrayKeys as $string) {
+            Assert::string($string);
+        }
+        return preg_replaceString($arrayKeys, array_values($replacePatterns), $text);
     }
 }
