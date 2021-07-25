@@ -123,6 +123,19 @@ class ProjectCommon extends MyCommon
     }
 
     /**
+     *
+     * @param array<mixed> $arr
+     * @return array<string>
+     */
+    private function assertStringArray(array $arr)
+    {
+        foreach ($arr as $string) {
+            Assert::string($string);
+        }
+        return $arr;
+    }
+
+    /**
      * Replace spaces with \0160 after selected short words
      * The list of selected words may be enlarged or redefined in the ProjectSpecific child
      *
@@ -149,10 +162,7 @@ class ProjectCommon extends MyCommon
             '/Industry 4.0/' => 'Industry 4.0',
             ], $addReplacePatterns);
         // Parameter #1 $pattern of function preg_replaceString expects array<string>|string
-        $arrayKeys = array_keys($replacePatterns);
-        foreach ($arrayKeys as $string) {
-            Assert::string($string);
-        }
+        $arrayKeys = $this->assertStringArray(array_keys($replacePatterns));
         return preg_replaceString($arrayKeys, array_values($replacePatterns), $text);
     }
 }
