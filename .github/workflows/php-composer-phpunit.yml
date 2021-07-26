@@ -134,13 +134,13 @@ jobs:
         cd dist
         # debug directory listings
         ls
-        echo vendor
+        echo ---vendor
         ls ./vendor
-        echo vendor bin
+        echo ---vendor bin
         ls ./vendor/bin
         echo phinx migrate testing
         # and now the test
-        "./vendor/bin/phinx migrate -e testing"
+        vendor/bin/phinx migrate -e testing
         # `cd ..` redundant as each run starts in the root
         cd ..
 
