@@ -715,6 +715,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
     /**
      * This PHPUnit test is meant just for MyCMS development. It is recommended to remove it from real applications.
      *
+     * @group webserver
      * @return void
      */
     public function testPageStatusOverHttp()
