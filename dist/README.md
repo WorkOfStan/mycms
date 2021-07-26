@@ -67,7 +67,7 @@ to `conf/config.local.php`.
 
 Best practice: Management often uses iPhone or Mac, therefore don't forget to test on Apple devices as well!
 
-Recommendation: if you change boilerplate classes, update also info `(Last MyCMS/dist revision: 2021-05-20, v0.4.0)`, so that it is more clear what to update in case of MyCMS core upgrade.
+Recommendation: if you change boilerplate classes, update also info `(Last MyCMS/dist revision: 2021-07-26, v0.4.3)`, so that it is more clear what to update in case of MyCMS core upgrade.
 
 ### Adding new type of content to be displayed
 | Add to this place | Why |
