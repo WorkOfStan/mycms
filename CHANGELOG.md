@@ -13,6 +13,8 @@ MyCMS::InitDatabase class to read database configuration from (dist/)phinx.yml
 - phpcbf* branch (no slash allowed) triggers commit of auto PHPCS fixes, controlled by [phpcbf.yml](.github/workflows/phpcbf.yml)
 - InitDatabase class to read database configuration from (dist/)phinx.yml
 - cache for composer downloaded libraries into vendor folder for GitHub automated testing
+- added MySQL/8 (part of Ubuntu/20 virtual environment) with native password access used by phinx::testing environment
+- Note: Apache/2 that is part of Ubuntu/20 virtual environment doesn't have PHP installed by default, so phpunit @group webserver is excluded from automatic GitHub actions testing
 
 ### `Changed` for changes in existing functionality
 - to Check PHP syntax errors uses: overtrue/phplint@3.0.3 (instead of obsoleted michaelw90/PHP-Lint@master)

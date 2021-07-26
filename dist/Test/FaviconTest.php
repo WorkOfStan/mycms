@@ -61,6 +61,7 @@ class FaviconTest extends \PHPUnit_Framework_TestCase
      * Check presence of favicon resources
      * Useful for automatic checking of `.htaccess` RewriteRule ^(favicon\.ico) images/favicon/$1
      *
+     * @group webserver
      * @return void
      */
     public function testPageStatusOverHttp()
