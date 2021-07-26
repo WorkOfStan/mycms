@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-MyCMS::InitDatabase class to read database configuration from (dist/)phinx.yml
+- MyCMS::InitDatabase class to read database configuration from (dist/)phinx.yml
+- GitHub automation improved
 
 ### `Added` for new features
 - ThrowableFunctions/ThrowablePHPFunctions::strtotime
@@ -28,7 +29,7 @@ MyCMS::InitDatabase class to read database configuration from (dist/)phinx.yml
 - MyTableAdmin::outputField case timestamp $value doesn't have to be string
 - phpcbf automatically fixed style in styles/admin.css, dist/styles/admin.css, dist/scripts/admin-specific.js, dist/scripts/admin.js, dist/classes/Admin.php
 - assert array as argument of array_shift in LogMysqli::fetchAndReindex
-- dist/images/favicon/manifest.json 12x fixed error  Unnecessary escape character: \/  jsonc/no-useless-escape
+- in dist/images/favicon/manifest.json 12x error Unnecessary escape character: \/  jsonc/no-useless-escape
 - fix classes/MyAdmin.php line 640: Ternary operator condition is always true.
 - added private ProjectCommon::assertStringArray to fix Parameter #1 $pattern of function WorkOfStan\MyCMS\ThrowableFunctions\preg_replaceString expects array<string>|string, array<int, (int|string)> given.
 
