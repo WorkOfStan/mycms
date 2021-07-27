@@ -6,10 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### `Added` for new features
+
+### `Changed` for changes in existing functionality
+
+### `Deprecated` for soon-to-be removed features
+
+### `Removed` for now removed features
+
+### `Fixed` for any bug fixes
+
+### `Security` in case of vulnerabilities
+
+## [0.4.3] - 2021-07-27
+
 - MyCMS::InitDatabase class to read database configuration from (dist/)phinx.yml
 - GitHub automation improved
 
-### `Added` for new features
+### Added
 - ThrowableFunctions/ThrowablePHPFunctions::strtotime
 - phpcbf* branch (no slash allowed) triggers commit of auto PHPCS fixes, controlled by [phpcbf.yml](.github/workflows/phpcbf.yml)
 - InitDatabase class to read database configuration from (dist/)phinx.yml
@@ -17,15 +31,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added MySQL/8 (part of Ubuntu/20 virtual environment) with native password access used by phinx::testing environment
 - Note: Apache/2 that is part of Ubuntu/20 virtual environment doesn't have PHP installed by default, so phpunit @group webserver is excluded from automatic GitHub actions testing
 
-### `Changed` for changes in existing functionality
+### Changed
 - to Check PHP syntax errors uses: overtrue/phplint@3.0.3 (instead of obsoleted michaelw90/PHP-Lint@master)
 - dist/build.sh uses composer update -a **--prefer-dist --no-progress**
 
-### `Deprecated` for soon-to-be removed features
-
-### `Removed` for now removed features
-
-### `Fixed` for any bug fixes
+### Fixed
 - MyTableAdmin::outputField case timestamp $value doesn't have to be string
 - phpcbf automatically fixed style in styles/admin.css, dist/styles/admin.css, dist/scripts/admin-specific.js, dist/scripts/admin.js, dist/classes/Admin.php
 - assert array as argument of array_shift in LogMysqli::fetchAndReindex
@@ -33,7 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix classes/MyAdmin.php line 640: Ternary operator condition is always true.
 - added private ProjectCommon::assertStringArray to fix Parameter #1 $pattern of function WorkOfStan\MyCMS\ThrowableFunctions\preg_replaceString expects array<string>|string, array<int, (int|string)> given.
 
-### `Security` in case of vulnerabilities
+### Security
 - dist/.htaccess: no markdown file can be available on web
 
 ## [0.4.2] - 2021-05-28
