@@ -67,7 +67,7 @@ to `conf/config.local.php`.
 
 Best practice: Management often uses iPhone or Mac, therefore don't forget to test on Apple devices as well!
 
-Recommendation: if you change boilerplate classes, update also info `(Last MyCMS/dist revision: 2021-05-20, v0.4.0)`, so that it is more clear what to update in case of MyCMS core upgrade.
+Recommendation: if you change boilerplate classes, update also info `(Last MyCMS/dist revision: 2021-07-26, v0.4.3)`, so that it is more clear what to update in case of MyCMS core upgrade.
 
 ### Adding new type of content to be displayed
 | Add to this place | Why |
@@ -87,10 +87,11 @@ For this deployment scenarion only (because otherwise it would be a vulnerabilit
 
 
 ### `build.sh` runs the following commands
-1. `composer update -a`
+1. `composer update -a --prefer-dist --no-progress` # to download just the necessary code
 2. Note: All changes in database (structure) SHOULD be made by phinx migrations. Create your local `phinx.yml` as a copy of `phinx.dist.yml` to make it work, where you set your database connection into *development* section.
 ```bash
-vendor/bin/phinx migrate -e development # or production or testing
+vendor/bin/phinx migrate -e development # or production
+vendor/bin/phinx migrate -e testing # for phpunit, so that tests don't touch normal database
 ```
 3. `vendor/bin/phpunit` to always check the functionality
 4. `sass styles/index.sass styles/index.css` to keep order in the generated css

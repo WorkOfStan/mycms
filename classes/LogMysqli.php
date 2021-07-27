@@ -4,6 +4,7 @@ namespace WorkOfStan\MyCMS;
 
 use Exception;
 use Tracy\Debugger;
+use Webmozart\Assert\Assert;
 use WorkOfStan\Backyard\BackyardMysqli;
 use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
 
@@ -356,6 +357,7 @@ class LogMysqli extends BackyardMysqli
             $key = reset($row);
             $value = count($row) == 2 ? next($row) : $row;
             if (count($row) > 2) {
+                Assert::isArray($value);
                 array_shift($value);
             }
             if (isset($result[$key])) {

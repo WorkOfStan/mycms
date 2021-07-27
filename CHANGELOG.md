@@ -5,22 +5,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
 ### `Added` for new features
-- ThrowableFunctions/ThrowablePHPFunctions::strtotime
-- phpcbf* branch (no slash allowed) triggers commit of auto PHPCS fixes, controlled by [phpcbf.yml](.github/workflows/phpcbf.yml)
 
 ### `Changed` for changes in existing functionality
-- to Check PHP syntax errors uses: overtrue/phplint@3.0.2 (instead of obsoleted michaelw90/PHP-Lint@master)
 
 ### `Deprecated` for soon-to-be removed features
 
 ### `Removed` for now removed features
 
 ### `Fixed` for any bug fixes
-- MyTableAdmin::outputField case timestamp $value doesn't have to be string
-- phpcbf automatically fixed style in styles/admin.css, dist/styles/admin.css, dist/scripts/admin-specific.js, dist/scripts/admin.js, dist/classes/Admin.php
 
 ### `Security` in case of vulnerabilities
+
+## [0.4.3] - 2021-07-27
+
+- MyCMS::InitDatabase class to read database configuration from (dist/)phinx.yml
+- GitHub automation improved
+
+### Added
+- ThrowableFunctions/ThrowablePHPFunctions::strtotime
+- phpcbf* branch (no slash allowed) triggers commit of auto PHPCS fixes, controlled by [phpcbf.yml](.github/workflows/phpcbf.yml)
+- InitDatabase class to read database configuration from (dist/)phinx.yml
+- cache for composer downloaded libraries into vendor folder for GitHub automated testing
+- added MySQL/8 (part of Ubuntu/20 virtual environment) with native password access used by phinx::testing environment
+- Note: Apache/2 that is part of Ubuntu/20 virtual environment doesn't have PHP installed by default, so phpunit @group webserver is excluded from automatic GitHub actions testing
+
+### Changed
+- to Check PHP syntax errors uses: overtrue/phplint@3.0.3 (instead of obsoleted michaelw90/PHP-Lint@master)
+- dist/build.sh uses composer update -a **--prefer-dist --no-progress**
+
+### Fixed
+- MyTableAdmin::outputField case timestamp $value doesn't have to be string
+- phpcbf automatically fixed style in styles/admin.css, dist/styles/admin.css, dist/scripts/admin-specific.js, dist/scripts/admin.js, dist/classes/Admin.php
+- assert array as argument of array_shift in LogMysqli::fetchAndReindex
+- in dist/images/favicon/manifest.json 12x error Unnecessary escape character: \/  jsonc/no-useless-escape
+- fix classes/MyAdmin.php line 640: Ternary operator condition is always true.
+- added private ProjectCommon::assertStringArray to fix Parameter #1 $pattern of function WorkOfStan\MyCMS\ThrowableFunctions\preg_replaceString expects array<string>|string, array<int, (int|string)> given.
+
+### Security
 - dist/.htaccess: no markdown file can be available on web
 
 ## [0.4.2] - 2021-05-28
@@ -277,7 +300,8 @@ to
 
 
 
-[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.4.2...HEAD
+[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.4.3...HEAD
+[0.4.3]: https://github.com/WorkOfStan/mycms/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/WorkOfStan/mycms/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/WorkOfStan/mycms/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/WorkOfStan/mycms/compare/v0.3.15...v0.4.0

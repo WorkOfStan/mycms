@@ -12,8 +12,8 @@ require_once __DIR__ . '/vendor/autoload.php';
 use Tracy\Debugger;
 use Webmozart\Assert\Assert;
 use WorkOfStan\Backyard\Backyard;
+use WorkOfStan\MyCMS\InitDatabase;
 use WorkOfStan\MyCMS\LogMysqli;
-use WorkOfStan\mycmsprojectnamespace\Init;
 use WorkOfStan\mycmsprojectnamespace\MyCMSProject;
 
 //Tracy is able to show Debug bar and Bluescreens for AJAX and redirected requests.
@@ -31,7 +31,7 @@ if (!isset($phinxEnvironment)) {
     throw new Exception('phinxEnvironment is not set');
 }
 Assert::string($phinxEnvironment);
-$init = new Init($phinxEnvironment);
+$init = new InitDatabase($phinxEnvironment, __DIR__ . '/');
 
 $backyard = new Backyard($backyardConf);
 $myCmsConf['logger'] = $backyard->BackyardError;

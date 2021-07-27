@@ -3,6 +3,7 @@
 namespace WorkOfStan\MyCMS;
 
 use Exception;
+use Webmozart\Assert\Assert;
 
 use function WorkOfStan\MyCMS\ThrowableFunctions\preg_replaceString;
 
@@ -122,6 +123,19 @@ class ProjectCommon extends MyCommon
     }
 
     /**
+     *
+     * @param array<mixed> $arr
+     * @return array<string>
+     */
+    private function assertStringArray(array $arr)
+    {
+        foreach ($arr as $string) {
+            Assert::string($string);
+        }
+        return $arr;
+    }
+
+    /**
      * Replace spaces with \0160 after selected short words
      * The list of selected words may be enlarged or redefined in the ProjectSpecific child
      *
@@ -147,6 +161,11 @@ class ProjectCommon extends MyCommon
             '/ an /' => ' an ',
             '/Industry 4.0/' => 'Industry 4.0',
             ], $addReplacePatterns);
-        return preg_replaceString(array_keys($replacePatterns), array_values($replacePatterns), $text);
+        // Parameter #1 $pattern of function preg_replaceString expects array<string>|string
+        return preg_replaceString(
+            $this->assertStringArray(array_keys($replacePatterns)),
+            array_values($replacePatterns),
+            $text
+        );
     }
 }

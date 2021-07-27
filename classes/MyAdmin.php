@@ -639,7 +639,7 @@ class MyAdmin extends MyCommon
         }
         return '<h2>' . $this->tableAdmin->translate('Search results') . '</h2>' . PHP_EOL
             . '<div>' . $this->tableAdmin->translate('Search') . ': <tt>' . Tools::h($keyword) . '</tt></div>' . PHP_EOL
-            . $result ?: $this->tableAdmin->translate('No records found.');
+            . ($result !== '' ? $result : $this->tableAdmin->translate('No records found.'));
     }
 
     /**

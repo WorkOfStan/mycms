@@ -3,9 +3,9 @@
 namespace WorkOfStan\mycmsprojectnamespace\Test;
 
 use WorkOfStan\Backyard\Backyard;
+use WorkOfStan\MyCMS\InitDatabase;
 use WorkOfStan\MyCMS\LogMysqli;
 use WorkOfStan\mycmsprojectnamespace\AdminProcess;
-use WorkOfStan\mycmsprojectnamespace\Init;
 use WorkOfStan\mycmsprojectnamespace\MyCMSProject;
 use Tracy\Debugger;
 
@@ -33,7 +33,7 @@ class AdminProcessTest extends \PHPUnit_Framework_TestCase
         error_reporting(E_ALL); // incl E_NOTICE
         Debugger::enable(Debugger::DEVELOPMENT, __DIR__ . '/../log');
         $backyard = new Backyard($backyardConf);
-        new Init('development'); // set-up of constants for all tests // TODO parametric environment
+        new InitDatabase('testing', __DIR__ . '/../'); // set-up of constants for all other tests further in alphabet
         $mycmsOptions = [
             'TRANSLATIONS' => [
                 'en' => 'English',

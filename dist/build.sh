@@ -4,9 +4,12 @@ echo "To work on low performing environments, the script accepts number of secon
 paramSleepSec=0
 [ "$1" ] && [ "$1" -ge 0 ] && paramSleepSec=$1
 
-composer update -a
+composer update -a --prefer-dist --no-progress
 sleep "$paramSleepSec"s
 vendor/bin/phinx migrate -e development
+sleep "$paramSleepSec"s
+# In order to properly unit test all features, set-up a test database, put its credentials to testing section of phinx.yml and run phinx migration -e testing before phpunit
+vendor/bin/phinx migrate -e testing
 sleep "$paramSleepSec"s
 vendor/bin/phpunit
 sleep "$paramSleepSec"s

@@ -7,8 +7,13 @@
     convertWarningsToExceptions="true"
     stopOnFailure="false"> 
     <testsuites> 
-        <testsuite name="Application Test Suite">
-            <directory>./Test/</directory>
-        </testsuite>
+        <testsuite name="Distribution Test Suite">
+            <directory>./../dist/Test/</directory>
+        </testsuite>        
     </testsuites>
+    <groups>
+        <exclude>
+            <group>webserver</group>
+        </exclude>
+    </groups>
 </phpunit>

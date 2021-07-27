@@ -1,6 +1,6 @@
 <?php
 
-namespace WorkOfStan\mycmsprojectnamespace;
+namespace WorkOfStan\MyCMS;
 
 use Symfony\Component\Yaml\Yaml;
 use Webmozart\Assert\Assert;
@@ -9,19 +9,20 @@ use Webmozart\Assert\Assert;
  * Populating constants from phinx.yml
  * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
  */
-class Init
+class InitDatabase
 {
     use \Nette\SmartObject;
 
     /**
      *
      * @param string $phinxEnvironment
+     * @param string $pathToPhinx
      * @return void
      */
-    public function __construct($phinxEnvironment)
+    public function __construct($phinxEnvironment, $pathToPhinx = __DIR__ . '/../')
     {
         // TODO consider refactoring to not use constants , but rather change configuration to use object
-        $phinxYml = Yaml::parseFile(__DIR__ . '/../phinx.yml');
+        $phinxYml = Yaml::parseFile($pathToPhinx . 'phinx.yml');
         if (array_key_exists($phinxEnvironment, $phinxYml['environments'])) {
             foreach (
                 [
