@@ -7,10 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### `Added` for new features
-- dist: build.sh: if not exists create conf/config.local.php + phinx.yml
+- dist/build.sh: if not exists create conf/config.local.php + phinx.yml
 
 ### `Changed` for changes in existing functionality
-- dist: VALIDATE_GITLEAKS: false because of false positive 
+- dist: VALIDATE_GITLEAKS: false because of false positive
 
 ### `Deprecated` for soon-to-be removed features
 
