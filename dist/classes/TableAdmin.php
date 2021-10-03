@@ -119,13 +119,12 @@ class TableAdmin extends MyTableAdmin
                     . '<select class="form-control" name="path-parent" id="path' . $this->rand . '"><option />';
                 $rows = $this->dbms->fetchAll('SELECT path,category_' . $_SESSION['language'] . ' AS category FROM '
                     . TAB_PREFIX . 'category ORDER BY path');
-                $tmp = substr($value, 0, -PATH_MODULE);
                 if (is_array($rows)) {
                     foreach ($rows as $row) {
                         $result .= Tools::htmlOption(
                             $row['path'],
                             str_repeat('… ', (int) max(strlen($row['path']) / PATH_MODULE - 1, 0)) . $row['category'],
-                            $tmp,
+                            substr($value, 0, -PATH_MODULE),
                             Tools::begins($row['path'], $value)
                         );
                     }

@@ -324,10 +324,10 @@ class MyTableLister
                 case '+':
                 case '-':
                 case '*':
-                    $result .= ', ' . $this->escapeDbIdentifier($field) . ' = ' . $this->escapeDbIdentifier($field) . $vars['op'][$field] . ' ' . ($vars['op'][$field] == '*' ? (double) $value : (int) $value);
+                    $result .= ', ' . $this->escapeDbIdentifier($field) . ' = ' . $this->escapeDbIdentifier($field) . $vars['op'][$field] . ' ' . ($vars['op'][$field] == '*' ? (float) $value : (int) $value);
                     break;
                 case 'random':
-                    $result .= ', ' . $this->escapeDbIdentifier($field) . ' = RAND() * ' . ($value == 0 ? 1 : (double) $value);
+                    $result .= ', ' . $this->escapeDbIdentifier($field) . ' = RAND() * ' . ($value == 0 ? 1 : (float) $value);
                     break;
                 case 'now':
                 case 'uuid':
@@ -426,9 +426,9 @@ class MyTableLister
             $output .= $this->viewTable($query, $columns, $options)
                 . $this->pagination($sql['limit'], $options['total-rows'], null, $options);
         }
-        return $output . (!$options['total-rows'] && isset($_GET['col'])) ?
+        return $output . ((!$options['total-rows'] && isset($_GET['col'])) ?
             ('<p class="alert alert-danger"><small>' . $this->translate('No records found.') . '</small></p>') :
-            ('<p class="text-info"><small>' . $this->translate('Total rows: ') . $options['total-rows'] . '.</small></p>');
+            ('<p class="text-info"><small>' . $this->translate('Total rows: ') . $options['total-rows'] . '.</small></p>'));
     }
 
     /**

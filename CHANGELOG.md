@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Removed` for now removed features
 
 ### `Fixed` for any bug fixes
+- MyTableLister::view ternary operator blocking non-empty table output
 - dist: github online composer require --dev rector/rector
 
 ### `Security` in case of vulnerabilities
