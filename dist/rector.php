@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Rector configuration as proposed at https://github.com/rectorphp/rector
+ */
+
 declare(strict_types=1);
 
 use Rector\Core\Configuration\Option;

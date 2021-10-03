@@ -19,6 +19,11 @@ on:
       # notest branches to ignore testing of partial online commits
       - 'notest/**'
 
+  pull_request:
+    branches-ignore:
+      # notest branches to ignore testing of partial online commits
+      - 'notest/**'
+
 ###############
 # Set the Job #
 ###############
@@ -45,7 +50,7 @@ jobs:
       # Run Linter against code base #
       ################################
       - name: Lint Code Base
-        uses: github/super-linter@master
+        uses: github/super-linter@main
         env:
           VALIDATE_ALL_CODEBASE: true
           DEFAULT_BRANCH: develop
