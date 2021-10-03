@@ -157,6 +157,7 @@ jobs:
         cd dist
         # Only phpstan/phpstan-webmozart-assert + phpstan/phpstan added
         composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
+        composer require --dev rector/rector --prefer-dist --no-progress
         cd ..
     - name: "PHPStan webmozart-assert (app)"
       if: ${{ matrix.php-version >= '7.1' }}

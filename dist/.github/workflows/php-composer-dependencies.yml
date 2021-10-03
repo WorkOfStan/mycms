@@ -111,7 +111,7 @@ jobs:
       if: ${{ matrix.php-version >= '7.1' && steps.vendor-cache.outputs.cache-hit != 'true' }}
       run: |
         composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
-        composer require --dev rector/rector --prefer-dist --no-progress
+        #composer require --dev rector/rector --prefer-dist --no-progress
     - name: "PHPStan webmozart-assert"
       if: ${{ matrix.php-version >= '7.1' }}
       run: phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
