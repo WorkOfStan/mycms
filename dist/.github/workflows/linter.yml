@@ -19,6 +19,11 @@ on:
       # notest branches to ignore testing of partial online commits
       - 'notest/**'
 
+  pull_request:
+    branches-ignore:
+      # notest branches to ignore testing of partial online commits
+      - 'notest/**'
+
 ###############
 # Set the Job #
 ###############
@@ -54,6 +59,8 @@ jobs:
           VALIDATE_JAVASCRIPT_STANDARD: false
           VALIDATE_ANSIBLE: false
           VALIDATE_CSS: false
+          # TODO VALIDATE_JSCPD later
+          VALIDATE_JSCPD: false
           # PHPStan run in matrix strategy in php-composer-phpunit.yml
           VALIDATE_PHP_PHPSTAN: false
           VALIDATE_PHP_PSALM: false

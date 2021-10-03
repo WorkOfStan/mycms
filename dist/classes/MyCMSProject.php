@@ -67,11 +67,13 @@ class MyCMSProject extends MyCMS
                 Utils::jsonOrEcho($this->context['json'], $directJsonCall, $backyard);
             }
         } elseif (array_key_exists('messageFailure', $this->context) && !is_null($this->context['messageFailure'])) {
+            Debugger::barDump('contextJson is expected to be an array');
             // TODO remove after Controller.php refactor all context['message... to    Tools::addMessage('error',
             Tools::addMessage('error', $this->context['messageFailure']);
             header('HTTP/1.1 404 Not Found', true, 404);
             echo($this->context['messageFailure']);
         } else {
+            Debugger::barDump('contextJson is expected to be an array');
             header('HTTP/1.1 404 Not Found', true, 404);
         }
 

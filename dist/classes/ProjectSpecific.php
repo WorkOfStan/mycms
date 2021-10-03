@@ -153,7 +153,7 @@ class ProjectSpecific extends ProjectCommon
         $options += array('path' => $result['path'], 'except_id' => $result['id']);
         if (($pos = strpos($result['description'], '%CHILDREN%')) !== false) {
             $result['description'] = str_replace('%CHILDREN%', '', $result['description']);
-            $this->MyCMS->context['children'] = ProjectSpecific::getChildren($result['category_id'], $options);
+            $this->MyCMS->context['children'] = self::getChildren($result['category_id'], $options);
         }/* elseif (($pos = strpos($result['description'], '%GRANDCHILDREN%')) !== false) {
           $result['description'] = str_replace('%GRANDCHILDREN%', '', $result['description']);
           $this->MyCMS->context['children'] = ProjectSpecific::getChildren(
@@ -162,7 +162,7 @@ class ProjectSpecific extends ProjectCommon
         if (($pos = strpos($result['description'], '%SITEMAP%')) !== false) {
             $result['description'] = str_replace(
                 '%SITEMAP%',
-                ProjectSpecific::getSitemap($options), // TOOD use self:: instead of ProjectSpecific
+                self::getSitemap($options),
                 $result['description']
             );
         }

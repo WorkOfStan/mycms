@@ -107,13 +107,9 @@ jobs:
     #   run: composer run-script test
 
     # PHPStan works for PHP/7.1+ so it can't even be in composer.json
-    - name: "Composer + PHPStan"
+    - name: "Composer phpstan-webmozart-assert"
+      if: ${{ matrix.php-version >= '7.1' && steps.vendor-cache.outputs.cache-hit != 'true' }}
+      run: composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
+    - name: "PHPStan webmozart-assert"
       if: ${{ matrix.php-version >= '7.1' }}
-      run: |
-        #to fix `Constant DB_USERNAME not found.` etc
-        #cp -p conf/config.local.dist.php conf/config.local.php
-        #composer update --prefer-dist --no-progress
-        phpstan analyse --no-interaction --no-progress .
-        # or ?
-        #composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
-        #phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
+      run: phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
