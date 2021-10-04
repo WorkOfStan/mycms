@@ -100,6 +100,9 @@ vendor/bin/phinx migrate -e testing # for phpunit, so that tests don't touch nor
 - Note2: PHPUnit test of FaviconTest may uncover a need for RewriteBase configuration in .htaccess
 - Note3: PHPUnit tests use phinx database environment `development` (TODO: consider using `testing`)
 
+It might be necessary to allow web server user write into cache and log folders.
+Run [permissions.sh](permissions.sh) to perform this operation.
+
 ### reCAPTCHA
 
 Paste this snippet at the end of the <form> where you want the reCAPTCHA widget to appear:

@@ -26,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - dist/build.sh: if not exists create conf/config.local.php + phinx.yml
 - Faster MyCMS dist deployment by rector.php (github online check include composer require --dev rector/rector)
-- dist/build.sh: if not exists create conf/config.local.php + phinx.yml
+- dist/permissions.sh: run if necessary to allow web server user write into cache and log folders
 
 ### Changed
 - dist: VALIDATE_GITLEAKS: false because of false positive
