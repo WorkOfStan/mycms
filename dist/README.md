@@ -330,7 +330,7 @@ That's how it works and how to set an API:
 ## Coding style and linting
 
 GitHub Actions run PHPSTAN to identify errors
-* the same way as would be run locally
+* the same way as run locally
 * so it might need to know which global constants are used (`.github/linters/conf/constants.php`) on top of standard config files
 * and where to look for present classes (scanDirectories), hence following files:
 * `phpstan.neon.dist` - for PHPSTAN of this app (dist folder)
@@ -408,7 +408,6 @@ Feature flag is propagated to Class Admin, Controller, to JS and to Latte.
 * 200712: update bootstrap <https://getbootstrap.com/> incl. map --> admin.php expects section
 * 200712: update jquery <https://jquery.com/> incl. map --> admin.php expects section
 * 200712: update fontawesome --> admin.php expects section
-* 200712: remove unnecessary `sql =` constructs
 * 200802: test with 2 categories
 * 200802: image for product and category in assets
 * 200921: (MyCMS) properly fix message: '#Parameter #2 $newvalue of function ini_set expects string, true given.#'    path: /github/workspace/set-environment.php

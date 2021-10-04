@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Security` in case of vulnerabilities
 
 ## [0.1] - YYYY-MM-DD
-- new application based on MyCMS/0.4.3/dist
+- new application based on MyCMS/0.4.4/dist
 
 [Unreleased]: https://github.com/vendor/project/compare/v0.1...HEAD
 [0.1]: https://github.com/vendor/project/releases/tag/v0.1

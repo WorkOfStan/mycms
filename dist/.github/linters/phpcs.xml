@@ -19,6 +19,5 @@
         <exclude-pattern>db/migrations/*.php</exclude-pattern>
         <!-- TODO Ignore `Line exceeds 120 characters` until fixed -->
         <exclude-pattern>classes/AdminProcess.php</exclude-pattern>
-        <!-- obsoleted exclude-pattern>classes/TableAdmin.php</exclude-pattern -->
     </rule>
 </ruleset>

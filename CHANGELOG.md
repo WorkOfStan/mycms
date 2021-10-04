@@ -7,20 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### `Added` for new features
-- dist/build.sh: if not exists create conf/config.local.php + phinx.yml
 
 ### `Changed` for changes in existing functionality
-- dist: VALIDATE_GITLEAKS: false because of false positive
 
 ### `Deprecated` for soon-to-be removed features
 
 ### `Removed` for now removed features
 
 ### `Fixed` for any bug fixes
-- MyTableLister::view ternary operator blocking non-empty table output
-- dist: github online composer require --dev rector/rector
 
 ### `Security` in case of vulnerabilities
+
+## [0.4.4] - 2021-10-04
+
+- fixed MyTableLister::view ternary operator blocking non-empty table output
+- faster dist seed app creatin (rector.php + build.sh)
+
+### Added
+- dist/build.sh: if not exists create conf/config.local.php + phinx.yml
+- Faster MyCMS dist deployment by rector.php (github online check include composer require --dev rector/rector)
+- dist/build.sh: if not exists create conf/config.local.php + phinx.yml
+
+### Changed
+- dist: VALIDATE_GITLEAKS: false because of false positive
+- change github/super-linter master -> main
+
+### Removed
+- VALIDATE_GITLEAKS: false because of false positive (todo reconsider later)
+- unnecessary `sql =` constructs removed
+
+### Fixed
+- MyTableLister::view ternary operator blocking non-empty table output
+- dist: github online composer require --dev rector/rector
+- dist/classes/TableAdmin.php - line 177: Parameter #2 $multiplier of function str_repeat expects int,  float|int<-1, max> given.
 
 ## [0.4.3] - 2021-07-27
 

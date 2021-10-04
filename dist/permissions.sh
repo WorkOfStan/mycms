@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# TODO - if !exists phinx.yml & conf/config.local.php - create them by copying
+# Note: build.sh is used to create if !exists phinx.yml & conf/config.local.php
 
 # directories where www-data MUST have permission to write
 chmod g+w cache

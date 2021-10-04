@@ -264,7 +264,7 @@ class ProjectSpecific extends ProjectCommon
     {
         Tools::setifnotset($options['level'], 0);
         if ($options['level'] && Tools::nonzero($options['path'])) {
-            $tempKeys = $this->MyCMS->fetchAndReindex($sql = 'SELECT id FROM ' . TAB_PREFIX . 'category
+            $tempKeys = $this->MyCMS->fetchAndReindex('SELECT id FROM ' . TAB_PREFIX . 'category
                 WHERE LEFT(path, ' . strlen($options['path']) . ')="' . $this->MyCMS->escapeSQL($options['path']) . '"
                 AND LENGTH(path) > ' . strlen($options['path']) . '
                 AND LENGTH(path) <= ' . (strlen($options['path']) + (int) $options['level'] * PATH_MODULE));
