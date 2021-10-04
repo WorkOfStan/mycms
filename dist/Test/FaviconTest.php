@@ -9,7 +9,6 @@ require_once __DIR__ . '/../conf/config.php';
 
 class FaviconTest extends \PHPUnit_Framework_TestCase
 {
-
     /** @var Backyard */
     protected $backyard;
 
@@ -105,7 +104,8 @@ class FaviconTest extends \PHPUnit_Framework_TestCase
             $this->assertNotFalse(is_array($result), "cURL failed on {$url} with result=" . print_r($result, true));
             $this->assertFalse(
                 ($result['HTTP_CODE'] === 0),
-                "URL {$url} is not available. (Is \$backyardConf['web_address'] properly configured?)"
+                "URL {$url} is not available. "
+                . "(Are \$backyardConf['web_domain'] and \$backyardConf['web_path'] properly configured?)"
             );
             $this->assertEquals(
                 200,

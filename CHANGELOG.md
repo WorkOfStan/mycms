@@ -18,6 +18,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Security` in case of vulnerabilities
 
+## [0.4.4] - 2021-10-04
+
+- fixed MyTableLister::view ternary operator blocking non-empty table output
+- faster dist seed app creation (rector.php + build.sh)
+
+### Added
+- dist/build.sh: if not exists create conf/config.local.php + phinx.yml
+- Faster MyCMS dist deployment by rector.php (github online check include composer require --dev rector/rector)
+- dist/build.sh: if not exists create conf/config.local.php + phinx.yml
+
+### Changed
+- dist: VALIDATE_GITLEAKS: false because of false positive
+- change github/super-linter master -> main
+
+### Removed
+- VALIDATE_GITLEAKS: false because of false positive (todo reconsider later)
+- unnecessary `sql =` constructs removed
+
+### Fixed
+- MyTableLister::view ternary operator blocking non-empty table output
+- dist: github online composer require --dev rector/rector
+- dist/classes/TableAdmin.php - line 177: Parameter #2 $multiplier of function str_repeat expects int,  float|int<-1, max> given.
+
 ## [0.4.3] - 2021-07-27
 
 - MyCMS::InitDatabase class to read database configuration from (dist/)phinx.yml
@@ -300,7 +323,8 @@ to
 
 
 
-[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.4.3...HEAD
+[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.4.4...HEAD
+[0.4.4]: https://github.com/WorkOfStan/mycms/compare/v0.4.3...v0.4.4
 [0.4.3]: https://github.com/WorkOfStan/mycms/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/WorkOfStan/mycms/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/WorkOfStan/mycms/compare/v0.4.0...v0.4.1

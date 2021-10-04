@@ -17,5 +17,7 @@
     <rule ref="Generic.Files.LineLength">
         <!-- Don't apply `Line exceeds 120 characters` to SQL defining files -->
         <exclude-pattern>db/migrations/*.php</exclude-pattern>
+        <!-- TODO Ignore `Line exceeds 120 characters` until fixed -->
+        <exclude-pattern>classes/AdminProcess.php</exclude-pattern>
     </rule>
 </ruleset>

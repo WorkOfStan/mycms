@@ -9,6 +9,7 @@ cache/*
 !/cache/.htaccess
 .sass-cache/
 /.php_cs.cache
+/.php-cs-fixer.cache
 
 #disable private local files
 *.local.php

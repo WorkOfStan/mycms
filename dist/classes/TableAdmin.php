@@ -98,9 +98,16 @@ class TableAdmin extends MyTableAdmin
             case "content\\image":
             case "product\\image":
                 $result = '<div class="input-group">'
-                    . Tools::htmlInput("fields[$field]", '', $value, ['class' => 'form-control input-image', 'id' => $field . $this->rand])
+                    . Tools::htmlInput(
+                        "fields[$field]",
+                        '',
+                        $value,
+                        ['class' => 'form-control input-image', 'id' => $field . $this->rand]
+                    )
                     . '<span class="input-group-btn">'
-                    . '<button type="button" class="btn btn-secondary ImageSelector" data-target="#' . Tools::h($field . $this->rand) . '" title="' . $this->translate('Select') . '"><i class="fa fa-image" aria-hidden="true"></i></button>'
+                    . '<button type="button" class="btn btn-secondary ImageSelector" data-target="#'
+                    . Tools::h($field . $this->rand) . '" title="' . $this->translate('Select')
+                    . '"><i class="fa fa-image" aria-hidden="true"></i></button>'
                     . '</span></div>';
                 break;
 
@@ -110,11 +117,16 @@ class TableAdmin extends MyTableAdmin
                 $result = $this->translate('Parent category') . ':<br />'
                     . Tools::htmlInput('path-original', '', $value, 'hidden')
                     . '<select class="form-control" name="path-parent" id="path' . $this->rand . '"><option />';
-                $rows = $this->dbms->fetchAll('SELECT path,category_' . $_SESSION['language'] . ' AS category FROM ' . TAB_PREFIX . 'category ORDER BY path');
-                $tmp = substr($value, 0, -PATH_MODULE);
+                $rows = $this->dbms->fetchAll('SELECT path,category_' . $_SESSION['language'] . ' AS category FROM '
+                    . TAB_PREFIX . 'category ORDER BY path');
                 if (is_array($rows)) {
                     foreach ($rows as $row) {
-                        $result .= Tools::htmlOption($row['path'], str_repeat('… ', max(strlen($row['path']) / PATH_MODULE - 1, 0)) . $row['category'], $tmp, Tools::begins($row['path'], $value));
+                        $result .= Tools::htmlOption(
+                            $row['path'],
+                            str_repeat('… ', (int) max(strlen($row['path']) / PATH_MODULE - 1, 0)) . $row['category'],
+                            substr($value, 0, -PATH_MODULE),
+                            Tools::begins($row['path'], $value)
+                        );
                     }
                 }
                 $result .= '</select>';
@@ -123,13 +135,17 @@ class TableAdmin extends MyTableAdmin
             // Selection list of relations to product
             // TODO try this template in dist
             case "content\\product_id":
-                $result = '<select class="form-control" name="fields[product_id]" id="' . $field . $this->rand . '"><option />';
-                $rows = $this->dbms->fetchAll('SELECT p.id,category_' . $_SESSION['language'] . ' AS category,product_' . $_SESSION['language'] . ' AS title FROM ' . TAB_PREFIX . 'product p LEFT JOIN ' . TAB_PREFIX . 'category c ON p.category_id = c.id ORDER BY c.path,p.sort');
+                $result = '<select class="form-control" name="fields[product_id]" id="' . $field . $this->rand
+                    . '"><option />';
+                $rows = $this->dbms->fetchAll('SELECT p.id,category_' . $_SESSION['language'] . ' AS category,product_'
+                    . $_SESSION['language'] . ' AS title FROM ' . TAB_PREFIX . 'product p LEFT JOIN '
+                    . TAB_PREFIX . 'category c ON p.category_id = c.id ORDER BY c.path,p.sort');
                 if (is_array($rows)) {
                     $tmp = null;
                     foreach ($rows as $row) {
                         if ($tmp != $row['category']) {
-                            $result .= (is_null($tmp) ? '' : '</optgroup>') . '<optgroup label="' . Tools::h($tmp = $row['category']) . '">' . PHP_EOL;
+                            $result .= (is_null($tmp) ? '' : '</optgroup>') . '<optgroup label="'
+                                . Tools::h($tmp = $row['category']) . '">' . PHP_EOL;
                         }
                         $result .= Tools::htmlOption($row['id'], $row['title'], $value) . PHP_EOL;
                     }

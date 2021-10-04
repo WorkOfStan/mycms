@@ -166,7 +166,7 @@ class MyTableAdmin extends MyTableLister
         $comment = json_decode(isset($field['comment']) ? (string) $field['comment'] : '{}', true);
         Tools::setifnull($comment['display']);
         if (!is_null($field['type']) && $comment['display'] == 'option') {
-            $query = $this->dbms->queryStrictObject($sql = 'SELECT DISTINCT ' . Tools::escapeDbIdentifier($key)
+            $query = $this->dbms->queryStrictObject('SELECT DISTINCT ' . Tools::escapeDbIdentifier($key)
                 . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' ORDER BY ' . Tools::escapeDbIdentifier($key) . ' LIMIT ' . $this->DEFAULTS['MAXSELECTSIZE']);
             $input = '<select name="fields[' . Tools::h($key) . ']" id="' . Tools::h($key . $this->rand) . '" class="form-control d-inline-block w-initial"'
                 . (isset($comment['display-own']) && $comment['display-own'] ? ' onchange="$(\'#' . Tools::h($key . $this->rand) . '_\').val(null)"' : '') . '>'
@@ -591,7 +591,7 @@ class MyTableAdmin extends MyTableLister
                             $value = null;
                         }
                         $sql .= ',' . Tools::escapeDbIdentifier($key) . '='
-                            . (is_null($value) ? 'NULL' : ($field['basictype'] == 'integer' ? (int) $value : (double) $value));
+                            . (is_null($value) ? 'NULL' : ($field['basictype'] == 'integer' ? (int) $value : (float) $value));
                         break;
                     default:
                         $sql .= ',' . Tools::escapeDbIdentifier($key) . '='
