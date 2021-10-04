@@ -172,10 +172,11 @@ because MySQLi environment isn't prepared (yet) and HTTP requests to self can't 
 
 ### PHPStan
 
-Till PHP<7.1 is supported, `phpstan/phpstan-webmozart-assert` can't be required-dev in composer.json.
+Till PHP<7.1 is supported, neither `phpstan/phpstan-webmozart-assert` nor `rector/rector` can't be required-dev in composer.json.
 Therefore, to properly take into account Assert statements by PHPStan (relevant for level>6), do a temporary (i.e. without commiting it to repository)
 ```sh
 composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
+composer require --dev rector/rector --prefer-dist --no-progress
 ```
 and use [conf/phpstan.webmozart-assert.neon](conf/phpstan.webmozart-assert.neon) to allow for `phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse . --memory-limit 300M`.
 

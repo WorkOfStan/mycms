@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.4.4] - 2021-10-04
 
 - fixed MyTableLister::view ternary operator blocking non-empty table output
-- faster dist seed app creatin (rector.php + build.sh)
+- faster dist seed app creation (rector.php + build.sh)
 
 ### Added
 - dist/build.sh: if not exists create conf/config.local.php + phinx.yml
@@ -323,7 +323,8 @@ to
 
 
 
-[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.4.3...HEAD
+[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.4.4...HEAD
+[0.4.4]: https://github.com/WorkOfStan/mycms/compare/v0.4.3...v0.4.4
 [0.4.3]: https://github.com/WorkOfStan/mycms/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/WorkOfStan/mycms/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/WorkOfStan/mycms/compare/v0.4.0...v0.4.1
