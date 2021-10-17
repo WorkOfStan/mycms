@@ -8,6 +8,7 @@ on:
   pull_request:
     branches:
       - 'phpcbf*'
+  workflow_call:
 
 jobs:
   phplint:
