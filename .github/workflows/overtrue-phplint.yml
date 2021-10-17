@@ -8,20 +8,19 @@ on:
     branches-ignore:
       # notest branches to ignore testing of partial online commits
       - 'notest/**'
+  workflow_call:
 
 jobs:
-  call-workflow:
-    uses: WorkOfStan/MyCMS/.github/workflows/overtrue-phplint_reusable.yml@feature/reusable
-#  phplint:
-#    runs-on: ubuntu-latest
-#    # Limit the running time
-#    timeout-minutes: 10
-#    steps:
-#        - name: Checkout
-#          uses: actions/checkout@v2
+# This is how to reuse this workflow:
+#  call-workflow:
+#    uses: WorkOfStan/MyCMS/.github/workflows/overtrue-phplint.yml@main
+  phplint:
+    runs-on: ubuntu-latest
+    # Limit the running time
+    timeout-minutes: 10
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v2
 
-        # obsolete
-        #- uses: michaelw90/PHP-Lint@master
-
-#        - name: Check PHP syntax errors
-#          uses: overtrue/phplint@3.0.3
+        - name: Check PHP syntax errors
+          uses: overtrue/phplint@3.0.3

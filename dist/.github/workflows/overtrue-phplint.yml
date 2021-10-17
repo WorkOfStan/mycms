@@ -11,7 +11,7 @@ on:
 
 jobs:
   call-workflow:
-    uses: WorkOfStan/MyCMS/.github/workflows/overtrue-phplint_reusable.yml@feature/reusable
+    uses: WorkOfStan/MyCMS/.github/workflows/overtrue-phplint.yml@main
 #  phplint:
 #    runs-on: ubuntu-latest
     # Limit the running time
