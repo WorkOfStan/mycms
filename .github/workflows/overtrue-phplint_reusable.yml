@@ -1,5 +1,8 @@
 name: PHP Linting (Overtrue)
 
+on:
+  workflow_call
+
 jobs:
   phplint:
     runs-on: ubuntu-latest
