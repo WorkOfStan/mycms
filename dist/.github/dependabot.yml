@@ -2,8 +2,9 @@
 
 version: 2
 updates:
-
+  # See documentation for possible values
   - package-ecosystem: "github-actions"
+    # Location of package manifests
     directory: "/"
     schedule:
       # Check for updates to GitHub Actions every weekday

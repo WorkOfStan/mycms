@@ -8,9 +8,10 @@ on:
   pull_request:
     branches:
       - 'phpcbf*'
+  workflow_call:
 
 jobs:
-  phplint:
+  phpcbf:
     runs-on: ubuntu-latest
     # Limit the running time
     timeout-minutes: 10

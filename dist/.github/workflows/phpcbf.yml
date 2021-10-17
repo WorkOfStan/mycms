@@ -1,0 +1,14 @@
+name: PHPCBF
+# ge-tracker/phpcbf-action can't handle branches with `/`
+# `fatal: couldn't find remote ref` error is triggered
+on:
+  push:
+    branches:
+      - 'phpcbf*'
+  pull_request:
+    branches:
+      - 'phpcbf*'
+
+jobs:
+  call-workflow:
+    uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@main

@@ -18,11 +18,11 @@ on:
     branches-ignore:
       # notest branches to ignore testing of partial online commits
       - 'notest/**'
-
   pull_request:
     branches-ignore:
       # notest branches to ignore testing of partial online commits
       - 'notest/**'
+  workflow_call:
 
 ###############
 # Set the Job #
@@ -59,6 +59,8 @@ jobs:
           VALIDATE_JAVASCRIPT_STANDARD: false
           VALIDATE_ANSIBLE: false
           VALIDATE_CSS: false
+          # TODO 211017 returns false positive `unknown Webhook event "workflow_call"`
+          VALIDATE_GITHUB_ACTIONS: false
           # TODO 211003 returns false positive: {"line":"                    <li><a href=\"https://www.linkedin.com/company/MYCMSPROJECTSPECIFIC\" title=\"{=\"MYCMSPROJECTSPECIFIC na LinkedIn\"|translate}\"><i class=\"fa fa-linkedin\" aria-hidden=\"true\"></i></a></li>","lineNumber":56,"offender":"linkedin.com/company/MYCMSPROJECTSPECIFIC","offenderEntropy":-1,"commit":"","repo":"","repoURL":"","leakURL":"","rule":"LinkedIn Secret Key","commitMessage":"","author":"","email":"","file":".","date":"0001-01-01T00:00:00Z","tags":"secret, LinkedIn"}
           VALIDATE_GITLEAKS: false
           # TODO VALIDATE_JSCPD later
