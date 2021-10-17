@@ -10,16 +10,18 @@ on:
       - 'notest/**'
 
 jobs:
-  phplint:
-    runs-on: ubuntu-latest
-    # Limit the running time
-    timeout-minutes: 10
-    steps:
-        - name: Checkout
-          uses: actions/checkout@v2
+  call-workflow:
+    uses: WorkOfStan/MyCMS/.github/workflows/overtrue-phplint_reusable.yml@dev-feature/reusable
+#  phplint:
+#    runs-on: ubuntu-latest
+#    # Limit the running time
+#    timeout-minutes: 10
+#    steps:
+#        - name: Checkout
+#          uses: actions/checkout@v2
 
         # obsolete
         #- uses: michaelw90/PHP-Lint@master
 
-        - name: Check PHP syntax errors
-          uses: overtrue/phplint@3.0.3
+#        - name: Check PHP syntax errors
+#          uses: overtrue/phplint@3.0.3

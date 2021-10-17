@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Added` for new features
 
 ### `Changed` for changes in existing functionality
+- instead of dist specific workflows, use reusable ones
 
 ### `Deprecated` for soon-to-be removed features
 

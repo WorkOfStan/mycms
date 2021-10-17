@@ -1,0 +1,13 @@
+name: PHP Linting (Overtrue)
+
+jobs:
+  phplint:
+    runs-on: ubuntu-latest
+    # Limit the running time
+    timeout-minutes: 10
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+
+        - name: Check PHP syntax errors
+          uses: overtrue/phplint@3.0.3
