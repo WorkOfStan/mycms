@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Added` for new features
 
 ### `Changed` for changes in existing functionality
-- instead of dist specific workflows, use reusable ones
+- instead of dist specific workflows, use reusable ones (linter.yml, overtrue-phplint.yml, php-composer-dependencies.yml, phpcbf.yml)
+- VALIDATE_GITHUB_ACTIONS: false as it returns false positive `unknown Webhook event "workflow_call"` (todo reconsider later)
 
 ### `Deprecated` for soon-to-be removed features
 
@@ -30,11 +31,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - dist/permissions.sh: run if necessary to allow web server user write into cache and log folders
 
 ### Changed
+- VALIDATE_GITLEAKS: false because of false positive (todo reconsider later)
 - dist: VALIDATE_GITLEAKS: false because of false positive
 - change github/super-linter master -> main
 
 ### Removed
-- VALIDATE_GITLEAKS: false because of false positive (todo reconsider later)
 - unnecessary `sql =` constructs removed
 
 ### Fixed

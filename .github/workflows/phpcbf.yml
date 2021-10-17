@@ -11,7 +11,7 @@ on:
   workflow_call:
 
 jobs:
-  phplint:
+  phpcbf:
     runs-on: ubuntu-latest
     # Limit the running time
     timeout-minutes: 10
