@@ -31,7 +31,7 @@ class AdminProcess extends MyAdminProcess
      * accepted attributes:
      */
 
-    /** @var array<array> */
+    /** @var array<array<string>> */
     protected $agendas;
 
     /**
@@ -458,7 +458,7 @@ class AdminProcess extends MyAdminProcess
      * It is public for PHPUnit test
      *
      * @param string $agenda
-     * @return array<array>
+     * @return array<array<string|array>>
      */
     public function getAgenda($agenda)
     {
@@ -466,7 +466,7 @@ class AdminProcess extends MyAdminProcess
             return [];
         }
         $result = $correctOrder = [];
-        /** @var array<string|array> $options array of agenda set in admin.php in $AGENDAS */
+        /** @var array<string|array<mixed>> $options array of agenda set in admin.php in $AGENDAS */
         $options = $this->agendas[$agenda];
         $optionsTable = (isset($options['table']) && is_string($options['table'])) ?
             ($options['table'] ?: $agenda) : $agenda;
