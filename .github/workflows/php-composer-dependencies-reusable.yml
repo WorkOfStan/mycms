@@ -106,7 +106,7 @@ jobs:
     - name: "Composer phpstan-webmozart-assert"
       if: ${{ matrix.php-version >= '7.1' && steps.vendor-cache.outputs.cache-hit != 'true' }}
       run: |
-        composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
+        composer require --dev phpstan/phpstan-webmozart-assert:^0.12 --prefer-dist --no-progress
         composer require --dev rector/rector --prefer-dist --no-progress
     - name: "PHPStan webmozart-assert"
       if: ${{ matrix.php-version >= '7.1' }}
