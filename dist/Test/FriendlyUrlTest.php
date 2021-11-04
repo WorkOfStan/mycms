@@ -724,8 +724,8 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             [
                 'relative_url' => '', // home
                 // 'http_status' => 200,
-                'allow_redirect' => true,
-                // 'contains_text' => 'Lorem ipsum dolor sit amet',
+                // 'allow_redirect' => true,
+                'contains_text' => 'Lorem ipsum dolor sit amet',
                 // 'is_json' => false
             ],
             [

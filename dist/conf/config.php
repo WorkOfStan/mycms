@@ -201,7 +201,7 @@ foreach ($arrayOfConstants as $constant => $value) {
 }
 // If you want to receive fatal errors in mail, set in config.local.php: $backyardConf['mail_for_admin_enabled'] = true;
 $backyardConf['mail_for_admin_enabled'] = (
-    isset($backyardConf['mail_for_admin_enabled']) && $backyardConf['mail_for_admin_enabled']
+    array_key_exists('mail_for_admin_enabled', $backyardConf) && $backyardConf['mail_for_admin_enabled']
 ) ? EMAIL_ADMIN : false;
 
 // default values for feature flags (use keys without spaces to avoid problems in javascript)
