@@ -157,6 +157,7 @@ jobs:
         cd dist
         # Only phpstan/phpstan-webmozart-assert + phpstan/phpstan added
         composer require --dev phpstan/phpstan-webmozart-assert:^0.12 --prefer-dist --no-progress
+        composer require --dev phpstan/phpstan-phpunit --prefer-dist --no-progress
         composer require --dev rector/rector --prefer-dist --no-progress
         cd ..
     - name: "PHPStan webmozart-assert (app)"

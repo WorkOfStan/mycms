@@ -107,8 +107,8 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             //(' session:' . http_build_query($friendlyUrlOptions['session'])) : '')
             . ' templateDetermined: ' . print_r($templateDetermined, true);
         if (FORCE_301 && FRIENDLY_URL) {
-            $this->assertIsArray(
-//                'array',
+            $this->assertInternalType(
+                'array',
                 $templateDetermined,
                 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
             );
