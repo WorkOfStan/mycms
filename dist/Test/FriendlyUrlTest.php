@@ -13,7 +13,6 @@ require_once __DIR__ . '/../conf/config.php';
 
 class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
 {
-
     /** @var MyCMSProject */
     protected $myCms;
 
@@ -108,8 +107,8 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
             //(' session:' . http_build_query($friendlyUrlOptions['session'])) : '')
             . ' templateDetermined: ' . print_r($templateDetermined, true);
         if (FORCE_301 && FRIENDLY_URL) {
-            $this->assertInternalType(
-                'array',
+            $this->assertIsArray(
+//                'array',
                 $templateDetermined,
                 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
             );
