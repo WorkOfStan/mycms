@@ -31,7 +31,7 @@ class AdminProcess extends MyAdminProcess
      * accepted attributes:
      */
 
-    /** @var array<array<string|array<string|int>>> */
+    /** @var array<array<mixed>> */
     protected $agendas;
 
     /**
