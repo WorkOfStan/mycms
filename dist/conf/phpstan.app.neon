@@ -119,7 +119,7 @@ parameters:
       #  message: '#Right side of && is always false.#'
       #  path: config.php
       -
-        message: "#Call to function array_key_exists\(\) with 'mail_for_admin…' and array{logging_level: 3, error_log_message_type: 3, logging_file: '/home/runner/work…'} will always evaluate to false.#"
+        message: "#Call to function array_key_exists\\(\\) with 'mail_for_admin…' and array{logging_level: 3, error_log_message_type: 3, logging_file: '/home/runner/work…'} will always evaluate to false.#"
         path: config.php
       -
         message: '#Result of && is always false.#'
