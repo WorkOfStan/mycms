@@ -29,7 +29,7 @@ $backyardConf = [
     'logging_level' => 3,
     'error_log_message_type' => 3,
     'logging_file' => __DIR__ . '/../log/backyard-error.log',
-    'mail_for_admin_enabled' => false,
+    //'mail_for_admin_enabled' => true,
 ];
 
 $debugIpArray = [
@@ -200,9 +200,10 @@ foreach ($arrayOfConstants as $constant => $value) {
     }
 }
 // If you want to receive fatal errors in mail, set in config.local.php: $backyardConf['mail_for_admin_enabled'] = true;
-if (isset($backyardConf['mail_for_admin_enabled']) && $backyardConf['mail_for_admin_enabled']) {
-    $backyardConf['mail_for_admin_enabled'] = EMAIL_ADMIN;
-}
+$backyardConf['mail_for_admin_enabled'] = (
+    isset($backyardConf['mail_for_admin_enabled']) && $backyardConf['mail_for_admin_enabled']
+) ? EMAIL_ADMIN : false;
+
 // default values for feature flags (use keys without spaces to avoid problems in javascript)
 $featureFlags = array_merge(
     [

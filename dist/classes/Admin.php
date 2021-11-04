@@ -19,7 +19,8 @@ class Admin extends MyAdmin
     use \Nette\SmartObject;
 
     /**
-     * @var array<array> admin search defined for table => [id, field1 to be searched in, field2 to be searched in...]
+     * @var array<array<string>> tables and columns to search in admin
+     * table => [id, field1 to be searched in, field2 to be searched in...]
      */
     protected $searchColumns = [
         'category' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language

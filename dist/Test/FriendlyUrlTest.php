@@ -720,6 +720,14 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
     public function testPageStatusOverHttp()
     {
         $urlsToBeCheckedAny = [
+            // so that offsets 'allow_redirect', 'http_status' and 'is_json' can be isset() tested
+            [
+                'relative_url' => '', // home
+                // 'http_status' => 200,
+                'allow_redirect' => true,
+                // 'contains_text' => 'Lorem ipsum dolor sit amet',
+                // 'is_json' => false
+            ],
             [
                 'relative_url' => '', // home
                 'http_status' => 200,

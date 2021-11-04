@@ -31,7 +31,7 @@ class AdminProcess extends MyAdminProcess
      * accepted attributes:
      */
 
-    /** @var array<array<string>> */
+    /** @var array<array<string|array<string|int>>> */
     protected $agendas;
 
     /**
@@ -39,7 +39,7 @@ class AdminProcess extends MyAdminProcess
      * Commands with all required variables cause page redirection.
      * $_SESSION is manipulated by this function - mainly [messages] get added
      *
-     * @param array<string|array> $post $_POST by reference
+     * @param array<string|array<mixed>> $post $_POST by reference
      * @todo refactor, so that $this->endAdmin(); is called automatically
      *
      * @return void
@@ -458,7 +458,7 @@ class AdminProcess extends MyAdminProcess
      * It is public for PHPUnit test
      *
      * @param string $agenda
-     * @return array<array<string|array>>
+     * @return array<array<string|array<mixed>>>
      */
     public function getAgenda($agenda)
     {
