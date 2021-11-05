@@ -1,7 +1,3 @@
-includes:
-      # Ignore errors in rector.php when rector/rector is not installed
-      - phpstan.rector.neon
-
 parameters:
     level: 8
     excludePaths:

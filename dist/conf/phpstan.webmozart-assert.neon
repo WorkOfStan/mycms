@@ -4,3 +4,5 @@ includes:
       # to use https://github.com/phpstan/phpstan-webmozart-assert
       # phpstan/phpstan-webmozart-assert requires this settings
       - ../vendor/phpstan/phpstan-webmozart-assert/extension.neon
+      # Ignore errors in rector.php when rector/rector is not installed
+      - phpstan.rector.neon
