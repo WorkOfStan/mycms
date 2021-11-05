@@ -195,18 +195,3 @@ parameters:
 			message: "#^Right side of \\|\\| is always false\\.$#"
 			count: 1
 			path: classes/MyTableLister.php
-
-		-
-			message: "#^Access to constant OLD_TO_NEW_NAMESPACES on an unknown class Rector\\\\Renaming\\\\Rector\\\\Namespace_\\\\RenameNamespaceRector\\.$#"
-			count: 1
-			path: dist/rector.php
-
-		-
-			message: "#^Access to constant PATHS on an unknown class Rector\\\\Core\\\\Configuration\\\\Option\\.$#"
-			count: 1
-			path: dist/rector.php
-
-		-
-			message: "#^Class Rector\\\\Renaming\\\\Rector\\\\Namespace_\\\\RenameNamespaceRector not found\\.$#"
-			count: 1
-			path: dist/rector.php
