@@ -1,4 +1,4 @@
-# TODO fix these old imperfection
+# TODO fix these old imperfections
 includes:
       - ../phpstan-baseline.neon
 

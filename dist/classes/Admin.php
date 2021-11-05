@@ -12,7 +12,7 @@ use function WorkOfStan\MyCMS\ThrowableFunctions\preg_match_all;
 
 /**
  * Admin UI
- * (Last MyCMS/dist revision: 2021-11-04, v0.4.4)
+ * (Last MyCMS/dist revision: 2021-11-05, v0.4.4+)
  */
 class Admin extends MyAdmin
 {
