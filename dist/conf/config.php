@@ -29,7 +29,7 @@ $backyardConf = [
     'logging_level' => 3,
     'error_log_message_type' => 3,
     'logging_file' => __DIR__ . '/../log/backyard-error.log',
-    //'mail_for_admin_enabled' => true,
+    'mail_for_admin_enabled' => false,
 ];
 
 $debugIpArray = [

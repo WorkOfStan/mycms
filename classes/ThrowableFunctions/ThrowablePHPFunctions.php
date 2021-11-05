@@ -70,7 +70,7 @@ function glob($pattern, $flags = 0)
  *
  * @param mixed $value
  * @param int $flags
- * @param int $depth
+ * @param int<1, max> $depth
  * @return string
  */
 function json_encode($value, $flags = 0, $depth = 512)
