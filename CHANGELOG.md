@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Deprecated` for soon-to-be removed features
 
 ### `Removed` for now removed features
+- github automated test rector/rector (todo return when rector ready for phpstan:1.0)
 
 ### `Fixed` for any bug fixes
 - some type hint imperfections (especially for nested arrays) in [PHPStan level=8](https://github.com/phpstan/phpstan/releases/tag/1.0.0)
