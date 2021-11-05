@@ -172,7 +172,7 @@ jobs:
       if: ${{ matrix.php-version >= '7.1' && steps.vendor-cache.outputs.cache-hit != 'true' }}
       run: |
         # Only phpstan/phpstan-webmozart-assert + phpstan/phpstan added
-        composer require --dev phpstan/phpstan-webmozart-assert:^0.12 --prefer-dist --no-progress
+        composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
     - name: "PHPStan webmozart-assert (library + app)"
       # alternative syntax # if: ${{ matrix.php-version != '5.3' && matrix.php-version != '5.6' }}
       if: ${{ matrix.php-version >= '7.1' }}

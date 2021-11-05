@@ -135,7 +135,8 @@ class MyCMSMonoLingual
     /**
      *
      * @param string $sql SQL statement to be executed
-     * @return array<array<mixed>|string>|false - either associative array, empty array on empty SELECT, or false on error
+     * @return array<array<mixed>|string>|false
+     *   Returns either associative array, empty array on empty SELECT, or false on error
      */
     public function fetchAndReindex($sql)
     {

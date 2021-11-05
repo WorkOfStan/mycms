@@ -343,7 +343,8 @@ class LogMysqli extends BackyardMysqli
      *     [1=>[[name=>'John',surname=>'Doe'], [name=>'Mary',surname=>'Saint']], 2=>[...]]
      *
      * @param string $sql SQL statement to be executed
-     * @return array<array<mixed>|string>|false - either associative array, empty array on empty SELECT, or false on error
+     * @return array<array<mixed>|string>|false
+     *   Result is either associative array, empty array on empty SELECT, or false on error
      *   Error for this function is also an SQL statement that returns true.
      */
     public function fetchAndReindex($sql)
