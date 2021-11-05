@@ -6,10 +6,10 @@ parameters:
 			count: 1
 			path: ../rector.php
 
-		#-
-		#	message: "#^Access to constant PATHS on an unknown class Rector\\\\Core\\\\Configuration\\\\Option\\.$#"
-		#	count: 1
-		#	path: ../rector.php
+		-
+			message: "#^Access to constant PATHS on an unknown class Rector\\\\Core\\\\Configuration\\\\Option\\.$#"
+			count: 1
+			path: ../rector.php
 
 		-
 			message: "#^Class Rector\\\\Renaming\\\\Rector\\\\Namespace_\\\\RenameNamespaceRector not found\\.$#"
