@@ -13,7 +13,6 @@ require_once __DIR__ . '/../conf/config.php';
 
 class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
 {
-
     /** @var MyCMSProject */
     protected $myCms;
 
@@ -721,6 +720,11 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
     public function testPageStatusOverHttp()
     {
         $urlsToBeCheckedAny = [
+            [
+                // so that isset() test of offsets 'allow_redirect', 'http_status', 'is_json' allowed by PHPStan
+                'relative_url' => '', // home
+                'contains_text' => 'Lorem ipsum dolor sit amet'
+            ],
             [
                 'relative_url' => '', // home
                 'http_status' => 200,

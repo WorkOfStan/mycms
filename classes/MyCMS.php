@@ -33,7 +33,7 @@ class MyCMS extends MyCMSMonoLingual
     /**
      * PARAMETRIC URL into TEMPLATE conditions (for FriendlyURL functionality)
      *
-     * @var array<array>
+     * @var array<array<string|bool>>
      */
     public $templateAssignementParametricRules;
 

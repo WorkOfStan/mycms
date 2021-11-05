@@ -1,3 +1,7 @@
+# TODO fix these old imperfections
+includes:
+      - ../phpstan-baseline.neon
+
 parameters:
     excludePaths:
         analyse:

@@ -31,7 +31,7 @@ class ProjectSpecific extends ProjectCommon
      * @param string $totalRows //TODO or?? mixed $totalRows first selected row
      *     (or its first column if only one column is selected),
      *     null on empty SELECT, or false on error
-     * @return array<array> search result
+     * @return array<array<string>> search result
      */
     public function searchResults($text, $offset = 0, $limit = 10, &$totalRows = null)
     {
@@ -233,7 +233,7 @@ class ProjectSpecific extends ProjectCommon
      * TODO: make this method useful for dist project as a demonstration (inspired by A project)
      *
      * @param string $path
-     * @return array<array|string>|false
+     * @return array<array<string>|string>|false
      */
     public function getBreadcrumbs($path)
     {
@@ -258,7 +258,8 @@ class ProjectSpecific extends ProjectCommon
      *          [path] - path of the category
      *          [level] - level to which seek for children
      *          [except_id] - id of the child to omit from the result
-     * @return array<array|string|int>|false - either associative array, empty array on empty SELECT, or false on error
+     * @return array<array<string|int>|string|int>|false
+     *          either associative array, empty array on empty SELECT, or false on error
      */
     public function getChildren($category_id, array $options = [])
     {

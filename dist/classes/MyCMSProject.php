@@ -26,7 +26,7 @@ class MyCMSProject extends MyCMS
     /** @var array<mixed> */
     public $SETTINGS;
 
-    /** @var array<array> */
+    /** @var array<array<string|array<array<string>>>> */
     public $WEBSITE;
 
     /**

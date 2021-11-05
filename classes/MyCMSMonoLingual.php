@@ -125,7 +125,7 @@ class MyCMSMonoLingual
     /**
      *
      * @param string $sql
-     * @return array<array> array of associative arrays for each result row or empty array on error or no results
+     * @return array<array<mixed>> array of associative arrays for each result row or empty array on error or no results
      */
     public function fetchAll($sql)
     {
@@ -135,7 +135,8 @@ class MyCMSMonoLingual
     /**
      *
      * @param string $sql SQL statement to be executed
-     * @return array<array|string>|false - either associative array, empty array on empty SELECT, or false on error
+     * @return array<array<mixed>|string>|false
+     *   Returns either associative array, empty array on empty SELECT, or false on error
      */
     public function fetchAndReindex($sql)
     {

@@ -19,13 +19,13 @@ class MyAdmin extends MyCommon
 {
     use \Nette\SmartObject;
 
-    /** @var array<array> */
+    /** @var array<array<mixed>> */
     protected $agendas = [];
 
     /** @var array<string> */
     protected $ASSETS_SUBFOLDERS = [];
 
-    /** @var array<array> client-side resources - css, js, fonts etc. */
+    /** @var array<array<string>> client-side resources - css, js, fonts etc. */
     protected $clientSideResources = [
         'js' => [
             'scripts/jquery.js',

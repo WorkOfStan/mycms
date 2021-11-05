@@ -96,7 +96,7 @@ class LogMysqli extends BackyardMysqli
      * If it is empty or database call fails, throws Exception.
      *
      * @param string $sql
-     * @return array[]
+     * @return array<mixed>
      * @throws Exception
      */
     public function queryStrictNonEmptyArray($sql)
@@ -264,7 +264,7 @@ class LogMysqli extends BackyardMysqli
                 isset($fields[$column]['type']) &&
                 ($fields[$column]['type'] == 'set' || $fields[$column]['type'] == 'enum')
             ) {
-                $result .= "$escColumn - 0 AS $escColumn"; //NULLs will persist
+                $result .= "$escColumn - 0 AS $escColumn"; // NULLs will persist
             } else {
                 $result .= $escColumn;
             }
@@ -317,7 +317,7 @@ class LogMysqli extends BackyardMysqli
      * Execute an SQL, fetch and return all resulting rows
      *
      * @param string $sql
-     * @return array<array> array of associative arrays for each result row or empty array on error or no results
+     * @return array<array<mixed>> array of associative arrays for each result row or empty array on error or no results
      */
     public function fetchAll($sql)
     {
@@ -343,7 +343,8 @@ class LogMysqli extends BackyardMysqli
      *     [1=>[[name=>'John',surname=>'Doe'], [name=>'Mary',surname=>'Saint']], 2=>[...]]
      *
      * @param string $sql SQL statement to be executed
-     * @return array<array|string>|false - either associative array, empty array on empty SELECT, or false on error
+     * @return array<array<mixed>|string>|false
+     *   Result is either associative array, empty array on empty SELECT, or false on error
      *   Error for this function is also an SQL statement that returns true.
      */
     public function fetchAndReindex($sql)

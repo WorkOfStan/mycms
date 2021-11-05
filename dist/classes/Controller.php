@@ -286,7 +286,7 @@ class Controller extends MyController
     /**
      * For PHP Unit test
      *
-     * @return array<array>
+     * @return array<array<mixed>>
      */
     public function getVars()
     {

@@ -7,16 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### `Added` for new features
+- phpstan.sh and phpstan-remove.sh for local testing
+- phpstan-baseline.neon to hide type hint imperfections in PHPStan level=8 (TODO fix these)
 
 ### `Changed` for changes in existing functionality
 - instead of dist specific workflows, use reusable ones (linter.yml, overtrue-phplint.yml, php-composer-dependencies.yml, phpcbf.yml)
 - VALIDATE_GITHUB_ACTIONS: false as it returns false positive `unknown Webhook event "workflow_call"` (todo reconsider later)
+- PHPStan level lowered to 8 due to stricter PHPStan:1.0
 
 ### `Deprecated` for soon-to-be removed features
 
 ### `Removed` for now removed features
+- github automated test rector/rector (todo return when rector ready for phpstan:1.0)
 
 ### `Fixed` for any bug fixes
+- some type hint imperfections (especially for nested arrays) in [PHPStan level=8](https://github.com/phpstan/phpstan/releases/tag/1.0.0)
 
 ### `Security` in case of vulnerabilities
 

@@ -18,7 +18,7 @@ define('PROCESS_LIMIT', 100); // used in self::getAgenda
 
 /**
  * AJAX and form handling for Admin UI
- * (Last MyCMS/dist revision: 2021-05-28, v0.4.2)
+ * (Last MyCMS/dist revision: 2021-11-05, v0.4.4+)
  */
 class AdminProcess extends MyAdminProcess
 {
@@ -31,7 +31,7 @@ class AdminProcess extends MyAdminProcess
      * accepted attributes:
      */
 
-    /** @var array<array> */
+    /** @var array<array<mixed>> */
     protected $agendas;
 
     /**
@@ -39,7 +39,7 @@ class AdminProcess extends MyAdminProcess
      * Commands with all required variables cause page redirection.
      * $_SESSION is manipulated by this function - mainly [messages] get added
      *
-     * @param array<string|array> $post $_POST by reference
+     * @param array<string|array<mixed>> $post $_POST by reference
      * @todo refactor, so that $this->endAdmin(); is called automatically
      *
      * @return void
@@ -458,7 +458,7 @@ class AdminProcess extends MyAdminProcess
      * It is public for PHPUnit test
      *
      * @param string $agenda
-     * @return array<array>
+     * @return array<array<string|array<mixed>>>
      */
     public function getAgenda($agenda)
     {
@@ -466,7 +466,7 @@ class AdminProcess extends MyAdminProcess
             return [];
         }
         $result = $correctOrder = [];
-        /** @var array<string|array> $options array of agenda set in admin.php in $AGENDAS */
+        /** @var array<string|array<mixed>> $options array of agenda set in admin.php in $AGENDAS */
         $options = $this->agendas[$agenda];
         $optionsTable = (isset($options['table']) && is_string($options['table'])) ?
             ($options['table'] ?: $agenda) : $agenda;

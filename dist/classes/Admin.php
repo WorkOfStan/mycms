@@ -12,14 +12,14 @@ use function WorkOfStan\MyCMS\ThrowableFunctions\preg_match_all;
 
 /**
  * Admin UI
- * (Last MyCMS/dist revision: 2021-05-28, v0.4.2)
+ * (Last MyCMS/dist revision: 2021-11-05, v0.4.4+)
  */
 class Admin extends MyAdmin
 {
     use \Nette\SmartObject;
 
     /**
-     * @var array<array> tables and columns to search in admin
+     * @var array<array<string>> tables and columns to search in admin
      * table => [id, field1 to be searched in, field2 to be searched in...]
      */
     protected $searchColumns = [
