@@ -19,7 +19,7 @@ class MyAdmin extends MyCommon
 {
     use \Nette\SmartObject;
 
-    /** @var array<array<bool>> */
+    /** @var array<array<mixed>> */
     protected $agendas = [];
 
     /** @var array<string> */

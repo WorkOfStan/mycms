@@ -96,7 +96,7 @@ class LogMysqli extends BackyardMysqli
      * If it is empty or database call fails, throws Exception.
      *
      * @param string $sql
-     * @return array<array<mixed>>
+     * @return array<mixed>
      * @throws Exception
      */
     public function queryStrictNonEmptyArray($sql)

@@ -1,0 +1,212 @@
+# PHPSTAN level = 8
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\LogMysqli\\:\\:listColumns\\(\\) has parameter \\$fields with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/LogMysqli.php
+
+		-
+			message: "#^Property WorkOfStan\\\\MyCMS\\\\MyAdmin\\:\\:\\$TableAdmin \\(WorkOfStan\\\\MyCMS\\\\MyTableAdmin\\) in empty\\(\\) is not falsy\\.$#"
+			count: 1
+			path: classes/MyAdmin.php
+
+		-
+			message: "#^Property WorkOfStan\\\\MyCMS\\\\MyAdmin\\:\\:\\$searchColumns type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyAdmin.php
+
+		-
+			message: "#^Property WorkOfStan\\\\MyCMS\\\\MyAdmin\\:\\:\\$tableAdmin \\(WorkOfStan\\\\MyCMS\\\\MyTableAdmin\\) in empty\\(\\) is not falsy\\.$#"
+			count: 1
+			path: classes/MyAdmin.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyAdminProcess\\:\\:processActivity\\(\\) has parameter \\$post with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyAdminProcess.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyAdminProcess\\:\\:processClone\\(\\) has parameter \\$post with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyAdminProcess.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyAdminProcess\\:\\:processExport\\(\\) has parameter \\$get with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyAdminProcess.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyAdminProcess\\:\\:processExport\\(\\) has parameter \\$post with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyAdminProcess.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyAdminProcess\\:\\:processFileDelete\\(\\) has parameter \\$post with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyAdminProcess.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyAdminProcess\\:\\:processFilePack\\(\\) has parameter \\$post with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyAdminProcess.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyAdminProcess\\:\\:processFileRename\\(\\) has parameter \\$post with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyAdminProcess.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyAdminProcess\\:\\:processFileUnpack\\(\\) has parameter \\$post with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyAdminProcess.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyAdminProcess\\:\\:processFileUpload\\(\\) has parameter \\$post with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyAdminProcess.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyAdminProcess\\:\\:processLogin\\(\\) has parameter \\$post with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyAdminProcess.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyAdminProcess\\:\\:processLogout\\(\\) has parameter \\$post with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyAdminProcess.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyAdminProcess\\:\\:processSubfolder\\(\\) has parameter \\$post with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyAdminProcess.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyAdminProcess\\:\\:processUserActivation\\(\\) has parameter \\$post with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyAdminProcess.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyAdminProcess\\:\\:processUserChangePassword\\(\\) has parameter \\$post with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyAdminProcess.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyAdminProcess\\:\\:processUserCreate\\(\\) has parameter \\$post with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyAdminProcess.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyAdminProcess\\:\\:processUserDelete\\(\\) has parameter \\$post with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyAdminProcess.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyCMSMonoLingual\\:\\:__construct\\(\\) has parameter \\$myCmsConf with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyCMSMonoLingual.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyCMSMonoLingual\\:\\:fetchAndReindexStrictArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyCMSMonoLingual.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyController\\:\\:controller\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyController.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyController\\:\\:getVars\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyController.php
+
+		-
+			message: "#^Property WorkOfStan\\\\MyCMS\\\\MyController\\:\\:\\$friendlyUrl \\(WorkOfStan\\\\MyCMS\\\\MyFriendlyUrl\\) in isset\\(\\) is not nullable\\.$#"
+			count: 1
+			path: classes/MyController.php
+
+		-
+			message: "#^Property WorkOfStan\\\\MyCMS\\\\MyController\\:\\:\\$get type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyController.php
+
+		-
+			message: "#^Property WorkOfStan\\\\MyCMS\\\\MyController\\:\\:\\$result type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyController.php
+
+		-
+			message: "#^Property WorkOfStan\\\\MyCMS\\\\MyController\\:\\:\\$session type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyController.php
+
+		-
+			message: "#^Left side of && is always true\\.$#"
+			count: 1
+			path: classes/MyTableAdmin.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyTableAdmin\\:\\:addForeignOption\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyTableAdmin.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyTableAdmin\\:\\:outputForeignId\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyTableAdmin.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyTableAdmin\\:\\:outputForeignId\\(\\) has parameter \\$values with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyTableAdmin.php
+
+		-
+			message: "#^Variable \\$query in empty\\(\\) always exists and is not falsy\\.$#"
+			count: 1
+			path: classes/MyTableAdmin.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyTableLister\\:\\:bulkUpdateSQL\\(\\) has parameter \\$vars with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyTableLister.php
+
+		-
+			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyTableLister\\:\\:getColumns\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyTableLister.php
+
+		-
+			message: "#^Property WorkOfStan\\\\MyCMS\\\\MyTableLister\\:\\:\\$fields type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyTableLister.php
+
+		-
+			message: "#^Property WorkOfStan\\\\MyCMS\\\\MyTableLister\\:\\:\\$tableContext type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyTableLister.php
+
+		-
+			message: "#^Property WorkOfStan\\\\MyCMS\\\\MyTableLister\\:\\:\\$tables type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: classes/MyTableLister.php
+
+		-
+			message: "#^Right side of \\|\\| is always false\\.$#"
+			count: 1
+			path: classes/MyTableLister.php
+
+		-
+			message: "#^Access to constant OLD_TO_NEW_NAMESPACES on an unknown class Rector\\\\Renaming\\\\Rector\\\\Namespace_\\\\RenameNamespaceRector\\.$#"
+			count: 1
+			path: dist/rector.php
+
+		-
+			message: "#^Access to constant PATHS on an unknown class Rector\\\\Core\\\\Configuration\\\\Option\\.$#"
+			count: 1
+			path: dist/rector.php
+
+		-
+			message: "#^Class Rector\\\\Renaming\\\\Rector\\\\Namespace_\\\\RenameNamespaceRector not found\\.$#"
+			count: 1
+			path: dist/rector.php
