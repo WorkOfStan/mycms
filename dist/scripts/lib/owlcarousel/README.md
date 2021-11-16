@@ -21,7 +21,7 @@ Or download the [latest release](https://github.com/OwlCarousel2/OwlCarousel2/re
 
 #### Webpack
 
-Load the required stylesheet and JS:
+Load the required style sheet and JS:
 
 ```js
 import 'owl.carousel/dist/assets/owl.carousel.css';
@@ -31,7 +31,7 @@ import 'imports?jQuery=jquery!owl.carousel';
 
 #### Static HTML
 
-Put the required stylesheet at the [top](https://developer.yahoo.com/performance/rules.html#css_top) of your markup:
+Put the required style sheet at the [top](https://developer.yahoo.com/performance/rules.html#css_top) of your markup:
 
 ```html
 <link rel="stylesheet" href="/node_modules/owl.carousel/dist/assets/owl.carousel.min.css" />
@@ -84,7 +84,7 @@ $(document).ready(function(){
 
 ## Documentation
 
-The documentation, included in this repo in the root directory, is built with [Assemble](http://assemble.io/) and publicly available at <https://owlcarousel2.github.io/OwlCarousel2/>. The documentation may also be run locally.
+The documentation, included in this repository in the root directory, is built with [Assemble](http://assemble.io/) and publicly available at <https://owlcarousel2.github.io/OwlCarousel2/>. The documentation may also be run locally.
 
 ## Building
 
