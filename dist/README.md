@@ -46,7 +46,7 @@ script/autotrack.V.V.V.js and script/autotrack.V.V.V.js.map are manually taken f
 ## MyCMS dist deployment
 * Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder.
 * Replace the string `mycmsprojectnamespace` with your project namespace in composer.json and BY RUNNING `vendor/bin/rector process --dry-run` (of course before you have to `composer require rector/rector --dev` and after remove `--dry-run`).
-* Replace the string `MYCMSPROJECTSPECIFIC` with other website specific information (Brand, Twitter address, phone number, database name, name of icon in manifest.json etc.).
+* Replace the string `MYCMSPROJECTSPECIFIC` with other site specific information (Brand, Twitter address, phone number, database name, name of icon in manifest.json etc.).
 * Default *admin.php* credentials are *john* / *Ew7Ri561*   - MUST be deleted after the real admin account is set up.
 * Change `define('MYCMS_SECRET', 'u7-r!!T7.&&7y6ru');` //16-byte random string, unique per project in `conf/config.php`
 * Delete this section after the changes above are made
@@ -75,7 +75,7 @@ Recommendation: if you change boilerplate classes, update also info `(Last MyCMS
 | conf/config.php 'templateAssignementParametricRules' | how a GET parameters translate to template |
 | conf/config.php 'typeToTableMapping' | type uses specific table for its records |
 | Controller::prepareTemplate | Retrieves the content for usage in View layer |
-| FriendlyUrl::switchParametric | Checks existence of the content piece and Returns Friendly Url string for type=id URL if it is available or it returns type=id |
+| FriendlyUrl::switchParametric | Checks existence of the content piece and Returns Friendly URL string for type=ID URL if it is available or it returns type=ID |
 | admin.php $AGENDAS | convenient way to administer records within admin.php |
 | template/NEW.latte | View layer |
 
@@ -94,7 +94,7 @@ vendor/bin/phinx migrate -e development # or production
 vendor/bin/phinx migrate -e testing # for phpunit, so that tests don't touch normal database
 ```
 3. `vendor/bin/phpunit` to always check the functionality
-4. `sass styles/index.sass styles/index.css` to keep order in the generated css
+4. `sass styles/index.sass styles/index.css` to keep order in the generated CSS
 
 - Note: To work on low performing environments, the script accepts number of seconds as parameter to be used as a waiting time between steps.
 - Note2: PHPUnit test of FaviconTest may uncover a need for RewriteBase configuration in .htaccess
@@ -281,14 +281,14 @@ Note: assets expects only ONE sub-level.
 
 #### admin.php expects
 * [Summernote](https://summernote.org/getting-started/#installation) v.0.8.18 (2020-05-20) (styles/summernote.css, styles/font/summernote.*, scripts/summernote.js, scripts/summernote.js.map)
-* scripts\bootstrap.js
-* scripts\admin-specific.js
-* scripts\ie10-viewport-bug-workaround.js
-* styles\bootstrap.css
-* styles\bootstrap-datetimepicker.css
-* styles\font-awesome.css
-* styles\ie10-viewport-bug-workaround.css
-* fonts\fa*.*
+* `scripts/bootstrap.js`
+* `scripts/admin-specific.js`
+* `scripts/ie10-viewport-bug-workaround.js`
+* `styles/bootstrap.css`
+* `styles/bootstrap-datetimepicker.css`
+* `styles/font-awesome.css`
+* `styles/ie10-viewport-bug-workaround.css`
+* `fonts/fa*.*`
 
 ### Admin UI
 Add protected functions to Admin.php according to MyAdmin.php in order to add menu relevant for the application, such as Translations, FriendlyURL, Divisions and products, etc.
@@ -323,7 +323,7 @@ Note: `header("Content-type: application/json");` in outputJSON hides Tracy
 That's how it works and how to set an API:
 - It is possible to combine api/noun constructs (conf/config) and api/noun/ folders (e.g. api/dummy - for this, there are exceptions in phpstan.neon.dist)
 - scripts/index.js: `let API_BASE_DIR = API_BASE + 'api/';` to which folder API calls are targeted
-- .htaccess contains api in `RewriteRule ^(de|en|zh)/(api|assets|favicon.ico|fonts|images|scripts|styles)(.*)$ $2$3 [L,QSA]` in order to use api/ even in e.g. de/ context (and not de/api/)
+- .htaccess contains API in `RewriteRule ^(de|en|zh)/(api|assets|favicon.ico|fonts|images|scripts|styles)(.*)$ $2$3 [L,QSA]` in order to use api/ even in e.g. de/ context (and not de/api/)
 - SET TEMPLATE FOR EACH API: conf/config.php $myCmsConf['templateAssignementParametricRules'][] = ['api/amount' => ['template' => 'apiAmount']; etc. sets in which template the API call should be terminated
 - index.php $controller = new Controller($MyCMS, ['requestUri'] => preg_replace necessary for FriendlyURL feature: /api/item?id=14 => ?api-item&id=14
 - EACH API TEMPLATE MUST CREATE JSON FIELD: Controller::prepareTemplate creates ['context']['json'] as array to be returned as json by an API
@@ -361,7 +361,7 @@ Logs are in folder `log`:
 
 Pages have view-TEMPLATE class in <body/> to allow for exceptions.
 
-Convert SASS to CSS (performed also by [build.sh](build.sh)) by
+Convert Sass to CSS (performed also by [build.sh](build.sh)) by
 ```sh
 sass styles/index.sass styles/index.css
 ```
@@ -406,10 +406,10 @@ Feature flag is propagated to Class Admin, Controller, to JS and to Latte.
 
 ### TODO other
 * 190611: add article and search page types including controller tests
-* 190611: Make SASS to CSS conversion automatic (e.g. gulp or Github Action?)
+* 190611: Make Sass to CSS conversion automatic (e.g. gulp or GitHub Action?)
 * 200712: migrate popper <https://popper.js.org/docs/v2/migration-guide/> incl. map --> admin.php expects section
 * 200712: update bootstrap <https://getbootstrap.com/> incl. map --> admin.php expects section
-* 200712: update jquery <https://jquery.com/> incl. map --> admin.php expects section
+* 200712: update jQuery <https://jquery.com/> incl. map --> admin.php expects section
 * 200712: update fontawesome --> admin.php expects section
 * 200802: test with 2 categories
 * 200802: image for product and category in assets

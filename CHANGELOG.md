@@ -18,9 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Deprecated` for soon-to-be removed features
 
 ### `Removed` for now removed features
-- github automated test rector/rector (todo return when rector ready for phpstan:1.0)
+- GitHub automated test rector/rector (todo return when rector ready for phpstan:1.0)
 
-### `Fixed` for any bug fixes
+### `Fixed` for any bugfixes
 - some type hint imperfections (especially for nested arrays) in [PHPStan level=8](https://github.com/phpstan/phpstan/releases/tag/1.0.0)
 
 ### `Security` in case of vulnerabilities
@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - dist/build.sh: if not exists create conf/config.local.php + phinx.yml
-- Faster MyCMS dist deployment by rector.php (github online check include composer require --dev rector/rector)
+- Faster MyCMS dist deployment by rector.php (GitHub online check include composer require --dev rector/rector)
 - dist/permissions.sh: run if necessary to allow web server user write into cache and log folders
 
 ### Changed
@@ -45,7 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - MyTableLister::view ternary operator blocking non-empty table output
-- dist: github online composer require --dev rector/rector
+- dist: GitHub online composer require --dev rector/rector
 - dist/classes/TableAdmin.php - line 177: Parameter #2 $multiplier of function str_repeat expects int,  float|int<-1, max> given.
 
 ## [0.4.3] - 2021-07-27
@@ -74,7 +74,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added private ProjectCommon::assertStringArray to fix Parameter #1 $pattern of function WorkOfStan\MyCMS\ThrowableFunctions\preg_replaceString expects array<string>|string, array<int, (int|string)> given.
 
 ### Security
-- dist/.htaccess: no markdown file can be available on web
+- dist/.htaccess: no Markdown file can be available on web
 
 ## [0.4.2] - 2021-05-28
 - PHPStan level=max ... Error Zero
@@ -92,7 +92,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MyTableAdmin::outputField case:timestamp replaced old way of addressing characters in a string `$value[10]` by more modern `substr($value, 10, 1)`
 
 ### Fixed
-- dist ProjectSpecific::getContent,::getCategory - code|id are used by the SQL statement only if they are present
+- dist ProjectSpecific::getContent,::getCategory - code|ID are used by the SQL statement only if they are present
 - MyAdminProcess::processUserCreate $salt typecasted as string
 - MyTableAdmin::recordSave and MyTableAdmin::recordDelete - resolveSQL call treated $messageSuccess and $messageError as strings while they are bool
 
@@ -130,7 +130,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - dist/TableAdmin templates for methods customInput and customInputAfter added
 - dist/Admin outputSpecialMenuLinks and projectSpecificSections etc. overrides of MyAdmin methods added
 - featureFlags work also in Admin UI
-- Admin.php, AdminProcess.php, admin.js and admin.css now contains (almost) all the code from A and F projects - some is however not working (hence featureFlag 'order_hierarchy') TODO: simplify it and keep only the essential
+- Admin.php, AdminProcess.php, admin.js and `admin.css` now contains (almost) all the code from A and F projects - some is however not working (hence featureFlag 'order_hierarchy') TODO: simplify it and keep only the essential
 - Admin UI: Friendly URL: one place to set them all, identify duplicities
 - Admin UI: generate translations. Note: this rewrites the translation files language-xx.inc.php
 - admin.js: toggle Export, Edit, Clone buttons based on row selection
@@ -143,7 +143,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ProjectCommon::language - Returns or set the language
 - MyTableAdmin: fix if prefill value is not yet among the existing values, set as value for the own-value input box
 - View: latte may use $applicationDirLanguage to keep the selected language folder
-- View: FEATURE_FLAGS are available now in javascript
+- View: FEATURE_FLAGS are available now in JavaScript
 - class Mail incl. test UI: class Mail works both on PHP/5.6 (tested on 5.6.40-0+deb8u12) and PHP/7.x (tested on 7.3.27-1~deb10u1) with test page available at the third tab
 - Recommendation: if you change boilerplate classes, update also info `(Last MyCMS/dist revision: 2021-05-20, v0.4.0)`, so that it is more clear what to update in case of MyCMS core upgrade.
 
@@ -297,7 +297,7 @@ to
 - Lot of improvements
   - logging
   - Tracy
-  - cusomized Css and Js
+  - customized CSS and JavaScript
   - dist folder contains an example project using MyCMS
 
 ## [0.2.5] - 2017-11-24

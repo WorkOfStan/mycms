@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Removed` for now removed features
 
-### `Fixed` for any bug fixes
+### `Fixed` for any bugfixes
 
 ### `Security` in case of vulnerabilities
 
