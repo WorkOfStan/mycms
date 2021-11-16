@@ -4,7 +4,7 @@
 [![Lint Code Base](https://github.com/WorkOfStan/mycms/actions/workflows/linter.yml/badge.svg)](https://github.com/WorkOfStan/mycms/actions/workflows/linter.yml)
 [![PHP Composer + PHPUnit + PHPStan](https://github.com/WorkOfStan/mycms/actions/workflows/php-composer-phpunit.yml/badge.svg)](https://github.com/WorkOfStan/mycms/actions/workflows/php-composer-phpunit.yml)
 
-Brief MVC framework for interactive websites including general administration.
+Brief MVC framework for interactive sites including general administration.
 Works as a devstack which you install and then write your classes specific for the project.
 The boilerplate project is prepared in `dist` folder to be adapted as needed and it uses this `WorkOfStan\MyCMS` library out-of-the-box.
 
@@ -49,7 +49,7 @@ Note: `$MyCMS` name is expected by `ProjectSpecific extends ProjectCommon` class
 ### `/dist`
 Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder in order to easily start.
 Replace the string `MYCMSPROJECTNAMESPACE` with your project namespace.
-Replace the string `MYCMSPROJECTSPECIFIC` with other website specific information (Brand, Twitter address, phone number, database table_prefix in phinx.yml...).
+Replace the string `MYCMSPROJECTSPECIFIC` with other site specific information (Brand, Twitter address, phone number, database table_prefix in phinx.yml...).
 If you want to use your own table name prefix, it is recommanded to change database related strings before first running [`./build.sh`](dist/build.sh).
 
 To adapt the content and its structure either adapt migrations [content_table](dist/db/migrations/20200607204634_content_table.php) and [content_example](dist/db/migrations/20200703213436_content_example.php)
@@ -246,7 +246,7 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 
 ### TODO Governance
 * 190705: v classes\LogMysqli.php probíhá logování `'log/sql' . date("Y-m-d") . '.log.sql');` do aktuálního adresáře volajícího skriptu - což u API není výhodné. Jak vycházet z APP_ROOT?
-* 200526: describe jquery dependencies; and also other js libraries (maybe only in dist??)
+* 200526: describe jQuery dependencies; and also other js libraries (maybe only in dist??)
 * 200529: Minimum of PHP 7.2 required now: PHPUnit latest + Phinx latest <https://github.com/cakephp/phinx/releases> .. planned for release 0.5.0
 * 200608: replace all `array(` by `[`
 * 200819: refactor FORCE_301, FRIENDLY_URL and REDIRECTOR_ENABLED to a variable, so that all scenarios can be PHPUnit tested

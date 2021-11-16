@@ -1,3 +1,3 @@
 # `styles` folder
 
-sass and css
+Sass and CSS

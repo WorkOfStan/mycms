@@ -1,6 +1,6 @@
 # Font usage
 
-## Font Awesome Free 5.5.0 styles/font-awesome.css expects those fonts
+## Font Awesome Free 5.5.0 `styles/font-awesome.css` expects those fonts
 fa-brands-400.eot
 fa-brands-400.svg
 fa-brands-400.ttf
