@@ -31,7 +31,7 @@ class AdminProcess extends MyAdminProcess
      * accepted attributes:
      */
 
-    /** @var array<array<mixed>> */
+    /** @var array<array<string|array<string|int>>> */
     protected $agendas;
 
     /**
@@ -459,6 +459,7 @@ class AdminProcess extends MyAdminProcess
      *
      * @param string $agenda
      * @return array<array<string|array<mixed>>>
+     *   Todo: mixed is result of fetch_assoc - string??
      */
     public function getAgenda($agenda)
     {
@@ -504,7 +505,7 @@ class AdminProcess extends MyAdminProcess
                 $correctOrder[$row['id']] = $i;
             }
         }
-        // TODO does the next foreach have any impact on the returned value?
+        // TODO does the next foreach have any impact on the returned value? Update??
         foreach ($correctOrder as $key => $value) {
             $this->MyCMS->dbms->query('UPDATE `' . $this->MyCMS->dbms->escapeDbIdentifier(
                 TAB_PREFIX . $optionsTable
