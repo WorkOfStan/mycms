@@ -290,7 +290,7 @@ class LogMysqli extends BackyardMysqli
      * @example: fetchSingle('SELECT age FROM employees WHERE id = 5') --> 45
      *
      * @param string $sql SQL to be executed
-     * @return mixed first selected row (or its first column if only one column is selected), null on empty SELECT
+     * @return null|string|array<null|string> first selected row (or its first column if only one column is selected), null on empty SELECT
      * @throws Exception when a database error occurs or when an SQL statement returns true.
      */
     public function fetchSingle($sql)
@@ -300,24 +300,21 @@ class LogMysqli extends BackyardMysqli
             //return null;
             throw new Exception('SQL statement resulting in \mysqli_result<object> expected. True received.');
         }
-        if ($query) {
-            $row = $query->fetch_assoc();
-            if (is_array($row)) {
-                if (!count($row)) {
-                    return null;
-                }
-                return count($row) == 1 ? reset($row) : $row;
-            }
+        if (!$query) {
+            throw new Exception($this->errno . ': ' . $this->error);
+        }
+        $row = $query->fetch_assoc();
+        if (!is_array($row) || !count($row)) {
             return null;
         }
-        throw new Exception($this->errno . ': ' . $this->error);
+        return count($row) == 1 ? reset($row) : $row;
     }
 
     /**
      * Execute an SQL, fetch and return all resulting rows
      *
      * @param string $sql
-     * @return array<array<mixed>> array of associative arrays for each result row or empty array on error or no results
+     * @return array<array<null|string>> array of associative arrays for each result row or empty array on error or no results
      */
     public function fetchAll($sql)
     {
@@ -343,7 +340,7 @@ class LogMysqli extends BackyardMysqli
      *     [1=>[[name=>'John',surname=>'Doe'], [name=>'Mary',surname=>'Saint']], 2=>[...]]
      *
      * @param string $sql SQL statement to be executed
-     * @return array<array<mixed>|string>|false
+     * @return array<array<string|null>|string>|false
      *   Result is either associative array, empty array on empty SELECT, or false on error
      *   Error for this function is also an SQL statement that returns true.
      */
