@@ -3,7 +3,7 @@ includes:
       - phpstan.rector.neon
 
 parameters:
-    level: 8
+    level: 9
     excludePaths:
         analyseAndScan:
             - ../cache/*
