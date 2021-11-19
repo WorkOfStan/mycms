@@ -101,18 +101,18 @@ class FriendlyUrl extends MyFriendlyUrl
                 if (empty($outputValue)) {
                     return isset($this->get['offset']) ? "?category&offset=" . (int) $this->get['offset'] : "?category";
                 }
-                $content = $this->MyCMS->dbms->fetchSingle('SELECT id, name_' . $this->language . ' AS title,'
+                $content = $this->MyCMS->dbms->fetchStringArray('SELECT id, name_' . $this->language . ' AS title,'
                     . $this->projectSpecific->getLinkSql("?category=", $this->language)
                     . ' FROM ' . TAB_PREFIX . 'category WHERE active = 1 '
                     . ' AND id = "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"');
                 Debugger::barDump($content, 'category');
-                return is_null($content) ? self::PAGE_NOT_FOUND : $content['link'];
+                return is_null($content) ? self::PAGE_NOT_FOUND : (string) $content['link'];
             case 'language':
                 return null; // i.e. do not change the output or return "?{$outputKey}={$outputValue}";
             case 'product':
                 $content = $this->projectSpecific->getProduct((int) $outputValue);
                 Debugger::barDump($content, 'product');
-                return is_null($content) ? self::PAGE_NOT_FOUND : $content['link'];
+                return is_null($content) ? self::PAGE_NOT_FOUND : (string) $content['link'];
             default:
                 Debugger::log(
                     "switchParametric: undefined friendlyfyUrl for {$outputKey} => {$outputValue}",
