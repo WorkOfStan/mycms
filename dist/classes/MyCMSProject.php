@@ -4,6 +4,7 @@ namespace WorkOfStan\mycmsprojectnamespace;
 
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
+use Webmozart\Assert\Assert;
 use WorkOfStan\Backyard\Backyard;
 use WorkOfStan\MyCMS\MyCMS;
 use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
@@ -57,6 +58,7 @@ class MyCMSProject extends MyCMS
             if (
                 array_key_exists('messageSuccessInfo', $this->context) && !is_null($this->context['messageSuccessInfo'])
             ) {
+                Assert::string($this->context['messageSuccessInfo']);
                 Tools::addMessage('info', $this->context['messageSuccessInfo']);
             }
             if ($humanReadable) { // TODO: maybe it will be removed after the development phase
@@ -69,6 +71,7 @@ class MyCMSProject extends MyCMS
         } elseif (array_key_exists('messageFailure', $this->context) && !is_null($this->context['messageFailure'])) {
             Debugger::barDump('contextJson is expected to be an array');
             // TODO remove after Controller.php refactor all context['message... to    Tools::addMessage('error',
+            Assert::string($this->context['messageFailure']);
             Tools::addMessage('error', $this->context['messageFailure']);
             header('HTTP/1.1 404 Not Found', true, 404);
             echo($this->context['messageFailure']);
