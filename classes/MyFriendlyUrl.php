@@ -10,7 +10,7 @@ class MyFriendlyUrl extends MyCommon
 {
     use \Nette\SmartObject;
 
-    const PAGE_NOT_FOUND = '404';
+    public const PAGE_NOT_FOUND = '404';
 
     /**
      * interestingPath pattern to match `language subpattern` and the `rest of the path`
@@ -316,7 +316,7 @@ class MyFriendlyUrl extends MyCommon
      * as self::TEMPLATE_NOT_FOUND || null || true
      *
      * @param array<mixed> $options OPTIONAL verbose==true bleeds info to standard output
-     * @return mixed `string` with name of the template when template determined
+     * @return string|array<string>|true `string` with name of the template when template determined
      *     || `array` with redir field when redirect || `bool (true)` when template set to `TEMPLATE_NOT_FOUND`
      */
     public function determineTemplate(array $options = [])

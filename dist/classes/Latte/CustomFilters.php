@@ -48,7 +48,9 @@ class CustomFilters
         if (method_exists(__CLASS__, $filter)) {
             $tempCallable = [__CLASS__, $filter];
             Assert::isCallable($tempCallable);
-            return call_user_func_array($tempCallable, $args);
+            $result = call_user_func_array($tempCallable, $args);
+            Assert::string($result);
+            return $result;
         }
     }
 
