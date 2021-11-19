@@ -991,7 +991,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
                     . print_r($singleUrl, true)
                 );
             }
-            $this->assertArrayHasKey('message_body', $result, "URL {$url} nevraci obsah.");
+            $this->assertArrayHasKey('message_body', $result, "URL {$url} doesn't return content.");
             if (isset($singleUrl['contains_text'])) {
                 $this->assertContains(
                     $singleUrl['contains_text'],
@@ -1000,11 +1000,15 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
                 );
             }
             if (isset($singleUrl['is_json']) && $singleUrl['is_json']) {
+                /**
+                 * @phpstan-ignore-next-line Parameter #1 $json of function json_decode expects string, mixed given.
+                 */
                 $jsonArr = json_decode($result['message_body'], true);
-                $this->assertTrue(
-                    is_array($jsonArr),
-                    "Vysledek neni pole, tedy vstup na URL {$url} nebyl JSON: " . substr($result['message_body'], 0, 20)
-                );
+                $tempString = "Result isn't array, so the input on URL {$url} wasn't JSON: ";
+                /**
+                 * @phpstan-ignore-next-line Parameter #1 $json of function json_decode expects string, mixed given.
+                 */
+                $this->assertTrue(is_array($jsonArr), $tempString . substr($result['message_body'], 0, 20));
             }
         }
     }

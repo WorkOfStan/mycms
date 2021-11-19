@@ -59,11 +59,15 @@ class AdminProcess extends MyAdminProcess
         }
         // return given agenda
         if (isset($post['agenda'], $this->agendas[$post['agenda']])) {
+            $subagenda = (isset($this->agendas[$post['agenda']]['join']) &&
+                is_array($this->agendas[$post['agenda']]['join']) &&
+                array_key_exists('table', $this->agendas[$post['agenda']]['join'])) ?
+                $this->agendas[$post['agenda']]['join']['table'] : null;
             $result = [
                 'data' => $this->getAgenda($post['agenda']),
                 'success' => true,
                 'agenda' => $post['agenda'],
-                'subagenda' => Tools::setifnull($this->agendas[$post['agenda']]['join']['table'])
+                'subagenda' => $subagenda
             ];
             $this->exitJson($result); // terminates
         }
@@ -148,7 +152,14 @@ class AdminProcess extends MyAdminProcess
             Assert::string($path);
             $strlen = strlen($path);
             $neighbour = substr($path, 0, -PATH_MODULE)
-                . str_pad(substr($path, -PATH_MODULE) + $post['category-switch'], PATH_MODULE, '0', STR_PAD_LEFT);
+                . str_pad(
+                    // TODO better describe: button category-switch Admin::projectSpecificSections implies +-1 value
+                    (string) (substr($path, -PATH_MODULE) + $post['category-switch']),
+                    PATH_MODULE,
+                    '0',
+                    STR_PAD_LEFT
+                );
+            Debugger::barDump($neighbour, 'neighbour'); // debug
             $edits = $this->MyCMS->fetchAndReindex(
                 'SELECT id,path FROM ' . TAB_PREFIX . 'category WHERE LEFT(path, ' . strlen($path) . ') IN ("'
                 . $this->MyCMS->escapeSQL($neighbour) . '")'
@@ -196,6 +207,7 @@ class AdminProcess extends MyAdminProcess
                 . (int) $product['category_id'] . ' AND sort' . ($post['product-switch'] == 1 ? '>' : '<')
                 . $product['sort'] . ' ORDER BY sort' . ($post['product-switch'] == 1 ? '' : ' DESC') . ' LIMIT 1');
             if ($id) {
+                Assert::string($id);
                 $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'product SET sort='
                     . $product['sort'] . ' WHERE id=' . $id);
                 $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'product SET sort='
@@ -482,6 +494,11 @@ class AdminProcess extends MyAdminProcess
                 isset($options['column']) ? (is_array($options['column']) ? (
                     'CONCAT(' . implode(
                         ",'|',",
+                        /**
+                         * @phpstan-ignore-next-line
+                         * Parameter #1 $callback of function array_map expects (callable(mixed): mixed)|null,
+                         * array{WorkOfStan\MyCMS\LogMysqli, 'escapeDbIdentifier'} given.
+                         */
                         array_map([$this->MyCMS->dbms, 'escapeDbIdentifier'], $options['column'])
                     ) . ')'
                 ) : $this->MyCMS->dbms->escapeDbIdentifier($options['column'])) :

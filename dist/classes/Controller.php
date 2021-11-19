@@ -124,7 +124,7 @@ class Controller extends MyController
                     Assert::string($this->get['code'], 'article code MUST be string');
                     $articleIdentifier = ' code LIKE "' . $this->MyCMS->escapeSQL($this->get['code']) . '"';
                 }
-                $this->MyCMS->context['content'] = (array) $this->MyCMS->dbms->fetchStringArray(
+                $tempContent = $this->MyCMS->dbms->fetchStringArray(
                     'SELECT id,'
                     . 'context,'
                     // . 'category_id,'
@@ -139,10 +139,12 @@ class Controller extends MyController
                     . $articleIdentifier
                     . ' LIMIT 1'
                 );
-                if (is_null($this->MyCMS->context['content'])) {
+                if (is_null($tempContent)) {
+                    $this->MyCMS->context['content'] = [];
                     $this->MyCMS->template = self::TEMPLATE_NOT_FOUND;
                     return true;
                 }
+                $this->MyCMS->context['content'] = $tempContent;
                 $this->MyCMS->context['content']['context'] = json_decode(
                     $this->MyCMS->context['content']['context'],
                     true
@@ -158,6 +160,7 @@ class Controller extends MyController
                     $categoryId = null;
                     // TODO localize // TODO content element
                     $this->MyCMS->context['pageTitle'] = 'Categories';
+                    Assert::isArray($this->MyCMS->context['content']);
                     // TODO localize perex for all categories // TODO content element
                     $this->MyCMS->context['content']['description'] = 'About all categories';
                 } else {
@@ -172,6 +175,7 @@ class Controller extends MyController
                         return true;
                     }
                     $categoryId = $this->MyCMS->context['content']['category_id'];
+                    Assert::string($this->MyCMS->context['content']['title']);
                     $this->MyCMS->context['pageTitle'] = $this->MyCMS->context['content']['title'];
                 }
                 // TODO add perex for categories and products from content

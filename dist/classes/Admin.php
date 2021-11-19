@@ -405,9 +405,9 @@ class Admin extends MyAdmin
                 Assert::isIterable($articles[0]);
                 foreach ($articles[0] as $article) {
                     Assert::isArray($article);
-                    Assert::integer($article['id']);
+                    Assert::string($article['id']);
                     $output .= '<a href="?table=' . TAB_PREFIX . 'content&amp;where[id]=' . $article['id'] .
-                        '" class="ml-3"><i class="far fa-file"></i></a> ' . strip_tags($article['content']) .
+                        '" class="ml-3"><i class="far fa-file"></i></a> ' . strip_tags((string) $article['content']) .
                         '<br />' . PHP_EOL;
                 }
                 $output .= '</details>';
