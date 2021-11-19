@@ -203,7 +203,7 @@ class ProjectSpecific extends ProjectCommon
      * Retrieves product info
      *
      * @param int $id
-     * @return array<mixed>|null array first selected row, null on empty SELECT
+     * @return array<string|null>|null array first selected row, null on empty SELECT
      */
     public function getProduct($id)
     {
