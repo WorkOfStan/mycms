@@ -290,14 +290,14 @@ class LogMysqli extends BackyardMysqli
      * @example: fetchSingle('SELECT age FROM employees WHERE id = 5') --> 45
      *
      * @param string $sql SQL to be executed
-     * @return null|string|array<null|string> first selected row (or its first column if only one column is selected), null on empty SELECT
+     * @return null|string|array<null|string> first selected row (or its first column if only one column is selected),
+     *     null on empty SELECT
      * @throws Exception when a database error occurs or when an SQL statement returns true.
      */
     public function fetchSingle($sql)
     {
         $query = $this->query($sql);
         if ($query === true) {
-            //return null;
             throw new Exception('SQL statement resulting in \mysqli_result<object> expected. True received.');
         }
         if (!$query) {
@@ -315,29 +315,32 @@ class LogMysqli extends BackyardMysqli
      * if it is an array of strings.
      *
      * @param string $sql SQL to be executed
-     * @return array<string>
-     * @throws Exception when a database error occurs or when an SQL statement returns true.
-     *     Or other than string[]
+     * @return array<string>|null
+     * @throws Exception when a database error occurs or when an SQL statement returns true or string.
      */
     public function fetchStringArray($sql)
     {
         $arr = $this->fetchSingle($sql);
-        if (!isArray($arr)) {
+        if (is_null($arr)) {
+            return null;
+        }
+        if (!is_array($arr)) {
             throw new Exception('SQL statement resulting in non array.');
         }
-        foreach($arr as $str) {
-            if(is_null($str)) {
+        foreach ($arr as $str) {
+            if (is_null($str)) {
                 throw new Exception('Some non string.');
             }
         }
         return $arr;
-     }
+    }
 
     /**
      * Execute an SQL, fetch and return all resulting rows
      *
      * @param string $sql
-     * @return array<array<null|string>> array of associative arrays for each result row or empty array on error or no results
+     * @return array<array<null|string>> array of associative arrays for each result row
+     *     or empty array on error or no results
      */
     public function fetchAll($sql)
     {

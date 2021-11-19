@@ -87,7 +87,7 @@ class FriendlyUrl extends MyFriendlyUrl
                 if (empty($outputValue)) {
                     return isset($this->get['offset']) ? "?article&offset=" . (int) $this->get['offset'] : "?article";
                 }
-                $content = $this->MyCMS->dbms->fetchSingle(
+                $content = $this->MyCMS->dbms->fetchStringArray(
                     'SELECT id, name_' . $this->language . ' AS name,'
                     . $this->projectSpecific->getLinkSql("?article&id=", $this->language)
                     . ' FROM ' . TAB_PREFIX . 'content WHERE active = 1 AND '
