@@ -246,7 +246,7 @@ class Admin extends MyAdmin
                 WHERE type IN ("perex", "claim", "testimonial") AND product_id IS NOT NULL
                 ORDER BY FIELD(type, "testimonial", "claim", "perex")');
             foreach ($categories as $category) {
-                Assert::integer($category['id']);
+                Assert::string($category['id']);
                 Assert::string($category['category']);
                 $output .= '<h4' . ($category['active'] == 1 ? '' : ' class="inactive"') . '><a href="?table=' .
                     TAB_PREFIX . 'category&amp;where[id]=' . $category['id'] .
@@ -263,10 +263,13 @@ class Admin extends MyAdmin
                     $products[$category['id']] : [$products[$category['id']]]) : [];
                 Assert::isArray($productLine);
                 uasort($productLine, function ($a, $b) {
+                    Assert::isArray($a);
+                    Assert::isArray($b);
                     return $a['sort'] == $b['sort'] ? 0 : ($a['sort'] < $b['sort'] ? -1 : 1);
                 });
                 $i = 1;
                 foreach ($productLine as $product) {
+                    Assert::isArray($product);
                     if ($product['sort'] != $i) {
                         if (
                             $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'product SET sort=' . $i .
@@ -291,18 +294,20 @@ class Admin extends MyAdmin
                         (int) $product['id'] . '" value="1" title="' . $this->tableAdmin->translate('Move down') .
                         '"><i class="fas fa-arrow-down"></i></button>'
                         . '<span' . ($product['active'] ? '' : ' class="inactive"') . '> ' .
-                        Tools::h($product['product']) . '</span>'
+                        Tools::h((string) $product['product']) . '</span>'
                         . ' <sup class="product-texts badge badge-' . (count($tmp) ? 'secondary' : 'warning') .
                         '"><small>' . count($tmp) . '</small></sup>'
                         . ' <sup class="product-images badge badge-' .
-                        (file_exists($product['image']) ? 'secondary' : 'warning') .
-                        '" data-toggle="tooltip" data-html="true" title="<img src=\'' . Tools::h($product['image']) .
+                        (file_exists((string) $product['image']) ? 'secondary' : 'warning') .
+                        '" data-toggle="tooltip" data-html="true" title="<img src=\'' .
+                        Tools::h((string) $product['image']) .
                         '\' width=\'200\' class=\'img-thumbnail\'/>"><i class="far fa-image"></i></sup></summary>';
                     foreach ($tmp as $row) {
+                        Assert::isArray($row);
                         $output .= '<div class="ml-5' . ($row['active'] ? '' : ' inactive') . '"><a href="?table=' .
                             TAB_PREFIX . 'content&amp;where[id]=' . $row['id'] . '"><i class="fas fa-edit"></i></a> '
-                            . '<sup>' . $row['type'] . '</sup> ' . Tools::h(strip_tags($row['content'])) . '</div>' .
-                            PHP_EOL;
+                            . '<sup>' . $row['type'] . '</sup> ' . Tools::h(strip_tags((string) $row['content'])) .
+                            '</div>' . PHP_EOL;
                     }
                     $output .= '<div class="ml-5"><a href="?table=' . TAB_PREFIX .
                         'content&amp;where[]=&amp;prefill[type]=perex&amp;prefill[product_id]=' . $product['id'] . '">'
@@ -344,7 +349,8 @@ class Admin extends MyAdmin
                 Assert::isArray($category);
                 Assert::isCountable($articles[$key]);
                 $tmp = isset($articles[$key][0]) ? count($articles[$key]) : (isset($articles[$key]) ? 1 : 0);
-                $output .= '<details style="margin-left:' . (strlen($category['path']) / PATH_MODULE - 1) . 'em"' .
+                $output .= '<details style="margin-left:' . (strlen((string) $category['path']) / PATH_MODULE - 1) .
+                    'em"' .
                     ($category['active'] == 1 ? '' : ' class="inactive-item"') . '>
                     <summary class="d-inline-block">'
                     . '<a href="?table=' . TAB_PREFIX . 'category&amp;where[id]=' . $key .
@@ -356,7 +362,7 @@ class Admin extends MyAdmin
                     . '<button class="category-switch btn btn-xs" value="1" data-id="' . $key . '" title="' .
                     $this->tableAdmin->translate('Move down') . '"><i class="fa fa-arrow-down"></i></button> '
                     . '<span' . ($category['active'] == 1 ? '' : ' class="inactive"') . '>' .
-                    Tools::h($category['category']) . '</span>'
+                    Tools::h((string) $category['category']) . '</span>'
                     . ' <sup class="badge badge-' . ($tmp ? 'info' : 'warning') . '"><small>' . $tmp .
                     '</small></sup></summary>'
                     . '<div class="ml-3">';
@@ -364,13 +370,14 @@ class Admin extends MyAdmin
                     $tmp = isset($articles[$key][0]) ? $articles[$key] : [$articles[$key]];
                     Assert::isArray($tmp);
                     foreach ($tmp as $article) {
+                        Assert::isArray($article);
                         $output .= '<div' . ($article['active'] == 1 ? '' : ' class="inactive-item"') . '>'
                             . '<a href="?table=' . TAB_PREFIX . 'content&amp;where[id]=' . $article['id'] .
                             '"><small class="far fa-edit"></small></a> '
                             . '<a href="index.php?article&amp;id=' . $article['id'] .
                             '"><small class="fas fa-external-link-alt"></small></a> '
                             . '<span' . ($article['active'] == 1 ? '' : ' class="inactive"') . '>' .
-                            strip_tags($article['content']) . '</span></div>' . PHP_EOL;
+                            strip_tags((string) $article['content']) . '</span></div>' . PHP_EOL;
                     }
                 }
                 $output .= '<a href="?table=' . TAB_PREFIX . 'content&amp;where[]=&amp;prefill[category_id]=' . $key .
@@ -499,7 +506,7 @@ class Admin extends MyAdmin
                             }
                         }
                         $output .= '<span class="' . ($parent['active'] ? 'active' : 'inactive') . '">' .
-                            Tools::h($parent['product']) . '</span>'
+                            Tools::h((string) $parent['product']) . '</span>'
                             . '<sup class="badge badge-secondary ml-1">' . count($tmp) . '</sup></summary>'
                             . implode(PHP_EOL, $tmp)
                             . '<a href="?table=' . TAB_PREFIX . 'product&amp;where[]=&amp;prefill[division_id]=' .
@@ -658,6 +665,7 @@ class Admin extends MyAdmin
         ];
         $lastType = false;
         foreach ($urls as $value) {
+            Assert::isArray($value);
             if ($lastType != $value['_table'] . '-' . $value['type']) {
                 $output .= '<h3 class="lead">' . Tools::h($lastType = $value['_table'] . '-' . $value['type']) .
                     '</h3>' . PHP_EOL;
@@ -736,7 +744,7 @@ class Admin extends MyAdmin
                 count($query) . '</sup></summary>';
             foreach ($query as $row) {
                 $output .= '<div class="ml-2"><a href="?table=' . TAB_PREFIX . $row['type'] . '&amp;where[id]=' .
-                    $row['id'] . '"><i class="fa fa-table"></i> ' . Tools::h($row['name']) .
+                    $row['id'] . '"><i class="fa fa-table"></i> ' . Tools::h((string) $row['name']) .
                     ' (' .
 //                    $this->tableAdmin->translate(
                     $row['type']
