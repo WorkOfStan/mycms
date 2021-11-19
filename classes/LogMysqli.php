@@ -311,6 +311,29 @@ class LogMysqli extends BackyardMysqli
     }
 
     /**
+     * Execute an SQL and fetch the first row of a resultset,
+     * if it is an array of strings.
+     *
+     * @param string $sql SQL to be executed
+     * @return array<string>
+     * @throws Exception when a database error occurs or when an SQL statement returns true.
+     *     Or other than string[]
+     */
+    public function fetchStringArray($sql)
+    {
+        $arr = $this->fetchSingle($sql);
+        if (!isArray($arr)) {
+            throw new Exception('SQL statement resulting in non array.');
+        }
+        foreach($arr as $str) {
+            if(is_null($str)) {
+                throw new Exception('Some non string.');
+            }
+        }
+        return $arr;
+     }
+
+    /**
      * Execute an SQL, fetch and return all resulting rows
      *
      * @param string $sql
