@@ -51,7 +51,7 @@ $controller = new Controller($MyCMS, [
     ]);
 $controllerResult = $controller->run();
 $MyCMS->template = $controllerResult['template'];
-$MyCMS->context = $controllerResult['context'];
+$MyCMS->setContext($controllerResult['context']);
 $MyCMS->WEBSITE = $WEBSITE[$_SESSION['language']]; // language is already properly set through FriendlyURL mechanism
 Debugger::barDump($controllerResult, 'ControllerResult', [Tracy\Dumper::DEPTH => 5]);
 

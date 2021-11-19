@@ -4,6 +4,7 @@ namespace WorkOfStan\mycmsprojectnamespace;
 
 use Tracy\Debugger;
 use Tracy\ILogger;
+use WorkOfStan\MyCMS\ArrayStrict;
 use WorkOfStan\MyCMS\MyCMS;
 use WorkOfStan\MyCMS\MyFriendlyUrl;
 use WorkOfStan\mycmsprojectnamespace\ProjectSpecific;
@@ -82,10 +83,11 @@ class FriendlyUrl extends MyFriendlyUrl
     {
         Debugger::barDump("{$outputKey} => {$outputValue}", 'switchParametric started');
         $this->projectSpecific->language($this->language);
+        $get = new ArrayStrict($this->get);
         switch ($outputKey) {
             case 'article':
                 if (empty($outputValue)) {
-                    return isset($this->get['offset']) ? "?article&offset=" . (int) $this->get['offset'] : "?article";
+                    return isset($this->get['offset']) ? "?article&offset=" . $get->integer('offset') : "?article";
                 }
                 $content = $this->MyCMS->dbms->fetchStringArray(
                     'SELECT id, name_' . $this->language . ' AS name,'
@@ -99,7 +101,7 @@ class FriendlyUrl extends MyFriendlyUrl
                 return is_null($content) ? self::PAGE_NOT_FOUND : $content['link'];
             case 'category':
                 if (empty($outputValue)) {
-                    return isset($this->get['offset']) ? "?category&offset=" . (int) $this->get['offset'] : "?category";
+                    return isset($this->get['offset']) ? "?category&offset=" . $get->integer('offset') : "?category";
                 }
                 $content = $this->MyCMS->dbms->fetchStringArray('SELECT id, name_' . $this->language . ' AS title,'
                     . $this->projectSpecific->getLinkSql("?category=", $this->language)

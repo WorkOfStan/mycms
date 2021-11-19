@@ -37,7 +37,7 @@ class MyCMSMonoLingual
 
     /**
      * variables for template rendering
-     * @var array<mixed>
+     * @var array<string>
      */
     public $context = [];
 
@@ -182,5 +182,16 @@ class MyCMSMonoLingual
         $Latte->render('template/' . $this->template . '.latte', $params); // @todo make it configurable
         unset($_SESSION['messages']);
         $this->dbms->showSqlBarPanel();
+    }
+
+    /**
+     * Context setter that ensures the type
+     *
+     * @param array<string> $arr
+     */
+    public function setContext(array $arr)
+    {
+        Assert::isArray($arr);
+        $this->context = $arr;
     }
 }
