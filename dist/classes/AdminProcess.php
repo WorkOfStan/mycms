@@ -145,6 +145,7 @@ class AdminProcess extends MyAdminProcess
                 'SELECT path FROM ' . TAB_PREFIX . 'category WHERE id=' . $post['id']
             ))
         ) {
+            Assert::string($path);
             $strlen = strlen($path);
             $neighbour = substr($path, 0, -PATH_MODULE)
                 . str_pad(substr($path, -PATH_MODULE) + $post['category-switch'], PATH_MODULE, '0', STR_PAD_LEFT);

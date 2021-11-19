@@ -37,7 +37,7 @@ class MyCMSMonoLingual
 
     /**
      * variables for template rendering
-     * @var array<string>
+     * @var array<string|array<mixed>>
      */
     public $context = [];
 
@@ -114,8 +114,8 @@ class MyCMSMonoLingual
     /**
      *
      * @param string $sql
-     * @return mixed first selected row (or its first column if only one column is selected),
-     *     null on empty SELECT, or false on error
+     * @return null|string|array<null|string> first selected row (or its first column if only one column is selected),
+     *     null on empty SELECT
      */
     public function fetchSingle($sql)
     {
@@ -125,7 +125,8 @@ class MyCMSMonoLingual
     /**
      *
      * @param string $sql
-     * @return array<array<mixed>> array of associative arrays for each result row or empty array on error or no results
+     * @return array<array<null|string>> array of associative arrays for each result row
+     *     or empty array on error or no results
      */
     public function fetchAll($sql)
     {
@@ -135,8 +136,9 @@ class MyCMSMonoLingual
     /**
      *
      * @param string $sql SQL statement to be executed
-     * @return array<array<mixed>|string>|false
-     *   Returns either associative array, empty array on empty SELECT, or false on error
+     * @return array<array<string|null>|string>|false
+     *   Result is either associative array, empty array on empty SELECT, or false on error
+     *   Error for this function is also an SQL statement that returns true.
      */
     public function fetchAndReindex($sql)
     {
@@ -146,7 +148,7 @@ class MyCMSMonoLingual
     /**
      *
      * @param string $sql SQL statement to be executed
-     * @return array<array|string> - either associative array, empty array on empty SELECT
+     * @return array<array<string|null>|string> - either associative array, empty array on empty SELECT
      *   Exception on error
      */
     public function fetchAndReindexStrictArray($sql)

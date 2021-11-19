@@ -124,7 +124,7 @@ class Controller extends MyController
                     Assert::string($this->get['code'], 'article code MUST be string');
                     $articleIdentifier = ' code LIKE "' . $this->MyCMS->escapeSQL($this->get['code']) . '"';
                 }
-                $this->MyCMS->context['content'] = $this->MyCMS->fetchSingle(
+                $this->MyCMS->context['content'] = (array) $this->MyCMS->dbms->fetchStringArray(
                     'SELECT id,'
                     . 'context,'
                     // . 'category_id,'
