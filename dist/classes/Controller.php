@@ -181,7 +181,7 @@ class Controller extends MyController
                 // TODO add perex for categories and products from content
                 $this->verboseBarDump($categoryId, 'categoryId');
                 $this->MyCMS->context['limit'] = PAGINATION_LIMIT;
-                $this->MyCMS->context['list'] = $this->MyCMS->dbms->queryArray(
+                $this->MyCMS->context['list'] = $this->MyCMS->dbms->fetchAll(
                     is_null($categoryId) ?
                     // list categories
                     ('SELECT id,'
@@ -198,7 +198,7 @@ class Controller extends MyController
                     . ' AND name_' . $this->language . ' NOT LIKE ""' // hide product language variants with empty title
                     . ' ORDER BY sort ASC')
                 );
-                $this->MyCMS->context['totalRows'] = ($this->MyCMS->context['list'] === false) ? 0 :
+                $this->MyCMS->context['totalRows'] = ($this->MyCMS->context['list'] === []) ? 0 :
                     count($this->MyCMS->context['list']);
                 return true;
             case 'item-1':
@@ -258,25 +258,34 @@ class Controller extends MyController
             case 'product':
                 Assert::keyExists($this->get, 'id', 'product MUST be identified by id');
                 Assert::scalar($this->get['id']);
-                $this->MyCMS->context['product'] = $this->projectSpecific->getProduct((int) $this->get['id']);
-                if (is_null($this->MyCMS->context['product'])) {
+                $tempProduct = $this->projectSpecific->getProduct((int) $this->get['id']);
+                if (is_null($tempProduct)) {
                     $this->MyCMS->template = self::TEMPLATE_NOT_FOUND;
                 } else {
-                    $this->MyCMS->context['pageTitle'] = $this->MyCMS->context['product']['title'];
+                    $this->MyCMS->context['product'] = $tempProduct;
+                    $this->MyCMS->context['pageTitle'] = (string) $this->MyCMS->context['product']['title'];
                 }
                 return true;
             case 'search-results': //search _GET[search] contains the search phrase // TODO make search work
                 $this->MyCMS->context['limit'] = PAGINATION_LIMIT;
-                $this->MyCMS->context['offset'] = isset($this->get['offset']) ? filter_var(
-                    $this->get['offset'],
-                    FILTER_VALIDATE_INT,
-                    ['default' => 0, 'min_range' => 0, 'max_range' => 1e9]
-                ) : 0;
+                if (isset($this->get['offset'])) {
+                    $tempInt = filter_var(
+                        $this->get['offset'],
+                        FILTER_VALIDATE_INT,
+                        ['default' => 0, 'min_range' => 0, 'max_range' => 1e9]
+                    );
+                    if ($tempInt === false) {
+                        throw new \Exception('filter_var failed');
+                    }
+                    $this->MyCMS->context['offset'] = $tempInt;
+                } else {
+                    $this->MyCMS->context['offset'] = 0;
+                }
                 Assert::string($this->get['search']);
                 $this->MyCMS->context['results'] = $this->projectSpecific->searchResults(
                     $this->get['search'],
                     (int) $this->MyCMS->context['offset'],
-                    $this->MyCMS->context['totalRows']
+                    (int) $this->MyCMS->context['totalRows']
                 );
                 //@todo ošetřit empty result
                 $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Výsledky hledání');
