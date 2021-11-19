@@ -123,9 +123,12 @@ class TableAdmin extends MyTableAdmin
                     foreach ($rows as $row) {
                         $result .= Tools::htmlOption(
                             $row['path'],
-                            str_repeat('… ', (int) max(strlen($row['path']) / PATH_MODULE - 1, 0)) . $row['category'],
+                            str_repeat(
+                                '… ',
+                                (int) max(strlen((string) $row['path']) / PATH_MODULE - 1, 0)
+                            ) . $row['category'],
                             substr($value, 0, -PATH_MODULE),
-                            Tools::begins($row['path'], $value)
+                            Tools::begins((string) $row['path'], $value)
                         );
                     }
                 }
@@ -145,9 +148,9 @@ class TableAdmin extends MyTableAdmin
                     foreach ($rows as $row) {
                         if ($tmp != $row['category']) {
                             $result .= (is_null($tmp) ? '' : '</optgroup>') . '<optgroup label="'
-                                . Tools::h($tmp = $row['category']) . '">' . PHP_EOL;
+                                . Tools::h($tmp = (string)$row['category']) . '">' . PHP_EOL;
                         }
-                        $result .= Tools::htmlOption($row['id'], $row['title'], $value) . PHP_EOL;
+                        $result .= Tools::htmlOption($row['id'], (string) $row['title'], $value) . PHP_EOL;
                     }
                     $result .= (is_null($tmp) ? '' : '</optgroup>');
                 }
