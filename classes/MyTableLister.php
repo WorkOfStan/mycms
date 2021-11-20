@@ -30,7 +30,7 @@ class MyTableLister
     /** @var array<array> all fields in the table */
     public $fields;
 
-    /** @var array<mixed> display options */
+    /** @var array<string|array<string>> display options */
     protected $options;
 
     /** @var string JavaScript code gathered to show the listing */
