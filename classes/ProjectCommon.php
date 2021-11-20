@@ -132,6 +132,9 @@ class ProjectCommon extends MyCommon
         foreach ($arr as $string) {
             Assert::string($string);
         }
+        /**
+         * @phpstan-ignore-next-line should return array<string> but returns array
+         */
         return $arr;
     }
 

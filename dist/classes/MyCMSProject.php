@@ -33,7 +33,7 @@ class MyCMSProject extends MyCMS
     /**
      * Constructor
      *
-     * @param array<mixed> $myCmsConf
+     * @param array<array<array<array<string>,bool,string>,string>|\WorkOfStan\Backyard\BackyardError|\WorkOfStan\MyCMS\LogMysqli|null> $myCmsConf
      */
     public function __construct(array $myCmsConf = [])
     {

@@ -5,6 +5,7 @@ namespace WorkOfStan\MyCMS;
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use Tracy\ILogger;
+use Webmozart\Assert\Assert;
 use WorkOfStan\MyCMS\MyCMS;
 use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
 
@@ -313,6 +314,7 @@ class MyAdmin extends MyCommon
             if ($users = $this->MyCMS->fetchAll('SELECT id,admin,active FROM ' . TAB_PREFIX . 'admin')) {
                 $result .= '<ul class="list-group list-group-flush">';
                 foreach ($users as $user) {
+                    Assert::string($user['admin']);
                     $result .= '<li class="list-group-item">
                         <form action="" method="post" class="form-inline d-inline-block delete-user-form' . ($user['active'] == 1 ? '' : ' inactive-item') . '" onsubmit="return confirm(\'' . $this->tableAdmin->translate('Really delete?') . '\')">'
                         . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden')
