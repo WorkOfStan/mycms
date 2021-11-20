@@ -14,6 +14,7 @@
 namespace WorkOfStan\MyCMS\ThrowableFunctions;
 
 use Exception;
+use Webmozart\Assert\Assert;
 
 /**
  * Return the argument unless it is `false`.
@@ -52,7 +53,9 @@ function throwOnNull($result)
  */
 function filemtime($filename)
 {
-    return throwOnFalse(\filemtime($filename));
+    $result = throwOnFalse(\filemtime($filename));
+    Assert::integer($result);
+    return $result;
 }
 
 /**

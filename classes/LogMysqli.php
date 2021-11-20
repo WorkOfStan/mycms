@@ -312,7 +312,7 @@ class LogMysqli extends BackyardMysqli
 
     /**
      * Execute an SQL and fetch the first row of a resultset,
-     * if it is an array of strings.
+     * if it is an array of strings. (NULL is replaced by empty string.)
      *
      * @param string $sql SQL to be executed
      * @return array<string>|null
@@ -327,11 +327,15 @@ class LogMysqli extends BackyardMysqli
         if (!is_array($arr)) {
             throw new Exception('SQL statement resulting in non array.');
         }
-        foreach ($arr as $str) {
+        foreach ($arr as $name => $str) {
             if (is_null($str)) {
-                throw new Exception('Some non string.');
+                //throw new Exception('Some non string. Null in the field: ' . $name . ' for SQL: ' . $sql);
+                $arr[$name] = '';
             }
         }
+        /**
+         * @phpstan-ignore-next-line FALSE POSITIVE: should return array<string>|null but returns array<string|null>.
+         */
         return $arr;
     }
 
