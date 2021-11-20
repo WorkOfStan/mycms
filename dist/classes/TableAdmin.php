@@ -20,11 +20,12 @@ class TableAdmin extends MyTableAdmin
      *
      * @param LogMysqli $dbms database management system (e.g. new mysqli())
      * @param string $table table name
-     * @param array<mixed> $options
+     * @param array<string|array<string>> $options
      */
     public function __construct(LogMysqli $dbms, $table, array $options = [])
     {
         parent::__construct($dbms, $table, $options);
+        Assert::isArray($options['TRANSLATIONS']);
         $this->TRANSLATIONS = $options['TRANSLATIONS'];
         $translationFile = 'conf/l10n/admin-' . Tools::setifempty($_SESSION['language'], 'en') . '.yml';
         // The union operator ( + ) might be more useful than array_merge.
