@@ -127,30 +127,30 @@ class ProjectSpecific extends ProjectCommon
      */
     public function getContent($id = null, $code = null, array $options = [])
     {
-        $result = [];
-        if (!is_null($id) || !is_null($code)) {
-            $result = $this->MyCMS->fetchSingle('SELECT co.id,'
-                . ' product_id,'
-                . ' type,'
-                . ' co.code,'
-                . ' co.added,'
-                . ' co.context,'
-                . ' category_id,'
-                . ' path,'
-                . ' co.content_' . $options['language'] . ' AS title,'
-                . ' co.perex_' . $options['language'] . ' AS perex,'
-                . ' co.description_' . $options['language'] . ' AS description '
-                . ' FROM ' . TAB_PREFIX . 'content co LEFT JOIN ' . TAB_PREFIX . 'category ca ON co.category_id=ca.id '
-                . ' WHERE co.active="1"'
-                . (is_null($code) ? '' : Tools::wrap($this->MyCMS->escapeSQL($code), ' AND co.code="', '"'))
-                . (is_null($id) ? '' : Tools::wrap(intval($id), ' AND co.id=')) .
-                ' LIMIT 1');
-            if ($result) {
-                $result['context'] = json_decode($result['context'], true) ?: [];
-                $result['added'] = Tools::localeDate($result['added'], $options['language'], false);
-            }
+        if (is_null($id) && is_null($code)) {
+            return [];
         }
+        $result = $this->MyCMS->fetchSingle('SELECT co.id,'
+            . ' product_id,'
+            . ' type,'
+            . ' co.code,'
+            . ' co.added,'
+            . ' co.context,'
+            . ' category_id,'
+            . ' path,'
+            . ' co.content_' . $options['language'] . ' AS title,'
+            . ' co.perex_' . $options['language'] . ' AS perex,'
+            . ' co.description_' . $options['language'] . ' AS description '
+            . ' FROM ' . TAB_PREFIX . 'content co LEFT JOIN ' . TAB_PREFIX . 'category ca ON co.category_id=ca.id '
+            . ' WHERE co.active="1"'
+            . (is_null($code) ? '' : Tools::wrap($this->MyCMS->escapeSQL($code), ' AND co.code="', '"'))
+            . (is_null($id) ? '' : Tools::wrap(intval($id), ' AND co.id=')) .
+            ' LIMIT 1');
+        Assert::isArray($result);
+        $result['context'] = json_decode((string) $result['context'], true) ?: [];
+        $result['added'] = Tools::localeDate($result['added'], $options['language'], false);
         $options += array('path' => $result['path'], 'except_id' => $result['id']);
+        Assert::string($result['description']);
         if (($pos = strpos($result['description'], '%CHILDREN%')) !== false) {
             $result['description'] = str_replace('%CHILDREN%', '', $result['description']);
             $this->MyCMS->context['children'] = self::getChildren($result['category_id'], $options);

@@ -18,7 +18,7 @@ class MyTableAdmin extends MyTableLister
      * @param mixed $where to identify which row to fetch and offer for edit
      *      e.g. ['id' => 5] translates as "WHERE id=5" in SQL
      *      scalar value translates as ['id' => value]
-     * @param array<mixed> $options additional options
+     * @param array<mixed> $options additional options TODO: array<bool|array<string|array<string>>>
      *      [include-fields] - array of fields to include only
      *      [exclude-fields] - array of fields to exclude
      *      [exclude-form] - exclude the <form> element

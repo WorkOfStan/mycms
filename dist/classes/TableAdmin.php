@@ -32,7 +32,12 @@ class TableAdmin extends MyTableAdmin
         // The array_merge function does not preserve numeric key values.
         // If you need to preserve the numeric keys, then using + will do that.
         // TODO/Note: TRANSLATION is based on A project, rather than F project.
-        $this->TRANSLATION += file_exists($translationFile) ? Yaml::parseFile($translationFile) : [];
+        //delete//$this->TRANSLATION += file_exists($translationFile) ? Yaml::parseFile($translationFile) : [];
+        if (file_exists($translationFile)) {
+            $tempYaml = Yaml::parseFile($translationFile);
+            Assert::isArray($tempYaml);
+            $this->TRANSLATION += $tempYaml;
+        }
     }
 
     /**
@@ -60,13 +65,18 @@ class TableAdmin extends MyTableAdmin
             // Selection list of parent_product_id
             // TODO try this template in dist
             case "product\\parent_product_id":
+                $tempExclude = 0;
+                if (isset($_GET['where']['id'])) {
+                    Assert::string($_GET['where']['id']);
+                    $tempExclude = (int) $_GET['where']['id'];
+                }
                 $result = $this->outputForeignId(
                     "fields[$field]",
                     'SELECT p.id,product_' . DEFAULT_LANGUAGE . ',division_' . DEFAULT_LANGUAGE .
                     ' FROM ' . TAB_PREFIX . 'product p LEFT JOIN ' . TAB_PREFIX . 'division d ON p.division_id = d.id'
                     . ' WHERE IFNULL(p.parent_product_id, 0) = 0 ORDER BY d.sort,p.sort',
                     $value,
-                    ['class' => 'form-control', 'exclude' => (int) Tools::set($_GET['where']['id'])]
+                    ['class' => 'form-control', 'exclude' => $tempExclude]
                 );
                 break;
 

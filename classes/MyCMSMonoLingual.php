@@ -37,7 +37,7 @@ class MyCMSMonoLingual
 
     /**
      * variables for template rendering
-     * @var array<string|int|null|array<mixed>>
+     * @var array<array<mixed>|false|int|null|string>
      */
     public $context = [];
 
