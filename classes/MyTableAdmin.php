@@ -32,8 +32,8 @@ class MyTableAdmin extends MyTableLister
     public function outputForm($where, array $options = [])
     {
         $options['include-fields'] = isset($options['include-fields']) && is_array($options['include-fields']) ? $options['include-fields'] : array_keys($this->fields);
-        Assert::isArray($options['include-fields']);
         $options['exclude-fields'] = isset($options['exclude-fields']) && is_array($options['exclude-fields']) ? $options['exclude-fields'] : [];
+        Assert::isArray($options['include-fields']);
         foreach ($options['exclude-fields'] as $key => $value) {
             if (in_array($value, $options['include-fields'])) {
                 unset($options['include-fields'][$key]);
@@ -47,8 +47,9 @@ class MyTableAdmin extends MyTableLister
             foreach ($where as $key => $value) {
                 $sql [] = Tools::escapeDbIdentifier($key) . '="' . $this->escapeSQL($value) . '"';
             }
-            $sql = 'SELECT ' . $this->dbms->listColumns($options['include-fields'], $this->fields) . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' WHERE ' . implode(' AND ', $sql) . ' LIMIT 1';
-            $record = $this->dbms->query($sql);
+            $record = $this->dbms->query)(
+                'SELECT ' . $this->dbms->listColumns($options['include-fields'], $this->fields) . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' WHERE ' . implode(' AND ', $sql) . ' LIMIT 1'
+            );
             if (is_object($record)) {
                 $record = $record->fetch_assoc();
             }
@@ -128,7 +129,7 @@ class MyTableAdmin extends MyTableLister
     {
         $value = isset($record[$key]) ? $record[$key] : false;
         if (Tools::among($record, false, [])) {
-            if (isset($options['prefill'][$key]) && is_scalar($options['prefill'][$key])) {
+            if (is_array($options['prefill']) && isset($options['prefill'][$key]) && is_scalar($options['prefill'][$key])) {
                 $value = $options['prefill'][$key];
                 if (Tools::among($field['type'], 'datetime', 'timestamp') && $options['prefill'][$key] == 'now') {
                     $value = date('Y-m-d\TH:i:s');
@@ -419,9 +420,9 @@ class MyTableAdmin extends MyTableLister
         } else {
             $module = 10;
         }
-        $result = '<select name="' . Tools::h(isset($options['name']) ? $options['name'] : 'path_id')
-            . '" class="' . Tools::h(isset($options['class']) ? $options['class'] : '')
-            . '" id="' . Tools::h(isset($options['id']) ? $options['id'] : '') . '">'
+        $result = '<select name="' . MyTools::h(isset($options['name']) ? $options['name'] : 'path_id')
+            . '" class="' . MyTools::h(isset($options['class']) ? $options['class'] : '')
+            . '" id="' . MyTools::h(isset($options['id']) ? $options['id'] : '') . '">'
             . Tools::htmlOption('', $this->translate('--choose--'));
         $query = $this->dbms->queryStrictObject('SELECT id,path,' . Tools::escapeDbIdentifier($name['column']) . ' AS category_
             FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name['table']) . ' ORDER BY path');
