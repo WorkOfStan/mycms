@@ -32,6 +32,7 @@ class MyTableAdmin extends MyTableLister
     public function outputForm($where, array $options = [])
     {
         $options['include-fields'] = isset($options['include-fields']) && is_array($options['include-fields']) ? $options['include-fields'] : array_keys($this->fields);
+        Assert::isArray($options['include-fields']);
         $options['exclude-fields'] = isset($options['exclude-fields']) && is_array($options['exclude-fields']) ? $options['exclude-fields'] : [];
         foreach ($options['exclude-fields'] as $key => $value) {
             if (in_array($value, $options['include-fields'])) {
@@ -164,6 +165,7 @@ class MyTableAdmin extends MyTableLister
             $field['type'] = null;
         }
         $comment = json_decode(isset($field['comment']) ? (string) $field['comment'] : '{}', true);
+        Assert::isArray($comment);
         Tools::setifnull($comment['display']);
         if (!is_null($field['type']) && $comment['display'] == 'option') {
             $query = $this->dbms->queryStrictObject('SELECT DISTINCT ' . Tools::escapeDbIdentifier($key)
