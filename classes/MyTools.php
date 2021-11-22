@@ -10,7 +10,7 @@ use Webmozart\Assert\Assert;
  *
  * @author rejthar@stanislavrejthar.com
  */
-class Utils
+class MyTools
 {
     use \Nette\SmartObject;
 
