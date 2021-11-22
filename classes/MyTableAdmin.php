@@ -47,7 +47,7 @@ class MyTableAdmin extends MyTableLister
             foreach ($where as $key => $value) {
                 $sql [] = Tools::escapeDbIdentifier($key) . '="' . $this->escapeSQL($value) . '"';
             }
-            $record = $this->dbms->query)(
+            $record = $this->dbms->query(
                 'SELECT ' . $this->dbms->listColumns($options['include-fields'], $this->fields) . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' WHERE ' . implode(' AND ', $sql) . ' LIMIT 1'
             );
             if (is_object($record)) {
