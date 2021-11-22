@@ -397,7 +397,7 @@ class MyAdmin extends MyCommon
         foreach ($this->agendas as $agenda => $option) {
             Tools::setifempty($option['table'], $agenda);
             $result .= '<details class="my-1" id="details-' . $agenda . '">
-                <summary><i class="fa fa-table"></i> ' . Tools::h(Tools::setifempty($option['display'], $agenda)) . '</summary>
+                <summary><i class="fa fa-table"></i> ' . MyTools::h(Tools::setifempty($option['display'], $agenda)) . '</summary>
                 <div class="card" id="agenda-' . $agenda . '"></div>
                 </details>' . PHP_EOL;
             if (isset($option['prefill'])) {
@@ -625,7 +625,7 @@ class MyAdmin extends MyCommon
                 foreach ($rows as $row) {
                     $row = array_values($row);
                     $result .= '<li><a href="?table=' . urlencode(TAB_PREFIX . $key) . '&amp;where[' . urlencode($id) . ']=' . urlencode($row[0]) . '">'
-                        . Tools::h($row[1]) . '</a>';
+                        . MyTools::h($row[1]) . '</a>';
                     $where = '';
                     for ($i = 1; $i < count($row); $i++) {
                         $row[$i] = strip_tags($row[$i]);
