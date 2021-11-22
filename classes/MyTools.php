@@ -1,6 +1,6 @@
 <?php
 
-namespace WorkOfStan\mycms;
+namespace WorkOfStan\MyCMS;
 
 use GodsDev\Tools\Tools;
 use Webmozart\Assert\Assert;
