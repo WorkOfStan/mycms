@@ -33,8 +33,9 @@ class MyTableAdmin extends MyTableLister
     {
         $options['include-fields'] = isset($options['include-fields']) && is_array($options['include-fields']) ? $options['include-fields'] : array_keys($this->fields);
         $options['exclude-fields'] = isset($options['exclude-fields']) && is_array($options['exclude-fields']) ? $options['exclude-fields'] : [];
-        Assert::isArray($options['include-fields']);
+        Assert::isArray($options['exclude-fields']);
         foreach ($options['exclude-fields'] as $key => $value) {
+            Assert::isArray($options['include-fields']);
             if (in_array($value, $options['include-fields'])) {
                 unset($options['include-fields'][$key]);
             }
@@ -45,7 +46,7 @@ class MyTableAdmin extends MyTableLister
             }
             $sql = [];
             foreach ($where as $key => $value) {
-                $sql [] = Tools::escapeDbIdentifier($key) . '="' . $this->escapeSQL($value) . '"';
+                $sql [] = Tools::escapeDbIdentifier($key) . '="' . $this->escapeSQL((string) $value) . '"';
             }
             $record = $this->dbms->query(
                 'SELECT ' . $this->dbms->listColumns($options['include-fields'], $this->fields) . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' WHERE ' . implode(' AND ', $sql) . ' LIMIT 1'
