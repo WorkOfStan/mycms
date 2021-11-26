@@ -49,11 +49,12 @@ $controller = new Controller($MyCMS, [
     'verbose' => DEBUG_VERBOSE,
     'featureFlags' => $featureFlags,
     ]);
-$controllerResult = $controller->run();
-$MyCMS->template = $controllerResult['template'];
-$MyCMS->setContext($controllerResult['context']);
+//$controllerResult = 
+$controller->run();
+$MyCMS->template = $controller->template(); //Result['template'];
+$MyCMS->setContext($controller->context()); //Result['context']);
 $MyCMS->WEBSITE = $WEBSITE[$_SESSION['language']]; // language is already properly set through FriendlyURL mechanism
-Debugger::barDump($controllerResult, 'ControllerResult', [Tracy\Dumper::DEPTH => 5]);
+Debugger::barDump(['template' => $controller->template(), 'context' => $controller->context()], 'ControllerResult', [Tracy\Dumper::DEPTH => 5]);
 
 if (array_key_exists('json', $MyCMS->context)) {
     $MyCMS->renderJson(
