@@ -231,9 +231,30 @@ class MyController extends MyCommon
             http_response_code(404);
         }
 
+        // Todo: deprecated >0.4.4 - should return void
         return [
             'template' => $this->MyCMS->template,
             'context' => $this->MyCMS->context,
         ];
+    }
+
+    /**
+     * Getter
+     *
+     * @return string
+     */
+    public function template()
+    {
+        return $this->MyCMS->template;
+    }
+
+    /**
+     * Getter
+     *
+     * @return array<array<string>>
+     */
+    public function context()
+    {
+        return $this->MyCMS->context;
     }
 }
