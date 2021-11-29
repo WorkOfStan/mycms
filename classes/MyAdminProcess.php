@@ -107,6 +107,7 @@ class MyAdminProcess extends MyCommon
             $online = []; // other admins online
             $time = time();
             foreach ($admins as $admin) {
+                Assert::string($admin['activity']);
                 $tabs = json_decode($admin['activity'], true);
                 $tabs = is_array($tabs) ? $tabs : [];
                 $new = true;

@@ -49,14 +49,14 @@ $controller = new Controller($MyCMS, [
     'verbose' => DEBUG_VERBOSE,
     'featureFlags' => $featureFlags,
     ]);
-//$controllerResult = 
+
 $controller->run();
-$MyCMS->template = $controller->template(); //Result['template'];
-$MyCMS->setContext($controller->context()); //Result['context']);
+$MyCMS->template = $controller->template();
+$MyCMS->setContext($controller->context());
 $MyCMS->WEBSITE = $WEBSITE[$_SESSION['language']]; // language is already properly set through FriendlyURL mechanism
 Debugger::barDump(
-        ['template' => $controller->template(), 'context' => $controller->context()],
-        'ControllerResult', [Tracy\Dumper::DEPTH => 5]
+    ['template' => $controller->template(), 'context' => $controller->context()],
+    'ControllerResult', [Tracy\Dumper::DEPTH => 5]
 );
 
 if (array_key_exists('json', $MyCMS->context)) {

@@ -624,7 +624,9 @@ class MyAdmin extends MyCommon
                 $result .= '<h3><a href="?table=' . urlencode(TAB_PREFIX . $key) . '"><i class="fa fa-table"></i></a> <tt>' . Tools::h($key) . '</tt></h3>' . PHP_EOL . '<ul>';
                 foreach ($rows as $row) {
                     $row = array_values($row);
-                    $result .= '<li><a href="?table=' . urlencode(TAB_PREFIX . $key) . '&amp;where[' . urlencode($id) . ']=' . urlencode($row[0]) . '">'
+                    //TODO: $row = ProjectCommon::assertStringArray(array_values($row)); instead of previous line
+                    $result .= '<li><a href="?table=' . urlencode(TAB_PREFIX . $key) . '&amp;where['
+                        . urlencode($id) . ']=' . urlencode($row[0]) . '">'
                         . MyTools::h($row[1]) . '</a>';
                     $where = '';
                     for ($i = 1; $i < count($row); $i++) {

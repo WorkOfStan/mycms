@@ -101,15 +101,15 @@ parameters:
 			count: 1
 			path: classes/MyAdminProcess.php
 
-		-
-			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyCMSMonoLingual\\:\\:__construct\\(\\) has parameter \\$myCmsConf with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: classes/MyCMSMonoLingual.php
+		#-
+		#	message: "#^Method WorkOfStan\\\\MyCMS\\\\MyCMSMonoLingual\\:\\:__construct\\(\\) has parameter \\$myCmsConf with no value type specified in iterable type array\\.$#"
+		#	count: 1
+		#	path: classes/MyCMSMonoLingual.php
 
-		-
-			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyCMSMonoLingual\\:\\:fetchAndReindexStrictArray\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: classes/MyCMSMonoLingual.php
+		#-
+		#	message: "#^Method WorkOfStan\\\\MyCMS\\\\MyCMSMonoLingual\\:\\:fetchAndReindexStrictArray\\(\\) return type has no value type specified in iterable type array\\.$#"
+		#	count: 1
+		#	path: classes/MyCMSMonoLingual.php
 
 		-
 			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyController\\:\\:controller\\(\\) return type has no value type specified in iterable type array\\.$#"

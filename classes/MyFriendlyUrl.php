@@ -85,13 +85,11 @@ class MyFriendlyUrl extends MyCommon
      */
     protected function redirWrapper($url, $barDumpTitle, $httpCode = 301)
     {
-        return [
-            'redir' => $this->verboseBarDump(
-                $this->applicationDir . $url,
-                'redir identified: ' . $barDumpTitle
-            ),
-            'httpCode' => $httpCode,
-        ];
+        $this->verboseBarDump(
+            $this->applicationDir . $url,
+            'redir identified: ' . $barDumpTitle
+        );
+        return ['redir' => $this->applicationDir . $url, 'httpCode' => $httpCode];
     }
 
     /**
@@ -109,7 +107,7 @@ class MyFriendlyUrl extends MyCommon
      * matchResult = (1=pattern matches `PARSE_PATH_PATTERN`, 0=it does not, or FALSE=error)
      *
      * @param array<string> $options
-     * @return array<int,string,array<string>>|true
+     * @return array<int|string|array<string>>|true
      *     `bool (true)` when `TEMPLATE_NOT_FOUND` || `array<int,string>` with redir string field
      *     || `array` with token string field and matches array field (see above)
      * @throws Exception on malformed URL

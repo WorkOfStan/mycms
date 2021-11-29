@@ -200,6 +200,7 @@ class MyTableLister
         }
         $tmp = $this->dbms->fetchSingle('SELECT TABLE_COMMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA="'
             . $this->escapeSQL($this->database) . '" AND TABLE_NAME="' . $this->escapeSQL($this->table) . '"');
+        Assert::string($tmp);
         $this->tableContext = json_decode($tmp, true) or [];
     }
 
@@ -480,7 +481,9 @@ class MyTableLister
         if (isset($_GET['col'], $_GET['op']) && is_array($_GET['col'])) {
             foreach ($_GET['col'] as $key => $value) {
                 if ($value) {
-                    $this->script .= 'addSearchRow($(\'#search-div' . $this->rand . '\'), "' . Tools::escapeJs($value) . '",' . Tools::setifnull($_GET['op'][$key], 0) . ', "' . addslashes(Tools::setifnull($_GET['val'][$key], '')) . '");' . PHP_EOL;
+                    $this->script .= 'addSearchRow($(\'#search-div' . $this->rand . '\'), "'
+                            . Tools::escapeJs($value) . '",' . Tools::setifnull($_GET['op'][$key], 0) . ', "'
+                            . addslashes((string) Tools::setifnull($_GET['val'][$key], '')) . '");' . PHP_EOL;
                 } else {
                     unset($_GET['col'][$key], $_GET['op'][$key], $_GET['val'][$key]);
                 }
@@ -1045,7 +1048,7 @@ class MyTableLister
     {
         $result = [];
         if ($keys = $this->filterKeys(['PRI'])) {
-            $result [] = 'where[' . urlencode(array_keys($keys)[0]) . ']='
+            $result [] = 'where[' . urlencode((string) array_keys($keys)[0]) . ']='
                 . urlencode(Tools::set($row[array_keys($keys)[0]]));
         } elseif ($keys = $this->filterKeys(['UNI'])) {
             foreach ($keys as $key => $value) {
