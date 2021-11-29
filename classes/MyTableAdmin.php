@@ -417,6 +417,7 @@ class MyTableAdmin extends MyTableLister
             $tempArr = $module->fetch_assoc();
             Assert::isArray($tempArr);
             $module = json_decode($tempArr['Comment'], true);
+            Assert::isArray($module);
             $module = isset($module['module']) && $module['module'] ? $module['module'] : 10;
         } else {
             $module = 10;

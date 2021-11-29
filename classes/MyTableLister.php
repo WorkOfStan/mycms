@@ -256,9 +256,12 @@ class MyTableLister
             }
             unset($filterColumn[0]);
             foreach ($vars['col'] as $key => $value) {
+                Assert::isArray($vars['val']);
                 if (isset($filterColumn[$value], $vars['val'][$key])) {
                     $id = $this->escapeDbIdentifier($this->table) . '.' . $this->escapeDbIdentifier((string) $filterColumn[$value]);
+                    Assert::string($vars['val'][$key]); // escape $val below expect string
                     $val = $vars['val'][$key];
+                    Assert::isArray($vars['op']);
                     $op = $this->WHERE_OPS[$vars['op'][$key]];
                     $result['where'] .= ' AND ';
                     if (substr($op, 0, 4) == 'NOT ') {
@@ -1048,7 +1051,8 @@ class MyTableLister
     {
         $result = [];
         if ($keys = $this->filterKeys(['PRI'])) {
-            $result [] = 'where[' . urlencode((string) array_keys($keys)[0]) . ']='
+            Assert::string(array_keys($keys)[0]);
+            $result [] = 'where[' . urlencode(array_keys($keys)[0]) . ']='
                 . urlencode(Tools::set($row[array_keys($keys)[0]]));
         } elseif ($keys = $this->filterKeys(['UNI'])) {
             foreach ($keys as $key => $value) {

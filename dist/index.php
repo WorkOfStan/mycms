@@ -56,7 +56,8 @@ $MyCMS->setContext($controller->context());
 $MyCMS->WEBSITE = $WEBSITE[$_SESSION['language']]; // language is already properly set through FriendlyURL mechanism
 Debugger::barDump(
     ['template' => $controller->template(), 'context' => $controller->context()],
-    'ControllerResult', [Tracy\Dumper::DEPTH => 5]
+    'ControllerResult',
+    [Tracy\Dumper::DEPTH => 5]
 );
 
 if (array_key_exists('json', $MyCMS->context)) {

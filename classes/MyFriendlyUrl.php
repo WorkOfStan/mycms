@@ -344,7 +344,8 @@ class MyFriendlyUrl extends MyCommon
         $pureFriendlyUrl = $this->pureFriendlyUrl($options, $token, $matches);
         if (!is_null($pureFriendlyUrl)) {
             $this->verboseBarDump($this->get, 'determineTemplate this->get before return pureFriendlyUrl');
-            return $this->verboseBarDump($pureFriendlyUrl, 'determineTemplate return pureFriendlyUrl');
+            $this->verboseBarDump($pureFriendlyUrl, 'determineTemplate return pureFriendlyUrl');
+            return $pureFriendlyUrl;
         }
 
         // URL token not found
@@ -418,7 +419,8 @@ class MyFriendlyUrl extends MyCommon
      * but SQL statement may be adapted in any way so this method MAY be overidden in child class
      *
      * @param string $token
-     * @return mixed null on empty result, false on database failure or one-dimensional array [id, type] on success
+     * @return null|false|array<string>
+     *     null on empty result, false on database failure or one-dimensional array [id, type] on success
      */
     protected function findFriendlyUrlToken($token)
     {
@@ -432,7 +434,7 @@ class MyFriendlyUrl extends MyCommon
         foreach ($this->MyCMS->typeToTableMapping as $type => $table) {
             $output[] = $this->prepareTableSelect($token, $type, $table);
         }
-        return $this->MyCMS->fetchSingle(implode(' UNION ', $output));
+        return $this->MyCMS->fetchSingle(implode(' UNION ', $output)); // TODO replace by fetchSingleString ??
     }
 
     /**
@@ -478,7 +480,10 @@ class MyFriendlyUrl extends MyCommon
 
         $result = $this->switchParametric($outputKey, $outputValue);
         $this->MyCMS->logger->info(
-            $this->verboseBarDump("{$params} friendlyfyUrl to " . print_r($result, true), 'friendlyfyUrl result')
+            (string) $this->verboseBarDump(
+                "{$params} friendlyfyUrl to " . print_r($result, true),
+                'friendlyfyUrl result'
+            )
         );
         return is_null($result) ? $params : $result;
     }
