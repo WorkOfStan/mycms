@@ -25,5 +25,4 @@ class MyTools
         Assert::string($str);
         return Tools::h($str);
     }
-
 }

@@ -8,7 +8,7 @@ use WorkOfStan\mycmsprojectnamespace\Latte\CustomFilters;
 use WorkOfStan\mycmsprojectnamespace\ProjectSpecific;
 use WorkOfStan\mycmsprojectnamespace\Utils;
 
-require './set-environment.php';
+require './conf/set-environment.php';
 
 // Under construction section
 if (
@@ -54,7 +54,10 @@ $controller->run();
 $MyCMS->template = $controller->template(); //Result['template'];
 $MyCMS->setContext($controller->context()); //Result['context']);
 $MyCMS->WEBSITE = $WEBSITE[$_SESSION['language']]; // language is already properly set through FriendlyURL mechanism
-Debugger::barDump(['template' => $controller->template(), 'context' => $controller->context()], 'ControllerResult', [Tracy\Dumper::DEPTH => 5]);
+Debugger::barDump(
+        ['template' => $controller->template(), 'context' => $controller->context()],
+        'ControllerResult', [Tracy\Dumper::DEPTH => 5]
+);
 
 if (array_key_exists('json', $MyCMS->context)) {
     $MyCMS->renderJson(

@@ -6,6 +6,7 @@ use Exception;
 use Psr\Log\LoggerInterface;
 use Tracy\Debugger;
 use Webmozart\Assert\Assert;
+use WorkOfStan\Backyard\BackyardError;
 use WorkOfStan\MyCMS\LogMysqli;
 use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
 
@@ -50,7 +51,7 @@ class MyCMSMonoLingual
     /**
      * Constructor
      *
-     * @param array<array<array<array<string>,bool,string>,string>|\WorkOfStan\Backyard\BackyardError|LogMysqli|null> $myCmsConf
+     * @param array<array<array<array<string>,bool,string>,string>|BackyardError|LogMysqli|null> $myCmsConf
      * @throws Exception if logger not configured
      */
     public function __construct(array $myCmsConf = [])

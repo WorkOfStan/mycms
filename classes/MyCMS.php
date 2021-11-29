@@ -2,6 +2,9 @@
 
 namespace WorkOfStan\MyCMS;
 
+use WorkOfStan\Backyard\BackyardError;
+use WorkOfStan\MyCMS\LogMysqli;
+
 /**
  * Extension of a MyCMS object with translations.
  * It holds all variables needed for the used project.
@@ -47,7 +50,7 @@ class MyCMS extends MyCMSMonoLingual
     /**
      * Constructor
      *
-     * @param array<array<array<array<string>,bool,string>,string>|\WorkOfStan\Backyard\BackyardError|\WorkOfStan\MyCMS\LogMysqli|null> $myCmsConf
+     * @param array<array<array<array<string>,bool,string>,string>|BackyardError|LogMysqli|null> $myCmsConf
      */
     public function __construct(array $myCmsConf = [])
     {

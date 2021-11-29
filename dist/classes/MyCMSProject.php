@@ -6,6 +6,8 @@ use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use Webmozart\Assert\Assert;
 use WorkOfStan\Backyard\Backyard;
+use WorkOfStan\Backyard\BackyardError;
+use WorkOfStan\MyCMS\LogMysqli;
 use WorkOfStan\MyCMS\MyCMS;
 use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
 use WorkOfStan\mycmsprojectnamespace\Utils;
@@ -33,7 +35,7 @@ class MyCMSProject extends MyCMS
     /**
      * Constructor
      *
-     * @param array<array<array<array<string>,bool,string>,string>|\WorkOfStan\Backyard\BackyardError|\WorkOfStan\MyCMS\LogMysqli|null> $myCmsConf
+     * @param array<array<array<array<string>,bool,string>,string>|BackyardError|LogMysqli|null> $myCmsConf
      */
     public function __construct(array $myCmsConf = [])
     {

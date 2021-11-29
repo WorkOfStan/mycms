@@ -7,7 +7,7 @@ use WorkOfStan\mycmsprojectnamespace\AdminProcess;
 use WorkOfStan\mycmsprojectnamespace\TableAdmin;
 
 // Admin
-require_once './set-environment.php';
+require_once './conf/set-environment.php';
 require_once './prepare.php';
 
 if (isset($_POST) && !empty($_POST)) {

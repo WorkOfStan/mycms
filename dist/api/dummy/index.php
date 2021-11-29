@@ -7,7 +7,7 @@
 
 use WorkOfStan\mycmsprojectnamespace\Utils;
 
-require './../../set-environment.php';
+require './../../conf/set-environment.php';
 
 // Under construction section
 // Note: if condition changes, pls change also $developmentEnvironment assignement in prepare.php
