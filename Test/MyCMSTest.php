@@ -9,7 +9,6 @@ require_once __DIR__ . '/../conf/config.php';
 
 class MyCMSTest extends \PHPUnit_Framework_TestCase
 {
-
     /** @var MyCMS */
     protected $object;
 
