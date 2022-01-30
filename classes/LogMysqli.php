@@ -311,6 +311,19 @@ class LogMysqli extends BackyardMysqli
     }
 
     /**
+     * Execute an SQL and fetch the string content of the one one column of the one row of a resultset.
+     *
+     * @param string $sql SQL to be executed
+     * @return string first column of the first selected row
+     */
+    public function fetchSingleString($sql)
+    {
+        $query = $this->fetchSingle($sql);
+        Assert::string($query);
+        return $query;
+    }
+
+    /**
      * Execute an SQL and fetch the first row of a resultset,
      * if it is an array of strings. (NULL is replaced by empty string.)
      *

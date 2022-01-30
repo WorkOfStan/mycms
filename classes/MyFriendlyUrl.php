@@ -264,12 +264,13 @@ class MyFriendlyUrl extends MyCommon
                 ),
                 true
             ));
-            $this->MyCMS->logger->info($this->verboseBarDump(
+            $this->MyCMS->logger->info($this->verboseBarDumpString(
                 "{$getParam} may lead to '{$assignement['template']}' template",
                 'determineTemplate: template assignement'
             ));
             if (!isset($assignement['idcode']) || $assignement['idcode'] === false) {
-                return $this->verboseBarDump(
+                Assert::string($assignement['template']);
+                return $this->verboseBarDumpString(
                     $assignement['template'],
                     'determineTemplate: assignement established from get parameter name'
                 );
@@ -281,15 +282,17 @@ class MyFriendlyUrl extends MyCommon
                         FILTER_VALIDATE_INT,
                         ['default' => 0, 'min_range' => 0, 'max_range' => 1e9]
                     );
+                    Assert::scalar($tempGetId);
                     if (!$this->get['id']) {
-                        $this->MyCMS->logger->error($this->verboseBarDump(
+                        $this->MyCMS->logger->error($this->verboseBarDumpString(
                             "this->get['id'] {$tempGetId} did not pass number filter",
                             "get id did not pass filter"
                         ));
                         return self::TEMPLATE_NOT_FOUND;
                     }
                 }
-                return $this->verboseBarDump(
+                Assert::string($assignement['template']);
+                return $this->verboseBarDumpString(
                     $assignement['template'],
                     'determineTemplate: assignement established from id or code parameter'
                 );
@@ -335,8 +338,11 @@ class MyFriendlyUrl extends MyCommon
         }
         //$token, $matches - will be expected below for FRIENDLY URL & Redirect calculation
         //(see friendlyIdentifyRedirect PHPDoc for explanation)
+        Assert::isArray($friendlyUrlRedirectVariables);
         $token = $friendlyUrlRedirectVariables['token'];
+        Assert::string($token);
         $matches = $friendlyUrlRedirectVariables['matches'];
+        Assert::isArray($matches);
 
         $parametricRuleToTemplate = $this->parametricRuleToTemplate();
         if (!is_null($parametricRuleToTemplate)) {
@@ -363,22 +369,23 @@ class MyFriendlyUrl extends MyCommon
      * @param array<mixed> $options for recursive determineTemplate call (TODO: isn't this obsolete?)
      * @param string $token calculated by friendlyIdentifyRedirect
      * @param array<string> $matches calculated by friendlyIdentifyRedirect
-     * @return null|string|array<int,string>|true
+     * @return null|string
      *    `null` leads to self::TEMPLATE_NOT_FOUND (TODO: factor-out in favor of the constant? or true is redundant?)
      *    || `string` with name of the template when template determined
-     *    || `array` with redir field when redirect || `bool (true)` when template set to `TEMPLATE_NOT_FOUND`
+     *    NEVER OCCURS || `array<int,string>` with redir field when redirect
+     *    NEVER OCCURS || `bool (true)` when template set to `TEMPLATE_NOT_FOUND`
      */
     private function pureFriendlyUrl(array $options, $token, array $matches)
     {
         //default scripts and language directories all result into the default template
         if (in_array($token, array_merge([HOME_TOKEN, '', 'index'], array_keys($this->MyCMS->TRANSLATIONS)))) {
-            return $this->verboseBarDump(self::TEMPLATE_DEFAULT, 'pureFriendlyUrl return default');
+            return $this->verboseBarDumpString(self::TEMPLATE_DEFAULT, 'pureFriendlyUrl return default');
         }
 
         // Language MUST always be set
         if (!isset($matches[1])) {
             $this->language = DEFAULT_LANGUAGE;
-            $this->verboseBarDump($this->language, 'pureFriendlyUrl: Language reset to DEFAULT');
+            $this->verboseBarDumpString($this->language, 'pureFriendlyUrl: Language reset to DEFAULT');
         }
         // If there is a pure friendly URL, i.e. the token exactly matches a record in content database,
         // decode it internally to type=id
@@ -389,13 +396,16 @@ class MyFriendlyUrl extends MyCommon
             $this->get[$found['type']] = $this->get['id'] = $found['id'];
             $this->verboseBarDump($this->get, 'pureFriendlyUrl: this->get within pureFriendlyUrl');
             //TODO change the description as recursion is limited here
-            return $this->verboseBarDump(
-                $this->parametricRuleToTemplate(),
+            $result = $this->parametricRuleToTemplate();
+            $this->verboseBarDump(
+                $result,
                 'pureFriendlyUrl return parametricRuleToTemplate()'
             );
+            return $result;
         }
         //null leads to self::TEMPLATE_NOT_FOUND
-        return $this->verboseBarDump(null, 'pureFriendlyUrl return null leads to self::TEMPLATE_NOT_FOUND');
+        $this->verboseBarDump(null, 'pureFriendlyUrl return null leads to self::TEMPLATE_NOT_FOUND');
+        return null;
     }
 
     /**
@@ -479,11 +489,15 @@ class MyFriendlyUrl extends MyCommon
             && isset($this->MyCMS->templateAssignementParametricRules[$outputKey]['idcode'])
             && $this->MyCMS->templateAssignementParametricRules[$outputKey]['idcode'])
             ? (isset($output['id']) ? (int) ($output['id'])
-            : (string) Tools::ifset($output['code'], '')) : $output2[$outputKey];
+            :
+//            (string) Tools::ifset($output['code'], '')
+            (isset($output['code']) ? $output['code'] : '')
+            )
+            : $output2[$outputKey];
 
         $result = $this->switchParametric($outputKey, $outputValue);
         $this->MyCMS->logger->info(
-            (string) $this->verboseBarDump(
+            $this->verboseBarDumpString(
                 "{$params} friendlyfyUrl to " . print_r($result, true),
                 'friendlyfyUrl result'
             )
@@ -494,7 +508,7 @@ class MyFriendlyUrl extends MyCommon
     /**
      * $this->get may be changed and Controller needs to know
      *
-     * @return array<string|array|int>
+     * @return array<mixed>
      */
     public function getGet()
     {

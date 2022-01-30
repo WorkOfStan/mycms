@@ -126,10 +126,10 @@ parameters:
 			count: 1
 			path: classes/MyController.php
 
-		-
-			message: "#^Property WorkOfStan\\\\MyCMS\\\\MyController\\:\\:\\$get type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: classes/MyController.php
+		#-
+		#	message: "#^Property WorkOfStan\\\\MyCMS\\\\MyController\\:\\:\\$get type has no value type specified in iterable type array\\.$#"
+		#	count: 1
+		#	path: classes/MyController.php
 
 		-
 			message: "#^Property WorkOfStan\\\\MyCMS\\\\MyController\\:\\:\\$result type has no value type specified in iterable type array\\.$#"

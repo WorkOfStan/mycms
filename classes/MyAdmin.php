@@ -125,7 +125,11 @@ class MyAdmin extends MyCommon
             $result .= '<meta name="' . Tools::h($key) . '" content="' . Tools::h($value) . '">' . "\n";
         }
         $result .= '<title>' . Tools::h(Tools::wrap($title, '', ' - CMS Admin', 'CMS Admin')) . '</title>' . PHP_EOL
-            . Tools::arrayListed(Tools::set($this->clientSideResources['css'], []), 0, '', '<link rel="stylesheet" href="', '" />' . PHP_EOL)
+            . Tools::arrayListed(
+//                Tools::set($this->clientSideResources['css'], [])
+                (isset($this->clientSideResources['css']) && $this->clientSideResources['css']
+                    ? $this->clientSideResources['css'] : [])
+                , 0, '', '<link rel="stylesheet" href="', '" />' . PHP_EOL)
             . '<style type="text/css">' . PHP_EOL
             . $this->getAdminCss() //@todo how to make a link rel instead of inline css?
             . '</style>
@@ -402,6 +406,7 @@ class MyAdmin extends MyCommon
                 </details>' . PHP_EOL;
             if (isset($option['prefill'])) {
                 $tmpBadge = ',prefill:{';
+                Assert::isIterable($option['prefill']);
                 foreach ($option['prefill'] as $key => $value) {
                     $tmpBadge .= json_encode($key) . ':' . json_encode($value) . ',';
                 }
@@ -424,7 +429,12 @@ class MyAdmin extends MyCommon
      */
     protected function outputBodyEnd()
     {
-        $result = Tools::arrayListed(Tools::set($this->clientSideResources['js'], []), 0, '', '<script type="text/javascript" src="', '"></script>' . PHP_EOL)
+        $result = Tools::arrayListed(
+//            Tools::set($this->clientSideResources['js'], [])
+                (isset($this->clientSideResources['js']) && $this->clientSideResources['js']
+                    ? $this->clientSideResources['js'] : [])
+
+            , 0, '', '<script type="text/javascript" src="', '"></script>' . PHP_EOL)
 //            . (empty($this->javascripts) ? '' : ('<script type="text/javascript" src="' . implode('"></script><script type="text/javascript" src="', $this->javascripts) . '"></script>' ))
 //            <script type="text/javascript" src="scripts/bootstrap-datetimepicker.js"></script>
             . '<script type="text/javascript" src="scripts/jquery.sha1.js"></script>'
@@ -501,7 +511,9 @@ class MyAdmin extends MyCommon
             // table edit
             $result .= '<h2 class="sub-header">' . $this->tableAdmin->translate('Edit') . ' <span class="AdminRecordName"></span></h2>';
             $tabs = [null];
-            foreach (Tools::set($this->tableAdmin->tableContext['language-versions'], $this->MyCMS->TRANSLATIONS) as $key => $value) {
+            $tempIterable = Tools::set($this->tableAdmin->tableContext['language-versions'], $this->MyCMS->TRANSLATIONS);
+            Assert::isIterable($tempIterable);
+            foreach ($tempIterable as $key => $value) {
                 $tabs[$value] = "~^.+_$key$~i";
             }
             $result .= $this->outputTableBeforeEdit()
@@ -625,11 +637,13 @@ class MyAdmin extends MyCommon
                 foreach ($rows as $row) {
                     $row = array_values($row);
                     //TODO: $row = ProjectCommon::assertStringArray(array_values($row)); instead of previous line
+                    Assert::string($row[0]);
                     $result .= '<li><a href="?table=' . urlencode(TAB_PREFIX . $key) . '&amp;where['
                         . urlencode($id) . ']=' . urlencode($row[0]) . '">'
                         . MyTools::h($row[1]) . '</a>';
                     $where = '';
                     for ($i = 1; $i < count($row); $i++) {
+                        Assert::string($row[$i]);
                         $row[$i] = strip_tags($row[$i]);
                         if (($p = stripos($row[$i], $keyword)) !== false) {
                             $row[$i] = preg_replaceString('~(' . preg_quote($keyword) . ')~six', '<b>${1}</b>', $row[$i]);
@@ -870,7 +884,9 @@ class MyAdmin extends MyCommon
         if (!isset($_SESSION['user'])) {
             $_GET['table'] = $_GET['media'] = $_GET['user'] = null;
         }
-        return mb_substr(Tools::set($_GET['table']), mb_strlen(TAB_PREFIX)) ?:
+        return mb_substr(
+            Tools::set($_GET['table'])
+            , mb_strlen(TAB_PREFIX)) ?:
             (
                 isset($_GET['user']) ? $this->tableAdmin->translate('User') :
             (

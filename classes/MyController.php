@@ -27,7 +27,8 @@ class MyController extends MyCommon
     /**
      * HTTP request parameters
      *
-     * @var array<string|array|int>
+     * @var array<mixed>
+     * TBD: or is GET really always?? array<string|array<RECURSIVE>|int>
      */
     protected $get;
 
@@ -193,15 +194,14 @@ class MyController extends MyCommon
             // která je vstupem MyCMS->getSessionLanguage
             // Note: $this->language je potřeba, protože nastavuje jazyk v rámci instance Controller
             $this->session['language'] = $this->language = $this->friendlyUrl->getLanguage();
-            $_SESSION['language'] = $this->MyCMS->getSessionLanguage(
-                //isset($this->get) ?
-                $this->get //: []
-                ,
-                //isset($this->session) ?
-                $this->session //: []
-                ,
-                true // Language is finally determined, therefore make the include creating TRANSLATION
-            );
+            /**
+             * @phpstan-ignore-next-line
+             * Property WorkOfStan\MyCMS\MyController::$get (array) in isset() is not nullable.
+             * But in PHPUnit call it is not even set
+             */
+            $tempGet = isset($this->get) ? $this->get : [];
+            // Language is finally determined, therefore make the include creating TRANSLATION
+            $_SESSION['language'] = $this->MyCMS->getSessionLanguage($tempGet, $this->session, true);
             $this->MyCMS->context['applicationDirLanguage'] = $this->MyCMS->context['applicationDir']
             . (($_SESSION['language'] === DEFAULT_LANGUAGE) ? '' : ($_SESSION['language'] . '/'));
             $this->MyCMS->logger->info("After determineTemplate: this->language={$this->language}, "
@@ -218,15 +218,20 @@ class MyController extends MyCommon
                 $this->redir($templateDetermined['redir'], (int) $templateDetermined['httpCode']);
             }
         } else {
-            $this->language = $_SESSION['language'] = $this->MyCMS->getSessionLanguage(
-                //Tools::ifset(
-                    $this->get//, [])
-                ,
-                //Tools::ifset(
-                    $this->session//, [])
-                ,
-                true // Language is finally determined, therefore make the include creating TRANSLATION
-            );
+            /**
+             * @phpstan-ignore-next-line
+             * Property WorkOfStan\MyCMS\MyController::$get (array) in isset() is not nullable.
+             * But in PHPUnit call it is not even set
+             */
+            $tempGet = isset($this->get) ? $this->get : [];
+            /**
+             * @phpstan-ignore-next-line
+             * Property WorkOfStan\MyCMS\MyController::$session (array<array|string>) in isset() is not nullable.
+             * But in PHPUnit call it is not even set
+             */
+            $tempSession = isset($this->session) ? $this->session : [];
+            // Language is finally determined, therefore make the include creating TRANSLATION
+            $this->language = $_SESSION['language'] = $this->MyCMS->getSessionLanguage($tempGet, $tempSession, true);
         }
 
         // PROJECT SPECIFIC CHANGE OF OPTIONS AFTER LANGUAGE IS DETERMINED

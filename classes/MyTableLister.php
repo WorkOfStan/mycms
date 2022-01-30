@@ -93,7 +93,7 @@ class MyTableLister
     {
         $this->dbms = $dbms;
         $this->options = $options;
-        $this->database = $this->dbms->fetchSingle('SELECT DATABASE()');
+        $this->database = $this->dbms->fetchSingleString('SELECT DATABASE()');
         $this->getTables();
         $this->setTable($table);
         $this->rand = rand((int) 1e5, (int) (1e6 - 1));
@@ -426,6 +426,7 @@ class MyTableLister
         }
         $output .= $this->viewInputs($options);
         if ($options['total-rows']) {
+            Assert::integer($options['total-rows']);
             Assert::integer($sql['limit']);
             $output .= $this->viewTable($query, $columns, $options)
                 . $this->pagination($sql['limit'], $options['total-rows'], null, $options);
