@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - phpstan.sh and phpstan-remove.sh for local testing
 - phpstan-baseline.neon to hide type hint imperfections in PHPStan level=8 (TODO fix these)
 - LogMysqli::fetchSingleString for strict string response
-- MyCommon::verboseBarDumpString with strict string response
+- MyCommon::verboseBarDumpString for strict string response
 
 ### `Changed` for changes in existing functionality
 - instead of dist specific workflows, use reusable ones (linter.yml, overtrue-phplint.yml, php-composer-dependencies.yml, phpcbf.yml)
