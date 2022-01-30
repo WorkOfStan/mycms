@@ -128,8 +128,12 @@ class MyAdmin extends MyCommon
             . Tools::arrayListed(
 //                Tools::set($this->clientSideResources['css'], [])
                 (isset($this->clientSideResources['css']) && $this->clientSideResources['css']
-                    ? $this->clientSideResources['css'] : [])
-                , 0, '', '<link rel="stylesheet" href="', '" />' . PHP_EOL)
+                    ? $this->clientSideResources['css'] : []),
+                0,
+                '',
+                '<link rel="stylesheet" href="',
+                '" />' . PHP_EOL
+            )
             . '<style type="text/css">' . PHP_EOL
             . $this->getAdminCss() //@todo how to make a link rel instead of inline css?
             . '</style>
@@ -431,10 +435,13 @@ class MyAdmin extends MyCommon
     {
         $result = Tools::arrayListed(
 //            Tools::set($this->clientSideResources['js'], [])
-                (isset($this->clientSideResources['js']) && $this->clientSideResources['js']
-                    ? $this->clientSideResources['js'] : [])
-
-            , 0, '', '<script type="text/javascript" src="', '"></script>' . PHP_EOL)
+            (isset($this->clientSideResources['js']) && $this->clientSideResources['js']
+                    ? $this->clientSideResources['js'] : []),
+            0,
+            '',
+            '<script type="text/javascript" src="',
+            '"></script>' . PHP_EOL
+        )
 //            . (empty($this->javascripts) ? '' : ('<script type="text/javascript" src="' . implode('"></script><script type="text/javascript" src="', $this->javascripts) . '"></script>' ))
 //            <script type="text/javascript" src="scripts/bootstrap-datetimepicker.js"></script>
             . '<script type="text/javascript" src="scripts/jquery.sha1.js"></script>'
@@ -885,8 +892,9 @@ class MyAdmin extends MyCommon
             $_GET['table'] = $_GET['media'] = $_GET['user'] = null;
         }
         return mb_substr(
-            Tools::set($_GET['table'])
-            , mb_strlen(TAB_PREFIX)) ?:
+            Tools::set($_GET['table']),
+            mb_strlen(TAB_PREFIX)
+        ) ?:
             (
                 isset($_GET['user']) ? $this->tableAdmin->translate('User') :
             (
