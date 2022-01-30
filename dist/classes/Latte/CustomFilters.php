@@ -19,7 +19,7 @@ class CustomFilters
     /** @var MyCMS */
     protected $MyCMS;
 
-    /** @var ProjectSpecific */
+    /** var ProjectSpecific */
 //    private $projectSpecific;
 
     /**

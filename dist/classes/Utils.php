@@ -44,7 +44,10 @@ class Utils
             ) ? self::niceDumpArray(
                 $v,
                 $showKey
-            ) : (((int) $v > $boldWhenHigherThan) ? "<b>{$v}</b>" : $v);
+            ) : (is_scalar($v) ? (
+                ((int) $v > $boldWhenHigherThan) ? "<b>{$v}</b>" : $v
+                ) : ("cannot display type: " . gettype($v))
+            );
             $result .= "<br/>" . PHP_EOL;
         }
         return $result . "</ol>" . PHP_EOL;

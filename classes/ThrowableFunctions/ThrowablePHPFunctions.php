@@ -66,7 +66,11 @@ function filemtime($filename)
  */
 function glob($pattern, $flags = 0)
 {
-    return throwOnFalse(\glob($pattern, $flags));
+    $result = \glob($pattern, $flags);
+    if ($result === false) {
+        throw new Exception('error (false) ' . debug_backtrace()[1]['function']);
+    }
+    return $result;
 }
 
 /**
@@ -144,7 +148,11 @@ function preg_match_all($pattern, $subject, array &$matches = null, $flags = 0, 
  */
 function preg_replace($pattern, $replacement, $subject, $limit = -1, &$count = null)
 {
-    return throwOnNull(\preg_replace($pattern, $replacement, $subject, $limit, $count));
+    $result = \preg_replace($pattern, $replacement, $subject, $limit, $count);
+    if (is_null($result)) {
+        throw new Exception('error (null) ' . debug_backtrace()[1]['function']);
+    }
+    return $result;
 }
 
 /**
