@@ -5,6 +5,7 @@ namespace WorkOfStan\MyCMS;
 use Exception;
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
+use Webmozart\Assert\Assert;
 
 class MyFriendlyUrl extends MyCommon
 {
@@ -81,7 +82,7 @@ class MyFriendlyUrl extends MyCommon
      * @param string $url
      * @param string $barDumpTitle
      * @param int $httpCode
-     * @return array<int,string> with redir string field
+     * @return array<int|string> with redir string field
      */
     protected function redirWrapper($url, $barDumpTitle, $httpCode = 301)
     {
@@ -221,6 +222,7 @@ class MyFriendlyUrl extends MyCommon
                 'friendlyIdentifyRedirect: found redirect'
             )
         ) {
+            Assert::string($found);
             // Multiple directories,
             // such as /spolecnost/tiskove-centrum/logo-ke-stazeni.html -> /index.php?category&id=14
             return $this->redirWrapper($found, 'old to new redirector');
@@ -239,7 +241,8 @@ class MyFriendlyUrl extends MyCommon
                 : $this->redirWrapper(($addLanguageDirectory ? "/{$this->language}/" : '/')
                     . self::PAGE_NOT_FOUND . '?url=' . $interestingPath, '404 for complex unknown URL');
         }
-        return $this->verboseBarDump(compact('token', 'matches'), 'friendlyIdentifyRedirect: return [token, matches]');
+        $this->verboseBarDump(compact('token', 'matches'), 'friendlyIdentifyRedirect: return [token, matches]');
+        return compact('token', 'matches');
     }
 
     /**
@@ -491,7 +494,7 @@ class MyFriendlyUrl extends MyCommon
     /**
      * $this->get may be changed and Controller needs to know
      *
-     * @return array<mixed>
+     * @return array<string|array|int>
      */
     public function getGet()
     {

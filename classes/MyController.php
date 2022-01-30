@@ -3,7 +3,7 @@
 namespace WorkOfStan\MyCMS;
 
 use Exception;
-use GodsDev\Tools\Tools;
+//use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use Webmozart\Assert\Assert;
 use WorkOfStan\MyCMS\MyFriendlyUrl;
@@ -194,8 +194,12 @@ class MyController extends MyCommon
             // Note: $this->language je potřeba, protože nastavuje jazyk v rámci instance Controller
             $this->session['language'] = $this->language = $this->friendlyUrl->getLanguage();
             $_SESSION['language'] = $this->MyCMS->getSessionLanguage(
-                Tools::ifset($this->get, []),
-                Tools::ifset($this->session, []),
+                //isset($this->get) ?
+                $this->get //: []
+                ,
+                //isset($this->session) ?
+                $this->session //: []
+                ,
                 true // Language is finally determined, therefore make the include creating TRANSLATION
             );
             $this->MyCMS->context['applicationDirLanguage'] = $this->MyCMS->context['applicationDir']
@@ -211,12 +215,16 @@ class MyController extends MyCommon
             if (is_string($templateDetermined)) {
                 $this->MyCMS->template = $templateDetermined;
             } elseif (is_array($templateDetermined) && isset($templateDetermined['redir'])) {
-                $this->redir($templateDetermined['redir'], $templateDetermined['httpCode']);
+                $this->redir($templateDetermined['redir'], (int) $templateDetermined['httpCode']);
             }
         } else {
             $this->language = $_SESSION['language'] = $this->MyCMS->getSessionLanguage(
-                Tools::ifset($this->get, []),
-                Tools::ifset($this->session, []),
+                //Tools::ifset(
+                    $this->get//, [])
+                ,
+                //Tools::ifset(
+                    $this->session//, [])
+                ,
                 true // Language is finally determined, therefore make the include creating TRANSLATION
             );
         }
@@ -251,7 +259,7 @@ class MyController extends MyCommon
     /**
      * Getter
      *
-     * @return array<array<string>>
+     * @return array<array<mixed>|false|int|null|string>
      */
     public function context()
     {
