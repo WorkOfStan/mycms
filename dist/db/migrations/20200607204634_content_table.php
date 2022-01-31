@@ -5,7 +5,6 @@ use Phinx\Db\Adapter\MysqlAdapter;
 
 class ContentTable extends AbstractMigration
 {
-
     /**
      * Creates table with content.
      * You may want to adapt language rows according to your needs.

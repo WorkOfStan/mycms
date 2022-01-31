@@ -219,7 +219,7 @@ class MyAdminProcess extends MyCommon
                     $post['database-table'] = $this->tableAdmin->escapeDbIdentifier($post['database-table']);
                     $output = $this->MyCMS->fetchSingle('SHOW CREATE TABLE ' . $post['database-table']);
                     $output = "-- " . date('Y-m-d H:i:s') . "\n"
-                        . "-- " . $this->MyCMS->fetchSingle('SELECT VERSION()') . "\n\n"
+                        . "-- " . $this->MyCMS->fetchSingle('SELECT VERSION()') . "\n\n" // TODO use fetchSingleString?
                         . "SET NAMES utf8;\n"
                         . "SET time_zone = '+00:00';\n"
                         . "SET foreign_key_checks = 0;\n"

@@ -13,7 +13,6 @@ require_once __DIR__ . '/../conf/config.php';
 
 class AdminProcessTest extends \PHPUnit_Framework_TestCase
 {
-
     /** @var MyCMSProject */
     protected $myCms;
 

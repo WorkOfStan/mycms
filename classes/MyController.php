@@ -16,7 +16,6 @@ use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
  */
 class MyController extends MyCommon
 {
-
     /** @var array<string|int|array> */
     protected $result;
 

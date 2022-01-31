@@ -4,7 +4,6 @@ use Phinx\Migration\AbstractMigration;
 
 class RedirectorTable extends AbstractMigration
 {
-
     /**
      * Creates redirector table (use only if you use redirector feature)
      *
