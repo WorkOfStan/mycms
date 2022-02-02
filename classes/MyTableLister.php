@@ -328,14 +328,14 @@ class MyTableLister
      * Operation `original` means "leave the column as is" (i.e. don't use it in this SQL statement)
      * And for any other (=unknown) operation is the column ignored, i.e. is not used in this SQL statement.
      *
-     * @param array<string,array> $vars &$vars variables used to filter records
+     * @param array<string,array> $vars variables used to filter records
      * @return string
      */
-    public function bulkUpdateSQL(&$vars)
+    public function bulkUpdateSQL($vars)
     {
         $result = '';
         foreach ($vars['fields'] as $field => $value) {
-            switch (Tools::set($vars['op'][$field])) {
+            switch ((isset($vars['op'][$field]) && $vars['op'][$field] ? $vars['op'][$field] : false)) {
                 case 'value':
                     $result .= ', ' . $this->escapeDbIdentifier($field) . ' = "' . $this->escapeSQL($value) . '"';
                     break;
@@ -365,11 +365,8 @@ class MyTableLister
 //                    $result .= ', ' . $this->escapeDbIdentifier($field) . ' = ' . $this->escapeDbIdentifier($field);
 //                    break;
                 default:
-                    // TODO: the only place why $vars should be passed as reference. Explore if necessary
                     error_log('bulkUpdateSQL unknown operator ' .
-                        //(string) Tools::set($vars['op'][$field])
-                        (string) (isset($vars['op'][$field]) && $vars['op'][$field] ? $vars['op'][$field] : false)
-                    );
+                        (string) (isset($vars['op'][$field]) && $vars['op'][$field] ? $vars['op'][$field] : false));
                     break;
             }
         }
