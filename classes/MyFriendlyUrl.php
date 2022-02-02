@@ -447,7 +447,7 @@ class MyFriendlyUrl extends MyCommon
         foreach ($this->MyCMS->typeToTableMapping as $type => $table) {
             $output[] = $this->prepareTableSelect($token, $type, $table);
         }
-        return $this->MyCMS->fetchSingle(implode(' UNION ', $output)); // TODO replace by fetchSingleString ??
+        return $this->MyCMS->dbms->fetchSingle(implode(' UNION ', $output)); // TODO replace by fetchSingleString ??
     }
 
     /**

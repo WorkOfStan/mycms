@@ -219,11 +219,21 @@ class MyTableLister
             'order by' => '',
             'sql' => ''
         ];
-        $result['limit'] = isset($vars['limit']) && $vars['limit'] ? (int) $vars['limit'] : $this->DEFAULTS['PAGESIZE'];
+        if (isset($vars['limit'])) {
+            Assert::integer($vars['limit']);
+            $result['limit'] = $vars['limit'] ? (int) $vars['limit'] : $this->DEFAULTS['PAGESIZE'];
+        } else {
+            $result['limit'] = $this->DEFAULTS['PAGESIZE'];
+        }
         if ($result['limit'] < 1 || $result['limit'] > $this->DEFAULTS['MAXPAGESIZE']) {
             $result['limit'] = $this->DEFAULTS['PAGESIZE'];
         }
-        $result['offset'] = max(isset($vars['offset']) ? (int) $vars['offset'] : 0, 0);
+        if (isset($vars['offset'])) {
+            Assert::integer($vars['offset']);
+            $result['offset'] = max((int) $vars['offset'], 0);
+        } else {
+            $result['offset'] = 0;
+        }
         foreach ($columns as $key => $value) {
             if (isset($this->fields[$key]['foreign_table']) && $this->fields[$key]['foreign_table']) {
                 $result['join'] .= ' LEFT JOIN ' . $this->fields[$key]['foreign_table']
@@ -294,8 +304,12 @@ class MyTableLister
                 }
             }
         }
-        foreach (Tools::setifempty($vars['sort'], []) as $key => $value) {
+        $tempArr = Tools::setifempty($vars['sort'], []);
+        Assert::isIterable($tempArr);
+        foreach ($tempArr as $key => $value) {
+            Assert::integer($value);
             if (isset(array_keys($columns)[(int) $value - 1])) {
+                Assert::isArray($vars['desc']);
                 $result['order by'] .= ',' . array_values($columns)[(int) $value - 1] . (isset($vars['desc'][$key]) && $vars['desc'][$key] ? ' DESC' : '');
             }
         }
@@ -352,7 +366,10 @@ class MyTableLister
 //                    break;
                 default:
                     // TODO: the only place why $vars should be passed as reference. Explore if necessary
-                    error_log('bulkUpdateSQL unknown operator ' . (string) Tools::set($vars['op'][$field]));
+                    error_log('bulkUpdateSQL unknown operator ' .
+                        //(string) Tools::set($vars['op'][$field])
+                        (string) (isset($vars['op'][$field]) && $vars['op'][$field] ? $vars['op'][$field] : false)
+                    );
                     break;
             }
         }
@@ -426,11 +443,13 @@ class MyTableLister
         }
         $output .= $this->viewInputs($options);
         if ($options['total-rows']) {
-            Assert::integer($options['total-rows']);
+            //$options['total-rows'] = (int) $options['total-rows'];
+            //Assert::integer($options['total-rows']);
             Assert::integer($sql['limit']);
             $output .= $this->viewTable($query, $columns, $options)
-                . $this->pagination($sql['limit'], $options['total-rows'], null, $options);
+                . $this->pagination($sql['limit'], (int) $options['total-rows'], null, $options);
         }
+        Assert::string($options['total-rows']); // TODO: if it throws exception just type cast to string
         return $output . ((!$options['total-rows'] && isset($_GET['col'])) ?
             ('<p class="alert alert-danger"><small>' . $this->translate('No records found.') . '</small></p>') :
             ('<p class="text-info"><small>' . $this->translate('Total rows: ') . $options['total-rows'] . '.</small></p>'));

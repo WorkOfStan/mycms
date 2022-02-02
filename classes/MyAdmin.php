@@ -185,7 +185,12 @@ class MyAdmin extends MyCommon
         $result .= '</div></li></ul></div>';
         if (isset($_SESSION['user'])) {
             $result .= '<form class="collapse mt-md-0" id="nav-search-form">'
-                . Tools::htmlInput('search', '', Tools::set($_GET['search'], ''), ['class' => 'form-control', 'placeholder' => $this->tableAdmin->translate('Search'), 'required' => true, 'id' => 'nav-search-input'])
+                . Tools::htmlInput(
+                    'search',
+                    '',
+                    Tools::set($_GET['search'], ''),
+                    ['class' => 'form-control', 'placeholder' => $this->tableAdmin->translate('Search'), 'required' => true, 'id' => 'nav-search-input']
+                )
                 . '</form>';
         }
         $result .= '
@@ -400,12 +405,15 @@ class MyAdmin extends MyCommon
     protected function outputAgendas()
     {
         // show agendas in the sidebar
-        $result = '<details id="agendas"><summary class="page-header">' . $this->tableAdmin->translate('Agendas') . '<br />'
-            . $this->tableAdmin->translate('Select your agenda, then particular row.') . '</summary><div class="ml-3">' . PHP_EOL;
+        $result = '<details id="agendas"><summary class="page-header">' . $this->tableAdmin->translate('Agendas')
+            . '<br />'
+            . $this->tableAdmin->translate('Select your agenda, then particular row.') . '</summary><div class="ml-3">'
+            . PHP_EOL;
         foreach ($this->agendas as $agenda => $option) {
             Tools::setifempty($option['table'], $agenda);
             $result .= '<details class="my-1" id="details-' . $agenda . '">
-                <summary><i class="fa fa-table"></i> ' . MyTools::h(Tools::setifempty($option['display'], $agenda)) . '</summary>
+                <summary><i class="fa fa-table"></i> '
+                . MyTools::h(Tools::setifempty($option['display'], $agenda)) . '</summary>
                 <div class="card" id="agenda-' . $agenda . '"></div>
                 </details>' . PHP_EOL;
             if (isset($option['prefill'])) {
@@ -418,7 +426,8 @@ class MyAdmin extends MyCommon
             } else {
                 $tmpBadge = '';
             }
-            $this->tableAdmin->script .= 'getAgenda(' . json_encode($agenda) . ',{table:' . json_encode($option['table'] ?: $agenda) . $tmpBadge . '});' . PHP_EOL;
+            $this->tableAdmin->script .= 'getAgenda(' . json_encode($agenda)
+                . ',{table:' . json_encode($option['table'] ?: $agenda) . $tmpBadge . '});' . PHP_EOL;
         }
         $result .= '</div></details>';
         $this->tableAdmin->script .= '$("#agendas > summary").click();';
@@ -466,7 +475,8 @@ class MyAdmin extends MyCommon
             . $this->tableAdmin->script . PHP_EOL
             // AdminRecordName displays changes in red next to the main h2
             . 'if (typeof(AdminRecordName) != "undefined") {' . PHP_EOL
-            . '    $("h2 .AdminRecordName").text(AdminRecordName.replaceAll(/<\/?[a-z][^>]*>/i, "").substr(0, 50));' . PHP_EOL
+            . '    $("h2 .AdminRecordName").text(AdminRecordName.replaceAll(/<\/?[a-z][^>]*>/i, "").substr(0, 50));'
+            . PHP_EOL
             . '}' . PHP_EOL
             . '});' . PHP_EOL
             . ' </script>';
@@ -512,13 +522,18 @@ class MyAdmin extends MyCommon
     {
         $tablePrefixless = mb_substr($_GET['table'], mb_strlen(TAB_PREFIX));
         $result = '<h1 class="page-header">'
-            . '<a href="?table=' . Tools::h($_GET['table']) . '" title="' . $this->tableAdmin->translate('Back to listing') . '"><i class="fa fa-list-alt"></i></a> '
+            . '<a href="?table=' . Tools::h($_GET['table']) . '" title="'
+            . $this->tableAdmin->translate('Back to listing') . '"><i class="fa fa-list-alt"></i></a> '
             . '<tt>' . Tools::h($tablePrefixless) . '</tt></h1>' . PHP_EOL;
         if (isset($_GET['where']) && is_array($_GET['where'])) {
             // table edit
-            $result .= '<h2 class="sub-header">' . $this->tableAdmin->translate('Edit') . ' <span class="AdminRecordName"></span></h2>';
+            $result .= '<h2 class="sub-header">' . $this->tableAdmin->translate('Edit')
+                . ' <span class="AdminRecordName"></span></h2>';
             $tabs = [null];
-            $tempIterable = Tools::set($this->tableAdmin->tableContext['language-versions'], $this->MyCMS->TRANSLATIONS);
+            $tempIterable = Tools::set(
+                $this->tableAdmin->tableContext['language-versions'],
+                $this->MyCMS->TRANSLATIONS
+            );
             Assert::isIterable($tempIterable);
             foreach ($tempIterable as $key => $value) {
                 $tabs[$value] = "~^.+_$key$~i";
@@ -891,10 +906,7 @@ class MyAdmin extends MyCommon
         if (!isset($_SESSION['user'])) {
             $_GET['table'] = $_GET['media'] = $_GET['user'] = null;
         }
-        return mb_substr(
-            Tools::set($_GET['table']),
-            mb_strlen(TAB_PREFIX)
-        ) ?:
+        return mb_substr((isset($_GET['table']) && $_GET['table'] ? $_GET['table'] : false), mb_strlen(TAB_PREFIX)) ?:
             (
                 isset($_GET['user']) ? $this->tableAdmin->translate('User') :
             (

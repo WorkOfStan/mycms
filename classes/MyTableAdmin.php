@@ -67,6 +67,7 @@ class MyTableAdmin extends MyTableLister
         if (isset($options['tabs']) && is_array($options['tabs'])) {
             foreach ($options['tabs'] as $key => $value) {
                 foreach ($this->fields as $k => $field) {
+                    Assert::string($value);
                     if ($value && preg_match($value, $k)) {
                         $tabs[$key][$k] = $field;
                         unset($tabs[0][$k]);
@@ -87,6 +88,7 @@ class MyTableAdmin extends MyTableLister
             $output .= (count($tabs) > 1 ? '<div class="tab-pane fade' . ($tabKey === 0 ? ' show active' : '') . '" id="tab-' . ($tmp = Tools::webalize($this->table . '-' . $tabKey)) . '" role="tabpanel" aria-labelledby="nav-' . $tmp . '">' : '')
                 . ($options['layout-row'] ? '<div class="database">' : '<table class="database">');
             foreach ($tab as $key => $field) {
+                Assert::isArray($options['include-fields']);
                 if (!in_array($key, $options['include-fields']) || in_array($key, $options['exclude-fields'])) {
                     continue;
                 }
@@ -386,11 +388,12 @@ class MyTableAdmin extends MyTableLister
             if (is_null($value)) {
                 $input .= Tools::htmlInput("original-null[$key]", '', 1, 'hidden');
             } else {
+                Assert::isArray($options);
                 $input .= Tools::htmlInput("original[$key]", '', isset($options['prefill'][$key]) && is_scalar($options['prefill'][$key]) ? '' : $value, 'hidden');
             }
         }
-        $output .= $input . $this->customInputAfter($key, $value, $record) . ($options['layout-row'] ? '' : '</td></tr>') . PHP_EOL;
-        return $output;
+        return $output . $input . $this->customInputAfter($key, $value, $record)
+            . ($options['layout-row'] ? '' : '</td></tr>') . PHP_EOL;
     }
 
     /**
