@@ -214,7 +214,7 @@ class MyTableAdmin extends MyTableLister
                 // set null to all the fields named after $comment['subfields'] values (TODO refactor?)
                 foreach ($comment['subfields'] as $v) {
                     // initiates $json as an array only once and only in case when $comment['subfields'] isn't empty
-                    if(!is_array($json)){
+                    if (!is_array($json)) {
                         $json = [];
                     }
                     $json[$v] = isset($json[$v]) ? $json[$v] : null; // TODO, maybe `$json[$v] = null;` suffices
