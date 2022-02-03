@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MyCommon::verboseBarDumpString for strict string response
 
 ### `Changed` for changes in existing functionality
+- *BREAKING CHANGE* MyFriendlyUrl::determineTemplate change from `@return string|array<string>|true` to `@return string|array<int|string>|true`
+- *BREAKING CHANGE* dist/FriendlyUrlTest.php `Assert::string($templateDetermined['redir']);` added where needed
 - instead of dist specific workflows, use reusable ones (linter.yml, overtrue-phplint.yml, php-composer-dependencies.yml, phpcbf.yml)
 - VALIDATE_GITHUB_ACTIONS: false as it returns false positive `unknown Webhook event "workflow_call"` (todo reconsider later)
 - PHPStan level lowered to 8 due to stricter PHPStan:1.0

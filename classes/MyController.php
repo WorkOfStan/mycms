@@ -222,7 +222,7 @@ class MyController extends MyCommon
             if (is_string($templateDetermined)) {
                 $this->MyCMS->template = $templateDetermined;
             } elseif (is_array($templateDetermined) && isset($templateDetermined['redir'])) {
-                $this->redir($templateDetermined['redir'], (int) $templateDetermined['httpCode']);
+                $this->redir((string) $templateDetermined['redir'], (int) $templateDetermined['httpCode']);
             }
         } else {
             /**

@@ -321,7 +321,7 @@ class MyFriendlyUrl extends MyCommon
      * as self::TEMPLATE_NOT_FOUND || null || true
      *
      * @param array<string> $options (TODO:rest of line valid??)OPTIONAL verbose==true bleeds info to standard output
-     * @return string|array<string>|true `string` with name of the template when template determined
+     * @return string|array<int|string>|true `string` with name of the template when template determined
      *     || `array` with redir field when redirect || `bool (true)` when template set to `TEMPLATE_NOT_FOUND`
      */
     public function determineTemplate(array $options = [])
@@ -333,8 +333,18 @@ class MyFriendlyUrl extends MyCommon
 
         //FRIENDLY URL & Redirect variables
         $friendlyUrlRedirectVariables = $this->friendlyIdentifyRedirect($options);
-        if (is_bool($friendlyUrlRedirectVariables) || isset($friendlyUrlRedirectVariables['redir'])) {
-            return $friendlyUrlRedirectVariables;
+        if (is_bool($friendlyUrlRedirectVariables)) {
+            return $friendlyUrlRedirectVariables; // true
+        }
+        if (isset($friendlyUrlRedirectVariables['redir'])) {
+            //var_dump($friendlyUrlRedirectVariables);exit;
+            Assert::string($friendlyUrlRedirectVariables['redir']);
+            Assert::integer($friendlyUrlRedirectVariables['httpCode']);
+            // array<int|string>
+            return [
+                'redir' => $friendlyUrlRedirectVariables['redir'],
+                'httpCode' => $friendlyUrlRedirectVariables['httpCode']
+            ];
         }
         //$token, $matches - will be expected below for FRIENDLY URL & Redirect calculation
         //(see friendlyIdentifyRedirect PHPDoc for explanation)
@@ -346,21 +356,21 @@ class MyFriendlyUrl extends MyCommon
 
         $parametricRuleToTemplate = $this->parametricRuleToTemplate();
         if (!is_null($parametricRuleToTemplate)) {
-            return $parametricRuleToTemplate;
+            return $parametricRuleToTemplate; // string
         }
 
         //FRIENDLY URL & Redirect calculation where $token, $matches are expected from above
         $pureFriendlyUrl = $this->pureFriendlyUrl($options, $token, $matches);
         if (!is_null($pureFriendlyUrl)) {
             $this->verboseBarDump($this->get, 'determineTemplate this->get before return pureFriendlyUrl');
-            $this->verboseBarDump($pureFriendlyUrl, 'determineTemplate return pureFriendlyUrl');
-            return $pureFriendlyUrl;
+            $this->verboseBarDumpString($pureFriendlyUrl, 'determineTemplate return pureFriendlyUrl');
+            return $pureFriendlyUrl; // string
         }
 
         // URL token not found
         $this->MyCMS->logger->error("404 Not found - {$options['REQUEST_URI']} and token=`{$token}`");
         $this->verboseBarDump("No condition catched the input.", "determineTemplate fail");
-        return self::TEMPLATE_NOT_FOUND;
+        return self::TEMPLATE_NOT_FOUND; // string
     }
 
     /**
@@ -382,7 +392,7 @@ class MyFriendlyUrl extends MyCommon
             return $this->verboseBarDumpString(self::TEMPLATE_DEFAULT, 'pureFriendlyUrl return default');
         }
 
-        // Language MUST always be set
+        // Language MUST be set
         if (!isset($matches[1])) {
             $this->language = DEFAULT_LANGUAGE;
             $this->verboseBarDumpString($this->language, 'pureFriendlyUrl: Language reset to DEFAULT');
@@ -432,8 +442,9 @@ class MyFriendlyUrl extends MyCommon
      * but SQL statement may be adapted in any way so this method MAY be overidden in child class
      *
      * @param string $token
-     * @return null|false|array<string>
-     *     null on empty result, false on database failure or one-dimensional array [id, type] on success
+     * @return null|array<string|null>
+     *     null on empty result | one-dimensional array [id, type] on success
+     *     Throws exception on database failure
      */
     protected function findFriendlyUrlToken($token)
     {
@@ -447,7 +458,12 @@ class MyFriendlyUrl extends MyCommon
         foreach ($this->MyCMS->typeToTableMapping as $type => $table) {
             $output[] = $this->prepareTableSelect($token, $type, $table);
         }
-        return $this->MyCMS->dbms->fetchSingle(implode(' UNION ', $output)); // TODO replace by fetchSingleString ??
+        $result = $this->MyCMS->dbms->fetchSingle(implode(' UNION ', $output));
+        if(is_null($result)) {
+            return null;
+        }
+        Assert::isArray($result);
+        return $result;
     }
 
     /**

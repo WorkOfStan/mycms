@@ -125,6 +125,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
                 'non-301 httpCode field in ' . print_r($templateDetermined, true)
             );
             $this->assertArrayHasKey('redir', $templateDetermined, 'Determine template ' . $message);
+            Assert::string($templateDetermined['redir']);
             $this->assertStringEndsWith('/alfa', $templateDetermined['redir'], 'redir field MUST end with /alfa');
         } else {
             $this->assertEquals('product', $templateDetermined, $message);
@@ -161,6 +162,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
                 'non-301 httpCode field in ' . print_r($templateDetermined, true)
             );
             $this->assertArrayHasKey('redir', $templateDetermined, 'Determine template ' . $message);
+            Assert::string($templateDetermined['redir']);
             $this->assertStringEndsWith('/beta', $templateDetermined['redir'], 'redir field MUST end with /beta');
         } else {
             $this->assertEquals('product', $templateDetermined, $message);
@@ -213,6 +215,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
                 'non-301 httpCode field in ' . print_r($templateDetermined, true)
             );
             $this->assertArrayHasKey('redir', $templateDetermined, 'Determine template ' . $message);
+            Assert::string($templateDetermined['redir']);
             $this->assertStringEndsWith('/404', $templateDetermined['redir'], 'redir field MUST end with /404');
         } else {
             $this->assertEquals('product', $templateDetermined, $message);
@@ -250,6 +253,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
                 'non-301 httpCode field in ' . print_r($templateDetermined, true)
             );
             $this->assertArrayHasKey('redir', $templateDetermined, 'Determine template ' . $message);
+            Assert::string($templateDetermined['redir']);
             $this->assertStringEndsWith(
                 '/default-category-cs',
                 $templateDetermined['redir'],
@@ -321,6 +325,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
                 'non-301 httpCode field in ' . print_r($templateDetermined, true)
             );
             $this->assertArrayHasKey('redir', $templateDetermined, 'Determine template ' . $message);
+            Assert::string($templateDetermined['redir']);
             $this->assertStringEndsWith('/404', $templateDetermined['redir'], 'redir field MUST end with /404');
         } else {
             $this->assertEquals('category', $templateDetermined, $message);
