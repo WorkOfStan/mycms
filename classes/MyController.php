@@ -70,7 +70,15 @@ class MyController extends MyCommon
             'pageTitle' => '', // todo verify if it is used at output
             ])
         ];
+        /**
+         * @phpstan-ignore-next-line
+         * Result of && is always true.
+         */
         $this->friendlyUrlInstantiated = isset($this->friendlyUrl) && ($this->friendlyUrl instanceof MyFriendlyUrl);
+        /**
+         * @phpstan-ignore-next-line
+         * If condition is always true.
+         */
         if ($this->friendlyUrlInstantiated) {
             if (substr($this->friendlyUrl->applicationDir, -1) === '/') {
                 throw new Exception('applicationDir MUST NOT end with slash');

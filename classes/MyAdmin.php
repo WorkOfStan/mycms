@@ -538,14 +538,18 @@ class MyAdmin extends MyCommon
             foreach ($tempIterable as $key => $value) {
                 $tabs[$value] = "~^.+_$key$~i";
             }
-            $result .= $this->outputTableBeforeEdit()
-                . $this->tableAdmin->outputForm($_GET['where'], [
+            $tempOutputFormOptions = [
                     'layout-row' => true,
                     'prefill' => isset($_GET['prefill']) && is_array($_GET['prefill']) ? $_GET['prefill'] : [],
                     'original' => true,
                     'tabs' => $tabs
-                ])
-                . $this->outputTableAfterEdit();
+                ];
+            /**
+             * @phpstan-ignore-next-line
+             * Parameter #2 $options of method WorkOfStan\MyCMS\MyTableAdmin::outputForm() expects array<array<array<string>|string>|bool>, array<string, array|true> given.
+             * caused by PHPStan thinking $tabs may be a string. But why??
+             */
+            $result .= $this->outputTableBeforeEdit() . $this->tableAdmin->outputForm($_GET['where'], $tempOutputFormOptions) . $this->outputTableAfterEdit();
         } elseif (isset($_POST['edit-selected'])) {
             $result .= $this->outputTableEditSelected();
         } elseif (isset($_POST['clone-selected'])) {

@@ -67,8 +67,7 @@ class MyTableAdmin extends MyTableLister
         if (isset($options['tabs']) && is_array($options['tabs'])) {
             foreach ($options['tabs'] as $key => $value) {
                 foreach ($this->fields as $k => $field) {
-                    Assert::string($value);
-                    if ($value && preg_match($value, $k)) {
+                    if ($value && is_string($value) && preg_match($value, $k)) {
                         $tabs[$key][$k] = $field;
                         unset($tabs[0][$k]);
                     }
@@ -169,8 +168,11 @@ class MyTableAdmin extends MyTableLister
             $field['type'] = null;
         }
         $comment = json_decode(isset($field['comment']) ? (string) $field['comment'] : '{}', true);
-        Assert::isArray($comment);
-        Tools::setifnull($comment['display']);
+        if (is_array($comment)) {
+            $comment['display'] = isset($comment['display']) ? $comment['display'] : null;
+        } else {
+            $comment = ['display' => null];
+        }
         if (!is_null($field['type']) && $comment['display'] == 'option') {
             $query = $this->dbms->queryStrictObject('SELECT DISTINCT ' . Tools::escapeDbIdentifier($key)
                 . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' ORDER BY ' . Tools::escapeDbIdentifier($key) . ' LIMIT ' . $this->DEFAULTS['MAXSELECTSIZE']);
@@ -209,8 +211,13 @@ class MyTableAdmin extends MyTableLister
             $json = json_decode($value, true) ?: (Tools::among($value, '', '[]', '{}') ? [] : $value);
             $output .= '<div class="input-expanded">' . Tools::htmlInput($key . EXPAND_INFIX, '', 1, 'hidden');
             if (!is_array($json) && isset($comment['subfields']) && is_array($comment['subfields'])) {
+                // set null to all the fields named after $comment['subfields'] values (TODO refactor?)
                 foreach ($comment['subfields'] as $v) {
-                    Tools::setifnull($json[$v], null);
+                    // initiates $json as an array only once and only in case when $comment['subfields'] isn't empty
+                    if(!is_array($json)){
+                        $json = [];
+                    }
+                    $json[$v] = isset($json[$v]) ? $json[$v] : null; // TODO, maybe `$json[$v] = null;` suffices
                 }
             }
             if (is_array($json) && is_scalar(reset($json))) {
