@@ -87,7 +87,7 @@ class MyTableLister
      *
      * @param LogMysqli $dbms database management system already connected to wanted database
      * @param string $table to view
-     * @param array<mixed> $options
+     * @param array<string|array<string>> $options display options
      */
     public function __construct(LogMysqli $dbms, $table, array $options = [])
     {
@@ -201,7 +201,8 @@ class MyTableLister
         $tmp = $this->dbms->fetchSingle('SELECT TABLE_COMMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA="'
             . $this->escapeSQL($this->database) . '" AND TABLE_NAME="' . $this->escapeSQL($this->table) . '"');
         Assert::string($tmp);
-        $this->tableContext = json_decode($tmp, true) or [];
+        $tempJsonDecode = json_decode($tmp, true);
+        $this->tableContext = is_array($tempJsonDecode) ? $tempJsonDecode : [];
     }
 
     /**
@@ -427,7 +428,7 @@ class MyTableLister
             Tools::setifempty($options[$i]);
         }
         // find out what columns to include/exclude
-        if (!($columns = $this->getColumns($options))) {
+        if (!($columns = $this->getColumns(['include' => (array) $options['include'], 'exclude' => (array) $options['exclude']]))) {
             return '';
         }
         $sql = $this->selectSQL($columns, $_GET);
@@ -502,8 +503,10 @@ class MyTableLister
             foreach ($_GET['col'] as $key => $value) {
                 if ($value) {
                     $this->script .= 'addSearchRow($(\'#search-div' . $this->rand . '\'), "'
-                            . Tools::escapeJs($value) . '",' . Tools::setifnull($_GET['op'][$key], 0) . ', "'
-                            . addslashes((string) Tools::setifnull($_GET['val'][$key], '')) . '");' . PHP_EOL;
+                        . Tools::escapeJs($value) . '",' . Tools::setifnull($_GET['op'][$key], 0) . ', "'
+                        . addslashes(
+                            (string) ((isset($_GET['val'][$key]) && (is_scalar($_GET['val'][$key]) || is_null($_GET['val'][$key]) ) ) ? ( is_null($_GET['val'][$key]) ? '' : $_GET['val'][$key]) : '')
+                        ) . '");' . PHP_EOL;
                 } else {
                     unset($_GET['col'][$key], $_GET['op'][$key], $_GET['val'][$key]);
                 }
@@ -1070,7 +1073,7 @@ class MyTableLister
         if ($keys = $this->filterKeys(['PRI'])) {
             Assert::string(array_keys($keys)[0]);
             $result [] = 'where[' . urlencode(array_keys($keys)[0]) . ']='
-                . urlencode(Tools::set($row[array_keys($keys)[0]]));
+                . urlencode((isset($row[array_keys($keys)[0]]) && $row[array_keys($keys)[0]] ? $row[array_keys($keys)[0]] : ''));
         } elseif ($keys = $this->filterKeys(['UNI'])) {
             foreach ($keys as $key => $value) {
                 if (isset($row[$key]) && $row[$key] !== null) {

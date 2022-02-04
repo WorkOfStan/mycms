@@ -459,7 +459,7 @@ class MyFriendlyUrl extends MyCommon
             $output[] = $this->prepareTableSelect($token, $type, $table);
         }
         $result = $this->MyCMS->dbms->fetchSingle(implode(' UNION ', $output));
-        if(is_null($result)) {
+        if (is_null($result)) {
             return null;
         }
         Assert::isArray($result);

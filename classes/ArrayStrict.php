@@ -33,6 +33,22 @@ class ArrayStrict
     }
 
     /**
+     * Asserts that all values of the array are of string type
+     * To prevent 'expects array<string>, mixed given' PHPStan error mesage
+     *
+     * @return string[]
+     */
+    public function arrayString()
+    {
+        $newArr = [];
+        foreach ($this->arr as $k => $v) {
+            Assert::string($v);
+            $newArr[$k] = $v;
+        }
+        return $newArr;
+    }
+
+    /**
      * Returns bool value of the field with bool value or throws an Exception
      *
      * @param string $field

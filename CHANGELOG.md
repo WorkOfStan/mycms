@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - phpstan-baseline.neon to hide type hint imperfections in PHPStan level=8 (TODO fix these)
 - LogMysqli::fetchSingleString for strict string response
 - MyCommon::verboseBarDumpString for strict string response
+- ArrayStrict::arrayString to asserts that all values of the array are of string type
 
 ### `Changed` for changes in existing functionality
 - *BREAKING CHANGE* MyFriendlyUrl::determineTemplate change from `@return string|array<string>|true` to `@return string|array<int|string>|true`
@@ -19,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - VALIDATE_GITHUB_ACTIONS: false as it returns false positive `unknown Webhook event "workflow_call"` (todo reconsider later)
 - PHPStan level lowered to 8 due to stricter PHPStan:1.0
 - MyTableLister::bulkUpdateSQL passes $vars by value (it's not necessary to pass by reference)
+- various conditions changed to reflect type hinting
+- Tools::setifnull and Tools::set replaced by a type hint strict code
 
 ### `Deprecated` for soon-to-be removed features
 

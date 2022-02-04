@@ -148,16 +148,45 @@ class MyCMSMonoLingual
     }
 
     /**
+     * Assert array<string|null>
+     *
+     * @param array<mixed> $arr
+     * @return array<string|null>
+     */
+    private function assertArrayStringNull(array $arr)
+    {
+        $result = [];
+        foreach ($arr as $k2 => $v2) {
+            if (!is_null($v2) && !is_string($v2)) {
+                throw new Exception('String or null expected, but array contains type ' . gettype($v2));
+            }
+            $result[$k2] = $v2;
+        }
+        return $result;
+    }
+
+    /**
      *
      * @param string $sql SQL statement to be executed
-     * @return array<array<string|null>|string> - either associative array, empty array on empty SELECT
+     * @return array<array<string|null>|string> Either associative array or empty array on empty SELECT
+     *
      *   Exception on error
      */
     public function fetchAndReindexStrictArray($sql)
     {
-        $result = $this->dbms->fetchAndReindex($sql);
+        $result = $this->dbms->fetchAndReindex($sql); // returns array<array<string|null|array<string|null>>|string>|false
         Assert::isArray($result);
-        return $result;
+        $resultTwoLevelArray = [];
+        foreach ($result as $k => $v) {
+            if (is_string($v)) {
+                $resultTwoLevelArray[$k] = $v;
+            } elseif (is_array($v)) {
+                $resultTwoLevelArray[$k] = $this->assertArrayStringNull($v);
+            } else {
+                throw new Exception('Unexpected structure of SQL statement result. Array contains type ' . gettype($v));
+            }
+        }
+        return $resultTwoLevelArray;
     }
 
     /**

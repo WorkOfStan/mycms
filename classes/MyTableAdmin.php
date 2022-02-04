@@ -40,16 +40,19 @@ class MyTableAdmin extends MyTableLister
                 unset($options['include-fields'][$key]);
             }
         }
-        if (!is_null($where) && $where != ['']) {
-            if (is_scalar($where)) {
-                $where = ['id' => $where];
-            }
+        if (is_scalar($where)) {
+            $where = ['id' => $where];
+        }
+        if ($where != ['']) {
             $sql = [];
             foreach ($where as $key => $value) {
                 $sql [] = Tools::escapeDbIdentifier($key) . '="' . $this->escapeSQL((string) $value) . '"';
             }
+            Assert::isArray($options['include-fields']);
+            $tempOptionsIncludeFields = new ArrayStrict($options['include-fields']);
             $record = $this->dbms->query(
-                'SELECT ' . $this->dbms->listColumns($options['include-fields'], $this->fields) . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' WHERE ' . implode(' AND ', $sql) . ' LIMIT 1'
+                'SELECT ' . $this->dbms->listColumns($tempOptionsIncludeFields->arrayString(), $this->fields)
+                . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' WHERE ' . implode(' AND ', $sql) . ' LIMIT 1'
             );
             if (is_object($record)) {
                 $record = $record->fetch_assoc();

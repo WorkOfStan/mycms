@@ -191,7 +191,7 @@ parameters:
 			count: 1
 			path: classes/MyTableLister.php
 
-		-
-			message: "#^Right side of \\|\\| is always false\\.$#"
-			count: 1
-			path: classes/MyTableLister.php
+		#-
+		#	message: "#^Right side of \\|\\| is always false\\.$#"
+		#	count: 1
+		#	path: classes/MyTableLister.php
