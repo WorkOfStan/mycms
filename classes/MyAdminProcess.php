@@ -557,11 +557,10 @@ class MyAdminProcess extends MyCommon
                 if ($post['info'] && class_exists('\ZipArchive')) {
                     $ZipArchive = new \ZipArchive();
                 }
-                Assert::string($post['subfolder']);
-                Assert::string($post['wildcard'], 'Expected a string. Got: %s');
+                Assert::string($post['subfolder'], 'Expected a string. Got: %s');
                 foreach (
                     glob(
-                        DIR_ASSETS . $post['subfolder'] . '/' . (isset($post['wildcard']) ? $post['wildcard'] : '*.*'),
+                        DIR_ASSETS . $post['subfolder'] . '/' . (isset($post['wildcard']) && is_string($post['wildcard']) ? $post['wildcard'] : '*.*'),
                         isset($post['wildcard']) ? GLOB_BRACE : 0
                     ) as $file
                 ) {

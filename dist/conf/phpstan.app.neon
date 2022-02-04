@@ -130,6 +130,6 @@ parameters:
         message: '#Variable \$_POST in isset\(\) always exists and is not nullable#'
         path: ../process.php
       # This as property is defined in MyCMSProject extends MyCMS
-      -
-        message: '#Access to an undefined property WorkOfStan\\MyCMS\\MyCMS::\$SETTINGS.#'
-        path: ../classes/Admin.php
+      #-
+      #  message: '#Access to an undefined property WorkOfStan\\MyCMS\\MyCMS::\$SETTINGS.#'
+      #  path: ../classes/Admin.php

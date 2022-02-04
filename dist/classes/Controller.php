@@ -160,7 +160,11 @@ class Controller extends MyController
                     $categoryId = null;
                     // TODO localize // TODO content element
                     $this->MyCMS->context['pageTitle'] = 'Categories';
-                    Assert::isArray($this->MyCMS->context['content']);
+                    if (!array_key_exists('content', $this->MyCMS->context)) {
+                        $this->MyCMS->context['content'] = [];
+                    } else {
+                        Assert::isArray($this->MyCMS->context['content']);
+                    }
                     // TODO localize perex for all categories // TODO content element
                     $this->MyCMS->context['content']['description'] = 'About all categories';
                 } else {

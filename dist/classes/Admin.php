@@ -231,20 +231,28 @@ class Admin extends MyAdmin
         // products // TODO make work in Dist
         if (isset($_GET['products'])) {
             $output .= '<h1>' . $this->tableAdmin->translate('Products') . '</h1><div id="agenda-products">';
-            $categories = $this->MyCMS->fetchAll('SELECT id,category_' . $_SESSION['language'] . ' AS category,active
+            $categories = $this->MyCMS->fetchAll('SELECT id,name_' . $_SESSION['language'] . ' AS category,active
                 FROM ' . TAB_PREFIX . 'category'
-                . ' WHERE LENGTH(path)=' . (strlen($this->MyCMS->SETTINGS['PATH_CATEGORY']) + PATH_MODULE) .
-                ' AND LEFT(path,' . PATH_MODULE . ')="' .
-                $this->MyCMS->escapeSQL($this->MyCMS->SETTINGS['PATH_CATEGORY']) . '"
-                ORDER BY path');
-            $products = $this->MyCMS->fetchAndReindexStrictArray('SELECT category_id,id,product_' .
-                $_SESSION['language'] . ' AS product,image,sort,active FROM ' . TAB_PREFIX . 'product ORDER BY sort');
-            $perex = $this->MyCMS->fetchAndReindexStrictArray('SELECT product_id,id,type,active,TRIM(CONCAT(content_' .
-                $_SESSION['language'] . ', " ", CONCAT(LEFT(description_' .
+                // TODO reconsider code below from project A
+                //. ' WHERE LENGTH(path)=' . (strlen($this->MyCMS->SETTINGS['PATH_CATEGORY']) + PATH_MODULE) .
+                //' AND LEFT(path,' . PATH_MODULE . ')="' .
+                //$this->MyCMS->escapeSQL($this->MyCMS->SETTINGS['PATH_CATEGORY']) . '"
+                //ORDER BY path'
+                );
+            $products = $this->MyCMS->fetchAndReindexStrictArray('SELECT category_id,id,name_' .
+                $_SESSION['language'] . ' AS product,'
+                //. 'image,' // TODO add image to the default dist app
+                . 'sort,active FROM ' . TAB_PREFIX . 'product ORDER BY sort');
+            $perex = $this->MyCMS->fetchAndReindexStrictArray('SELECT '
+                //. 'product_id,' //TODO was used in A project to link certain content table rows to products.
+                // Reconsider here.
+                . 'id,type,active,TRIM(CONCAT(content_' .
+                $_SESSION['language'] . ', " ", CONCAT(LEFT(content_' .
                 $_SESSION['language'] . ', 50), "…"))) AS content
-                FROM ' . TAB_PREFIX . 'content
-                WHERE type IN ("perex", "claim", "testimonial") AND product_id IS NOT NULL
-                ORDER BY FIELD(type, "testimonial", "claim", "perex")');
+                FROM ' . TAB_PREFIX . 'content '
+                . 'WHERE type IN ("perex", "claim", "testimonial") '
+                //. 'AND product_id IS NOT NULL ' // TODO see product_id above
+                . 'ORDER BY FIELD(type, "testimonial", "claim", "perex")');
             foreach ($categories as $category) {
                 Assert::string($category['id']);
                 Assert::string($category['category']);
@@ -297,11 +305,13 @@ class Admin extends MyAdmin
                         Tools::h((string) $product['product']) . '</span>'
                         . ' <sup class="product-texts badge badge-' . (count($tmp) ? 'secondary' : 'warning') .
                         '"><small>' . count($tmp) . '</small></sup>'
-                        . ' <sup class="product-images badge badge-' .
-                        (file_exists((string) $product['image']) ? 'secondary' : 'warning') .
-                        '" data-toggle="tooltip" data-html="true" title="<img src=\'' .
-                        Tools::h((string) $product['image']) .
-                        '\' width=\'200\' class=\'img-thumbnail\'/>"><i class="far fa-image"></i></sup></summary>';
+                        // TODO implement image field
+                        //. ' <sup class="product-images badge badge-' .
+                        //(file_exists((string) $product['image']) ? 'secondary' : 'warning') .
+                        //'" data-toggle="tooltip" data-html="true" title="<img src=\'' .
+                        //Tools::h((string) $product['image']) .
+                        //'\' width=\'200\' class=\'img-thumbnail\'/>"><i class="far fa-image"></i></sup>'
+                        . '</summary>';
                     foreach ($tmp as $row) {
                         Assert::isArray($row);
                         $output .= '<div class="ml-5' . ($row['active'] ? '' : ' inactive') . '"><a href="?table=' .
@@ -320,7 +330,7 @@ class Admin extends MyAdmin
                     $category['id'] . '&amp;prefill[sort]=' . $i . '" class="ml-4">'
                     . '<i class="far fa-plus-square"></i></a> ' . $this->tableAdmin->translate('New record');
             }
-            $query = $this->MyCMS->dbms->queryStrictObject('SELECT id,product_' . $_SESSION['language'] .
+            $query = $this->MyCMS->dbms->queryStrictObject('SELECT id,name_' . $_SESSION['language'] .
                 ' AS product,sort,active FROM ' . TAB_PREFIX . 'product WHERE category_id IN (0, NULL) ORDER BY sort');
             $output .= $query->num_rows ? '<h4><i>' . $this->tableAdmin->translate('None') . '</i></h4>' . PHP_EOL : '';
             while ($row = $query->fetch_assoc()) {
@@ -337,21 +347,34 @@ class Admin extends MyAdmin
                 </footer></div>';
         } elseif (isset($_GET['pages'])) { // pages // TODO make it work in Dist
             $output .= '<h1>' . $this->tableAdmin->translate('Pages') . '</h1><div id="agenda-pages">';
-            $categories = $this->MyCMS->fetchAndReindexStrictArray('SELECT id,path,active,category_' .
-                $_SESSION['language'] . ' AS category FROM ' . TAB_PREFIX . 'category' .
-                ' WHERE LEFT(path, ' . PATH_MODULE . ')="' .
-                $this->MyCMS->escapeSQL($this->MyCMS->SETTINGS['PATH_HOME']) . '" ORDER BY path');
-            $articles = $this->MyCMS->fetchAndReindexStrictArray('SELECT category_id,id,active,IF(content_' .
-                $_SESSION['language'] . ' = "", LEFT(CONCAT(code, " ", description_' .
+            $categories = $this->MyCMS->fetchAndReindexStrictArray('SELECT id,'
+                //. 'path,' // TODO path was used in A project. Reconsider here.
+                . 'active,name_' .
+                $_SESSION['language'] . ' AS category FROM ' . TAB_PREFIX . 'category'
+                // TODO path was used in A project. Reconsider here.
+                // . ' WHERE LEFT(path, ' . PATH_MODULE . ')="'
+                // . $this->MyCMS->escapeSQL($this->MyCMS->SETTINGS['PATH_HOME']) . '" ORDER BY path'
+            );
+            \Tracy\Debugger::barDump($categories, 'CATEGORIES'); // temp
+            $articles = $this->MyCMS->fetchAndReindexStrictArray('SELECT '
+                //. 'category_id,' // TODO category_id was used in A project to link content rows. Reconsider here.
+                . 'id,active,IF(content_' .
+                $_SESSION['language'] . ' = "", LEFT(CONCAT(code, " ", content_' .
                 $_SESSION['language'] . '), 100),content_' . $_SESSION['language'] . ') AS content
-                FROM ' . TAB_PREFIX . 'content WHERE category_id > 0');
+                FROM ' . TAB_PREFIX . 'content'
+                //. ' WHERE category_id > 0' // TODO category_id was used in A project to link content rows.
+                //Reconsider here.
+            );
+            \Tracy\Debugger::barDump($categories, 'CATEGORIES'); // temp
             foreach ($categories as $key => $category) {
                 Assert::isArray($category);
+                /* TODO this code probably should display articles related to categories, Reconsider - Implement?
                 Assert::isCountable($articles[$key]);
                 $tmp = isset($articles[$key][0]) ? count($articles[$key]) : (isset($articles[$key]) ? 1 : 0);
-                $output .= '<details style="margin-left:' . (strlen((string) $category['path']) / PATH_MODULE - 1) .
-                    'em"' .
-                    ($category['active'] == 1 ? '' : ' class="inactive-item"') . '>
+                $output .= '<details '
+                    // TODO consider PATH from A project to provide tree like display
+                    //. 'style="margin-left:' . (strlen((string) $category['path']) / PATH_MODULE - 1) . 'em"'
+                    . ($category['active'] == 1 ? '' : ' class="inactive-item"') . '>
                     <summary class="d-inline-block">'
                     . '<a href="?table=' . TAB_PREFIX . 'category&amp;where[id]=' . $key .
                     '"><i class="fas fa-edit"></i></a> '
@@ -369,12 +392,13 @@ class Admin extends MyAdmin
                 if (isset($articles[$key])) {
                     $tmp = isset($articles[$key][0]) ? $articles[$key] : [$articles[$key]];
                     Assert::isArray($tmp);
-                    foreach ($tmp as $article) {
+                    foreach ($tmp as $id => $article) { // $id is article id
                         Assert::isArray($article);
+                        \Tracy\Debugger::barDump($article, 'ARTICLE'); // temp
                         $output .= '<div' . ($article['active'] == 1 ? '' : ' class="inactive-item"') . '>'
-                            . '<a href="?table=' . TAB_PREFIX . 'content&amp;where[id]=' . $article['id'] .
+                            . '<a href="?table=' . TAB_PREFIX . 'content&amp;where[id]=' . $id .
                             '"><small class="far fa-edit"></small></a> '
-                            . '<a href="index.php?article&amp;id=' . $article['id'] .
+                            . '<a href="index.php?article&amp;id=' . $id .
                             '"><small class="fas fa-external-link-alt"></small></a> '
                             . '<span' . ($article['active'] == 1 ? '' : ' class="inactive"') . '>' .
                             strip_tags((string) $article['content']) . '</span></div>' . PHP_EOL;
@@ -384,16 +408,22 @@ class Admin extends MyAdmin
                     '&amp;prefill[type]=page">'
                     . '<i class="far fa-plus-square"></i></a> ' . $this->tableAdmin->translate('New record') . '</div>'
                     . '</details>' . PHP_EOL;
+                */
             }
             $articles = $this->MyCMS->fetchAndReindex('SELECT 0, id, IF(content_' . $_SESSION['language'] .
-                ' = "", LEFT(CONCAT(code, " ", description_' . $_SESSION['language'] . '), 100),'
+                ' = "", LEFT(CONCAT(code, " ", content_' . $_SESSION['language'] . '), 100),'
                 . ' content_' . $_SESSION['language'] . ') AS content
-                FROM ' . TAB_PREFIX . 'content WHERE category_id IS NULL AND product_id IS NULL');
+                FROM ' . TAB_PREFIX . 'content'
+                //. ' WHERE category_id IS NULL AND product_id IS NULL' // used in project A - TODO reconsider
+                );
             if ($articles) {
                 $output .= '<details><summary><tt>NULL</tt></summary>';
                 if (
-                    $tmp = $this->MyCMS->fetchAndReindex('SELECT id,name_' . $_SESSION['language'] .
-                    ' AS name FROM ' . TAB_PREFIX . 'category WHERE path IS NULL')
+                    $tmp = $this->MyCMS->fetchAndReindex(
+                        'SELECT id,name_' . $_SESSION['language'] .
+                        ' AS name FROM ' . TAB_PREFIX . 'category'
+                        //. ' WHERE path IS NULL' // TODO reconsider this from project A
+                        )
                 ) {
                     foreach ($tmp as $key => $category) {
                         Assert::string($category);
@@ -431,96 +461,114 @@ class Admin extends MyAdmin
     protected function sectionDivisionsProducts()
     {
         $output = '<h1>' . $this->tableAdmin->translate('Divisions and products') . '</h1><div id="agenda-products">';
-        $divisions = $this->MyCMS->fetchAndReindexStrictArray('SELECT id,division_' . $_SESSION['language'] .
-            ' AS division,' . ($tmp = 'sort+IF(id=' . Tools::set($_SESSION['division-switch'], 0) . ',' .
-            Tools::set($_SESSION['division-delta'], 0) . ',0)') . ' AS sort,active FROM ' . TAB_PREFIX .
-            'division ORDER BY ' . $tmp);
-        $parents = $this->MyCMS->fetchAll('SELECT division_id,id,product_' . $_SESSION['language'] .
+        // TODO consider implementing from project F
+        $divisions = $this->MyCMS->fetchAndReindexStrictArray('SELECT '
+            . '* FROM mycmsprojectspecific_content LIMIT 0' // always return empty set - replace by working code below
+//            . 'id,division_' . $_SESSION['language'] .
+//            ' AS division,' . ($tmp = 'sort+IF(id=' . Tools::set($_SESSION['division-switch'], 0) . ',' .
+//            Tools::set($_SESSION['division-delta'], 0) . ',0)') . ' AS sort,active FROM ' . TAB_PREFIX .
+//            'division ORDER BY ' . $tmp
+        );
+        $parents = $this->MyCMS->fetchAll('SELECT '
+//                . 'division_id,'
+            . 'id,name_' . $_SESSION['language'] .
             ' AS product,' . ($tmp = 'sort+IF(id=' . Tools::set($_SESSION['product-switch'], 0) . ',' .
             Tools::set($_SESSION['product-delta'], 0) . ',0)') . ' AS sort,active FROM ' . TAB_PREFIX .
-            'product WHERE parent_product_id = 0 ORDER BY division_id,' . $tmp);
-        $children = $this->MyCMS->fetchAll('SELECT parent_product_id,id,product_' . $_SESSION['language'] .
+            'product'
+            //. ' WHERE parent_product_id = 0'
+            . ' ORDER BY '
+            //. 'division_id,'
+            . $tmp);
+        $children = $this->MyCMS->fetchAll('SELECT '
+//                . 'parent_product_id,'
+            . 'id,name_' . $_SESSION['language'] .
             ' AS product,' . ($tmp = 'sort+IF(id=' . Tools::set($_SESSION['product-switch'], 0) . ',' .
             Tools::set($_SESSION['product-delta'], 0) . ',0)') . ' AS sort,active'
-            . ' FROM ' . TAB_PREFIX . 'product WHERE parent_product_id <> 0 ORDER BY parent_product_id,' . $tmp);
+            . ' FROM ' . TAB_PREFIX . 'product'
+            //. ' WHERE parent_product_id <> 0'
+            . ' ORDER BY '
+            //. 'parent_product_id,'
+            . $tmp);
         $sort = array(0, 0, 0);
         $correctOrder = array();
-        foreach ($divisions as $divisionId => $division) {
-            Assert::isArray($division);
-            $output .= '<details open><summary class="d-inline-block"><big' .
-                ($division['active'] == 1 ? '' : ' class="inactive"') . '><a href="?table=' . TAB_PREFIX .
-                'division&amp;where[id]=' . $divisionId . '" title="' . $this->tableAdmin->translate('Edit') . '">'
-                . '<i class="fa fa-edit" aria-hidden="true"></i></a> '
-                . '<button type="button" class="btn btn-sm d-inline" name="division-up" value="' . $divisionId .
-                '" title="' . $this->tableAdmin->translate('Move up') . '">'
-                . '<i class="fa fa-arrow-up" aria-hidden="true"></i></button> '
-                . '<button type="button" class="btn btn-sm d-inline mr-2" name="division-down" value="' . $divisionId .
-                '" title="' . $this->tableAdmin->translate('Move down') . '">'
-                . '<i class="fa fa-arrow-down" aria-hidden="true"></i></button>'
-                . Tools::h($division['division'] ?: 'N/A') . '</big></summary>' . PHP_EOL;
-            if (++$sort[0] != $division['sort']) {
-                $correctOrder[] = array($divisionId, $sort[0], false);
-            }
-            $sort[1] = 0;
-            if (!empty($parents)) {
-                foreach ($parents as $parent) {
-                    if ($parent['division_id'] == $divisionId) {
-                        $output .= '<details class="ml-4"><summary class="d-inline-block"><a href="?table=' .
-                            TAB_PREFIX . 'product&amp;where[id]=' . $parent['id'] . '" target="_blank" title="' .
-                            $this->tableAdmin->translate('Link will open in a new window') .
-                            '"><i class="fa fa-external-link" aria-hidden="true"></i></a> '
-                            . '<button type="button" class="btn btn-xs d-inline" name="product-up" value="' .
-                            $parent['id'] . '" title="' . $this->tableAdmin->translate('Move up') . '">'
-                            . '<i class="fa fa-arrow-up" aria-hidden="true"></i></button> '
-                            . '<button type="button" class="btn btn-xs d-inline mr-2" name="product-down" value="' .
-                            $parent['id'] . '" title="' . $this->tableAdmin->translate('Move down') . '">'
-                            . '<i class="fa fa-arrow-down" aria-hidden="true"></i></button>';
-                        $sort[1]++;
-                        if ($sort[1] != $parent['sort']) {
-                            $correctOrder[] = array($parent['id'], $sort[1]);
-                        }
-                        $sort[2] = 0;
-                        $tmp = [];
-                        if (!empty($children)) {
-                            foreach ($children as $child) {
-                                if ($child['parent_product_id'] == $parent['id']) {
-                                    Assert::string($child['product']);
-                                    $tmp [] = '<div class="ml-4"><a href="?table=' .
-                                        TAB_PREFIX . 'product&amp;where[id]=' . $child['id'] .
-                                        '" target="_blank" title="' . $this->tableAdmin->translate('Edit') .
-                                        '"><i class="fa fa-external-link" aria-hidden="true"></i></a> ' .
-                                        '<button type="button" class="btn btn-xs d-inline" name="product-up" value="' .
-                                        $child['id'] . '" title="' . $this->tableAdmin->translate('Move up') .
-                                        '"><i class="fa fa-arrow-up" aria-hidden="true"></i></button> ' .
-                                        '<button type="button" class="btn btn-xs d-inline mr-2" name="product-down" ' .
-                                        'value="' . $child['id'] .
-                                        '" title="' . $this->tableAdmin->translate('Move down') .
-                                        '"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>'
-                                        . Tools::h($child['product'])
-                                        . '</div>';
-                                    $sort[2]++;
-                                    if ($sort[2] != $child['sort']) {
-                                        $correctOrder[] = array($child['id'], $sort[2]);
+        if (!empty($divisions)) {
+            foreach ($divisions as $divisionId => $division) {
+                Assert::isArray($division);
+                $output .= '<details open><summary class="d-inline-block"><big' .
+                    ($division['active'] == 1 ? '' : ' class="inactive"') . '><a href="?table=' . TAB_PREFIX .
+                    'division&amp;where[id]=' . $divisionId . '" title="' . $this->tableAdmin->translate('Edit') . '">'
+                    . '<i class="fa fa-edit" aria-hidden="true"></i></a> '
+                    . '<button type="button" class="btn btn-sm d-inline" name="division-up" value="' . $divisionId .
+                    '" title="' . $this->tableAdmin->translate('Move up') . '">'
+                    . '<i class="fa fa-arrow-up" aria-hidden="true"></i></button> '
+                    . '<button type="button" class="btn btn-sm d-inline mr-2" name="division-down" value="' . $divisionId .
+                    '" title="' . $this->tableAdmin->translate('Move down') . '">'
+                    . '<i class="fa fa-arrow-down" aria-hidden="true"></i></button>'
+                    . Tools::h($division['division'] ?: 'N/A') . '</big></summary>' . PHP_EOL;
+                if (++$sort[0] != $division['sort']) {
+                    $correctOrder[] = array($divisionId, $sort[0], false);
+                }
+                $sort[1] = 0;
+                if (!empty($parents)) {
+                    foreach ($parents as $parent) {
+                        if ($parent['division_id'] == $divisionId) {
+                            $output .= '<details class="ml-4"><summary class="d-inline-block"><a href="?table=' .
+                                TAB_PREFIX . 'product&amp;where[id]=' . $parent['id'] . '" target="_blank" title="' .
+                                $this->tableAdmin->translate('Link will open in a new window') .
+                                '"><i class="fa fa-external-link" aria-hidden="true"></i></a> '
+                                . '<button type="button" class="btn btn-xs d-inline" name="product-up" value="' .
+                                $parent['id'] . '" title="' . $this->tableAdmin->translate('Move up') . '">'
+                                . '<i class="fa fa-arrow-up" aria-hidden="true"></i></button> '
+                                . '<button type="button" class="btn btn-xs d-inline mr-2" name="product-down" value="' .
+                                $parent['id'] . '" title="' . $this->tableAdmin->translate('Move down') . '">'
+                                . '<i class="fa fa-arrow-down" aria-hidden="true"></i></button>';
+                            $sort[1]++;
+                            if ($sort[1] != $parent['sort']) {
+                                $correctOrder[] = array($parent['id'], $sort[1]);
+                            }
+                            $sort[2] = 0;
+                            $tmp = [];
+                            if (!empty($children)) {
+                                foreach ($children as $child) {
+                                    if ($child['parent_product_id'] == $parent['id']) {
+                                        Assert::string($child['product']);
+                                        $tmp [] = '<div class="ml-4"><a href="?table=' .
+                                            TAB_PREFIX . 'product&amp;where[id]=' . $child['id'] .
+                                            '" target="_blank" title="' . $this->tableAdmin->translate('Edit') .
+                                            '"><i class="fa fa-external-link" aria-hidden="true"></i></a> ' .
+                                            '<button type="button" class="btn btn-xs d-inline" name="product-up" value="' .
+                                            $child['id'] . '" title="' . $this->tableAdmin->translate('Move up') .
+                                            '"><i class="fa fa-arrow-up" aria-hidden="true"></i></button> ' .
+                                            '<button type="button" class="btn btn-xs d-inline mr-2" name="product-down" ' .
+                                            'value="' . $child['id'] .
+                                            '" title="' . $this->tableAdmin->translate('Move down') .
+                                            '"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>'
+                                            . Tools::h($child['product'])
+                                            . '</div>';
+                                        $sort[2]++;
+                                        if ($sort[2] != $child['sort']) {
+                                            $correctOrder[] = array($child['id'], $sort[2]);
+                                        }
                                     }
                                 }
                             }
+                            $output .= '<span class="' . ($parent['active'] ? 'active' : 'inactive') . '">' .
+                                Tools::h((string) $parent['product']) . '</span>'
+                                . '<sup class="badge badge-secondary ml-1">' . count($tmp) . '</sup></summary>'
+                                . implode(PHP_EOL, $tmp)
+                                . '<a href="?table=' . TAB_PREFIX . 'product&amp;where[]=&amp;prefill[division_id]=' .
+                                $divisionId . '&amp;prefill[parent_product_id]=' . $parent['id'] . '&amp;prefill[sort]=' .
+                                $sort[1] . '" class="ml-4"><i class="fa fa-plus-square-o" aria-hidden="true"></i></a> ' .
+                                $this->tableAdmin->translate('New record')
+                                . '</details>' . PHP_EOL;
                         }
-                        $output .= '<span class="' . ($parent['active'] ? 'active' : 'inactive') . '">' .
-                            Tools::h((string) $parent['product']) . '</span>'
-                            . '<sup class="badge badge-secondary ml-1">' . count($tmp) . '</sup></summary>'
-                            . implode(PHP_EOL, $tmp)
-                            . '<a href="?table=' . TAB_PREFIX . 'product&amp;where[]=&amp;prefill[division_id]=' .
-                            $divisionId . '&amp;prefill[parent_product_id]=' . $parent['id'] . '&amp;prefill[sort]=' .
-                            $sort[1] . '" class="ml-4"><i class="fa fa-plus-square-o" aria-hidden="true"></i></a> ' .
-                            $this->tableAdmin->translate('New record')
-                            . '</details>' . PHP_EOL;
                     }
                 }
+                $output .= '<a href="?table=' . TAB_PREFIX . 'product&amp;where[]=&amp;prefill[division_id]=' . $divisionId
+                    . '&amp;prefill[sort]=' . $sort[0] . '" class="ml-4">'
+                    . '<i class="fa fa-plus-square-o" aria-hidden="true"></i></a> ' .
+                    $this->tableAdmin->translate('New record') . '</summary></details>';
             }
-            $output .= '<a href="?table=' . TAB_PREFIX . 'product&amp;where[]=&amp;prefill[division_id]=' . $divisionId
-                . '&amp;prefill[sort]=' . $sort[0] . '" class="ml-4">'
-                . '<i class="fa fa-plus-square-o" aria-hidden="true"></i></a> ' .
-                $this->tableAdmin->translate('New record') . '</summary></details>';
         }
         $output .= '</div><form action="" method="post">'
             . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden')

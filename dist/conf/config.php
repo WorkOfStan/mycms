@@ -66,7 +66,7 @@ $myCmsConf = [
         'domain' => 'MYCMSPROJECTSPECIFIC.com',
         'form-email' => 'seidl@gods.cz',
         'PATH_HOME' => '0000000001',
-//        'PATH_CATEGORY' => '0000000002', // TODO unused in this application
+        'PATH_CATEGORY' => '0000000002', // used in Admin::projectSpecificSections TODO explain
     ],
     'WEBSITE' => [], // this will be filled with $WEBSITE['cs'] or $WEBSITE['en'] according to the current language
     /**

@@ -428,7 +428,13 @@ class MyTableLister
             Tools::setifempty($options[$i]);
         }
         // find out what columns to include/exclude
-        if (!($columns = $this->getColumns(['include' => (array) $options['include'], 'exclude' => (array) $options['exclude']]))) {
+        $tempGetColumnsOptions = [];
+        foreach (['include', 'exclude'] as $fieldName) {
+            if (array_key_exists($fieldName, $options)) {
+                $tempGetColumnsOptions[$fieldName] = (array) $options[$fieldName];
+            }
+        }
+        if (!($columns = $this->getColumns($tempGetColumnsOptions))) {
             return '';
         }
         $sql = $this->selectSQL($columns, $_GET);

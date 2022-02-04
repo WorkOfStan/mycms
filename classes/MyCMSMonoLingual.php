@@ -175,7 +175,15 @@ class MyCMSMonoLingual
     public function fetchAndReindexStrictArray($sql)
     {
         $result = $this->dbms->fetchAndReindex($sql); // returns array<array<string|null|array<string|null>>|string>|false
+        Debugger::barDump($sql, 'SQL statement for fetchAndReindex'); //temp
+        Debugger::barDump($result, 'Result of fetchAndReindex'); //temp
         Assert::isArray($result);
+        if (empty($result)) {
+            return [];
+        }
+        if ((count($result) === 1) && array_key_exists(1, $result) && is_array($result[1])) {
+            $result = $result[1]; // TODO explore why sometimes records are in the array, and sometimes in the key=1
+        }
         $resultTwoLevelArray = [];
         foreach ($result as $k => $v) {
             if (is_string($v)) {
