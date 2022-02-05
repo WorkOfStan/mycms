@@ -764,7 +764,7 @@ class Admin extends MyAdmin
             'content',
             'product'
             ] as $table
-            ) {
+        ) {
             foreach (array_keys($this->tableAdmin->TRANSLATIONS) as $i) {
                 $query = $this->MyCMS->fetchAll("SELECT COUNT(url_$i) AS _count, url_$i AS url"
                     . " FROM " . TAB_PREFIX . "$table GROUP BY url ORDER BY _count DESC");

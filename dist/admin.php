@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Admin
  * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
