@@ -51,7 +51,7 @@ class MyCMSMonoLingual
     /**
      * Constructor
      *
-     * @param array<array<array<array<string>,bool,string>,string>|BackyardError|LogMysqli|null> $myCmsConf
+     * @param array<mixed> $myCmsConf
      * @throws Exception if logger not configured
      */
     public function __construct(array $myCmsConf = [])

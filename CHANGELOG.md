@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - dist/set-environment.php moved to dist/conf/set-environment.php
 - $this->verboseBarDump returns mixed, so taken out of return statements (for smooth static analysis)
 - MyTableLister::bulkUpdateSQL passes $vars by value (it's not necessary to pass by reference)
+- $myCmsConf is mixed[] (instead of complex and not future usage proof array<array<array<array<string>,bool,string>,string>|BackyardError|LogMysqli|null> )
 
 ### `Deprecated` for soon-to-be removed features
 
