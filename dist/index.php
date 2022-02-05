@@ -1,4 +1,8 @@
 <?php
+/**
+ * MyCMS app front-end
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
+ */
 
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
@@ -8,10 +12,6 @@ use WorkOfStan\mycmsprojectnamespace\Latte\CustomFilters;
 use WorkOfStan\mycmsprojectnamespace\ProjectSpecific;
 use WorkOfStan\mycmsprojectnamespace\Utils;
 
-/**
- * MyCMS app front-end
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
- */
 require './conf/set-environment.php';
 
 // Under construction section

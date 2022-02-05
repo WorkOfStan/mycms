@@ -417,7 +417,7 @@ class Admin extends MyAdmin
                 if (
                     $tmp = $this->MyCMS->fetchAndReindex(
                         'SELECT id,name_' . $_SESSION['language'] . ' AS name FROM ' . TAB_PREFIX . 'category'
-                        )
+                    )
                         //. ' WHERE path IS NULL') // TODO reconsider this from project A
                 ) {
                     foreach ($tmp as $key => $category) {
@@ -757,12 +757,14 @@ class Admin extends MyAdmin
             . '<p>' . $this->tableAdmin->translate('Duplicities may appear across languages.') . '</p>'
             . '<div id="agenda-urls">';
         $urls = [];
-        foreach ([
+        foreach (
+            [
             // Note: not all apps have all those tables
             'category',
             'content',
             'product'
-            ] as $table) {
+            ] as $table
+            ) {
             foreach (array_keys($this->tableAdmin->TRANSLATIONS) as $i) {
                 $query = $this->MyCMS->fetchAll("SELECT COUNT(url_$i) AS _count, url_$i AS url"
                     . " FROM " . TAB_PREFIX . "$table GROUP BY url ORDER BY _count DESC");
