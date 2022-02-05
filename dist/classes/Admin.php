@@ -757,7 +757,12 @@ class Admin extends MyAdmin
             . '<p>' . $this->tableAdmin->translate('Duplicities may appear across languages.') . '</p>'
             . '<div id="agenda-urls">';
         $urls = [];
-        foreach (['category', 'content', 'product'] as $table) {
+        foreach ([
+            // Note: not all apps have all those tables
+            'category',
+            'content',
+            'product'
+            ] as $table) {
             foreach (array_keys($this->tableAdmin->TRANSLATIONS) as $i) {
                 $query = $this->MyCMS->fetchAll("SELECT COUNT(url_$i) AS _count, url_$i AS url"
                     . " FROM " . TAB_PREFIX . "$table GROUP BY url ORDER BY _count DESC");
