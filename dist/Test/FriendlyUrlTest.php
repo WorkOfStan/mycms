@@ -12,6 +12,10 @@ use Tracy\Debugger;
 
 require_once __DIR__ . '/../conf/config.php';
 
+/**
+ * Tests of Friendly URL set-up
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
+ */
 class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
 {
     /** @var MyCMSProject */
@@ -48,13 +52,14 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         Debugger::enable(Debugger::DEVELOPMENT, __DIR__ . '/../log');
         $this->backyard = new Backyard($backyardConf);
         $myCmsConf['logger'] = $this->backyard->BackyardError;
+        // constants are defined by `new InitDatabase` in the alphabetically first test
         $myCmsConf['dbms'] = new LogMysqli(
             DB_HOST . ':' . DB_PORT,
             DB_USERNAME,
             DB_PASSWORD,
             DB_DATABASE,
             $myCmsConf['logger']
-        ); //@todo - use test db instead. Or use other TAB_PREFIX !
+        );
 
         $this->myCms = new MyCMSProject($myCmsConf);
 

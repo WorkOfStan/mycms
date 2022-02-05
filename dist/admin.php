@@ -6,7 +6,10 @@ use WorkOfStan\mycmsprojectnamespace\Admin;
 use WorkOfStan\mycmsprojectnamespace\AdminProcess;
 use WorkOfStan\mycmsprojectnamespace\TableAdmin;
 
-// Admin
+/**
+ * Admin
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
+ */
 require_once './conf/set-environment.php';
 require_once './prepare.php';
 

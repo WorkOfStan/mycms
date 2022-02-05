@@ -7,7 +7,7 @@ use WorkOfStan\Backyard\Backyard;
 
 /**
  * Frequently used methods that are candidates to become part of MyCMS library as MyCMS\Utils
- * (Last MyCMS/dist revision: 2022-01-30, v0.4.5)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
  *
  * @author rejthar@stanislavrejthar.com
  */

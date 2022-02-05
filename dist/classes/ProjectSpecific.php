@@ -11,7 +11,7 @@ use WorkOfStan\MyCMS\ProjectCommon;
 
 /**
  * Functions specific to the project (that are not in its own model)
- * (Last MyCMS/dist revision: 2021-05-28, v0.4.2)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
  */
 class ProjectSpecific extends ProjectCommon
 {
@@ -358,6 +358,7 @@ class ProjectSpecific extends ProjectCommon
      * Reflection error: WorkOfStan\MyCMS\ProjectCommon not found.
      *
      * TODO: consider PR for phpstan project
+     * 220205: it seems that it is not needed anymore since PHPSTAN::1.4.5
      *
      * @param string $param
      * @return string

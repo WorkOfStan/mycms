@@ -18,7 +18,7 @@ define('PROCESS_LIMIT', 100); // used in self::getAgenda
 
 /**
  * AJAX and form handling for Admin UI
- * (Last MyCMS/dist revision: 2021-11-05, v0.4.4+)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
  */
 class AdminProcess extends MyAdminProcess
 {
@@ -238,7 +238,8 @@ class AdminProcess extends MyAdminProcess
                     }
                     if ($value) {
                         fwrite($fp, "    '" . strtr($key, array('&apos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
-                            . "' => '" . strtr($value, array('&appos;' => "\\'", "'" => "\\'", '&amp;' => '&')) . "',\n");
+                            . "' => '" . strtr($value, array('&appos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
+                            . "',\n");
                     }
                 }
                 fwrite($fp, "];\n");

@@ -15,7 +15,7 @@ use WorkOfStan\mycmsprojectnamespace\Utils;
 /**
  * Class for a MyCMS object.
  * It holds all specific variables needed for this application.
- * (Last MyCMS/dist revision: 2021-05-26, v0.4.1)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
  */
 class MyCMSProject extends MyCMS
 {

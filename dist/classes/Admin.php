@@ -13,7 +13,7 @@ use function WorkOfStan\MyCMS\ThrowableFunctions\preg_match_all;
 
 /**
  * Admin UI
- * (Last MyCMS/dist revision: 2021-11-05, v0.4.4+)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
  */
 class Admin extends MyAdmin
 {
@@ -410,15 +410,14 @@ class Admin extends MyAdmin
             $articles = $this->MyCMS->fetchAndReindex('SELECT 0, id, IF(content_' . $_SESSION['language'] .
                 ' = "", LEFT(CONCAT(code, " ", content_' . $_SESSION['language'] . '), 100),'
                 . ' content_' . $_SESSION['language'] . ') AS content
-                FROM ' . TAB_PREFIX . 'content'
-                //. ' WHERE category_id IS NULL AND product_id IS NULL' // used in project A - TODO reconsider
-                );
+                FROM ' . TAB_PREFIX . 'content');
+                //. ' WHERE category_id IS NULL AND product_id IS NULL'); // used in project A - TODO reconsider
             if ($articles) {
                 $output .= '<details><summary><tt>NULL</tt></summary>';
                 if (
                     $tmp = $this->MyCMS->fetchAndReindex(
-                        'SELECT id,name_' . $_SESSION['language'] .
-                        ' AS name FROM ' . TAB_PREFIX . 'category')
+                        'SELECT id,name_' . $_SESSION['language'] . ' AS name FROM ' . TAB_PREFIX . 'category'
+                        )
                         //. ' WHERE path IS NULL') // TODO reconsider this from project A
                 ) {
                     foreach ($tmp as $key => $category) {

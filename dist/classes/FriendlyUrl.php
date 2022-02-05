@@ -11,7 +11,7 @@ use WorkOfStan\mycmsprojectnamespace\ProjectSpecific;
 
 /**
  * Friendly URL set-up
- * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
  */
 class FriendlyUrl extends MyFriendlyUrl
 {

@@ -14,7 +14,7 @@ use WorkOfStan\mycmsprojectnamespace\ProjectSpecific;
 
 /**
  * Controller (of MVC)
- * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
  */
 class Controller extends MyController
 {

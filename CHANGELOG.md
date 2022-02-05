@@ -22,8 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MyCMSMonoLingual::fetchAndReindexStrictArray refactored to return the expected array structure
 
 ### `Changed` for changes in existing functionality
-- *BREAKING CHANGE* MyFriendlyUrl::determineTemplate change from `@return string|array<string>|true` to `@return string|array<int|string>|true`
-- *BREAKING CHANGE* dist/FriendlyUrlTest.php `Assert::string($templateDetermined['redir']);` added where needed
+- **BREAKING CHANGE** MyFriendlyUrl::determineTemplate change from `@return string|array<string>|true` to `@return string|array<int|string>|true`
+- **BREAKING CHANGE** dist/FriendlyUrlTest.php `Assert::string($templateDetermined['redir']);` added where needed
 - instead of dist specific workflows, use reusable ones (linter.yml, overtrue-phplint.yml, php-composer-dependencies.yml, phpcbf.yml)
 - VALIDATE_GITHUB_ACTIONS: false as it returns false positive `unknown Webhook event "workflow_call"` (todo reconsider later)
 - MyTableLister::bulkUpdateSQL passes $vars by value (it's not necessary to pass by reference)

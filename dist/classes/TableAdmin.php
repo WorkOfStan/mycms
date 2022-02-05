@@ -10,7 +10,7 @@ use WorkOfStan\MyCMS\MyTableAdmin;
 
 /**
  * Project specific adaptations of database tables in Admin UI
- * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
  */
 class TableAdmin extends MyTableAdmin
 {

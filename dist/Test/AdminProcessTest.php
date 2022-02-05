@@ -11,6 +11,10 @@ use Tracy\Debugger;
 
 require_once __DIR__ . '/../conf/config.php';
 
+/**
+ * Tests of AJAX and form handling for Admin UI
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
+ */
 class AdminProcessTest extends \PHPUnit_Framework_TestCase
 {
     /** @var MyCMSProject */

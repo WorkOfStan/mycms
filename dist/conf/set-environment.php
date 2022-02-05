@@ -2,6 +2,7 @@
 
 /**
  * setting the environment may be different for each MyCMS deployment
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
  */
 
 error_reporting(E_ALL & ~E_NOTICE);

@@ -10,6 +10,10 @@ use WorkOfStan\mycmsprojectnamespace\MyCMSProject;
 
 require_once __DIR__ . '/../conf/config.php';
 
+/**
+ * Tests of Controller (of MVC)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
+ */
 class ControllerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var MyCMSProject */
@@ -40,13 +44,14 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
                 'zh' => '中文',
             ],
             'logger' => $backyard->BackyardError,
+            // constants are defined by `new InitDatabase` in the alphabetically first test
             'dbms' => new LogMysqli(
                 DB_HOST . ':' . DB_PORT,
                 DB_USERNAME,
                 DB_PASSWORD,
                 DB_DATABASE,
                 $backyard->BackyardError
-            ), //@todo - use test db instead. Or use other TAB_PREFIX !
+            ),
             'templateAssignementParametricRules' => [],
         ];
         $this->myCms = new MyCMSProject($mycmsOptions);
