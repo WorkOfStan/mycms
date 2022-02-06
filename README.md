@@ -5,8 +5,8 @@
 [![PHP Composer + PHPUnit + PHPStan](https://github.com/WorkOfStan/mycms/actions/workflows/php-composer-phpunit.yml/badge.svg)](https://github.com/WorkOfStan/mycms/actions/workflows/php-composer-phpunit.yml)
 
 Brief MVC framework for interactive sites including general administration.
-Works as a devstack which you install and then write your classes specific for the project.
-The boilerplate project is prepared in `dist` folder to be adapted as needed and it uses this `WorkOfStan\MyCMS` library out-of-the-box.
+Works as a devstack which you install and then write your classes specific for your application.
+The boilerplate application is prepared in `dist` folder to be adapted as needed and it uses this `WorkOfStan\MyCMS` library out-of-the-box.
 
 MyCMS is designed to be used with following technologies:
 - [jQuery](https://jquery.org/) and [Bootstrap (version 4)](https://getbootstrap.com/docs/4.0/components/): for presentation
@@ -25,7 +25,7 @@ Once [composer](https://getcomposer.org/) is installed, execute the following co
 composer require workofstan/mycms:^0.4.4
 ```
 Most of library's classes use prefix `My`.
-To customize the project, create your own classes as children inheriting MyCMS' classes in the `./classes/` directory and name them without the initial `My` in its name.  
+To customize your application, create your own classes as children inheriting MyCMS' classes in the `./classes/` directory and name them without the initial `My` in its name.  
 
 ```php
 $MyCMS = new \WorkOfStan\MyCMS\MyCMS(
@@ -40,17 +40,17 @@ $MyCMS = new \WorkOfStan\MyCMS\MyCMS(
 $MyCMS->renderLatte(DIR_TEMPLATE_CACHE, "\\vendor\\ProjectName\\Latte\\CustomFilters::common", $params);
 ```
 
-Files `process.php` and `admin-process.php` MUST exist and process forms.
+Files `process.php` and `admin-process.php` MUST exist as they process forms.
 
 Note: `$MyCMS` name is expected by `ProjectSpecific extends ProjectCommon` class (@todo replace global $MyCMS by parameter handling)
 
 ## Deployment
 
 ### `/dist`
-Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder in order to easily start.
-Replace the string `MYCMSPROJECTNAMESPACE` with your project namespace.
+Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder in order to start easily.
+Replace the string `MYCMSPROJECTNAMESPACE` with your project namespace. (TODO: rector...)
 Replace the string `MYCMSPROJECTSPECIFIC` with other site specific information (Brand, Twitter address, phone number, database table_prefix in phinx.yml...).
-If you want to use your own table name prefix, it is recommanded to change database related strings before first running [`./build.sh`](dist/build.sh).
+If you want to use your own table name prefix, please change the database related strings before first running [`./build.sh`](dist/build.sh).
 
 To adapt the content and its structure either adapt migrations [content_table](dist/db/migrations/20200607204634_content_table.php) and [content_example](dist/db/migrations/20200703213436_content_example.php)
 before first running build
@@ -172,13 +172,20 @@ because MySQLi environment isn't prepared (yet) and HTTP requests to self can't 
 
 ### PHPStan
 
-Till PHP<7.1 is supported, neither `phpstan/phpstan-webmozart-assert` nor `rector/rector` can't be required-dev in composer.json.
+Till only PHP<7.1 is supported, neither `phpstan/phpstan-webmozart-assert` nor `rector/rector` can't be required-dev in composer.json.
 Therefore, to properly take into account Assert statements by PHPStan (relevant for level>6), do a temporary (i.e. without commiting it to repository)
 ```sh
 composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
 composer require --dev rector/rector --prefer-dist --no-progress
 ```
 and use [conf/phpstan.webmozart-assert.neon](conf/phpstan.webmozart-assert.neon) to allow for `phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse . --memory-limit 300M`.
+
+Prepared scripts
+[./phpstan.sh](phpstan.sh)
+and
+[./phpstan-remove.sh](phpstan-remove.sh)
+can be used to start (or remove) the static analysis.
+(TODO: call the dist scripts from root to DRY.)
 
 ## How does Friendly URL works within Controller
 
