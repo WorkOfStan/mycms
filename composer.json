@@ -38,7 +38,8 @@
         "issues": "https://github.com/WorkOfStan/mycms/issues",
         "source": "https://github.com/WorkOfStan/mycms"
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "WorkOfStan\\MyCMS\\": ["classes/"]
