@@ -103,6 +103,7 @@ class LogMysqli extends BackyardMysqli
     {
         $result = $this->queryArray($sql, false); // returns two dimensional array
         if ($result === false) {
+            // TODO add `$this->showSqlBarPanel();` ? in order to display SQL statements?
             throw new Exception('Empty result or database error');
         }
         return $result;
@@ -125,11 +126,13 @@ class LogMysqli extends BackyardMysqli
         $result = $this->query($sql, $errorLogOutput, $logQuery);
 
         if ($result === false) {
+            // TODO add `$this->showSqlBarPanel();` ? in order to display SQL statements?
             throw new Exception($this->errno . ': ' . $this->error);
         }
         if ($result === true) {
             return true;
         }
+        // TODO add `$this->showSqlBarPanel();` ? in order to display SQL statements?
         throw new Exception('Object answer on SQL statement (should have been true');
     }
 
@@ -150,9 +153,11 @@ class LogMysqli extends BackyardMysqli
         $result = $this->query($sql, $errorLogOutput, $logQuery);
 
         if ($result === false) {
+            // TODO add `$this->showSqlBarPanel();` ? in order to display SQL statements?
             throw new Exception($this->errno . ': ' . $this->error);
         }
         if ($result === true) {
+            // TODO add `$this->showSqlBarPanel();` ? in order to display SQL statements?
             throw new Exception('Non-object answer on SQL statement (unexpectedly equals true)');
         }
         return $result;
@@ -298,9 +303,11 @@ class LogMysqli extends BackyardMysqli
     {
         $query = $this->query($sql);
         if ($query === true) {
+            // TODO add `$this->showSqlBarPanel();` ? in order to display SQL statements?
             throw new Exception('SQL statement resulting in \mysqli_result<object> expected. True received.');
         }
         if (!$query) {
+            // TODO add `$this->showSqlBarPanel();` ? in order to display SQL statements?
             throw new Exception($this->errno . ': ' . $this->error);
         }
         $row = $query->fetch_assoc();
@@ -319,6 +326,7 @@ class LogMysqli extends BackyardMysqli
     public function fetchSingleString($sql)
     {
         $query = $this->fetchSingle($sql);
+        // TODO add `if(!is_string($query))$this->showSqlBarPanel();` ? in order to display SQL statements?
         Assert::string($query);
         return $query;
     }
@@ -338,6 +346,7 @@ class LogMysqli extends BackyardMysqli
             return null;
         }
         if (!is_array($arr)) {
+            // TODO add `$this->showSqlBarPanel();` ? in order to display SQL statements?
             throw new Exception('SQL statement resulting in non array.');
         }
         foreach ($arr as $name => $str) {
@@ -398,6 +407,7 @@ class LogMysqli extends BackyardMysqli
             $key = reset($row);
             $value = count($row) == 2 ? next($row) : $row;
             if (count($row) > 2) {
+                // TODO add `if(!is_array($value))$this->showSqlBarPanel();` ? in order to display SQL statements?
                 Assert::isArray($value);
                 array_shift($value);
             }

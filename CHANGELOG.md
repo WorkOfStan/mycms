@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MyTools::h(mixed) - Tools::h that accepts mixed but throws exception if it isn't a string
 - MyController::run getter for template and context to narrow the type hints
 - MyCMSMonoLingual::fetchAndReindexStrictArray refactored to return the expected array structure
+- MyCMSMonoLingual::fetchAndReindexStrictArray displays the SQL bar panel in case of Assertion thrown Exception
 
 ### `Changed` for changes in existing functionality
 - **BREAKING CHANGE** MyFriendlyUrl::determineTemplate change from `@return string|array<string>|true` to `@return string|array<int|string>|true`
@@ -34,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - dist/set-environment.php moved to dist/conf/set-environment.php
 - $this->verboseBarDump returns mixed, so taken out of return statements (for smooth static analysis)
 - MyTableLister::bulkUpdateSQL passes $vars by value (it's not necessary to pass by reference)
-- $myCmsConf is mixed[] (instead of complex and not future usage proof array<array<array<array<string>,bool,string>,string>|BackyardError|LogMysqli|null> )
+- $myCmsConf is mixed[] (instead of complex and not future usage proof array<array<array<array<string>,bool,string>,string>|BackyardError|LogMysqli|null> ) For some fields, there is a runtime assertion.
 
 ### `Deprecated` for soon-to-be removed features
 
