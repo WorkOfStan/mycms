@@ -17,7 +17,7 @@ jobs:
       matrix:
         operating-system:
           - "ubuntu-latest"
-        php-version: [${{ inputs.php-version }}]
+        php-version: [ ${{ inputs.php-version }} ]
         # If the bug https://bugs.php.net/bug.php?id=73803 materializes, then remove 7.1 from php-version list above, as
         # ZipArchive class has public properties, that are not visible via reflection in PHP/7.1.
         # Therefore using tools like PHPStan generates error: Access to an undefined property ZipArchive::$numFiles. in class\MyAdminProcess
