@@ -13,7 +13,7 @@ require_once __DIR__ . '/../conf/config.php';
 
 /**
  * Tests of Admin UI
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
  */
 class AdminTest extends \PHPUnit_Framework_TestCase
 {

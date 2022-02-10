@@ -11,7 +11,7 @@ use WorkOfStan\MyCMS\ProjectCommon;
 
 /**
  * Functions specific to the project (that are not in its own model)
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
  */
 class ProjectSpecific extends ProjectCommon
 {

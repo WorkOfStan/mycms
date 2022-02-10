@@ -12,7 +12,7 @@ require_once __DIR__ . '/../conf/config.php';
 
 /**
  * Tests of Controller (of MVC)
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
  */
 class ControllerTest extends \PHPUnit_Framework_TestCase
 {
