@@ -2,7 +2,7 @@
 
 /**
  * MyCMS app front-end
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
  */
 
 use GodsDev\Tools\Tools;

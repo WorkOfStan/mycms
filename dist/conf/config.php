@@ -2,7 +2,7 @@
 
 /**
  * Config for the project
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
  *
  * EDIT ONLY AS PART OF GIT REPOSITORY
  * FOR LOCAL CHANGES USE config.local.php

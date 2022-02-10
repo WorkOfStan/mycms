@@ -18,7 +18,7 @@ define('PROCESS_LIMIT', 100); // used in self::getAgenda
 
 /**
  * AJAX and form handling for Admin UI
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
  */
 class AdminProcess extends MyAdminProcess
 {

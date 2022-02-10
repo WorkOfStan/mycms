@@ -5,7 +5,7 @@ on:
     inputs:
       php-version:
         required: true
-        type: array
+        type: string
 
 jobs:
   build:
@@ -17,7 +17,7 @@ jobs:
       matrix:
         operating-system:
           - "ubuntu-latest"
-        php-version: ${{ inputs.php-version }}
+        php-version: ${{ fromJson(inputs.php-version) }}
         # If the bug https://bugs.php.net/bug.php?id=73803 materializes, then remove 7.1 from php-version list above, as
         # ZipArchive class has public properties, that are not visible via reflection in PHP/7.1.
         # Therefore using tools like PHPStan generates error: Access to an undefined property ZipArchive::$numFiles. in class\MyAdminProcess
@@ -33,7 +33,7 @@ jobs:
     - name: "Checkout"
       uses: actions/checkout@v2
 
-    - name: "Install PHP ${{ matrix.php-version }} Test on ${{ matrix.operating-system }}"
+    - name: "Install PHP ${{ matrix.php-version }} Test on ${{ runner.os }}"
       uses: "shivammathur/setup-php@v2"
       with:
         php-version: "${{ matrix.php-version }}"
