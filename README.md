@@ -5,8 +5,8 @@
 [![PHP Composer + PHPUnit + PHPStan](https://github.com/WorkOfStan/mycms/actions/workflows/php-composer-phpunit.yml/badge.svg)](https://github.com/WorkOfStan/mycms/actions/workflows/php-composer-phpunit.yml)
 
 Brief MVC framework for interactive sites including general administration.
-Works as a devstack which you install and then write your classes specific for your application.
-The boilerplate application is prepared in `dist` folder to be adapted as needed and it uses this `WorkOfStan\MyCMS` library out-of-the-box.
+Works as a devstack which you install and then write your classes specific for your project.
+The boilerplate project is prepared in `dist` folder to be adapted as needed and it uses this `WorkOfStan\MyCMS` library out-of-the-box.
 
 MyCMS is designed to be used with following technologies:
 - [jQuery](https://jquery.org/) and [Bootstrap (version 4)](https://getbootstrap.com/docs/4.0/components/): for presentation
@@ -22,10 +22,10 @@ Apache modules `mod_alias` (for hiding non-public files) and `mod_rewrite` (for 
 
 Once [composer](https://getcomposer.org/) is installed, execute the following command in your project root to install this library:
 ```sh
-composer require workofstan/mycms:^0.4.4
+composer require workofstan/mycms:^0.4.5
 ```
 Most of library's classes use prefix `My`.
-To customize your application, create your own classes as children inheriting MyCMS' classes in the `./classes/` directory and name them without the initial `My` in its name.  
+To develop your project, create your own classes as children inheriting MyCMS' classes in the `./classes/` directory and name them without the initial `My` in its name.  
 
 ```php
 $MyCMS = new \WorkOfStan\MyCMS\MyCMS(
@@ -62,7 +62,7 @@ The table with users and hashed passwords is named `TAB_PREFIX . 'admin'`.
 It is recommanded to adapt classes Contoller.php, FriendlyUrl.php and ProjectSpecific.php to your needs following the recommendations in comments.
 For deployment look also to [Deployment chapter](dist/README.md#deployment) and [Language management](dist/README.md#language-management) in dist/README.md.
 
-MyCMS is used only as a library, so the application using it SHOULD implement `RedirectMatch 404 vendor\/` statement as prepared in `dist/.htaccess` to keep the library hidden from web access.
+MyCMS is used only as a library, so the project using it SHOULD implement `RedirectMatch 404 vendor\/` statement as prepared in `dist/.htaccess` to keep the library hidden from web access.
 
 ## Admin UI
 Admin UI is displayed by MyAdmin::outputAdmin in this structure:

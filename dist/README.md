@@ -1,11 +1,11 @@
 # MYCMSPROJECTSPECIFIC
 XYZ web
-(Folder *dist* is an instant seed of a new project.)
+(Folder *dist* is an instant seed of a new project/application.)
 
 ## Stack
 
 Linux, Apache (mod_rewrite, mod_header, ssl...)
-PHP 7.0
+PHP 5.6, 7.x
 MySQL
 PHP libraries
 - xml

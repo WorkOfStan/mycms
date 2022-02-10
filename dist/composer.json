@@ -29,7 +29,7 @@
         "issues": "https://github.com/WorkOfStan/mycms/issues",
         "source": "https://github.com/WorkOfStan/mycms"
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "autoload": {
         "psr-4": {

@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - $this->verboseBarDump returns mixed, so taken out of return statements (for smooth static analysis)
 - MyTableLister::bulkUpdateSQL passes $vars by value (it's not necessary to pass by reference)
 - $myCmsConf is mixed[] (instead of complex and not future usage proof array<array<array<array<string>,bool,string>,string>|BackyardError|LogMysqli|null> ) For some fields, there is a runtime assertion.
+- workofstan/backyard bumped to ^3.3.1
 
 ### `Deprecated` for soon-to-be removed features
 
