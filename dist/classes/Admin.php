@@ -353,7 +353,7 @@ class Admin extends MyAdmin
                 // TODO path was used in A project. Reconsider here.
                 // . ' WHERE LEFT(path, ' . PATH_MODULE . ')="'
                 // . $this->MyCMS->escapeSQL($this->MyCMS->SETTINGS['PATH_HOME']) . '" ORDER BY path');
-            \Tracy\Debugger::barDump($categories, 'CATEGORIES'); // temp
+            //\Tracy\Debugger::barDump($categories, 'CATEGORIES'); // temp
             $articles = $this->MyCMS->fetchAndReindexStrictArray('SELECT '
                 //. 'category_id,' // TODO category_id was used in A project to link content rows. Reconsider here.
                 . 'id,active,IF(content_' .
@@ -362,7 +362,7 @@ class Admin extends MyAdmin
                 FROM ' . TAB_PREFIX . 'content');
                 //. ' WHERE category_id > 0'); // TODO category_id was used in A project to link content rows.
                 //Reconsider here.
-            \Tracy\Debugger::barDump($categories, 'CATEGORIES'); // temp
+            //\Tracy\Debugger::barDump($categories, 'CATEGORIES'); // temp
             foreach ($categories as $key => $category) {
                 Assert::isArray($category);
                 /* TODO this code probably should display articles related to categories, Reconsider - Implement?

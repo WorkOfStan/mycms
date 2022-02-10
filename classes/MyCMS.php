@@ -50,7 +50,7 @@ class MyCMS extends MyCMSMonoLingual
     /**
      * Constructor
      *
-     * @param array<array<array<array<string>,bool,string>,string>|BackyardError|LogMysqli|null> $myCmsConf
+     * @param array<mixed> $myCmsConf
      */
     public function __construct(array $myCmsConf = [])
     {

@@ -51,7 +51,7 @@ class MyCMSMonoLingual
     /**
      * Constructor
      *
-     * @param array<array<array<array<string>,bool,string>,string>|BackyardError|LogMysqli|null> $myCmsConf
+     * @param array<mixed> $myCmsConf
      * @throws Exception if logger not configured
      */
     public function __construct(array $myCmsConf = [])
@@ -175,8 +175,9 @@ class MyCMSMonoLingual
     public function fetchAndReindexStrictArray($sql)
     {
         $result = $this->dbms->fetchAndReindex($sql); // array<array<string|null|array<string|null>>|string>|false
-        Debugger::barDump($sql, 'SQL statement for fetchAndReindex'); //temp
-        Debugger::barDump($result, 'Result of fetchAndReindex'); //temp
+        if (!is_array($result)) {
+            $this->dbms->showSqlBarPanel();
+        }
         Assert::isArray($result);
         if (empty($result)) {
             return [];
