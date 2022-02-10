@@ -5,7 +5,7 @@ on:
     inputs:
       php-version:
         required: true
-        type: array
+        type: string
 
 jobs:
   build:
