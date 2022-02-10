@@ -8,18 +8,33 @@ on:
         type: string
 
 jobs:
+#  extract_php_version:
+#    runs-on: 'ubuntu-latest'
+#    # Limit the running time
+#    timeout-minutes: 1
+#    
+#    steps:
+#    - name: "Parse PHP version"
+#      id: parse-php-version
+#      run: echo "::set-output name=matrix::"
+#
+#    outputs:
+#      php-version: ${{ steps.parse-php-version.outputs.matrix }}
+    
   build:
+    # wait for parsing above
+#    needs: extract_php_version
 
     #runs-on: ${{ matrix.operating-system }}
     runs-on: 'ubuntu-latest'
     # Limit the running time
     timeout-minutes: 10
     # Note: https://docs.github.com/en/actions/using-workflows/reusing-workflows The strategy property is not supported in any job that calls a reusable workflow.
-    #strategy:
-      #matrix:
+    strategy:
+      matrix:
       #  operating-system:
       #    - "ubuntu-latest"
-      #  php-version: [ ${{ inputs.php-version }} ]
+        php-version: ${{ fromJson(inputs.php-version) }}
         # If the bug https://bugs.php.net/bug.php?id=73803 materializes, then remove 7.1 from php-version list above, as
         # ZipArchive class has public properties, that are not visible via reflection in PHP/7.1.
         # Therefore using tools like PHPStan generates error: Access to an undefined property ZipArchive::$numFiles. in class\MyAdminProcess
@@ -35,10 +50,10 @@ jobs:
     - name: "Checkout"
       uses: actions/checkout@v2
 
-    - name: "Install PHP ${{ inputs.php-version }} Test on ${{ runner.os }}"
+    - name: "Install PHP ${{ matrix.php-version }} Test on ${{ runner.os }}"
       uses: "shivammathur/setup-php@v2"
       with:
-        php-version: "${{ inputs.php-version }}"
+        php-version: "${{ matrix.php-version }}"
         tools: composer:v2, phpstan
         # Note: phpstan call fails for PHP<7.1
       env:
@@ -64,9 +79,9 @@ jobs:
         # path to Checkout working directory is /home/runner/work/repo-name/repo-name , so just add /vendor/
         path: ${{ github.workspace }}/vendor/
         # Use composer.json for key, if composer.lock is not committed.
-        key: ${{ runner.os }}-PHP${{ inputs.php-version }}-vendor-${{ hashFiles('**/composer.json') }}
+        key: ${{ runner.os }}-PHP${{ matrix.php-version }}-vendor-${{ hashFiles('**/composer.json') }}
         # key: ${{ runner.os }}-PHP${{ matrix.php-version }}-vendor-${{ hashFiles('**/composer.lock') }}
-        restore-keys: ${{ runner.os }}-PHP${{ inputs.php-version }}-vendor-
+        restore-keys: ${{ runner.os }}-PHP${{ matrix.php-version }}-vendor-
 
     - name: Validate composer.json and composer.lock
       if: ${{ steps.vendor-cache.outputs.cache-hit != 'true' }}
@@ -84,7 +99,7 @@ jobs:
         cp -p phinx.dist.yml phinx.yml
 
     - name: Phinx migration - migrate
-      if: ${{ inputs.php-version >= '7.1' }} #PHP/5.6 has auth problem with MySQL/8
+      if: ${{ matrix.php-version >= '7.1' }} #PHP/5.6 has auth problem with MySQL/8
       run: "./vendor/bin/phinx migrate -e testing"
 
     - name: Install dependencies
@@ -95,7 +110,7 @@ jobs:
     # Note `sudo /etc/init.d/apache2 start` uses `/etc/apache2/sites-enabled/000-default.conf` where DocumentRoot = `/var/www/html` but without PHP
     # Note: if there are tests without need of MySQL, prepare another PHPUnit config file
     - name: "PHPUnit tests with MySQL"
-      if: ${{ inputs.php-version >= '7.1' }}
+      if: ${{ matrix.php-version >= '7.1' }}
       run: ./vendor/bin/phpunit -c ./conf/phpunit-github.xml
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
@@ -106,10 +121,10 @@ jobs:
 
     # PHPStan works for PHP/7.1+ so it can't even be in composer.json
     - name: "Composer phpstan-webmozart-assert"
-      if: ${{ inputs.php-version >= '7.1' && steps.vendor-cache.outputs.cache-hit != 'true' }}
+      if: ${{ matrix.php-version >= '7.1' && steps.vendor-cache.outputs.cache-hit != 'true' }}
       run: |
         composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
         #todo return when rector ready for phpstan:1.0#composer require --dev rector/rector --prefer-dist --no-progress
     - name: "PHPStan webmozart-assert"
-      if: ${{ inputs.php-version >= '7.1' }}
+      if: ${{ matrix.php-version >= '7.1' }}
       run: phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
