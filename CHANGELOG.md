@@ -38,7 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **BREAKING CHANGE** MyFriendlyUrl::determineTemplate change from `@return string|array<string>|true` to `@return string|array<int|string>|true`
 - **BREAKING CHANGE** dist/FriendlyUrlTest.php `Assert::string($templateDetermined['redir']);` added where needed
-- instead of dist specific workflows, use reusable ones (linter.yml, overtrue-phplint.yml, php-composer-dependencies.yml, phpcbf.yml) Note: only scalar value can be passed as input to a reusable input - not an array of string.
+- instead of dist specific workflows, use reusable ones (linter.yml, overtrue-phplint.yml, php-composer-dependencies.yml, phpcbf.yml) Note: only scalar value can be passed as input to a reusable workflow input - not an array of strings.
 - VALIDATE_GITHUB_ACTIONS: false as it returns false positive `unknown Webhook event "workflow_call"` (todo reconsider later)
 - MyTableLister::bulkUpdateSQL passes $vars by value (it's not necessary to pass by reference)
 - Tools::setifnull and Tools::set replaced by a type hint strict code (avoid `cannot cast mixed to string` warning)
