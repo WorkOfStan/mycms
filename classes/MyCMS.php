@@ -2,6 +2,9 @@
 
 namespace WorkOfStan\MyCMS;
 
+use WorkOfStan\Backyard\BackyardError;
+use WorkOfStan\MyCMS\LogMysqli;
+
 /**
  * Extension of a MyCMS object with translations.
  * It holds all variables needed for the used project.
@@ -56,8 +59,8 @@ class MyCMS extends MyCMSMonoLingual
 
     /**
      *
-     * @param array<string> $getArray $_GET or its equivalent
-     * @param array<string> $sessionArray $_SESSION or its equivalent
+     * @param array<mixed> $getArray $_GET or its equivalent
+     * @param array<mixed> $sessionArray $_SESSION or its equivalent
      * @param bool $makeInclude for testing may be set to false as mycms itself doesn't contain the language-XX.inc.php
      * @return string to be used as $_SESSION['language']
      *
@@ -67,11 +70,15 @@ class MyCMS extends MyCMSMonoLingual
     {
         // rtrim($string, '/\\'); //strip both forward and back slashes to normalize both xx and xx/ to xx
         $resultLanguage = (
-            isset($getArray['language']) && isset($this->TRANSLATIONS[rtrim($getArray['language'], '/\\')])
+            isset($getArray['language']) && is_string(($getArray['language']))
+            && isset($this->TRANSLATIONS[rtrim($getArray['language'], '/\\')])
         ) ?
             rtrim($getArray['language'], '/\\') :
-            ((isset($sessionArray['language']) && isset($this->TRANSLATIONS[$sessionArray['language']])) ?
-            $sessionArray['language'] : DEFAULT_LANGUAGE);
+            (
+                (isset($sessionArray['language']) && is_string(($sessionArray['language']))
+                && isset($this->TRANSLATIONS[$sessionArray['language']])
+                ) ? $sessionArray['language'] : DEFAULT_LANGUAGE
+            );
         if ($makeInclude) {
             $languageFile = DIR_TEMPLATE . '/../language-' . $resultLanguage . '.inc.php';
             if (!file_exists($languageFile)) {

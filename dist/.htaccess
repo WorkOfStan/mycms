@@ -31,12 +31,9 @@ RedirectMatch 404 composer\.
 RedirectMatch 404 phpunit\.xml
 RedirectMatch 404 \.gitignore
 RedirectMatch 404 \.stylelintignore
-RedirectMatch 404 \.md$
 RedirectMatch 404 \/cache\/
 RedirectMatch 404 \/temp\/
 RedirectMatch 404 \/db\/
-RedirectMatch 404 \.yml$
-RedirectMatch 404 \.sh$
 RedirectMatch 404 classes\/
 RedirectMatch 404 Test\/
 RedirectMatch 404 \/logs\/
@@ -46,4 +43,8 @@ RedirectMatch 404 /\.sass-cache
 RedirectMatch 404 /package\.json
 RedirectMatch 404 /package\-lock\.json
 RedirectMatch 404 phpstan.neon.dist
+RedirectMatch 404 \.md$
+RedirectMatch 404 \.neon$
+RedirectMatch 404 \.sh$
+RedirectMatch 404 \.yml$
 #</IfModule>

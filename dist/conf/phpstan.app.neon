@@ -1,9 +1,10 @@
+# (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
 includes:
       # Ignore errors in rector.php when rector/rector is not installed
       - phpstan.rector.neon
 
 parameters:
-    level: 8
+    level: 9
     excludePaths:
         analyseAndScan:
             - ../cache/*
@@ -130,6 +131,6 @@ parameters:
         message: '#Variable \$_POST in isset\(\) always exists and is not nullable#'
         path: ../process.php
       # This as property is defined in MyCMSProject extends MyCMS
-      -
-        message: '#Access to an undefined property WorkOfStan\\MyCMS\\MyCMS::\$SETTINGS.#'
-        path: ../classes/Admin.php
+      #-
+      #  message: '#Access to an undefined property WorkOfStan\\MyCMS\\MyCMS::\$SETTINGS.#'
+      #  path: ../classes/Admin.php

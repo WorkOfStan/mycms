@@ -30,7 +30,7 @@ class MyTableLister
     /** @var array<array> all fields in the table */
     public $fields;
 
-    /** @var array<mixed> display options */
+    /** @var array<string|array<string>> display options */
     protected $options;
 
     /** @var string JavaScript code gathered to show the listing */
@@ -87,13 +87,13 @@ class MyTableLister
      *
      * @param LogMysqli $dbms database management system already connected to wanted database
      * @param string $table to view
-     * @param array<mixed> $options
+     * @param array<string|array<string>> $options display options
      */
     public function __construct(LogMysqli $dbms, $table, array $options = [])
     {
         $this->dbms = $dbms;
         $this->options = $options;
-        $this->database = $this->dbms->fetchSingle('SELECT DATABASE()');
+        $this->database = $this->dbms->fetchSingleString('SELECT DATABASE()');
         $this->getTables();
         $this->setTable($table);
         $this->rand = rand((int) 1e5, (int) (1e6 - 1));
@@ -200,7 +200,9 @@ class MyTableLister
         }
         $tmp = $this->dbms->fetchSingle('SELECT TABLE_COMMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA="'
             . $this->escapeSQL($this->database) . '" AND TABLE_NAME="' . $this->escapeSQL($this->table) . '"');
-        $this->tableContext = json_decode($tmp, true) or [];
+        Assert::string($tmp);
+        $tempJsonDecode = json_decode($tmp, true);
+        $this->tableContext = is_array($tempJsonDecode) ? $tempJsonDecode : [];
     }
 
     /**
@@ -218,11 +220,21 @@ class MyTableLister
             'order by' => '',
             'sql' => ''
         ];
-        $result['limit'] = isset($vars['limit']) && $vars['limit'] ? (int) $vars['limit'] : $this->DEFAULTS['PAGESIZE'];
+        if (isset($vars['limit'])) {
+            Assert::integer($vars['limit']);
+            $result['limit'] = $vars['limit'] ? (int) $vars['limit'] : $this->DEFAULTS['PAGESIZE'];
+        } else {
+            $result['limit'] = $this->DEFAULTS['PAGESIZE'];
+        }
         if ($result['limit'] < 1 || $result['limit'] > $this->DEFAULTS['MAXPAGESIZE']) {
             $result['limit'] = $this->DEFAULTS['PAGESIZE'];
         }
-        $result['offset'] = max(isset($vars['offset']) ? (int) $vars['offset'] : 0, 0);
+        if (isset($vars['offset'])) {
+            Assert::integer($vars['offset']);
+            $result['offset'] = max((int) $vars['offset'], 0);
+        } else {
+            $result['offset'] = 0;
+        }
         foreach ($columns as $key => $value) {
             if (isset($this->fields[$key]['foreign_table']) && $this->fields[$key]['foreign_table']) {
                 $result['join'] .= ' LEFT JOIN ' . $this->fields[$key]['foreign_table']
@@ -255,9 +267,12 @@ class MyTableLister
             }
             unset($filterColumn[0]);
             foreach ($vars['col'] as $key => $value) {
+                Assert::isArray($vars['val']);
                 if (isset($filterColumn[$value], $vars['val'][$key])) {
                     $id = $this->escapeDbIdentifier($this->table) . '.' . $this->escapeDbIdentifier((string) $filterColumn[$value]);
+                    Assert::string($vars['val'][$key]); // escape $val below expect string
                     $val = $vars['val'][$key];
+                    Assert::isArray($vars['op']);
                     $op = $this->WHERE_OPS[$vars['op'][$key]];
                     $result['where'] .= ' AND ';
                     if (substr($op, 0, 4) == 'NOT ') {
@@ -290,8 +305,12 @@ class MyTableLister
                 }
             }
         }
-        foreach (Tools::setifempty($vars['sort'], []) as $key => $value) {
+        $tempArr = Tools::setifempty($vars['sort'], []);
+        Assert::isIterable($tempArr);
+        foreach ($tempArr as $key => $value) {
+            Assert::integer($value);
             if (isset(array_keys($columns)[(int) $value - 1])) {
+                Assert::isArray($vars['desc']);
                 $result['order by'] .= ',' . array_values($columns)[(int) $value - 1] . (isset($vars['desc'][$key]) && $vars['desc'][$key] ? ' DESC' : '');
             }
         }
@@ -310,14 +329,14 @@ class MyTableLister
      * Operation `original` means "leave the column as is" (i.e. don't use it in this SQL statement)
      * And for any other (=unknown) operation is the column ignored, i.e. is not used in this SQL statement.
      *
-     * @param array<string,array> $vars &$vars variables used to filter records
+     * @param array<string,array> $vars variables used to filter records
      * @return string
      */
-    public function bulkUpdateSQL(&$vars)
+    public function bulkUpdateSQL($vars)
     {
         $result = '';
         foreach ($vars['fields'] as $field => $value) {
-            switch (Tools::set($vars['op'][$field])) {
+            switch ((isset($vars['op'][$field]) && $vars['op'][$field] ? $vars['op'][$field] : false)) {
                 case 'value':
                     $result .= ', ' . $this->escapeDbIdentifier($field) . ' = "' . $this->escapeSQL($value) . '"';
                     break;
@@ -347,8 +366,8 @@ class MyTableLister
 //                    $result .= ', ' . $this->escapeDbIdentifier($field) . ' = ' . $this->escapeDbIdentifier($field);
 //                    break;
                 default:
-                    // TODO: the only place why $vars should be passed as reference. Explore if necessary
-                    error_log('bulkUpdateSQL unknown operator ' . (string) Tools::set($vars['op'][$field]));
+                    error_log('bulkUpdateSQL unknown operator ' .
+                        (string) (isset($vars['op'][$field]) && $vars['op'][$field] ? $vars['op'][$field] : false));
                     break;
             }
         }
@@ -409,7 +428,13 @@ class MyTableLister
             Tools::setifempty($options[$i]);
         }
         // find out what columns to include/exclude
-        if (!($columns = $this->getColumns($options))) {
+        $tempGetColumnsOptions = [];
+        foreach (['include', 'exclude'] as $fieldName) {
+            if (array_key_exists($fieldName, $options)) {
+                $tempGetColumnsOptions[$fieldName] = (array) $options[$fieldName];
+            }
+        }
+        if (!($columns = $this->getColumns($tempGetColumnsOptions))) {
             return '';
         }
         $sql = $this->selectSQL($columns, $_GET);
@@ -422,10 +447,13 @@ class MyTableLister
         }
         $output .= $this->viewInputs($options);
         if ($options['total-rows']) {
+            //$options['total-rows'] = (int) $options['total-rows'];
+            //Assert::integer($options['total-rows']);
             Assert::integer($sql['limit']);
             $output .= $this->viewTable($query, $columns, $options)
-                . $this->pagination($sql['limit'], $options['total-rows'], null, $options);
+                . $this->pagination($sql['limit'], (int) $options['total-rows'], null, $options);
         }
+        Assert::string($options['total-rows']); // TODO: if it throws exception just type cast to string
         return $output . ((!$options['total-rows'] && isset($_GET['col'])) ?
             ('<p class="alert alert-danger"><small>' . $this->translate('No records found.') . '</small></p>') :
             ('<p class="text-info"><small>' . $this->translate('Total rows: ') . $options['total-rows'] . '.</small></p>'));
@@ -480,7 +508,11 @@ class MyTableLister
         if (isset($_GET['col'], $_GET['op']) && is_array($_GET['col'])) {
             foreach ($_GET['col'] as $key => $value) {
                 if ($value) {
-                    $this->script .= 'addSearchRow($(\'#search-div' . $this->rand . '\'), "' . Tools::escapeJs($value) . '",' . Tools::setifnull($_GET['op'][$key], 0) . ', "' . addslashes(Tools::setifnull($_GET['val'][$key], '')) . '");' . PHP_EOL;
+                    $this->script .= 'addSearchRow($(\'#search-div' . $this->rand . '\'), "'
+                        . Tools::escapeJs($value) . '",' . Tools::setifnull($_GET['op'][$key], 0) . ', "'
+                        . addslashes(
+                            (string) ((isset($_GET['val'][$key]) && (is_scalar($_GET['val'][$key]) || is_null($_GET['val'][$key]) ) ) ? ( is_null($_GET['val'][$key]) ? '' : $_GET['val'][$key]) : '')
+                        ) . '");' . PHP_EOL;
                 } else {
                     unset($_GET['col'][$key], $_GET['op'][$key], $_GET['val'][$key]);
                 }
@@ -1045,8 +1077,9 @@ class MyTableLister
     {
         $result = [];
         if ($keys = $this->filterKeys(['PRI'])) {
+            Assert::string(array_keys($keys)[0]);
             $result [] = 'where[' . urlencode(array_keys($keys)[0]) . ']='
-                . urlencode(Tools::set($row[array_keys($keys)[0]]));
+                . urlencode((isset($row[array_keys($keys)[0]]) && $row[array_keys($keys)[0]] ? $row[array_keys($keys)[0]] : ''));
         } elseif ($keys = $this->filterKeys(['UNI'])) {
             foreach ($keys as $key => $value) {
                 if (isset($row[$key]) && $row[$key] !== null) {

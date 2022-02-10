@@ -10,7 +10,7 @@ use WorkOfStan\MyCMS\MyCMS;
 
 /**
  * Custom project-specific filters for Latte.
- * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
  */
 class CustomFilters
 {
@@ -19,7 +19,7 @@ class CustomFilters
     /** @var MyCMS */
     protected $MyCMS;
 
-    /** @var ProjectSpecific */
+    /** var ProjectSpecific */
 //    private $projectSpecific;
 
     /**
@@ -48,7 +48,9 @@ class CustomFilters
         if (method_exists(__CLASS__, $filter)) {
             $tempCallable = [__CLASS__, $filter];
             Assert::isCallable($tempCallable);
-            return call_user_func_array($tempCallable, $args);
+            $result = call_user_func_array($tempCallable, $args);
+            Assert::string($result);
+            return $result;
         }
     }
 

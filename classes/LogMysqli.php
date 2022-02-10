@@ -103,6 +103,7 @@ class LogMysqli extends BackyardMysqli
     {
         $result = $this->queryArray($sql, false); // returns two dimensional array
         if ($result === false) {
+            // TODO add `$this->showSqlBarPanel();` ? in order to display SQL statements?
             throw new Exception('Empty result or database error');
         }
         return $result;
@@ -125,11 +126,13 @@ class LogMysqli extends BackyardMysqli
         $result = $this->query($sql, $errorLogOutput, $logQuery);
 
         if ($result === false) {
+            // TODO add `$this->showSqlBarPanel();` ? in order to display SQL statements?
             throw new Exception($this->errno . ': ' . $this->error);
         }
         if ($result === true) {
             return true;
         }
+        // TODO add `$this->showSqlBarPanel();` ? in order to display SQL statements?
         throw new Exception('Object answer on SQL statement (should have been true');
     }
 
@@ -150,9 +153,11 @@ class LogMysqli extends BackyardMysqli
         $result = $this->query($sql, $errorLogOutput, $logQuery);
 
         if ($result === false) {
+            // TODO add `$this->showSqlBarPanel();` ? in order to display SQL statements?
             throw new Exception($this->errno . ': ' . $this->error);
         }
         if ($result === true) {
+            // TODO add `$this->showSqlBarPanel();` ? in order to display SQL statements?
             throw new Exception('Non-object answer on SQL statement (unexpectedly equals true)');
         }
         return $result;
@@ -290,34 +295,78 @@ class LogMysqli extends BackyardMysqli
      * @example: fetchSingle('SELECT age FROM employees WHERE id = 5') --> 45
      *
      * @param string $sql SQL to be executed
-     * @return mixed first selected row (or its first column if only one column is selected), null on empty SELECT
+     * @return null|string|array<null|string> first selected row (or its first column if only one column is selected),
+     *     null on empty SELECT
      * @throws Exception when a database error occurs or when an SQL statement returns true.
      */
     public function fetchSingle($sql)
     {
         $query = $this->query($sql);
         if ($query === true) {
-            //return null;
+            // TODO add `$this->showSqlBarPanel();` ? in order to display SQL statements?
             throw new Exception('SQL statement resulting in \mysqli_result<object> expected. True received.');
         }
-        if ($query) {
-            $row = $query->fetch_assoc();
-            if (is_array($row)) {
-                if (!count($row)) {
-                    return null;
-                }
-                return count($row) == 1 ? reset($row) : $row;
-            }
+        if (!$query) {
+            // TODO add `$this->showSqlBarPanel();` ? in order to display SQL statements?
+            throw new Exception($this->errno . ': ' . $this->error);
+        }
+        $row = $query->fetch_assoc();
+        if (!is_array($row) || !count($row)) {
             return null;
         }
-        throw new Exception($this->errno . ': ' . $this->error);
+        return count($row) == 1 ? reset($row) : $row;
+    }
+
+    /**
+     * Execute an SQL and fetch the string content of the one one column of the one row of a resultset.
+     *
+     * @param string $sql SQL to be executed
+     * @return string first column of the first selected row
+     */
+    public function fetchSingleString($sql)
+    {
+        $query = $this->fetchSingle($sql);
+        // TODO add `if(!is_string($query))$this->showSqlBarPanel();` ? in order to display SQL statements?
+        Assert::string($query);
+        return $query;
+    }
+
+    /**
+     * Execute an SQL and fetch the first row of a resultset,
+     * if it is an array of strings. (NULL is replaced by empty string.)
+     *
+     * @param string $sql SQL to be executed
+     * @return array<string>|null
+     * @throws Exception when a database error occurs or when an SQL statement returns true or string.
+     */
+    public function fetchStringArray($sql)
+    {
+        $arr = $this->fetchSingle($sql);
+        if (is_null($arr)) {
+            return null;
+        }
+        if (!is_array($arr)) {
+            // TODO add `$this->showSqlBarPanel();` ? in order to display SQL statements?
+            throw new Exception('SQL statement resulting in non array.');
+        }
+        foreach ($arr as $name => $str) {
+            if (is_null($str)) {
+                //throw new Exception('Some non string. Null in the field: ' . $name . ' for SQL: ' . $sql);
+                $arr[$name] = '';
+            }
+        }
+        /**
+         * @phpstan-ignore-next-line FALSE POSITIVE: should return array<string>|null but returns array<string|null>.
+         */
+        return $arr;
     }
 
     /**
      * Execute an SQL, fetch and return all resulting rows
      *
      * @param string $sql
-     * @return array<array<mixed>> array of associative arrays for each result row or empty array on error or no results
+     * @return array<array<null|string>> array of associative arrays for each result row
+     *     or empty array on error or no results
      */
     public function fetchAll($sql)
     {
@@ -343,7 +392,7 @@ class LogMysqli extends BackyardMysqli
      *     [1=>[[name=>'John',surname=>'Doe'], [name=>'Mary',surname=>'Saint']], 2=>[...]]
      *
      * @param string $sql SQL statement to be executed
-     * @return array<array<mixed>|string>|false
+     * @return array<array<string|null|array<string|null>>|string>|false
      *   Result is either associative array, empty array on empty SELECT, or false on error
      *   Error for this function is also an SQL statement that returns true.
      */
@@ -358,6 +407,7 @@ class LogMysqli extends BackyardMysqli
             $key = reset($row);
             $value = count($row) == 2 ? next($row) : $row;
             if (count($row) > 2) {
+                // TODO add `if(!is_array($value))$this->showSqlBarPanel();` ? in order to display SQL statements?
                 Assert::isArray($value);
                 array_shift($value);
             }

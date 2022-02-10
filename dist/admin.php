@@ -1,13 +1,17 @@
 <?php
 
+/**
+ * Admin
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
+ */
+
 use Tracy\Debugger;
 use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
 use WorkOfStan\mycmsprojectnamespace\Admin;
 use WorkOfStan\mycmsprojectnamespace\AdminProcess;
 use WorkOfStan\mycmsprojectnamespace\TableAdmin;
 
-// Admin
-require_once './set-environment.php';
+require_once './conf/set-environment.php';
 require_once './prepare.php';
 
 if (isset($_POST) && !empty($_POST)) {

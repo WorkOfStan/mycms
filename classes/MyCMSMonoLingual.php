@@ -6,6 +6,7 @@ use Exception;
 use Psr\Log\LoggerInterface;
 use Tracy\Debugger;
 use Webmozart\Assert\Assert;
+use WorkOfStan\Backyard\BackyardError;
 use WorkOfStan\MyCMS\LogMysqli;
 use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
 
@@ -37,7 +38,7 @@ class MyCMSMonoLingual
 
     /**
      * variables for template rendering
-     * @var array<mixed>
+     * @var array<array<mixed>|false|int|null|string>
      */
     public $context = [];
 
@@ -50,7 +51,7 @@ class MyCMSMonoLingual
     /**
      * Constructor
      *
-     * @param array<array> $myCmsConf
+     * @param array<mixed> $myCmsConf
      * @throws Exception if logger not configured
      */
     public function __construct(array $myCmsConf = [])
@@ -114,8 +115,8 @@ class MyCMSMonoLingual
     /**
      *
      * @param string $sql
-     * @return mixed first selected row (or its first column if only one column is selected),
-     *     null on empty SELECT, or false on error
+     * @return null|string|array<null|string> first selected row (or its first column if only one column is selected),
+     *     null on empty SELECT
      */
     public function fetchSingle($sql)
     {
@@ -125,7 +126,8 @@ class MyCMSMonoLingual
     /**
      *
      * @param string $sql
-     * @return array<array<mixed>> array of associative arrays for each result row or empty array on error or no results
+     * @return array<array<null|string>> array of associative arrays for each result row
+     *     or empty array on error or no results
      */
     public function fetchAll($sql)
     {
@@ -135,8 +137,10 @@ class MyCMSMonoLingual
     /**
      *
      * @param string $sql SQL statement to be executed
-     * @return array<array<mixed>|string>|false
-     *   Returns either associative array, empty array on empty SELECT, or false on error
+     * @return array<array<array<null|string>|null|string>|string>|false
+     * was return array<array<string|null>|string>|false (todo remove)
+     *   Result is either associative array, empty array on empty SELECT, or false on error
+     *   Error for this function is also an SQL statement that returns true.
      */
     public function fetchAndReindex($sql)
     {
@@ -144,16 +148,54 @@ class MyCMSMonoLingual
     }
 
     /**
+     * Assert array<string|null>
+     *
+     * @param array<mixed> $arr
+     * @return array<string|null>
+     */
+    private function assertArrayStringNull(array $arr)
+    {
+        $result = [];
+        foreach ($arr as $k2 => $v2) {
+            if (!is_null($v2) && !is_string($v2)) {
+                throw new Exception('String or null expected, but array contains type ' . gettype($v2));
+            }
+            $result[$k2] = $v2;
+        }
+        return $result;
+    }
+
+    /**
      *
      * @param string $sql SQL statement to be executed
-     * @return array<array|string> - either associative array, empty array on empty SELECT
+     * @return array<array<string|null>|string> Either associative array or empty array on empty SELECT
+     *
      *   Exception on error
      */
     public function fetchAndReindexStrictArray($sql)
     {
-        $result = $this->dbms->fetchAndReindex($sql);
+        $result = $this->dbms->fetchAndReindex($sql); // array<array<string|null|array<string|null>>|string>|false
+        if (!is_array($result)) {
+            $this->dbms->showSqlBarPanel();
+        }
         Assert::isArray($result);
-        return $result;
+        if (empty($result)) {
+            return [];
+        }
+        if ((count($result) === 1) && array_key_exists(1, $result) && is_array($result[1])) {
+            $result = $result[1]; // TODO explore why sometimes records are in the array, and sometimes in the key=1
+        }
+        $resultTwoLevelArray = [];
+        foreach ($result as $k => $v) {
+            if (is_string($v)) {
+                $resultTwoLevelArray[$k] = $v;
+            } elseif (is_array($v)) {
+                $resultTwoLevelArray[$k] = $this->assertArrayStringNull($v);
+            } else {
+                throw new Exception('Unexpected structure of SQL statement result. Array contains type ' . gettype($v));
+            }
+        }
+        return $resultTwoLevelArray;
     }
 
     /**
@@ -182,5 +224,17 @@ class MyCMSMonoLingual
         $Latte->render('template/' . $this->template . '.latte', $params); // @todo make it configurable
         unset($_SESSION['messages']);
         $this->dbms->showSqlBarPanel();
+    }
+
+    /**
+     * Context setter that ensures the type
+     *
+     * @param array<string> $arr
+     * @return void
+     */
+    public function setContext(array $arr)
+    {
+        Assert::isArray($arr);
+        $this->context = $arr;
     }
 }

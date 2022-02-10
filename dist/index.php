@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * MyCMS app front-end
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
+ */
+
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
@@ -8,7 +13,7 @@ use WorkOfStan\mycmsprojectnamespace\Latte\CustomFilters;
 use WorkOfStan\mycmsprojectnamespace\ProjectSpecific;
 use WorkOfStan\mycmsprojectnamespace\Utils;
 
-require './set-environment.php';
+require './conf/set-environment.php';
 
 // Under construction section
 if (
@@ -49,11 +54,16 @@ $controller = new Controller($MyCMS, [
     'verbose' => DEBUG_VERBOSE,
     'featureFlags' => $featureFlags,
     ]);
-$controllerResult = $controller->run();
-$MyCMS->template = $controllerResult['template'];
-$MyCMS->context = $controllerResult['context'];
+
+$controller->run();
+$MyCMS->template = $controller->template();
+$MyCMS->setContext($controller->context());
 $MyCMS->WEBSITE = $WEBSITE[$_SESSION['language']]; // language is already properly set through FriendlyURL mechanism
-Debugger::barDump($controllerResult, 'ControllerResult', [Tracy\Dumper::DEPTH => 5]);
+Debugger::barDump(
+    ['template' => $controller->template(), 'context' => $controller->context()],
+    'ControllerResult',
+    [Tracy\Dumper::DEPTH => 5]
+);
 
 if (array_key_exists('json', $MyCMS->context)) {
     $MyCMS->renderJson(

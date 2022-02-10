@@ -14,6 +14,7 @@
 namespace WorkOfStan\MyCMS\ThrowableFunctions;
 
 use Exception;
+use Webmozart\Assert\Assert;
 
 /**
  * Return the argument unless it is `false`.
@@ -52,7 +53,9 @@ function throwOnNull($result)
  */
 function filemtime($filename)
 {
-    return throwOnFalse(\filemtime($filename));
+    $result = throwOnFalse(\filemtime($filename));
+    Assert::integer($result);
+    return $result;
 }
 
 /**
@@ -63,7 +66,11 @@ function filemtime($filename)
  */
 function glob($pattern, $flags = 0)
 {
-    return throwOnFalse(\glob($pattern, $flags));
+    $result = \glob($pattern, $flags);
+    if ($result === false) {
+        throw new Exception('error (false) ' . debug_backtrace()[1]['function']);
+    }
+    return $result;
 }
 
 /**
@@ -75,7 +82,9 @@ function glob($pattern, $flags = 0)
  */
 function json_encode($value, $flags = 0, $depth = 512)
 {
-    return throwOnFalse(\json_encode($value, $flags, $depth));
+    $result = throwOnFalse(\json_encode($value, $flags, $depth));
+    Assert::string($result);
+    return $result;
 }
 
 /**
@@ -88,10 +97,12 @@ function json_encode($value, $flags = 0, $depth = 512)
  */
 function mb_eregi_replace($pattern, $replacement, $string, $options = null)
 {
-    return
+    $result =
         is_null($options) ?
         throwOnFalse(throwOnNull(\mb_eregi_replace($pattern, $replacement, $string))) :
         throwOnFalse(throwOnNull(\mb_eregi_replace($pattern, $replacement, $string, $options)));
+    Assert::string($result);
+    return $result;
 }
 
 /**
@@ -105,7 +116,9 @@ function mb_eregi_replace($pattern, $replacement, $string, $options = null)
  */
 function preg_match($pattern, $subject, array &$matches = null, $flags = 0, $offset = 0)
 {
-    return throwOnFalse(\preg_match($pattern, $subject, $matches, $flags, $offset));
+    $result = throwOnFalse(\preg_match($pattern, $subject, $matches, $flags, $offset));
+    Assert::integer($result);
+    return $result;
 }
 
 /**
@@ -119,7 +132,9 @@ function preg_match($pattern, $subject, array &$matches = null, $flags = 0, $off
  */
 function preg_match_all($pattern, $subject, array &$matches = null, $flags = 0, $offset = 0)
 {
-    return throwOnFalse(\preg_match_all($pattern, $subject, $matches, $flags, $offset));
+    $result = throwOnFalse(\preg_match_all($pattern, $subject, $matches, $flags, $offset));
+    Assert::integer($result);
+    return $result;
 }
 
 /**
@@ -133,7 +148,11 @@ function preg_match_all($pattern, $subject, array &$matches = null, $flags = 0, 
  */
 function preg_replace($pattern, $replacement, $subject, $limit = -1, &$count = null)
 {
-    return throwOnNull(\preg_replace($pattern, $replacement, $subject, $limit, $count));
+    $result = \preg_replace($pattern, $replacement, $subject, $limit, $count);
+    if (is_null($result)) {
+        throw new Exception('error (null) ' . debug_backtrace()[1]['function']);
+    }
+    return $result;
 }
 
 /**
@@ -148,7 +167,9 @@ function preg_replace($pattern, $replacement, $subject, $limit = -1, &$count = n
  */
 function preg_replaceString($pattern, $replacement, $subject, $limit = -1, &$count = null)
 {
-    return throwOnNull(\preg_replace($pattern, $replacement, $subject, $limit, $count));
+    $result = throwOnNull(\preg_replace($pattern, $replacement, $subject, $limit, $count));
+    Assert::string($result);
+    return $result;
 }
 
 /**
@@ -159,5 +180,7 @@ function preg_replaceString($pattern, $replacement, $subject, $limit = -1, &$cou
  */
 function strtotime($datetime, $baseTimestamp = null)
 {
-    return throwOnFalse(\strtotime($datetime, is_null($baseTimestamp) ? time() : $baseTimestamp));
+    $result = throwOnFalse(\strtotime($datetime, is_null($baseTimestamp) ? time() : $baseTimestamp));
+    Assert::integer($result);
+    return $result;
 }

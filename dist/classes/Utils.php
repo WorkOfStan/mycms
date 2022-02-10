@@ -7,7 +7,7 @@ use WorkOfStan\Backyard\Backyard;
 
 /**
  * Frequently used methods that are candidates to become part of MyCMS library as MyCMS\Utils
- * (Last MyCMS/dist revision: 2021-05-28, v0.4.2)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
  *
  * @author rejthar@stanislavrejthar.com
  */
@@ -44,7 +44,10 @@ class Utils
             ) ? self::niceDumpArray(
                 $v,
                 $showKey
-            ) : (((int) $v > $boldWhenHigherThan) ? "<b>{$v}</b>" : $v);
+            ) : (is_scalar($v) ? (
+                ((int) $v > $boldWhenHigherThan) ? "<b>{$v}</b>" : $v
+                ) : ("cannot display type: " . gettype($v))
+            );
             $result .= "<br/>" . PHP_EOL;
         }
         return $result . "</ol>" . PHP_EOL;

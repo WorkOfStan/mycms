@@ -18,7 +18,7 @@ define('PROCESS_LIMIT', 100); // used in self::getAgenda
 
 /**
  * AJAX and form handling for Admin UI
- * (Last MyCMS/dist revision: 2021-11-05, v0.4.4+)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
  */
 class AdminProcess extends MyAdminProcess
 {
@@ -31,7 +31,7 @@ class AdminProcess extends MyAdminProcess
      * accepted attributes:
      */
 
-    /** @var array<array<mixed>> */
+    /** @var array<array<string|array<string|int>>> */
     protected $agendas;
 
     /**
@@ -59,11 +59,15 @@ class AdminProcess extends MyAdminProcess
         }
         // return given agenda
         if (isset($post['agenda'], $this->agendas[$post['agenda']])) {
+            $subagenda = (isset($this->agendas[$post['agenda']]['join']) &&
+                is_array($this->agendas[$post['agenda']]['join']) &&
+                array_key_exists('table', $this->agendas[$post['agenda']]['join'])) ?
+                $this->agendas[$post['agenda']]['join']['table'] : null;
             $result = [
                 'data' => $this->getAgenda($post['agenda']),
                 'success' => true,
                 'agenda' => $post['agenda'],
-                'subagenda' => Tools::setifnull($this->agendas[$post['agenda']]['join']['table'])
+                'subagenda' => $subagenda
             ];
             $this->exitJson($result); // terminates
         }
@@ -145,9 +149,17 @@ class AdminProcess extends MyAdminProcess
                 'SELECT path FROM ' . TAB_PREFIX . 'category WHERE id=' . $post['id']
             ))
         ) {
+            Assert::string($path);
             $strlen = strlen($path);
             $neighbour = substr($path, 0, -PATH_MODULE)
-                . str_pad(substr($path, -PATH_MODULE) + $post['category-switch'], PATH_MODULE, '0', STR_PAD_LEFT);
+                . str_pad(
+                    // TODO better describe: button category-switch Admin::projectSpecificSections implies +-1 value
+                    (string) (substr($path, -PATH_MODULE) + $post['category-switch']),
+                    PATH_MODULE,
+                    '0',
+                    STR_PAD_LEFT
+                );
+            Debugger::barDump($neighbour, 'neighbour'); // debug
             $edits = $this->MyCMS->fetchAndReindex(
                 'SELECT id,path FROM ' . TAB_PREFIX . 'category WHERE LEFT(path, ' . strlen($path) . ') IN ("'
                 . $this->MyCMS->escapeSQL($neighbour) . '")'
@@ -195,6 +207,7 @@ class AdminProcess extends MyAdminProcess
                 . (int) $product['category_id'] . ' AND sort' . ($post['product-switch'] == 1 ? '>' : '<')
                 . $product['sort'] . ' ORDER BY sort' . ($post['product-switch'] == 1 ? '' : ' DESC') . ' LIMIT 1');
             if ($id) {
+                Assert::string($id);
                 $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'product SET sort='
                     . $product['sort'] . ' WHERE id=' . $id);
                 $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'product SET sort='
@@ -225,7 +238,8 @@ class AdminProcess extends MyAdminProcess
                     }
                     if ($value) {
                         fwrite($fp, "    '" . strtr($key, array('&apos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
-                            . "' => '" . strtr($value, array('&appos;' => "\\'", "'" => "\\'", '&amp;' => '&')) . "',\n");
+                            . "' => '" . strtr($value, array('&appos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
+                            . "',\n");
                     }
                 }
                 fwrite($fp, "];\n");
@@ -459,6 +473,7 @@ class AdminProcess extends MyAdminProcess
      *
      * @param string $agenda
      * @return array<array<string|array<mixed>>>
+     *   Todo: mixed is result of fetch_assoc - string??
      */
     public function getAgenda($agenda)
     {
@@ -480,6 +495,11 @@ class AdminProcess extends MyAdminProcess
                 isset($options['column']) ? (is_array($options['column']) ? (
                     'CONCAT(' . implode(
                         ",'|',",
+                        /**
+                         * @phpstan-ignore-next-line
+                         * Parameter #1 $callback of function array_map expects (callable(mixed): mixed)|null,
+                         * array{WorkOfStan\MyCMS\LogMysqli, 'escapeDbIdentifier'} given.
+                         */
                         array_map([$this->MyCMS->dbms, 'escapeDbIdentifier'], $options['column'])
                     ) . ')'
                 ) : $this->MyCMS->dbms->escapeDbIdentifier($options['column'])) :
@@ -504,7 +524,7 @@ class AdminProcess extends MyAdminProcess
                 $correctOrder[$row['id']] = $i;
             }
         }
-        // TODO does the next foreach have any impact on the returned value?
+        // TODO does the next foreach have any impact on the returned value? Update??
         foreach ($correctOrder as $key => $value) {
             $this->MyCMS->dbms->query('UPDATE `' . $this->MyCMS->dbms->escapeDbIdentifier(
                 TAB_PREFIX . $optionsTable

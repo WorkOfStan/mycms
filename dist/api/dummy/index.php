@@ -2,12 +2,12 @@
 
 /**
  * Dummy API encoded below that co-exists with Controller served APIs
- *
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
  */
 
 use WorkOfStan\mycmsprojectnamespace\Utils;
 
-require './../../set-environment.php';
+require './../../conf/set-environment.php';
 
 // Under construction section
 // Note: if condition changes, pls change also $developmentEnvironment assignement in prepare.php

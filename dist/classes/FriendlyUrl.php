@@ -4,13 +4,14 @@ namespace WorkOfStan\mycmsprojectnamespace;
 
 use Tracy\Debugger;
 use Tracy\ILogger;
+use WorkOfStan\MyCMS\ArrayStrict;
 use WorkOfStan\MyCMS\MyCMS;
 use WorkOfStan\MyCMS\MyFriendlyUrl;
 use WorkOfStan\mycmsprojectnamespace\ProjectSpecific;
 
 /**
  * Friendly URL set-up
- * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
  */
 class FriendlyUrl extends MyFriendlyUrl
 {
@@ -82,12 +83,13 @@ class FriendlyUrl extends MyFriendlyUrl
     {
         Debugger::barDump("{$outputKey} => {$outputValue}", 'switchParametric started');
         $this->projectSpecific->language($this->language);
+        $get = new ArrayStrict($this->get);
         switch ($outputKey) {
             case 'article':
                 if (empty($outputValue)) {
-                    return isset($this->get['offset']) ? "?article&offset=" . (int) $this->get['offset'] : "?article";
+                    return isset($this->get['offset']) ? "?article&offset=" . $get->integer('offset') : "?article";
                 }
-                $content = $this->MyCMS->dbms->fetchSingle(
+                $content = $this->MyCMS->dbms->fetchStringArray(
                     'SELECT id, name_' . $this->language . ' AS name,'
                     . $this->projectSpecific->getLinkSql("?article&id=", $this->language)
                     . ' FROM ' . TAB_PREFIX . 'content WHERE active = 1 AND '
@@ -99,20 +101,20 @@ class FriendlyUrl extends MyFriendlyUrl
                 return is_null($content) ? self::PAGE_NOT_FOUND : $content['link'];
             case 'category':
                 if (empty($outputValue)) {
-                    return isset($this->get['offset']) ? "?category&offset=" . (int) $this->get['offset'] : "?category";
+                    return isset($this->get['offset']) ? "?category&offset=" . $get->integer('offset') : "?category";
                 }
-                $content = $this->MyCMS->dbms->fetchSingle('SELECT id, name_' . $this->language . ' AS title,'
+                $content = $this->MyCMS->dbms->fetchStringArray('SELECT id, name_' . $this->language . ' AS title,'
                     . $this->projectSpecific->getLinkSql("?category=", $this->language)
                     . ' FROM ' . TAB_PREFIX . 'category WHERE active = 1 '
                     . ' AND id = "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"');
                 Debugger::barDump($content, 'category');
-                return is_null($content) ? self::PAGE_NOT_FOUND : $content['link'];
+                return is_null($content) ? self::PAGE_NOT_FOUND : (string) $content['link'];
             case 'language':
                 return null; // i.e. do not change the output or return "?{$outputKey}={$outputValue}";
             case 'product':
                 $content = $this->projectSpecific->getProduct((int) $outputValue);
                 Debugger::barDump($content, 'product');
-                return is_null($content) ? self::PAGE_NOT_FOUND : $content['link'];
+                return is_null($content) ? self::PAGE_NOT_FOUND : (string) $content['link'];
             default:
                 Debugger::log(
                     "switchParametric: undefined friendlyfyUrl for {$outputKey} => {$outputValue}",

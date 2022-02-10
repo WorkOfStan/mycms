@@ -23,6 +23,7 @@ class InitDatabase
     {
         // TODO consider refactoring to not use constants , but rather change configuration to use object
         $phinxYml = Yaml::parseFile($pathToPhinx . 'phinx.yml');
+        Assert::isArray($phinxYml);
         if (array_key_exists($phinxEnvironment, $phinxYml['environments'])) {
             foreach (
                 [

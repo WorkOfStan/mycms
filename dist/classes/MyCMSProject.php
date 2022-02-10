@@ -4,7 +4,10 @@ namespace WorkOfStan\mycmsprojectnamespace;
 
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
+use Webmozart\Assert\Assert;
 use WorkOfStan\Backyard\Backyard;
+use WorkOfStan\Backyard\BackyardError;
+use WorkOfStan\MyCMS\LogMysqli;
 use WorkOfStan\MyCMS\MyCMS;
 use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
 use WorkOfStan\mycmsprojectnamespace\Utils;
@@ -12,7 +15,7 @@ use WorkOfStan\mycmsprojectnamespace\Utils;
 /**
  * Class for a MyCMS object.
  * It holds all specific variables needed for this application.
- * (Last MyCMS/dist revision: 2021-05-26, v0.4.1)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
  */
 class MyCMSProject extends MyCMS
 {
@@ -23,7 +26,7 @@ class MyCMSProject extends MyCMS
     /** @var array<string> */
     public $PAGES_SPECIAL;
 
-    /** @var array<mixed> */
+    /** @var array<string> */
     public $SETTINGS;
 
     /** @var array<array<string|array<array<string>>>> */
@@ -57,6 +60,7 @@ class MyCMSProject extends MyCMS
             if (
                 array_key_exists('messageSuccessInfo', $this->context) && !is_null($this->context['messageSuccessInfo'])
             ) {
+                Assert::string($this->context['messageSuccessInfo']);
                 Tools::addMessage('info', $this->context['messageSuccessInfo']);
             }
             if ($humanReadable) { // TODO: maybe it will be removed after the development phase
@@ -69,6 +73,7 @@ class MyCMSProject extends MyCMS
         } elseif (array_key_exists('messageFailure', $this->context) && !is_null($this->context['messageFailure'])) {
             Debugger::barDump('contextJson is expected to be an array');
             // TODO remove after Controller.php refactor all context['message... to    Tools::addMessage('error',
+            Assert::string($this->context['messageFailure']);
             Tools::addMessage('error', $this->context['messageFailure']);
             header('HTTP/1.1 404 Not Found', true, 404);
             echo($this->context['messageFailure']);

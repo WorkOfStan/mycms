@@ -5,12 +5,13 @@ namespace WorkOfStan\MyCMS;
 use Exception;
 use GodsDev\Tools\Tools;
 use Tracy\Debugger;
+use Webmozart\Assert\Assert;
 
 class MyFriendlyUrl extends MyCommon
 {
     use \Nette\SmartObject;
 
-    const PAGE_NOT_FOUND = '404';
+    public const PAGE_NOT_FOUND = '404';
 
     /**
      * interestingPath pattern to match `language subpattern` and the `rest of the path`
@@ -81,17 +82,15 @@ class MyFriendlyUrl extends MyCommon
      * @param string $url
      * @param string $barDumpTitle
      * @param int $httpCode
-     * @return array<mixed> with redir string field
+     * @return array<int|string> with redir string field
      */
     protected function redirWrapper($url, $barDumpTitle, $httpCode = 301)
     {
-        return [
-            'redir' => $this->verboseBarDump(
-                $this->applicationDir . $url,
-                'redir identified: ' . $barDumpTitle
-            ),
-            'httpCode' => $httpCode,
-        ];
+        $this->verboseBarDump(
+            $this->applicationDir . $url,
+            'redir identified: ' . $barDumpTitle
+        );
+        return ['redir' => $this->applicationDir . $url, 'httpCode' => $httpCode];
     }
 
     /**
@@ -108,8 +107,9 @@ class MyFriendlyUrl extends MyCommon
      * ]
      * matchResult = (1=pattern matches `PARSE_PATH_PATTERN`, 0=it does not, or FALSE=error)
      *
-     * @param array<mixed> $options
-     * @return array<mixed>|true `bool (true)` when `TEMPLATE_NOT_FOUND` || `array` with redir string field
+     * @param array<string> $options
+     * @return array<int|string|array<string>>|true
+     *     `bool (true)` when `TEMPLATE_NOT_FOUND` || `array<int,string>` with redir string field
      *     || `array` with token string field and matches array field (see above)
      * @throws Exception on malformed URL
      */
@@ -222,6 +222,7 @@ class MyFriendlyUrl extends MyCommon
                 'friendlyIdentifyRedirect: found redirect'
             )
         ) {
+            Assert::string($found);
             // Multiple directories,
             // such as /spolecnost/tiskove-centrum/logo-ke-stazeni.html -> /index.php?category&id=14
             return $this->redirWrapper($found, 'old to new redirector');
@@ -240,7 +241,8 @@ class MyFriendlyUrl extends MyCommon
                 : $this->redirWrapper(($addLanguageDirectory ? "/{$this->language}/" : '/')
                     . self::PAGE_NOT_FOUND . '?url=' . $interestingPath, '404 for complex unknown URL');
         }
-        return $this->verboseBarDump(compact('token', 'matches'), 'friendlyIdentifyRedirect: return [token, matches]');
+        $this->verboseBarDump(compact('token', 'matches'), 'friendlyIdentifyRedirect: return [token, matches]');
+        return compact('token', 'matches');
     }
 
     /**
@@ -262,12 +264,13 @@ class MyFriendlyUrl extends MyCommon
                 ),
                 true
             ));
-            $this->MyCMS->logger->info($this->verboseBarDump(
+            $this->MyCMS->logger->info($this->verboseBarDumpString(
                 "{$getParam} may lead to '{$assignement['template']}' template",
                 'determineTemplate: template assignement'
             ));
             if (!isset($assignement['idcode']) || $assignement['idcode'] === false) {
-                return $this->verboseBarDump(
+                Assert::string($assignement['template']);
+                return $this->verboseBarDumpString(
                     $assignement['template'],
                     'determineTemplate: assignement established from get parameter name'
                 );
@@ -279,15 +282,17 @@ class MyFriendlyUrl extends MyCommon
                         FILTER_VALIDATE_INT,
                         ['default' => 0, 'min_range' => 0, 'max_range' => 1e9]
                     );
+                    Assert::scalar($tempGetId);
                     if (!$this->get['id']) {
-                        $this->MyCMS->logger->error($this->verboseBarDump(
+                        $this->MyCMS->logger->error($this->verboseBarDumpString(
                             "this->get['id'] {$tempGetId} did not pass number filter",
                             "get id did not pass filter"
                         ));
                         return self::TEMPLATE_NOT_FOUND;
                     }
                 }
-                return $this->verboseBarDump(
+                Assert::string($assignement['template']);
+                return $this->verboseBarDumpString(
                     $assignement['template'],
                     'determineTemplate: assignement established from id or code parameter'
                 );
@@ -315,8 +320,8 @@ class MyFriendlyUrl extends MyCommon
      * TODO: simplify management of TEMPLATE_NOT_FOUND result as currently it is indicated
      * as self::TEMPLATE_NOT_FOUND || null || true
      *
-     * @param array<mixed> $options OPTIONAL verbose==true bleeds info to standard output
-     * @return mixed `string` with name of the template when template determined
+     * @param array<string> $options (TODO:rest of line valid??)OPTIONAL verbose==true bleeds info to standard output
+     * @return string|array<int|string>|true `string` with name of the template when template determined
      *     || `array` with redir field when redirect || `bool (true)` when template set to `TEMPLATE_NOT_FOUND`
      */
     public function determineTemplate(array $options = [])
@@ -328,53 +333,69 @@ class MyFriendlyUrl extends MyCommon
 
         //FRIENDLY URL & Redirect variables
         $friendlyUrlRedirectVariables = $this->friendlyIdentifyRedirect($options);
-        if (is_bool($friendlyUrlRedirectVariables) || isset($friendlyUrlRedirectVariables['redir'])) {
-            return $friendlyUrlRedirectVariables;
+        if (is_bool($friendlyUrlRedirectVariables)) {
+            return $friendlyUrlRedirectVariables; // true
+        }
+        if (isset($friendlyUrlRedirectVariables['redir'])) {
+            //var_dump($friendlyUrlRedirectVariables);exit;
+            Assert::string($friendlyUrlRedirectVariables['redir']);
+            Assert::integer($friendlyUrlRedirectVariables['httpCode']);
+            // array<int|string>
+            return [
+                'redir' => $friendlyUrlRedirectVariables['redir'],
+                'httpCode' => $friendlyUrlRedirectVariables['httpCode']
+            ];
         }
         //$token, $matches - will be expected below for FRIENDLY URL & Redirect calculation
         //(see friendlyIdentifyRedirect PHPDoc for explanation)
+        Assert::isArray($friendlyUrlRedirectVariables);
         $token = $friendlyUrlRedirectVariables['token'];
+        Assert::string($token);
         $matches = $friendlyUrlRedirectVariables['matches'];
+        Assert::isArray($matches);
 
         $parametricRuleToTemplate = $this->parametricRuleToTemplate();
         if (!is_null($parametricRuleToTemplate)) {
-            return $parametricRuleToTemplate;
+            return $parametricRuleToTemplate; // string
         }
 
         //FRIENDLY URL & Redirect calculation where $token, $matches are expected from above
         $pureFriendlyUrl = $this->pureFriendlyUrl($options, $token, $matches);
         if (!is_null($pureFriendlyUrl)) {
             $this->verboseBarDump($this->get, 'determineTemplate this->get before return pureFriendlyUrl');
-            return $this->verboseBarDump($pureFriendlyUrl, 'determineTemplate return pureFriendlyUrl');
+            $this->verboseBarDumpString($pureFriendlyUrl, 'determineTemplate return pureFriendlyUrl');
+            return $pureFriendlyUrl; // string
         }
 
         // URL token not found
         $this->MyCMS->logger->error("404 Not found - {$options['REQUEST_URI']} and token=`{$token}`");
         $this->verboseBarDump("No condition catched the input.", "determineTemplate fail");
-        return self::TEMPLATE_NOT_FOUND;
+        return self::TEMPLATE_NOT_FOUND; // string
     }
 
     /**
      * FRIENDLY URL & Redirect calculation
      *
-     * @param array<mixed> $options for recursive determineTemplate call
+     * @param array<mixed> $options for recursive determineTemplate call (TODO: isn't this obsolete?)
      * @param string $token calculated by friendlyIdentifyRedirect
      * @param array<string> $matches calculated by friendlyIdentifyRedirect
-     * @return mixed `null` leads to self::TEMPLATE_NOT_FOUND
+     * @return null|string
+     *    `null` leads to self::TEMPLATE_NOT_FOUND (TODO: factor-out in favor of the constant? or true is redundant?)
      *    || `string` with name of the template when template determined
-     *    || `array` with redir field when redirect || `bool (true)` when template set to `TEMPLATE_NOT_FOUND`
+     *    NEVER OCCURS || `array<int,string>` with redir field when redirect
+     *    NEVER OCCURS || `bool (true)` when template set to `TEMPLATE_NOT_FOUND`
      */
     private function pureFriendlyUrl(array $options, $token, array $matches)
     {
         //default scripts and language directories all result into the default template
         if (in_array($token, array_merge([HOME_TOKEN, '', 'index'], array_keys($this->MyCMS->TRANSLATIONS)))) {
-            return $this->verboseBarDump(self::TEMPLATE_DEFAULT, 'pureFriendlyUrl return default');
+            return $this->verboseBarDumpString(self::TEMPLATE_DEFAULT, 'pureFriendlyUrl return default');
         }
 
-        // Language MUST always be set
+        // Language MUST be set
         if (!isset($matches[1])) {
             $this->language = DEFAULT_LANGUAGE;
-            $this->verboseBarDump($this->language, 'pureFriendlyUrl: Language reset to DEFAULT');
+            $this->verboseBarDumpString($this->language, 'pureFriendlyUrl: Language reset to DEFAULT');
         }
         // If there is a pure friendly URL, i.e. the token exactly matches a record in content database,
         // decode it internally to type=id
@@ -385,13 +406,16 @@ class MyFriendlyUrl extends MyCommon
             $this->get[$found['type']] = $this->get['id'] = $found['id'];
             $this->verboseBarDump($this->get, 'pureFriendlyUrl: this->get within pureFriendlyUrl');
             //TODO change the description as recursion is limited here
-            return $this->verboseBarDump(
-                $this->parametricRuleToTemplate(),
+            $result = $this->parametricRuleToTemplate();
+            $this->verboseBarDump(
+                $result,
                 'pureFriendlyUrl return parametricRuleToTemplate()'
             );
+            return $result;
         }
         //null leads to self::TEMPLATE_NOT_FOUND
-        return $this->verboseBarDump(null, 'pureFriendlyUrl return null leads to self::TEMPLATE_NOT_FOUND');
+        $this->verboseBarDump(null, 'pureFriendlyUrl return null leads to self::TEMPLATE_NOT_FOUND');
+        return null;
     }
 
     /**
@@ -418,7 +442,9 @@ class MyFriendlyUrl extends MyCommon
      * but SQL statement may be adapted in any way so this method MAY be overidden in child class
      *
      * @param string $token
-     * @return mixed null on empty result, false on database failure or one-dimensional array [id, type] on success
+     * @return null|array<string|null>
+     *     null on empty result | one-dimensional array [id, type] on success
+     *     Throws exception on database failure
      */
     protected function findFriendlyUrlToken($token)
     {
@@ -432,7 +458,12 @@ class MyFriendlyUrl extends MyCommon
         foreach ($this->MyCMS->typeToTableMapping as $type => $table) {
             $output[] = $this->prepareTableSelect($token, $type, $table);
         }
-        return $this->MyCMS->fetchSingle(implode(' UNION ', $output));
+        $result = $this->MyCMS->dbms->fetchSingle(implode(' UNION ', $output));
+        if (is_null($result)) {
+            return null;
+        }
+        Assert::isArray($result);
+        return $result;
     }
 
     /**
@@ -474,11 +505,18 @@ class MyFriendlyUrl extends MyCommon
             && isset($this->MyCMS->templateAssignementParametricRules[$outputKey]['idcode'])
             && $this->MyCMS->templateAssignementParametricRules[$outputKey]['idcode'])
             ? (isset($output['id']) ? (int) ($output['id'])
-            : (string) Tools::ifset($output['code'], '')) : $output2[$outputKey];
+            :
+//            (string) Tools::ifset($output['code'], '')
+            (isset($output['code']) ? $output['code'] : '')
+            )
+            : $output2[$outputKey];
 
         $result = $this->switchParametric($outputKey, $outputValue);
         $this->MyCMS->logger->info(
-            $this->verboseBarDump("{$params} friendlyfyUrl to " . print_r($result, true), 'friendlyfyUrl result')
+            $this->verboseBarDumpString(
+                "{$params} friendlyfyUrl to " . print_r($result, true),
+                'friendlyfyUrl result'
+            )
         );
         return is_null($result) ? $params : $result;
     }

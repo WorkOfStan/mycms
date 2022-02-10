@@ -30,6 +30,7 @@
         "source": "https://github.com/WorkOfStan/mycms"
     },
     "minimum-stability": "stable",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "WorkOfStan\\mycmsprojectnamespace\\": ["classes/"]

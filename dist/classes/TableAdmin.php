@@ -10,7 +10,7 @@ use WorkOfStan\MyCMS\MyTableAdmin;
 
 /**
  * Project specific adaptations of database tables in Admin UI
- * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
  */
 class TableAdmin extends MyTableAdmin
 {
@@ -20,18 +20,24 @@ class TableAdmin extends MyTableAdmin
      *
      * @param LogMysqli $dbms database management system (e.g. new mysqli())
      * @param string $table table name
-     * @param array<mixed> $options
+     * @param array<string|array<string>> $options
      */
     public function __construct(LogMysqli $dbms, $table, array $options = [])
     {
         parent::__construct($dbms, $table, $options);
+        Assert::isArray($options['TRANSLATIONS']);
         $this->TRANSLATIONS = $options['TRANSLATIONS'];
         $translationFile = 'conf/l10n/admin-' . Tools::setifempty($_SESSION['language'], 'en') . '.yml';
         // The union operator ( + ) might be more useful than array_merge.
         // The array_merge function does not preserve numeric key values.
         // If you need to preserve the numeric keys, then using + will do that.
         // TODO/Note: TRANSLATION is based on A project, rather than F project.
-        $this->TRANSLATION += file_exists($translationFile) ? Yaml::parseFile($translationFile) : [];
+        //delete//$this->TRANSLATION += file_exists($translationFile) ? Yaml::parseFile($translationFile) : [];
+        if (file_exists($translationFile)) {
+            $tempYaml = Yaml::parseFile($translationFile);
+            Assert::isArray($tempYaml);
+            $this->TRANSLATION += $tempYaml;
+        }
     }
 
     /**
@@ -59,13 +65,18 @@ class TableAdmin extends MyTableAdmin
             // Selection list of parent_product_id
             // TODO try this template in dist
             case "product\\parent_product_id":
+                $tempExclude = 0;
+                if (isset($_GET['where']['id'])) {
+                    Assert::string($_GET['where']['id']);
+                    $tempExclude = (int) $_GET['where']['id'];
+                }
                 $result = $this->outputForeignId(
                     "fields[$field]",
                     'SELECT p.id,product_' . DEFAULT_LANGUAGE . ',division_' . DEFAULT_LANGUAGE .
                     ' FROM ' . TAB_PREFIX . 'product p LEFT JOIN ' . TAB_PREFIX . 'division d ON p.division_id = d.id'
                     . ' WHERE IFNULL(p.parent_product_id, 0) = 0 ORDER BY d.sort,p.sort',
                     $value,
-                    ['class' => 'form-control', 'exclude' => (int) Tools::set($_GET['where']['id'])]
+                    ['class' => 'form-control', 'exclude' => $tempExclude]
                 );
                 break;
 
@@ -123,9 +134,12 @@ class TableAdmin extends MyTableAdmin
                     foreach ($rows as $row) {
                         $result .= Tools::htmlOption(
                             $row['path'],
-                            str_repeat('… ', (int) max(strlen($row['path']) / PATH_MODULE - 1, 0)) . $row['category'],
+                            str_repeat(
+                                '… ',
+                                (int) max(strlen((string) $row['path']) / PATH_MODULE - 1, 0)
+                            ) . $row['category'],
                             substr($value, 0, -PATH_MODULE),
-                            Tools::begins($row['path'], $value)
+                            Tools::begins((string) $row['path'], $value)
                         );
                     }
                 }
@@ -145,9 +159,9 @@ class TableAdmin extends MyTableAdmin
                     foreach ($rows as $row) {
                         if ($tmp != $row['category']) {
                             $result .= (is_null($tmp) ? '' : '</optgroup>') . '<optgroup label="'
-                                . Tools::h($tmp = $row['category']) . '">' . PHP_EOL;
+                                . Tools::h($tmp = (string)$row['category']) . '">' . PHP_EOL;
                         }
-                        $result .= Tools::htmlOption($row['id'], $row['title'], $value) . PHP_EOL;
+                        $result .= Tools::htmlOption($row['id'], (string) $row['title'], $value) . PHP_EOL;
                     }
                     $result .= (is_null($tmp) ? '' : '</optgroup>');
                 }

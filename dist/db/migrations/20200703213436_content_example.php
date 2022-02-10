@@ -6,7 +6,6 @@ use Phinx\Migration\AbstractMigration;
 
 final class ContentExample extends AbstractMigration
 {
-
     /**
      * Contains initial template for content of the web.
      * Adapt it here

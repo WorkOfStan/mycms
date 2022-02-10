@@ -11,7 +11,7 @@ use WorkOfStan\MyCMS\ProjectCommon;
 
 /**
  * Functions specific to the project (that are not in its own model)
- * (Last MyCMS/dist revision: 2021-05-28, v0.4.2)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
  */
 class ProjectSpecific extends ProjectCommon
 {
@@ -123,36 +123,39 @@ class ProjectSpecific extends ProjectCommon
      * @param mixed $id of the content OPTIONAL
      * @param string $code OPTIONAL
      * @param array<string> $options OPTIONAL
-     * @return string[] resultset
+     * @return array<array<int|string>|string> resultset
      */
     public function getContent($id = null, $code = null, array $options = [])
     {
-        $result = [];
-        if (!is_null($id) || !is_null($code)) {
-            $result = $this->MyCMS->fetchSingle('SELECT co.id,'
-                . ' product_id,'
-                . ' type,'
-                . ' co.code,'
-                . ' co.added,'
-                . ' co.context,'
-                . ' category_id,'
-                . ' path,'
-                . ' co.content_' . $options['language'] . ' AS title,'
-                . ' co.perex_' . $options['language'] . ' AS perex,'
-                . ' co.description_' . $options['language'] . ' AS description '
-                . ' FROM ' . TAB_PREFIX . 'content co LEFT JOIN ' . TAB_PREFIX . 'category ca ON co.category_id=ca.id '
-                . ' WHERE co.active="1"'
-                . (is_null($code) ? '' : Tools::wrap($this->MyCMS->escapeSQL($code), ' AND co.code="', '"'))
-                . (is_null($id) ? '' : Tools::wrap(intval($id), ' AND co.id=')) .
-                ' LIMIT 1');
-            if ($result) {
-                $result['context'] = json_decode($result['context'], true) ?: [];
-                $result['added'] = Tools::localeDate($result['added'], $options['language'], false);
-            }
+        if (is_null($id) && is_null($code)) {
+            return [];
         }
+        $result = $this->MyCMS->fetchSingle('SELECT co.id,'
+            . ' product_id,'
+            . ' type,'
+            . ' co.code,'
+            . ' co.added,'
+            . ' co.context,'
+            . ' category_id,'
+            . ' path,'
+            . ' co.content_' . $options['language'] . ' AS title,'
+            . ' co.perex_' . $options['language'] . ' AS perex,'
+            . ' co.description_' . $options['language'] . ' AS description '
+            . ' FROM ' . TAB_PREFIX . 'content co LEFT JOIN ' . TAB_PREFIX . 'category ca ON co.category_id=ca.id '
+            . ' WHERE co.active="1"'
+            . (is_null($code) ? '' : Tools::wrap($this->MyCMS->escapeSQL($code), ' AND co.code="', '"'))
+            . (is_null($id) ? '' : Tools::wrap(intval($id), ' AND co.id=')) .
+            ' LIMIT 1');
+        Assert::isArray($result);
+        $result['context'] = json_decode((string) $result['context'], true) ?: [];
+        $result['added'] = Tools::localeDate($result['added'], $options['language'], false);
+        Assert::string($result['path']);
+        Assert::string($result['id']);
         $options += array('path' => $result['path'], 'except_id' => $result['id']);
+        Assert::string($result['description']);
         if (($pos = strpos($result['description'], '%CHILDREN%')) !== false) {
             $result['description'] = str_replace('%CHILDREN%', '', $result['description']);
+            Assert::integer($result['category_id']);
             $this->MyCMS->context['children'] = self::getChildren($result['category_id'], $options);
         }/* elseif (($pos = strpos($result['description'], '%GRANDCHILDREN%')) !== false) {
           $result['description'] = str_replace('%GRANDCHILDREN%', '', $result['description']);
@@ -166,6 +169,10 @@ class ProjectSpecific extends ProjectCommon
                 $result['description']
             );
         }
+        Assert::string($result['description']);
+        /**
+         * @phpstan-ignore-next-line should return array<array<int|string>|string> but returns array
+         */
         return $result;
     }
     //public function processProductDescription($description, array $options) // in A project
@@ -177,11 +184,11 @@ class ProjectSpecific extends ProjectCommon
      * @param mixed $id of the content OPTIONAL
      * @param string $code OPTIONAL
      * @param array<string> $options OPTIONAL
-     * @return array<mixed> resultset
+     * @return array<string>|null resultset
      */
     public function getCategory($id = null, $code = null, array $options = [])
     {
-        $result = $this->MyCMS->fetchSingle(
+        $result = $this->MyCMS->dbms->fetchStringArray(
             'SELECT id AS category_id, ' // . 'path,'
             . ' context,'
             // . ' "page" AS type,'
@@ -193,9 +200,12 @@ class ProjectSpecific extends ProjectCommon
             . (is_null($id) ? '' : Tools::wrap(intval($id), ' AND id=')) . ' LIMIT 1'
         );
         if ((!is_null($id) || !is_null($code)) && $result) {
-            $result['context'] = json_decode($result['context'], true) ?: [];
+            $result['context'] = json_decode((string) $result['context'], true) ?: [];
             $result['added'] = Tools::localeDate($result['added'], $options['language'], false);
         }
+        /**
+         * @phpstan-ignore-next-line should return array<string>|null but returns array|null
+         */
         return $result;
     }
 
@@ -203,12 +213,12 @@ class ProjectSpecific extends ProjectCommon
      * Retrieves product info
      *
      * @param int $id
-     * @return array<mixed>|null array first selected row, null on empty SELECT
+     * @return array<string|null>|null array first selected row, null on empty SELECT
      */
     public function getProduct($id)
     {
         Assert::integer($id, 'product MUST be identified by id');
-        $result = $this->MyCMS->fetchSingle(
+        $result = $this->MyCMS->dbms->fetchStringArray(
             'SELECT id,'
             . 'context,'
             . 'category_id,'
@@ -225,6 +235,9 @@ class ProjectSpecific extends ProjectCommon
         if (!is_null($result)) {
             $result['context'] = json_decode($result['context'], true) ?: [];
         }
+        /**
+         * @phpstan-ignore-next-line should return array<string|null>|null but returns array|null
+         */
         return $result;
     }
 
@@ -234,6 +247,7 @@ class ProjectSpecific extends ProjectCommon
      *
      * @param string $path
      * @return array<array<string>|string>|false
+     *       xxx  array<array<array<null|string>|null|string>|string>|false
      */
     public function getBreadcrumbs($path)
     {
@@ -243,10 +257,32 @@ class ProjectSpecific extends ProjectCommon
         for ($i = 0, $l = strlen($path), $sql = ''; $i < $l; $i += PATH_MODULE) {
             $sql .= ',"' . $this->MyCMS->escapeSQL(substr($path, 0, $i + PATH_MODULE)) . '"';
         }
-        return $this->MyCMS->fetchAndReindex('SELECT '
+        $result = $this->MyCMS->fetchAndReindex('SELECT '
                 . $this->getLinkSql("?category&id=", $this->language)
                 . ' ,category_' . $this->language . ' AS category FROM ' . TAB_PREFIX . 'category'
                 . ' WHERE active="1" AND path IN (' . substr($sql, 1) . ')');
+        // fix of PHPStan: should return array<array<string>|string>|false
+        // but returns array<array<array<string|null>|string|null>|string>
+        if ($result === false) {
+            return false;
+        }
+        Assert::isArray($result);
+        foreach ($result as $field => $row) {
+            if (is_array($row)) {
+                $result2[$field] = [];
+                foreach ($row as $f => $str) {
+                    Assert::string($str);
+                    $result2[$field][$f] = (string) $str;
+                }
+            } else {
+                Assert::string($row);
+                $result2[$field] = (string) $row;
+            }
+        }
+        /**
+         * @phpstan-ignore-next-line should return array<array<string>|string>|false but returns non-empty-array
+         */
+        return $result2;
     }
 
     /**
@@ -274,6 +310,10 @@ class ProjectSpecific extends ProjectCommon
         } else {
             $category_id = [$category_id];
         }
+        /**
+         * @phpstan-ignore-next-line should return array<array<int|string>|int|string>|false
+         * but returns array<array<array<string|null>|string|null>|string>|false
+         */
         return $this->MyCMS->fetchAndReindex('SELECT co.id, image,code, '
                 . $this->getLinkSql("?article&id=", $this->language) . ' ,
             content_' . $this->language . ' AS title,
@@ -301,6 +341,8 @@ class ProjectSpecific extends ProjectCommon
         $result = '';
         foreach ($pages as $key => $value) {
             Assert::isArray($value);
+            Assert::string($value['id']);
+            Assert::string($value['category']);
             $result .= '<div class="indent-' . (strlen($key) / PATH_MODULE - 1) . '">'
                 . '<a href="?category&amp;id=' . $value['id'] . '">' . Tools::h($value['category']) . '</a>'
                 . '</div>' . PHP_EOL;
@@ -316,6 +358,7 @@ class ProjectSpecific extends ProjectCommon
      * Reflection error: WorkOfStan\MyCMS\ProjectCommon not found.
      *
      * TODO: consider PR for phpstan project
+     * 220205: it seems that it is not needed anymore since PHPSTAN::1.4.5
      *
      * @param string $param
      * @return string

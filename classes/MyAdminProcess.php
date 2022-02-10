@@ -107,6 +107,7 @@ class MyAdminProcess extends MyCommon
             $online = []; // other admins online
             $time = time();
             foreach ($admins as $admin) {
+                Assert::string($admin['activity']);
                 $tabs = json_decode($admin['activity'], true);
                 $tabs = is_array($tabs) ? $tabs : [];
                 $new = true;
@@ -190,14 +191,18 @@ class MyAdminProcess extends MyCommon
     {
         //Debugger::barDump([$post, $get, $_GET], 'processExport(&$post, $get)');
         if (isset($post['table-export'], $post['database-table'])) {
-            Assert::isArray($post['check']);
-            if ((isset($post['check']) && count($post['check'])) || Tools::set($post['total-rows'])) {
+            //Assert::isArray($post['check']);
+            if (
+                (isset($post['check']) && is_array($post['check']) && count($post['check']))
+                || Tools::set($post['total-rows'])
+            ) {
                 if (Tools::set($post['total-rows'])) { //export whole resultset (regard possible $get limitations)
                     $sql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $get);
                     $sql = $sql['select'];
                 //Debugger::barDump($sql, 'SQL array');
                 } else { //export only checked rows
                     Assert::string($post['database-table']);
+                    Assert::isArray($post['check']);
                     $sql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $get);
                     $sql = $sql['select'] . ' WHERE `' . $post['database-table'] . '`.`id` IN (' .
                         implode(
@@ -217,8 +222,10 @@ class MyAdminProcess extends MyCommon
                     Assert::string($post['database-table']);
                     $post['database-table'] = $this->tableAdmin->escapeDbIdentifier($post['database-table']);
                     $output = $this->MyCMS->fetchSingle('SHOW CREATE TABLE ' . $post['database-table']);
+                    //Debugger::barDump($this->MyCMS->fetchSingle('SELECT VERSION()'), 'SELECT VERSION');
+                    Assert::isArray($output); // for $output['Create Table']
                     $output = "-- " . date('Y-m-d H:i:s') . "\n"
-                        . "-- " . $this->MyCMS->fetchSingle('SELECT VERSION()') . "\n\n"
+                        . "-- " . $this->MyCMS->dbms->fetchSingleString('SELECT VERSION()') . "\n\n"
                         . "SET NAMES utf8;\n"
                         . "SET time_zone = '+00:00';\n"
                         . "SET foreign_key_checks = 0;\n"
@@ -484,8 +491,11 @@ class MyAdminProcess extends MyCommon
             if (!isset($post['token']) || !$this->MyCMS->csrfCheck((int) $post['token'])) {
                 // let it fall to 'Error occured logging You in.'
             } elseif ($row = $this->MyCMS->fetchSingle('SELECT * FROM ' . TAB_PREFIX . 'admin WHERE admin="' . $this->MyCMS->escapeSQL($post['user']) . '"')) {
+                Assert::string($post['password']);
+                Assert::isArray($row);
+                Assert::string($row['salt']);
                 if ($row['active'] == '1' && $row['password_hashed'] == sha1($post['password'] . $row['salt'])) {
-                    Assert::string($post['password']);
+                    //Assert::string($post['password']);
                     $_SESSION['user'] = $post['user'];
                     $_SESSION['rights'] = $row['rights'];
                     $this->MyCMS->logger->info("Admin {$_SESSION['user']} logged in.");
@@ -547,11 +557,10 @@ class MyAdminProcess extends MyCommon
                 if ($post['info'] && class_exists('\ZipArchive')) {
                     $ZipArchive = new \ZipArchive();
                 }
-                Assert::string($post['subfolder']);
-                Assert::string($post['wildcard'], 'Expected a string. Got: %s');
+                Assert::string($post['subfolder'], 'Expected a string. Got: %s');
                 foreach (
                     glob(
-                        DIR_ASSETS . $post['subfolder'] . '/' . (isset($post['wildcard']) ? $post['wildcard'] : '*.*'),
+                        DIR_ASSETS . $post['subfolder'] . '/' . (isset($post['wildcard']) && is_string($post['wildcard']) ? $post['wildcard'] : '*.*'),
                         isset($post['wildcard']) ? GLOB_BRACE : 0
                     ) as $file
                 ) {
@@ -635,7 +644,11 @@ class MyAdminProcess extends MyCommon
         $row = $this->MyCMS->fetchSingle(
             'SELECT * FROM ' . TAB_PREFIX . 'admin WHERE admin="' . $this->MyCMS->escapeSQL($_SESSION['user']) . '"'
         );
+        Assert::string($post['old-password']);
+        Assert::isArray($row);
+        Assert::string($row['salt']);
         if ($row && $row['active'] === '1' && $row['password_hashed'] == sha1($post['old-password'] . $row['salt'])) {
+            Assert::string($post['new-password']);
             $result = $this->MyCMS->dbms->query(
                 'UPDATE ' . TAB_PREFIX . 'admin SET password_hashed="' . $this->MyCMS->escapeSQL(
                     sha1($post['new-password'] . $row['salt'])

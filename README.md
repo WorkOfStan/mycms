@@ -5,7 +5,7 @@
 [![PHP Composer + PHPUnit + PHPStan](https://github.com/WorkOfStan/mycms/actions/workflows/php-composer-phpunit.yml/badge.svg)](https://github.com/WorkOfStan/mycms/actions/workflows/php-composer-phpunit.yml)
 
 Brief MVC framework for interactive sites including general administration.
-Works as a devstack which you install and then write your classes specific for the project.
+Works as a devstack which you install and then write your classes specific for your project.
 The boilerplate project is prepared in `dist` folder to be adapted as needed and it uses this `WorkOfStan\MyCMS` library out-of-the-box.
 
 MyCMS is designed to be used with following technologies:
@@ -22,10 +22,10 @@ Apache modules `mod_alias` (for hiding non-public files) and `mod_rewrite` (for 
 
 Once [composer](https://getcomposer.org/) is installed, execute the following command in your project root to install this library:
 ```sh
-composer require workofstan/mycms:^0.4.4
+composer require workofstan/mycms:^0.4.5
 ```
 Most of library's classes use prefix `My`.
-To customize the project, create your own classes as children inheriting MyCMS' classes in the `./classes/` directory and name them without the initial `My` in its name.  
+To develop your project, create your own classes as children inheriting MyCMS' classes in the `./classes/` directory and name them without the initial `My` in its name.  
 
 ```php
 $MyCMS = new \WorkOfStan\MyCMS\MyCMS(
@@ -40,17 +40,17 @@ $MyCMS = new \WorkOfStan\MyCMS\MyCMS(
 $MyCMS->renderLatte(DIR_TEMPLATE_CACHE, "\\vendor\\ProjectName\\Latte\\CustomFilters::common", $params);
 ```
 
-Files `process.php` and `admin-process.php` MUST exist and process forms.
+Files `process.php` and `admin-process.php` MUST exist as they process forms.
 
 Note: `$MyCMS` name is expected by `ProjectSpecific extends ProjectCommon` class (@todo replace global $MyCMS by parameter handling)
 
 ## Deployment
 
 ### `/dist`
-Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder in order to easily start.
-Replace the string `MYCMSPROJECTNAMESPACE` with your project namespace.
+Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder in order to start easily.
+Replace the string `MYCMSPROJECTNAMESPACE` with your project namespace. (TODO: rector...)
 Replace the string `MYCMSPROJECTSPECIFIC` with other site specific information (Brand, Twitter address, phone number, database table_prefix in phinx.yml...).
-If you want to use your own table name prefix, it is recommanded to change database related strings before first running [`./build.sh`](dist/build.sh).
+If you want to use your own table name prefix, please change the database related strings before first running [`./build.sh`](dist/build.sh).
 
 To adapt the content and its structure either adapt migrations [content_table](dist/db/migrations/20200607204634_content_table.php) and [content_example](dist/db/migrations/20200703213436_content_example.php)
 before first running build
@@ -62,7 +62,7 @@ The table with users and hashed passwords is named `TAB_PREFIX . 'admin'`.
 It is recommanded to adapt classes Contoller.php, FriendlyUrl.php and ProjectSpecific.php to your needs following the recommendations in comments.
 For deployment look also to [Deployment chapter](dist/README.md#deployment) and [Language management](dist/README.md#language-management) in dist/README.md.
 
-MyCMS is used only as a library, so the application using it SHOULD implement `RedirectMatch 404 vendor\/` statement as prepared in `dist/.htaccess` to keep the library hidden from web access.
+MyCMS is used only as a library, so the project using it SHOULD implement `RedirectMatch 404 vendor\/` statement as prepared in `dist/.htaccess` to keep the library hidden from web access.
 
 ## Admin UI
 Admin UI is displayed by MyAdmin::outputAdmin in this structure:
@@ -179,6 +179,13 @@ composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progr
 composer require --dev rector/rector --prefer-dist --no-progress
 ```
 and use [conf/phpstan.webmozart-assert.neon](conf/phpstan.webmozart-assert.neon) to allow for `phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse . --memory-limit 300M`.
+
+Prepared scripts
+[./phpstan.sh](phpstan.sh)
+and
+[./phpstan-remove.sh](phpstan-remove.sh)
+can be used to start (or remove) the static analysis.
+(TODO: call the dist scripts from root to DRY.)
 
 ## How does Friendly URL works within Controller
 

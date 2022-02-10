@@ -55,6 +55,26 @@ class MyCommon
      */
     protected function verboseBarDump($var, $title = null, array $options = [])
     {
-        return ($this->verbose == true) ? Debugger::barDump($var, $title, $options) : $var;
+        if ($this->verbose == true) {
+            Debugger::barDump($var, $title, $options);
+        }
+        return $var;
+    }
+
+    /**
+     * Dumps information about a variable in Tracy Debug Bar or is silent
+     *
+     * @param  string $var
+     * @param  string $title
+     * @param  array<mixed> $options of Debugger::barDump
+     *   where array keys are [Dumper::DEPTH, Dumper::TRUNCATE, Dumper::LOCATION, Dumper::LAZY]
+     * @return string variable itself
+     */
+    protected function verboseBarDumpString($var, $title = null, array $options = [])
+    {
+        if ($this->verbose == true) {
+            Debugger::barDump($var, $title, $options);
+        }
+        return $var;
     }
 }

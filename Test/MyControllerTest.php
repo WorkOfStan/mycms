@@ -10,7 +10,6 @@ require_once __DIR__ . '/../conf/config.php';
 
 class MyControllerTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var MyCMS
      */

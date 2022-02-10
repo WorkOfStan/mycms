@@ -9,7 +9,7 @@
         "nette/utils": "^2.4.8|^3.2.2",
         "texy/texy": "^2.7.1",
         "godsdev/tools": "^0.3.8",
-        "workofstan/backyard": "^3.3.0",
+        "workofstan/backyard": "^3.3.1",
         "ext-session": "*",
         "ext-mbstring": "*"
     },
@@ -39,6 +39,7 @@
         "source": "https://github.com/WorkOfStan/mycms"
     },
     "minimum-stability": "stable",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "WorkOfStan\\MyCMS\\": ["classes/"]

@@ -14,7 +14,7 @@ use WorkOfStan\mycmsprojectnamespace\ProjectSpecific;
 
 /**
  * Controller (of MVC)
- * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
+ * (Last MyCMS/dist revision: 2022-02-04, v0.4.4+)
  */
 class Controller extends MyController
 {
@@ -124,7 +124,7 @@ class Controller extends MyController
                     Assert::string($this->get['code'], 'article code MUST be string');
                     $articleIdentifier = ' code LIKE "' . $this->MyCMS->escapeSQL($this->get['code']) . '"';
                 }
-                $this->MyCMS->context['content'] = $this->MyCMS->fetchSingle(
+                $tempContent = $this->MyCMS->dbms->fetchStringArray(
                     'SELECT id,'
                     . 'context,'
                     // . 'category_id,'
@@ -139,10 +139,12 @@ class Controller extends MyController
                     . $articleIdentifier
                     . ' LIMIT 1'
                 );
-                if (is_null($this->MyCMS->context['content'])) {
+                if (is_null($tempContent)) {
+                    $this->MyCMS->context['content'] = [];
                     $this->MyCMS->template = self::TEMPLATE_NOT_FOUND;
                     return true;
                 }
+                $this->MyCMS->context['content'] = $tempContent;
                 $this->MyCMS->context['content']['context'] = json_decode(
                     $this->MyCMS->context['content']['context'],
                     true
@@ -158,6 +160,11 @@ class Controller extends MyController
                     $categoryId = null;
                     // TODO localize // TODO content element
                     $this->MyCMS->context['pageTitle'] = 'Categories';
+                    if (!array_key_exists('content', $this->MyCMS->context)) {
+                        $this->MyCMS->context['content'] = [];
+                    } else {
+                        Assert::isArray($this->MyCMS->context['content']);
+                    }
                     // TODO localize perex for all categories // TODO content element
                     $this->MyCMS->context['content']['description'] = 'About all categories';
                 } else {
@@ -172,12 +179,13 @@ class Controller extends MyController
                         return true;
                     }
                     $categoryId = $this->MyCMS->context['content']['category_id'];
+                    Assert::string($this->MyCMS->context['content']['title']);
                     $this->MyCMS->context['pageTitle'] = $this->MyCMS->context['content']['title'];
                 }
                 // TODO add perex for categories and products from content
                 $this->verboseBarDump($categoryId, 'categoryId');
                 $this->MyCMS->context['limit'] = PAGINATION_LIMIT;
-                $this->MyCMS->context['list'] = $this->MyCMS->dbms->queryArray(
+                $this->MyCMS->context['list'] = $this->MyCMS->dbms->fetchAll(
                     is_null($categoryId) ?
                     // list categories
                     ('SELECT id,'
@@ -194,7 +202,7 @@ class Controller extends MyController
                     . ' AND name_' . $this->language . ' NOT LIKE ""' // hide product language variants with empty title
                     . ' ORDER BY sort ASC')
                 );
-                $this->MyCMS->context['totalRows'] = ($this->MyCMS->context['list'] === false) ? 0 :
+                $this->MyCMS->context['totalRows'] = ($this->MyCMS->context['list'] === []) ? 0 :
                     count($this->MyCMS->context['list']);
                 return true;
             case 'item-1':
@@ -254,25 +262,34 @@ class Controller extends MyController
             case 'product':
                 Assert::keyExists($this->get, 'id', 'product MUST be identified by id');
                 Assert::scalar($this->get['id']);
-                $this->MyCMS->context['product'] = $this->projectSpecific->getProduct((int) $this->get['id']);
-                if (is_null($this->MyCMS->context['product'])) {
+                $tempProduct = $this->projectSpecific->getProduct((int) $this->get['id']);
+                if (is_null($tempProduct)) {
                     $this->MyCMS->template = self::TEMPLATE_NOT_FOUND;
                 } else {
-                    $this->MyCMS->context['pageTitle'] = $this->MyCMS->context['product']['title'];
+                    $this->MyCMS->context['product'] = $tempProduct;
+                    $this->MyCMS->context['pageTitle'] = (string) $this->MyCMS->context['product']['title'];
                 }
                 return true;
             case 'search-results': //search _GET[search] contains the search phrase // TODO make search work
                 $this->MyCMS->context['limit'] = PAGINATION_LIMIT;
-                $this->MyCMS->context['offset'] = isset($this->get['offset']) ? filter_var(
-                    $this->get['offset'],
-                    FILTER_VALIDATE_INT,
-                    ['default' => 0, 'min_range' => 0, 'max_range' => 1e9]
-                ) : 0;
+                if (isset($this->get['offset'])) {
+                    $tempInt = filter_var(
+                        $this->get['offset'],
+                        FILTER_VALIDATE_INT,
+                        ['default' => 0, 'min_range' => 0, 'max_range' => 1e9]
+                    );
+                    if ($tempInt === false) {
+                        throw new \Exception('filter_var failed');
+                    }
+                    $this->MyCMS->context['offset'] = $tempInt;
+                } else {
+                    $this->MyCMS->context['offset'] = 0;
+                }
                 Assert::string($this->get['search']);
                 $this->MyCMS->context['results'] = $this->projectSpecific->searchResults(
                     $this->get['search'],
                     (int) $this->MyCMS->context['offset'],
-                    $this->MyCMS->context['totalRows']
+                    (int) $this->MyCMS->context['totalRows']
                 );
                 //@todo ošetřit empty result
                 $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Výsledky hledání');

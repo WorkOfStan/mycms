@@ -15,10 +15,10 @@ class MyTableAdmin extends MyTableLister
     /**
      * Output HTML form to edit specific row in the table
      *
-     * @param mixed $where to identify which row to fetch and offer for edit
+     * @param scalar|array<scalar> $where to identify which row to fetch and offer for edit
      *      e.g. ['id' => 5] translates as "WHERE id=5" in SQL
      *      scalar value translates as ['id' => value]
-     * @param array<mixed> $options additional options
+     * @param array<bool|array<string|array<string>>> $options additional options
      *      [include-fields] - array of fields to include only
      *      [exclude-fields] - array of fields to exclude
      *      [exclude-form] - exclude the <form> element
@@ -33,21 +33,27 @@ class MyTableAdmin extends MyTableLister
     {
         $options['include-fields'] = isset($options['include-fields']) && is_array($options['include-fields']) ? $options['include-fields'] : array_keys($this->fields);
         $options['exclude-fields'] = isset($options['exclude-fields']) && is_array($options['exclude-fields']) ? $options['exclude-fields'] : [];
+        Assert::isArray($options['exclude-fields']);
         foreach ($options['exclude-fields'] as $key => $value) {
+            Assert::isArray($options['include-fields']);
             if (in_array($value, $options['include-fields'])) {
                 unset($options['include-fields'][$key]);
             }
         }
-        if (!is_null($where) && $where != ['']) {
-            if (is_scalar($where)) {
-                $where = ['id' => $where];
-            }
+        if (is_scalar($where)) {
+            $where = ['id' => $where];
+        }
+        if ($where != ['']) {
             $sql = [];
             foreach ($where as $key => $value) {
-                $sql [] = Tools::escapeDbIdentifier($key) . '="' . $this->escapeSQL($value) . '"';
+                $sql [] = Tools::escapeDbIdentifier($key) . '="' . $this->escapeSQL((string) $value) . '"';
             }
-            $sql = 'SELECT ' . $this->dbms->listColumns($options['include-fields'], $this->fields) . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' WHERE ' . implode(' AND ', $sql) . ' LIMIT 1';
-            $record = $this->dbms->query($sql);
+            Assert::isArray($options['include-fields']);
+            $tempOptionsIncludeFields = new ArrayStrict($options['include-fields']);
+            $record = $this->dbms->query(
+                'SELECT ' . $this->dbms->listColumns($tempOptionsIncludeFields->arrayString(), $this->fields)
+                . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' WHERE ' . implode(' AND ', $sql) . ' LIMIT 1'
+            );
             if (is_object($record)) {
                 $record = $record->fetch_assoc();
             }
@@ -64,7 +70,7 @@ class MyTableAdmin extends MyTableLister
         if (isset($options['tabs']) && is_array($options['tabs'])) {
             foreach ($options['tabs'] as $key => $value) {
                 foreach ($this->fields as $k => $field) {
-                    if ($value && preg_match($value, $k)) {
+                    if ($value && is_string($value) && preg_match($value, $k)) {
                         $tabs[$key][$k] = $field;
                         unset($tabs[0][$k]);
                     }
@@ -84,6 +90,7 @@ class MyTableAdmin extends MyTableLister
             $output .= (count($tabs) > 1 ? '<div class="tab-pane fade' . ($tabKey === 0 ? ' show active' : '') . '" id="tab-' . ($tmp = Tools::webalize($this->table . '-' . $tabKey)) . '" role="tabpanel" aria-labelledby="nav-' . $tmp . '">' : '')
                 . ($options['layout-row'] ? '<div class="database">' : '<table class="database">');
             foreach ($tab as $key => $field) {
+                Assert::isArray($options['include-fields']);
                 if (!in_array($key, $options['include-fields']) || in_array($key, $options['exclude-fields'])) {
                     continue;
                 }
@@ -127,7 +134,7 @@ class MyTableAdmin extends MyTableLister
     {
         $value = isset($record[$key]) ? $record[$key] : false;
         if (Tools::among($record, false, [])) {
-            if (isset($options['prefill'][$key]) && is_scalar($options['prefill'][$key])) {
+            if (is_array($options['prefill']) && isset($options['prefill'][$key]) && is_scalar($options['prefill'][$key])) {
                 $value = $options['prefill'][$key];
                 if (Tools::among($field['type'], 'datetime', 'timestamp') && $options['prefill'][$key] == 'now') {
                     $value = date('Y-m-d\TH:i:s');
@@ -164,7 +171,11 @@ class MyTableAdmin extends MyTableLister
             $field['type'] = null;
         }
         $comment = json_decode(isset($field['comment']) ? (string) $field['comment'] : '{}', true);
-        Tools::setifnull($comment['display']);
+        if (is_array($comment)) {
+            $comment['display'] = isset($comment['display']) ? $comment['display'] : null;
+        } else {
+            $comment = ['display' => null];
+        }
         if (!is_null($field['type']) && $comment['display'] == 'option') {
             $query = $this->dbms->queryStrictObject('SELECT DISTINCT ' . Tools::escapeDbIdentifier($key)
                 . ' FROM ' . Tools::escapeDbIdentifier($this->table) . ' ORDER BY ' . Tools::escapeDbIdentifier($key) . ' LIMIT ' . $this->DEFAULTS['MAXSELECTSIZE']);
@@ -203,8 +214,13 @@ class MyTableAdmin extends MyTableLister
             $json = json_decode($value, true) ?: (Tools::among($value, '', '[]', '{}') ? [] : $value);
             $output .= '<div class="input-expanded">' . Tools::htmlInput($key . EXPAND_INFIX, '', 1, 'hidden');
             if (!is_array($json) && isset($comment['subfields']) && is_array($comment['subfields'])) {
+                // set null to all the fields named after $comment['subfields'] values (TODO refactor?)
                 foreach ($comment['subfields'] as $v) {
-                    Tools::setifnull($json[$v], null);
+                    // initiates $json as an array only once and only in case when $comment['subfields'] isn't empty
+                    if (!is_array($json)) {
+                        $json = [];
+                    }
+                    $json[$v] = isset($json[$v]) ? $json[$v] : null; // TODO, maybe `$json[$v] = null;` suffices
                 }
             }
             if (is_array($json) && is_scalar(reset($json))) {
@@ -382,11 +398,12 @@ class MyTableAdmin extends MyTableLister
             if (is_null($value)) {
                 $input .= Tools::htmlInput("original-null[$key]", '', 1, 'hidden');
             } else {
+                Assert::isArray($options);
                 $input .= Tools::htmlInput("original[$key]", '', isset($options['prefill'][$key]) && is_scalar($options['prefill'][$key]) ? '' : $value, 'hidden');
             }
         }
-        $output .= $input . $this->customInputAfter($key, $value, $record) . ($options['layout-row'] ? '' : '</td></tr>') . PHP_EOL;
-        return $output;
+        return $output . $input . $this->customInputAfter($key, $value, $record)
+            . ($options['layout-row'] ? '' : '</td></tr>') . PHP_EOL;
     }
 
     /**
@@ -413,13 +430,14 @@ class MyTableAdmin extends MyTableLister
             $tempArr = $module->fetch_assoc();
             Assert::isArray($tempArr);
             $module = json_decode($tempArr['Comment'], true);
+            Assert::isArray($module);
             $module = isset($module['module']) && $module['module'] ? $module['module'] : 10;
         } else {
             $module = 10;
         }
-        $result = '<select name="' . Tools::h(isset($options['name']) ? $options['name'] : 'path_id')
-            . '" class="' . Tools::h(isset($options['class']) ? $options['class'] : '')
-            . '" id="' . Tools::h(isset($options['id']) ? $options['id'] : '') . '">'
+        $result = '<select name="' . MyTools::h(isset($options['name']) ? $options['name'] : 'path_id')
+            . '" class="' . MyTools::h(isset($options['class']) ? $options['class'] : '')
+            . '" id="' . MyTools::h(isset($options['id']) ? $options['id'] : '') . '">'
             . Tools::htmlOption('', $this->translate('--choose--'));
         $query = $this->dbms->queryStrictObject('SELECT id,path,' . Tools::escapeDbIdentifier($name['column']) . ' AS category_
             FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name['table']) . ' ORDER BY path');
