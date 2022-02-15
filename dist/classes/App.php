@@ -13,7 +13,6 @@ use WorkOfStan\mycmsprojectnamespace\Latte\CustomFilters;
 use WorkOfStan\mycmsprojectnamespace\MyCMSProject;
 use WorkOfStan\mycmsprojectnamespace\Utils;
 
-
 /**
  * App class handles the request dispatching in index.php
  * (Last MyCMS/dist revision: 2022-02-15, v0.4.5+)
