@@ -5,7 +5,7 @@ XYZ web
 ## Stack
 
 Linux, Apache (mod_rewrite, mod_header, ssl...)
-PHP 5.6, 7.x
+PHP 5.6||7.x
 MySQL
 PHP libraries
 - xml
@@ -59,7 +59,10 @@ Create `phinx.yml` based on `phinx.dist.yml` including the name of the database 
 
 Create `conf/config.local.php` based on `config.local.dist.php` including the phinx environment to be used and change any settings you like.
 
-Under construction mode may be turned on (for non admin IP adresses i.e. not in `$debugIpArray`) by adding
+Run `build.sh` (see below)
+
+### Deployment minutia
+`Under construction` mode may be turned on (for non admin IP adresses i.e. not in `$debugIpArray`) by adding
 ```php
 define('UNDER_CONSTRUCTION', true);
 ```
@@ -67,7 +70,7 @@ to `conf/config.local.php`.
 
 Best practice: Management often uses iPhone or Mac, therefore don't forget to test on Apple devices as well!
 
-Recommendation: if you change boilerplate classes, update also info `(Last MyCMS/dist revision: 2021-07-26, v0.4.3)`, so that it is more clear what to update in case of MyCMS core upgrade.
+Recommendation: if you change boilerplate classes, update also info `(Last MyCMS/dist revision: YYYY-MM-DD, vX.Y.Z)`, so that it is more clear what to update in case of MyCMS core upgrade.
 
 ### Adding new type of content to be displayed
 | Add to this place | Why |
@@ -98,7 +101,7 @@ vendor/bin/phinx migrate -e testing # for phpunit, so that tests don't touch nor
 
 - Note: To work on low performing environments, the script accepts number of seconds as parameter to be used as a waiting time between steps.
 - Note2: PHPUnit test of FaviconTest may uncover a need for RewriteBase configuration in .htaccess
-- Note3: PHPUnit tests use phinx database environment `development` (TODO: consider using `testing`)
+So far only the first Test in alphabet is required to call Init to set database constants.
 
 It might be necessary to allow web server user write into cache and log folders.
 Run [permissions.sh](permissions.sh) to perform this operation.

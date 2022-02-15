@@ -63,12 +63,12 @@ parameters:
       -
         message: '#Variable \$_POST in isset\(\) always exists and is not nullable#'
         path: ../admin.php
-      -
-        message: '#Result of && is always true.#'
-        path: ../index.php
-      -
-        message: '#Variable \$_POST in isset\(\) always exists and is not nullable#'
-        path: ../index.php
+      #-
+      #  message: '#Result of && is always true.#'
+      #  path: ../index.php
+      #-
+      #  message: '#Variable \$_POST in isset\(\) always exists and is not nullable#'
+      #  path: ../index.php
       # These variables are responsibility of the including/included script
       -
         message: '#Undefined variable: \$myCmsConf#'

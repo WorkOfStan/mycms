@@ -8,10 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Added` for new features
 
 ### `Changed` for changes in existing functionality
+- App class handles the request dispatching instead of spagetti code in index.php
 
 ### `Deprecated` for soon-to-be removed features
 
 ### `Removed` for now removed features
+- Texy
 
 ### `Fixed` for any bugfixes
 

@@ -2,9 +2,6 @@
 
 namespace WorkOfStan\MyCMS;
 
-use WorkOfStan\Backyard\BackyardError;
-use WorkOfStan\MyCMS\LogMysqli;
-
 /**
  * Extension of a MyCMS object with translations.
  * It holds all variables needed for the used project.
