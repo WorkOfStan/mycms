@@ -1,3 +1,4 @@
+---
 name: PHP Linting (Overtrue)
 on:
   push:
@@ -19,8 +20,8 @@ jobs:
     # Limit the running time
     timeout-minutes: 10
     steps:
-        - name: Checkout
-          uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-        - name: Check PHP syntax errors
-          uses: overtrue/phplint@4.1.0
+      - name: Check PHP syntax errors
+        uses: overtrue/phplint@4.1.0

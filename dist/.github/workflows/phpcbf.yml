@@ -1,3 +1,4 @@
+---
 name: PHPCBF
 # ge-tracker/phpcbf-action can't handle branches with `/`
 # `fatal: couldn't find remote ref` error is triggered

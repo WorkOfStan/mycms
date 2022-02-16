@@ -6,16 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### `Added` for new features
+- dist: subscriber table, therefore subscription input box is working now
 
 ### `Changed` for changes in existing functionality
+- App class handles the request dispatching instead of spagetti code in index.php
 
 ### `Deprecated` for soon-to-be removed features
 
 ### `Removed` for now removed features
+- Texy
+- dist/process.php moved to dist::App class as part of run method
 
 ### `Fixed` for any bugfixes
+- yml style, add missing document start "---" (document-start); fix indentation
 
 ### `Security` in case of vulnerabilities
+- changes touched the CSRF mechanism, so CSRF was successfully tested
 
 ## [0.4.5] - 2022-02-10
 

@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * Initiates composer dependencies, session, Debugger, backyard, logger, dbms
+ *
  * Used by scripts accessed by clients
  * I.e. index.php and admin.php and also e.g. testmail.php
  * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)

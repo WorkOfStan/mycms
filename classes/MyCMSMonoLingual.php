@@ -6,7 +6,6 @@ use Exception;
 use Psr\Log\LoggerInterface;
 use Tracy\Debugger;
 use Webmozart\Assert\Assert;
-use WorkOfStan\Backyard\BackyardError;
 use WorkOfStan\MyCMS\LogMysqli;
 use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
 
@@ -229,7 +228,7 @@ class MyCMSMonoLingual
     /**
      * Context setter that ensures the type
      *
-     * @param array<string> $arr
+     * @param array<array<mixed>|false|int|null|string> $arr
      * @return void
      */
     public function setContext(array $arr)

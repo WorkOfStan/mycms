@@ -1,3 +1,4 @@
+---
 name: PHP Linting (Overtrue)
 on:
   push:
