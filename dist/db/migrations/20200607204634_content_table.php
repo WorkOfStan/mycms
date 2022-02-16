@@ -3,7 +3,7 @@
 use Phinx\Migration\AbstractMigration;
 use Phinx\Db\Adapter\MysqlAdapter;
 
-class ContentTable extends AbstractMigration
+final class ContentTable extends AbstractMigration
 {
     /**
      * Creates table with content.

@@ -2,7 +2,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class InitAdminTable extends AbstractMigration
+final class InitAdminTable extends AbstractMigration
 {
     /**
      * Creates MyCMS administrators table with one default admin

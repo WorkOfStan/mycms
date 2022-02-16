@@ -15,6 +15,7 @@ sleep "$paramSleepSec"s
 vendor/bin/phinx migrate -e development
 sleep "$paramSleepSec"s
 # In order to properly unit test all features, set-up a test database, put its credentials to testing section of phinx.yml and run phinx migration -e testing before phpunit
+# Drop tables in the testing database if changes were made to migrations
 vendor/bin/phinx migrate -e testing
 sleep "$paramSleepSec"s
 vendor/bin/phpunit
