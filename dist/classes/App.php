@@ -99,9 +99,10 @@ class App extends MyCommon
             // newsletter subscription
             if (
                 array_key_exists('newsletter_input_box', $this->featureFlags) &&
-                $this->featureFlags['newsletter_input_box']
-                && isset($this->post['newsletter']) && $this->post['newsletter'])
-            {
+                $this->featureFlags['newsletter_input_box'] &&
+                isset($this->post['newsletter']) &&
+                $this->post['newsletter']
+            ) {
                 if (
                     $this->MyCMS->dbms->query('INSERT INTO ' . TAB_PREFIX . 'subscriber SET email="'
                         . $this->MyCMS->escapeSQL($this->post['newsletter'])

@@ -3,6 +3,7 @@
 /**
  * Table expected if the $featureFlags['newsletter_input_box'] === true
  */
+
 //declare(strict_types=1);
 
 use Phinx\Migration\AbstractMigration;
