@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - dist/process.php moved to dist::App class as part of run method
 
 ### `Fixed` for any bugfixes
+- yml style, add missing document start "---" (document-start); fix indentation
 
 ### `Security` in case of vulnerabilities
 - changes touched the CSRF mechanism, so CSRF was successfully tested

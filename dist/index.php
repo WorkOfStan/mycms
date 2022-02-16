@@ -7,6 +7,7 @@
 
 use WorkOfStan\mycmsprojectnamespace\App;
 
+// Sets error_reporting, ini_set, config
 require './conf/set-environment.php';
 
 // Under construction section
@@ -22,8 +23,10 @@ if (
     exit;
 }
 
+// Initiates composer dependencies, session, Debugger, backyard, logger, dbms
 require_once './prepare.php';
 
+// Request dispatching
 $app = new App($MyCMS, [
     'featureFlags' => $featureFlags,
     'backyard' => $backyard,

@@ -1,3 +1,4 @@
+---
 ###########################
 ###########################
 ## Markdown Linter rules ##
@@ -21,7 +22,7 @@ MD004: false                  # Unordered list style
 MD007:
   indent: 2                   # Unordered list indentation
 MD013:
-  line_length: 808            # Line length
+  line_length: 808            # Line length 80 is far to short
 MD026:
   punctuation: ".,;:!。，；:"  # List of not allowed
 MD029: false                  # Ordered list item prefix
@@ -36,4 +37,5 @@ blank_lines: false  # Error on blank lines
 #####################
 # MyCMS Rules by id #
 #####################
-MD024: false                 # No-duplicate-heading Multiple heading with the same content (in CHANGELOG.md)
+# Multiple heading with the same content (in CHANGELOG.md)
+MD024: false                 # No-duplicate-heading
