@@ -381,6 +381,8 @@ Use $featureFlags in `conf/config.php` to convey the default status of a feature
 while in `conf/config.local.php` the flag can be turned on/off as needed on any particular environment.
 Feature flag is propagated to Class Admin, Controller, to JS and to Latte.
 
+E.g. featureFlag `newletter_input_box` when set to false hides both the (un)subscribe e-mail input box and the POST value processing.
+
 ## TROUBLESHOOTING
 
 | Issue | Possible solution |

@@ -73,7 +73,7 @@ class App extends MyCommon
      */
     public function run()
     {
-        // TODO move part of this function to MyCMS core (either run or construct?)
+        // TODO move part of this function to MyCMS core (either run or construct?) based on how much changes needed
         // Process POST, especially form submits
         if (is_array($this->post) && !empty($this->post)) {
             Debugger::getBar()->addPanel(new BarPanelTemplate('HTTP POST', $this->post));
@@ -97,7 +97,11 @@ class App extends MyCommon
                 exit(json_encode(['success' => true]));
             }
             // newsletter subscription
-            if (isset($this->post['newsletter']) && $this->post['newsletter']) {
+            if (
+                array_key_exists('newsletter_input_box', $this->featureFlags) &&
+                $this->featureFlags['newsletter_input_box']
+                && isset($this->post['newsletter']) && $this->post['newsletter'])
+            {
                 if (
                     $this->MyCMS->dbms->query('INSERT INTO ' . TAB_PREFIX . 'subscriber SET email="'
                         . $this->MyCMS->escapeSQL($this->post['newsletter'])

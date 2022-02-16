@@ -16,12 +16,12 @@
     "license": "proprietary",
     "authors": [
         {
-            "name": "Karel Seidl",
-            "email": "seidl@gods.cz"
-        },
-        {
             "name": "Stanislav Rejthar",
             "email": "rejthar@stanislavrejthar.com"
+        },
+        {
+            "name": "Karel Seidl",
+            "email": "seidl@gods.cz"
         }
     ],
     "support": {

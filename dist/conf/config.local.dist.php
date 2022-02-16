@@ -57,6 +57,8 @@ define('RECAPTCHA_SECRET', '...');
 $featureFlags = [
 //    'offline_dev' => true,
 //    'console_log_list_values' => true,
+//    'order_hierarchy' => true, // as used in A and F projects - just for testing before ready for Dist
+    'newsletter_input_box' => true,
 ];
 //$debugIpArray[] = '192.168.1.145'; // add other IP addresses to see full errors
 
