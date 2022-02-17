@@ -4,19 +4,17 @@ XYZ web
 
 ## Stack
 
-Linux, Apache (mod_rewrite, mod_header, ssl...)
-PHP 5.6||7.x
-MySQL
-PHP libraries
-- xml
-- mbstring
-- mysql
+- Linux, Apache (mod_rewrite, mod_header, ssl...)
+- PHP 5.6||7.x
+- MySQL
+- PHP libraries
+  - xml
+  - mbstring
+  - mysql
 
 ```sh
 apt install libapache2-mod-php7.0 apache2 mysql-server git composer php-xml php-mbstring php7.0-mysql
 ```
-
-Git flow (master,develop,feature,release,fix,hotfix)
 
 ## Security
 
@@ -99,9 +97,11 @@ vendor/bin/phinx migrate -e testing # for phpunit, so that tests don't touch nor
 3. `vendor/bin/phpunit` to always check the functionality
 4. `sass styles/index.sass styles/index.css` to keep order in the generated CSS
 
-- Note: To work on low performing environments, the script accepts number of seconds as parameter to be used as a waiting time between steps.
-- Note2: PHPUnit test of FaviconTest may uncover a need for RewriteBase configuration in .htaccess
+Notes
+1. To work on low performing environments, the script accepts number of seconds as parameter to be used as a waiting time between steps.
+2. PHPUnit test of FaviconTest may uncover a need for RewriteBase configuration in .htaccess
 So far only the first Test in alphabet is required to call Init to set database constants.
+3. Drop tables in the testing database if changes were made to migrations.
 
 It might be necessary to allow web server user write into cache and log folders.
 Run [permissions.sh](permissions.sh) to perform this operation.
@@ -201,17 +201,19 @@ is the language in which the web starts without any additional information about
 (such as language folder or session).
 The default language is typically shown in the application root.
 
-#### Accepted types of URL
+#### Accepted structures of URL
 
-* /alfa .. named page in the DEFAULT_LANGUAGE
-* /en/alfa .. named page in another language
-* /?product&id=3 .. parametric page in the DEFAULT_LANGUAGE
-* /?category=1 .. parametric page in the DEFAULT_LANGUAGE
-* /en/?product&id=3 .. parametric page in another language
-* /en/?category=1 .. parametric page in another language
-* /?language=de .. language switch
-* /de/ .. default page in German
-* /?product&id=3&language=de .. parametric page in another language
+| URL structure | Effect |
+|-----------------------------------------------|------|
+| /alfa | named page in the DEFAULT_LANGUAGE |
+| /en/alfa | named page in another language |
+| /?product&id=3 | parametric page in the DEFAULT_LANGUAGE |
+| /?category=1 | parametric page in the DEFAULT_LANGUAGE |
+| /en/?product&id=3 | parametric page in another language |
+| /en/?category=1 | parametric page in another language |
+| /?language=de | language switch |
+| /de/ | default page in German |
+| /?product&id=3&language=de | parametric page in another language |
 
 ## CMS notes
 
@@ -336,12 +338,12 @@ That's how it works and how to set an API:
 ## Coding style and linting
 
 GitHub Actions run PHPSTAN to identify errors
-* the same way as run locally
-* so it might need to know which global constants are used (`.github/linters/conf/constants.php`) on top of standard config files
-* and where to look for present classes (scanDirectories), hence following files:
-* `phpstan.neon.dist` - for PHPSTAN of this app (dist folder)
-* `conf/phpstan.app.neon` - both for this app and mycms library test
-* Note: when code becomes stable, change VALIDATE_ALL_CODEBASE to `false`
+- the same way as run locally
+- so it might need to know which global constants are used (`.github/linters/conf/constants.php`) on top of standard config files
+- and where to look for present classes (scanDirectories), hence following files:
+- `phpstan.neon.dist` - for PHPSTAN of this app (dist folder)
+- `conf/phpstan.app.neon` - both for this app and mycms library test
+- Note: when code becomes stable, change VALIDATE_ALL_CODEBASE to `false`
 
 * TODO: .eslintrc.yml and dist/.eslintrc.yml - keep or delete?
 
@@ -379,9 +381,9 @@ it tries to send a test email to `EMAIL_ADMIN`. One try allowed in 23 hours (as 
 ## Development
 Use $featureFlags in `conf/config.php` to convey the default status of a feature for production,
 while in `conf/config.local.php` the flag can be turned on/off as needed on any particular environment.
-Feature flag is propagated to Class Admin, Controller, to JS and to Latte.
+Feature flag is propagated to Class Admin, Controller, to JavaScript and to Latte.
 
-E.g. featureFlag `newletter_input_box` when set to false hides both the (un)subscribe e-mail input box and the POST value processing.
+E.g. featureFlag `newletter_input_box` can hide both the (un)subscribe e-mail input box and the POST value processing when set to false.
 
 ## TROUBLESHOOTING
 
