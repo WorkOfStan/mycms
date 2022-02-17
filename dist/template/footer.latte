@@ -2,15 +2,15 @@
     <div class="footer__nav">
         <div class="container">
             <ul>
-                <li><a href="{$applicationDir}?page=unsubscribe">{="Unsubscribe from newsletter"|translate}</a></li>{* TODO how can it unsubscribe without email knowledge? TODO fix click changes language to cs *}
+                <li><a href="{$applicationDir}?page=unsubscribe" n:if="$featureFlags['newsletter_input_box']">{="Unsubscribe from newsletter"|translate}</a></li>{* TODO how can it unsubscribe without email knowledge? TODO fix click changes language to cs *}
                 <li><a href="{$applicationDir}?page=contact">{="Contacts"|translate}</a></li>
             </ul>
         </div>
     </div>
 
-    <div class="footer__main">
+    <div class="footer__main" n:if="$featureFlags['newsletter_input_box']">
         <div class="container">
-            <form method="POST" action="{$applicationDir}">
+            <form method="POST" action="{$applicationDir}" n:if="$featureFlags['newsletter_input_box']">
                 {*<label for="newsletter-email"><i class="icon-newsletter"></i></label>*}
                 <h2><label for="newsletter-email">{="Subscribe to our Newsletter by email."|translate}</label></h2>
                 <input type="email" name="newsletter" id="newsletter-email" placeholder="{="Zde uveďte Vaši e-mailovou adresu"|translate}" required>
