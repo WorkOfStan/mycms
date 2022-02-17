@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### `Added` for new features
 - dist: subscriber table, therefore subscription input box is working now
-- dist: featureFlag `newletter_input_box` can turn off both the (un)subscribe e-mail input box and the POST value processing
+- dist: featureFlag `newletter_input_box` can turn off both the (un)subscribe email input box and the POST value processing
 
 ### `Changed` for changes in existing functionality
 - App class handles the request dispatching instead of spagetti code in index.php
