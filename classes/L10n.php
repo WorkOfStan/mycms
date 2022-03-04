@@ -4,6 +4,8 @@ namespace WorkOfStan\MyCMS;
 
 use GodsDev\Tools\Tools;
 use Symfony\Component\Yaml\Yaml;
+use Tracy\Debugger;
+use Tracy\ILogger;
 use Webmozart\Assert\Assert;
 
 /**
@@ -100,21 +102,19 @@ class L10n
                     . mb_substr($text, 1, null, $encoding);
             } elseif (array_key_exists(mb_strtoupper($key, $encoding), $this->translation)) {
 //                echo "2";
-                $text = $this->translation[mb_strtoupper($key, $encoding)];
-                $text = mb_strtolower($text, $encoding);
+                $text = mb_strtolower($this->translation[mb_strtoupper($key, $encoding)], $encoding);
 //                $changeCase = 2;
             } elseif (array_key_exists(mb_strtolower($key, $encoding), $this->translation)) {
 //                echo "-2";
-                $text = $this->translation[mb_strtolower($key, $encoding)];
-                $text = mb_strtoupper($text, $encoding);
+                $text = mb_strtoupper($this->translation[mb_strtolower($key, $encoding)], $encoding);
 //                $changeCase = -2;
             } elseif (DEBUG_VERBOSE) {
 //                echo "nothing";
                 // if text isn't present in $this->translation array, let's log it to be translated
                 error_log(
                     '[' . date("d-M-Y H:i:s") . '] ' .
-                    //                    (array_key_exists('language', $this->options) && is_string($this->options['language']) ?
-                    //                        $this->options['language'] : '')
+                    // (array_key_exists('language', $this->options) && is_string($this->options['language']) ?
+                    //     $this->options['language'] : '')
                     $this->selectedLanguage
                     . '\\' . $key . PHP_EOL,
                     3,
@@ -194,13 +194,16 @@ class L10n
 
         $languageFile = DIR_TEMPLATE . '/../language-' . $language . '.inc.php'; // deprecated
 
+        Debugger::log("TEST LOGGING", ILogger::INFO);
         if (file_exists($translationFile)) {
             $tempYaml = Yaml::parseFile($translationFile);
+            DEBUG_VERBOSE && Debugger::log("Yaml parse {$translationFile}", ILogger::INFO);
             Assert::isArray($tempYaml);
             //$this->translation += $tempYaml;
             $this->translation = $tempYaml;
         } elseif (file_exists($languageFile)) {
             // deprecated
+            DEBUG_VERBOSE && Debugger::log("including {$languageFile} with \$translation array", ILogger::INFO);
             // todo: read the $prefix.$language.'.inc.php'
 //            $languageFile = DIR_TEMPLATE . '/../language-' . $language . '.inc.php';
 //            if (!file_exists($languageFile)) {

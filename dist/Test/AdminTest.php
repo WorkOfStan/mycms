@@ -63,10 +63,14 @@ class AdminTest extends \PHPUnit_Framework_TestCase
             'tableAdmin' => new TableAdmin(
                 $mycmsOptions['dbms'],
                 '',
-                ['TRANSLATIONS' => [
-                    'cs' => 'Česky',
-                    'en' => 'English',
-                ]]
+                [
+                    'TRANSLATIONS' => [
+                        'cs' => 'Česky',
+                        'en' => 'English',
+                    ],
+                    'prefixL10n' => __DIR__ . '/admin-', // just a sample
+                    'language' => 'en',
+                ]
             )
         ]);
     }

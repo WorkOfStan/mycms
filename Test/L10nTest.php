@@ -2,10 +2,7 @@
 
 namespace WorkOfStan\MyCMS\Test;
 
-//use WorkOfStan\Backyard\Backyard;
 use WorkOfStan\MyCMS\L10n;
-
-//use Tracy\Debugger;
 
 require_once __DIR__ . '/../conf/config.php';
 
