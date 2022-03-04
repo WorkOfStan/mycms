@@ -460,7 +460,8 @@ class MyTableLister
                 'no-display-options',
                 'no-multi-options',
                 'no-selected-rows-operations'
-            ] as $i) {
+            ] as $i
+        ) {
             Tools::setifempty($options[$i]);
         }
         // find out what columns to include/exclude
@@ -548,7 +549,8 @@ class MyTableLister
             . Tools::htmlInput(
                 'textsize',
                 '',
-                Tools::setifnull($_GET['textsize'], $this->DEFAULTS['TEXTSIZE']), ['size' => 3, 'class' => 'text-right']
+                Tools::setifnull($_GET['textsize'], $this->DEFAULTS['TEXTSIZE']),
+                ['size' => 3, 'class' => 'text-right']
             )
             . '
             </label>
@@ -557,7 +559,8 @@ class MyTableLister
             . Tools::htmlInput(
                 'limit',
                 '',
-                Tools::setifnull($_GET['limit'], $this->DEFAULTS['PAGESIZE']), ['size' => 3, 'class' => 'text-right']
+                Tools::setifnull($_GET['limit'], $this->DEFAULTS['PAGESIZE']),
+                ['size' => 3, 'class' => 'text-right']
             ) . '
             </label>'
             . Tools::htmlInput('offset', '', Tools::setifnull($_GET['offset'], 0), 'hidden') . '
@@ -574,8 +577,8 @@ class MyTableLister
                         . Tools::escapeJs($value) . '",' . Tools::setifnull($_GET['op'][$key], 0) . ', "'
                         . addslashes(
                             (string) ((isset($_GET['val'][$key]) && (is_scalar($_GET['val'][$key])
-                        || is_null($_GET['val'][$key]) ) ) ? ( is_null($_GET['val'][$key]) ? '' : $_GET['val'][$key])
-                        : '')
+                            || is_null($_GET['val'][$key]) ) ) ? ( is_null($_GET['val'][$key]) ? '' : $_GET['val'][$key])
+                            : '')
                         ) . '");' . PHP_EOL;
                 } else {
                     unset($_GET['col'][$key], $_GET['op'][$key], $_GET['val'][$key]);
@@ -654,7 +657,8 @@ class MyTableLister
                     $output .= Tools::htmlInput(
                         'check[]',
                         '',
-                        implode('&', $url), ['type' => 'checkbox', 'data-order' => $i, 'id' => 'ch' . $this->rand . $i]
+                        implode('&', $url),
+                        ['type' => 'checkbox', 'data-order' => $i, 'id' => 'ch' . $this->rand . $i]
                     );
                 }
                 $output .= '<a href="?table=' . urlencode($this->table) . '&amp;' . implode('&', $url) . '" title="'

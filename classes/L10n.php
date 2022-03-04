@@ -113,8 +113,8 @@ class L10n
                 // if text isn't present in $this->translation array, let's log it to be translated
                 error_log(
                     '[' . date("d-M-Y H:i:s") . '] ' .
-//                    (array_key_exists('language', $this->options) && is_string($this->options['language']) ?
-//                        $this->options['language'] : '')
+                    //                    (array_key_exists('language', $this->options) && is_string($this->options['language']) ?
+                    //                        $this->options['language'] : '')
                     $this->selectedLanguage
                     . '\\' . $key . PHP_EOL,
                     3,
