@@ -211,7 +211,7 @@ class MyTableAdmin extends MyTableLister
                 $value = '[]';
             }
             Assert::string($value);
-            $json = json_decode($value, true) ?: (Tools::among($value, '', '[]', '{}') ? [] : $value);
+            $json = (array) json_decode($value, true) ?: (Tools::among($value, '', '[]', '{}') ? [] : $value);
             $output .= '<div class="input-expanded">' . Tools::htmlInput($key . EXPAND_INFIX, '', 1, 'hidden');
             if (!is_array($json) && isset($comment['subfields']) && is_array($comment['subfields'])) {
                 // set null to all the fields named after $comment['subfields'] values (TODO refactor?)

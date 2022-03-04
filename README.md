@@ -140,7 +140,7 @@ In `class/Admin.php` you can redefine the `clientSideResources` variable with re
         ],
         'css-pre-admin' => [
             'styles/bootstrap.css',
-            ],
+        ],
         'css' => [
             'styles/font-awesome.css',
             'styles/ie10-viewport-bug-workaround.css',

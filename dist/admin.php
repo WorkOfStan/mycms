@@ -72,11 +72,11 @@ $tableAdmin = new TableAdmin(
     (isset($_GET['table']) ? $_GET['table'] : ''),
     [
         'SETTINGS' => $MyCMS->SETTINGS,
-        'language' => $_SESSION['language'],
+        'language' => (isset($_SESSION['language']) && $_SESSION['language']) ? $_SESSION['language'] : 'en',
         'TRANSLATIONS' => $MyCMS->TRANSLATIONS,
+        'prefixL10n' => __DIR__ . 'conf/l10n/admin-',
     ]
 );
-
 
 $MyCMS->csrfStart();
 if (isset($_POST) && is_array($_POST) && !empty($_POST)) {
