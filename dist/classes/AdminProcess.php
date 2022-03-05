@@ -545,6 +545,10 @@ class AdminProcess extends MyAdminProcess
                     // todo add starting --- if not present, yet
 //                    file_put_contents($this->prefixUiL10n . $code . '.yml', $yamlDump);
                     $localisation = new L10n($this->prefixUiL10n, $this->MyCMS->TRANSLATIONS);
+                    Assert::isArray($post['tr']); // array<array<string>>
+                    Assert::isArray($post['new']); // array<string>
+                    Assert::string($post['old_name']);
+                    Assert::string($post['new_name']);
                     $localisation->updateLocalisation(
                         $post['tr'],
                         $post['new'],
