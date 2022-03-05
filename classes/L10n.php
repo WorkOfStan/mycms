@@ -47,7 +47,7 @@ class L10n
     public function __construct($prefix, array $enabledLanguages)
     {
         $this->prefix = $prefix; // "$prefixXX.yml" where XX is the language e.g. 'conf/l10n/admin-'
-        $this->enabledLanguages = $enabledLanguages;
+        $this->enabledLanguages = array_keys($enabledLanguages);
     }
 
     /**
