@@ -9,8 +9,10 @@
 namespace WorkOfStan\mycmsprojectnamespace;
 
 use GodsDev\Tools\Tools;
+use Symfony\Component\Yaml\Yaml;
 use Tracy\Debugger;
 use Webmozart\Assert\Assert;
+use WorkOfStan\MyCMS\L10n; // todo move to MyAdminProcess
 use WorkOfStan\MyCMS\MyAdminProcess;
 use WorkOfStan\mycmsprojectnamespace\TableAdmin;
 
@@ -24,15 +26,27 @@ class AdminProcess extends MyAdminProcess
 {
     use \Nette\SmartObject;
 
-    /** @var TableAdmin */
-    protected $tableAdmin;
-
-    /**
-     * accepted attributes:
-     */
-
     /** @var array<array<string|array<string|int>>> */
     protected $agendas;
+
+    /**
+     * Feature flags that bubble down to latte and controller
+     * TODO: move to MyAdminProcess
+     *
+     * @var array<bool>
+     */
+    protected $featureFlags;
+
+    /**
+     * Folder and name prefix of localisation yml for the web UI (not admin UI)
+     * TODO: move to MyAdminProcess
+     *
+     * @var string
+     */
+    protected $prefixUiL10n;
+
+    /** @var TableAdmin */
+    protected $tableAdmin;
 
     /**
      * Process admin commands. Most commands require admin logged in and/or CSRF check.
@@ -519,27 +533,60 @@ class AdminProcess extends MyAdminProcess
     public function processTranslationsUpdate($post)
     {
         if (isset($post['translations'])) {
+            //$postForYml = $post; // before legacy changes
             foreach (array_keys($this->MyCMS->TRANSLATIONS) as $code) {
+                // new yml
+                $yml = [];
+
+                // legacy inc.php
                 $fp = fopen("language-$code.inc.php", 'w+');
                 Assert::resource($fp);
                 fwrite($fp, "<?php\n\n// MyCMS->getSessionLanguage expects \$translation=\n\$translation = [\n");
+
+                // common
+                Assert::isArray($post['new']);
                 if ($post['new'][0]) {
+                    Assert::isArray($post['tr']);
+//                    Assert::isArray($post['tr'][$code]);
                     $post['tr'][$code][$post['new'][0]] = $post['new'][$code];
                 }
+                Assert::isArray($post['tr']);
+                Assert::isArray($post['tr'][$code]);
                 foreach ($post['tr'][$code] as $key => $value) {
                     if ($key == $post['old_name']) {
                         $key = $post['new_name'];
                         $value = Tools::set($post['delete']) ? false : $value;
                     }
                     if ($value) {
+                        // legacy inc.php
+                        Assert::string($key);
                         fwrite($fp, "    '" . strtr($key, array('&apos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
                             . "' => '" . strtr($value, array('&appos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
                             . "',\n");
+                        // new yml
+                        $yml[$key] = $value;
                     }
                 }
+
+                // legacy inc.php
                 fwrite($fp, "];\n");
                 fclose($fp);
+
+                // new yml
+                if(!(isset($this->featureFlags['languageFileWriteIncOnlyNotYml'])
+                    && $this->featureFlags['languageFileWriteIncOnlyNotYml'])) {
+                    // refactor into L10n
+                    $yamlDump = Yaml::dump($yml);
+                    // todo add starting --- if not present, yet
+                    file_put_contents($this->prefixUiL10n . $code . '.yml', $yamlDump);
+                    //$localisation = new L10n($this->prefixUiL10n);
+                }
+
+                // new yml
+                // tr - delete + new / rename
+
             }
+            // finish
             Tools::addMessage('info', $this->tableAdmin->translate('Processed.'));
             $this->redir();
         }

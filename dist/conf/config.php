@@ -210,6 +210,7 @@ $backyardConf['mail_for_admin_enabled'] = (
 $featureFlags = array_merge(
     [
         'console_log_list_values' => false,
+        'languageFileWriteIncOnlyNotYml' => false, // deprecated
         'offline_dev' => false,
         'order_hierarchy' => false, // as used in A and F projects - just for testing before ready for Dist
     ],

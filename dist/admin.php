@@ -71,27 +71,28 @@ $tableAdmin = new TableAdmin(
     $MyCMS->dbms,
     (isset($_GET['table']) ? $_GET['table'] : ''),
     [
-        'SETTINGS' => $MyCMS->SETTINGS,
         'language' => (isset($_SESSION['language']) && $_SESSION['language']) ? $_SESSION['language'] : 'en',
-        'TRANSLATIONS' => $MyCMS->TRANSLATIONS,
         'prefixL10n' => __DIR__ . '/conf/l10n/admin-',
+        'SETTINGS' => $MyCMS->SETTINGS,
+        'TRANSLATIONS' => $MyCMS->TRANSLATIONS,
     ]
 );
 
 $MyCMS->csrfStart();
 if (isset($_POST) && is_array($_POST) && !empty($_POST)) {
     $adminProcess = new AdminProcess($MyCMS, [
+        'agendas' => $AGENDAS,
+        'featureFlags' => $featureFlags,
+        'prefixUiL10n' => $myCmsConf['prefixL10n'],
         'tableAdmin' => $tableAdmin,
-        'agendas' => $AGENDAS
     ]);
     $adminProcess->adminProcess($_POST);
 }
 $admin = new Admin($MyCMS, [
     'agendas' => $AGENDAS,
-    'tableAdmin' => $tableAdmin,
     'featureFlags' => $featureFlags,
-    // 'prefixUiL10n' => $MyCMS->prefixL10n, // Cannot read an undeclared property WorkOfStan\mycmsprojectnamespace\MyCMSProject::$prefixL10n.
     'prefixUiL10n' => $myCmsConf['prefixL10n'],
+    'tableAdmin' => $tableAdmin,
     // to replace default CSS and/or JS in admin.php, uncomment the array below
 //    'clientSideResources' => [
 //        'css' => [

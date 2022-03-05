@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - dist/AdminProcess::processTranslationsUpdate method created instead of code being spagetti part of dist/AdminProcess::adminProcess
 
 ### `Deprecated` for soon-to-be removed features
-- using dist/language-xx.inc.php files (conf/l10n/language-xx.yml will be used instead) - just resave admin.php?translations to transform to the new format
+- using dist/language-xx.inc.php files (conf/l10n/language-xx.yml will be used instead) - just resave admin.php?translations to transform to the new format (unless turned off by featureFlag 'languageFileWriteIncOnlyNotYml')
 
 ### `Removed` for now removed features
 - Texy
