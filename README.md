@@ -22,7 +22,7 @@ Apache modules `mod_alias` (for hiding non-public files) and `mod_rewrite` (for 
 
 Once [composer](https://getcomposer.org/) is installed, execute the following command in your project root to install this library:
 ```sh
-composer require workofstan/mycms:^0.4.5
+composer require workofstan/mycms:^0.4.6
 ```
 Most of library's classes use prefix `My`.
 To develop your project, create your own classes as children inheriting MyCMS' classes in the `./classes/` directory and name them without the initial `My` in its name.  

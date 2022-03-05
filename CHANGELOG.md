@@ -5,31 +5,44 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### `Added` for new features
+
+### `Changed` for changes in existing functionality
+
+### `Deprecated` for soon-to-be removed features
+
+### `Removed` for now removed features
+
+### `Fixed` for any bugfixes
+
+### `Security` in case of vulnerabilities
+
+## [0.4.6] - 2022-03-05
 
 - Less files in the application root folder
 
-### `Added` for new features
+### Added
 - dist: subscriber table, therefore subscription input box is working now
 - dist: featureFlag `newletter_input_box` can turn off both the (un)subscribe email input box and the POST value processing
 
-### `Changed` for changes in existing functionality
+### Changed
 - App class handles the request dispatching instead of spagetti code in index.php
 - L10n (Localisation) class with loadLocalisation and translate methods common both for admin UI and MyCMS UI (instead of include php file with array for web UI and parsing yml for admin UI)
 - dist/Admin::sectionTranslations uses new L10n class instead of including language.inc.php file directly
 - MyAdminProcess::processTranslationsUpdate method created instead of code being spagetti part of dist/AdminProcess::adminProcess
 
-### `Deprecated` for soon-to-be removed features
+### Deprecated
 - using dist/language-xx.inc.php files (conf/l10n/language-xx.yml will be used instead) - just resave admin.php?translations to transform to the new format (unless turned off by featureFlag 'languageFileWriteIncOnlyNotYml')
 
-### `Removed` for now removed features
+### Removed
 - Texy
 - dist/process.php moved to dist::App class as part of run method
 - files dist/language-xx.inc.php were removed from the seed app, but are still supported by the MyCMS/dist (see deprecated section)
 
-### `Fixed` for any bugfixes
+### Fixed
 - yml style, add missing document start "---" (document-start); fix indentation
 
-### `Security` in case of vulnerabilities
+### Security
 - App class changes touched the CSRF mechanism, so CSRF was successfully tested
 
 ## [0.4.5] - 2022-02-10
@@ -383,7 +396,8 @@ to
 
 
 
-[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.4.5...HEAD
+[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.4.6...HEAD
+[0.4.6]: https://github.com/WorkOfStan/mycms/compare/v0.4.5...v0.4.6
 [0.4.5]: https://github.com/WorkOfStan/mycms/compare/v0.4.4...v0.4.5
 [0.4.4]: https://github.com/WorkOfStan/mycms/compare/v0.4.3...v0.4.4
 [0.4.3]: https://github.com/WorkOfStan/mycms/compare/v0.4.2...v0.4.3
