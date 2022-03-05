@@ -194,7 +194,9 @@ class L10n
             /** @phpstan-ignore-next-line */
             return $translation;
         }
-        throw new \Exception("Missing expected '{$language}' language file both {$translationFile} and {$languageFile}");
+        throw new \Exception(
+            "Missing expected '{$language}' language file both {$translationFile} and {$languageFile}"
+        );
 
 /**
  *

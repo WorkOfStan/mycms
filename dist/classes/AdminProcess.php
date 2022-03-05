@@ -223,31 +223,7 @@ class AdminProcess extends MyAdminProcess
         $this->processLogout($post);
 
         // generate translations. Note: this rewrites the translation files language-xx.inc.php
-        if (isset($post['translations'])) {
-            foreach (array_keys($this->MyCMS->TRANSLATIONS) as $code) {
-                $fp = fopen("language-$code.inc.php", 'w+');
-                Assert::resource($fp);
-                fwrite($fp, "<?php\n\n// MyCMS->getSessionLanguage expects \$translation=\n\$translation = [\n");
-                if ($post['new'][0]) {
-                    $post['tr'][$code][$post['new'][0]] = $post['new'][$code];
-                }
-                foreach ($post['tr'][$code] as $key => $value) {
-                    if ($key == $post['old_name']) {
-                        $key = $post['new_name'];
-                        $value = Tools::set($post['delete']) ? false : $value;
-                    }
-                    if ($value) {
-                        fwrite($fp, "    '" . strtr($key, array('&apos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
-                            . "' => '" . strtr($value, array('&appos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
-                            . "',\n");
-                    }
-                }
-                fwrite($fp, "];\n");
-                fclose($fp);
-            }
-            Tools::addMessage('info', $this->tableAdmin->translate('Processed.'));
-            $this->redir();
-        }
+        $this->processTranslationsUpdate($post);
 
         // export table rows
         $this->processExport($post, $_GET);
@@ -531,5 +507,41 @@ class AdminProcess extends MyAdminProcess
             ) . '` SET sort=' . (int) $value . ' WHERE id=' . (int) $key . ' LIMIT 1');
         }
         return $result;
+    }
+
+    /**
+     * Process the "translation" action.
+     * generate translations. Note: this rewrites the translation files language-xx.inc.php
+     *
+     * @param array<mixed> $post $_POST (originally by reference, as the $post is changed, but the method dies anyway)
+     * @return void
+     */
+    public function processTranslationsUpdate($post)
+    {
+        if (isset($post['translations'])) {
+            foreach (array_keys($this->MyCMS->TRANSLATIONS) as $code) {
+                $fp = fopen("language-$code.inc.php", 'w+');
+                Assert::resource($fp);
+                fwrite($fp, "<?php\n\n// MyCMS->getSessionLanguage expects \$translation=\n\$translation = [\n");
+                if ($post['new'][0]) {
+                    $post['tr'][$code][$post['new'][0]] = $post['new'][$code];
+                }
+                foreach ($post['tr'][$code] as $key => $value) {
+                    if ($key == $post['old_name']) {
+                        $key = $post['new_name'];
+                        $value = Tools::set($post['delete']) ? false : $value;
+                    }
+                    if ($value) {
+                        fwrite($fp, "    '" . strtr($key, array('&apos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
+                            . "' => '" . strtr($value, array('&appos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
+                            . "',\n");
+                    }
+                }
+                fwrite($fp, "];\n");
+                fclose($fp);
+            }
+            Tools::addMessage('info', $this->tableAdmin->translate('Processed.'));
+            $this->redir();
+        }
     }
 }

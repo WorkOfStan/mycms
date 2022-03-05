@@ -621,11 +621,11 @@ class Admin extends MyAdmin
             . Tools::htmlInput('one', '', false, 'radio') . '</th>';
         $translations = $keys = [];
         $localisation = new L10n($this->prefixUiL10n);
-        foreach ($this->MyCMS->TRANSLATIONS as $key => $value) { // TODO refactor using L10n
+        foreach ($this->MyCMS->TRANSLATIONS as $key => $value) {
             $output .= "<th>$value</th>";
-            //include "language-$key.inc.php";
-            //$translations[$key] = $translation;
-            //$keys = array_merge($keys, array_keys($translation));
+            //include "language-$key.inc.php"; //delete
+            //$translations[$key] = $translation; //delete
+            //$keys = array_merge($keys, array_keys($translation)); //delete
             $translations[$key] = $localisation->readLocalisation($key);
             $keys = array_merge($keys, array_keys($translations[$key]));
         }

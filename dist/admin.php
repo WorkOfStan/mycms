@@ -90,7 +90,8 @@ $admin = new Admin($MyCMS, [
     'agendas' => $AGENDAS,
     'tableAdmin' => $tableAdmin,
     'featureFlags' => $featureFlags,
-    'prefixUiL10n' => $MyCMS->prefixL10n, //$myCmsConf['prefixL10n'],
+    // 'prefixUiL10n' => $MyCMS->prefixL10n, // Cannot read an undeclared property WorkOfStan\mycmsprojectnamespace\MyCMSProject::$prefixL10n.
+    'prefixUiL10n' => $myCmsConf['prefixL10n'],
     // to replace default CSS and/or JS in admin.php, uncomment the array below
 //    'clientSideResources' => [
 //        'css' => [

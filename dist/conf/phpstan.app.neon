@@ -89,7 +89,9 @@ parameters:
           - ../index.php
       -
         message: '#Variable \$myCmsConf might not be defined.#'
-        path: ../index.php
+        paths:
+          - ../admin.php
+          - ../index.php
       -
         message: '#Variable \$WEBSITE might not be defined.#'
         path: ../index.php

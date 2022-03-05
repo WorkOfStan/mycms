@@ -13,8 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - App class handles the request dispatching instead of spagetti code in index.php
 - L10n (Localisation) class with loadLocalisation and translate methods common both for admin UI and MyCMS UI (instead of include php file with array for web UI and parsing yml for admin UI)
 - dist/Admin::sectionTranslations uses new L10n class instead of including language.inc.php file directly
+- dist/AdminProcess::processTranslationsUpdate method created instead of code being spagetti part of dist/AdminProcess::adminProcess
 
 ### `Deprecated` for soon-to-be removed features
+- using dist/language-xx.inc.php files (conf/l10n/language-xx.yml will be used instead) - just resave admin.php?translations to transform to the new format
 
 ### `Removed` for now removed features
 - Texy
