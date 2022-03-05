@@ -653,32 +653,36 @@ class MyAdminProcess extends MyCommon
             }
 
             foreach (array_keys($this->MyCMS->TRANSLATIONS) as $code) {
-                // deprecated inc.php
-                $fp = fopen("language-$code.inc.php", 'w+');
-                Assert::resource($fp);
-                fwrite($fp, "<?php\n\n// MyCMS->getSessionLanguage expects \$translation=\n\$translation = [\n");
+                // deprecated writing to inc.php
+                // update the file only if it still exists
+                if (file_exists("language-$code.inc.php")) {
+                    // TODO in the next version delete the inc.php file instead of updating it
+                    $fp = fopen("language-$code.inc.php", 'w+');
+                    Assert::resource($fp);
+                    fwrite($fp, "<?php\n\n// MyCMS->getSessionLanguage expects \$translation=\n\$translation = [\n");
 
-                Assert::isArray($post['new']);
-                if ($post['new'][0]) {
+                    Assert::isArray($post['new']);
+                    if ($post['new'][0]) {
+                        Assert::isArray($post['tr']);
+                        $post['tr'][$code][$post['new'][0]] = $post['new'][$code];
+                    }
                     Assert::isArray($post['tr']);
-                    $post['tr'][$code][$post['new'][0]] = $post['new'][$code];
-                }
-                Assert::isArray($post['tr']);
-                Assert::isArray($post['tr'][$code]);
-                foreach ($post['tr'][$code] as $key => $value) {
-                    if ($key == $post['old_name']) {
-                        $key = $post['new_name'];
-                        $value = Tools::set($post['delete']) ? false : $value;
+                    Assert::isArray($post['tr'][$code]);
+                    foreach ($post['tr'][$code] as $key => $value) {
+                        if ($key == $post['old_name']) {
+                            $key = $post['new_name'];
+                            $value = Tools::set($post['delete']) ? false : $value;
+                        }
+                        if ($value) {
+                            Assert::string($key);
+                            fwrite($fp, "    '" . strtr($key, array('&apos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
+                                . "' => '" . strtr($value, array('&appos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
+                                . "',\n");
+                        }
                     }
-                    if ($value) {
-                        Assert::string($key);
-                        fwrite($fp, "    '" . strtr($key, array('&apos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
-                            . "' => '" . strtr($value, array('&appos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
-                            . "',\n");
-                    }
+                    fwrite($fp, "];\n");
+                    fclose($fp);
                 }
-                fwrite($fp, "];\n");
-                fclose($fp);
             }
             // finish
             Tools::addMessage('info', $this->tableAdmin->translate('Processed.'));

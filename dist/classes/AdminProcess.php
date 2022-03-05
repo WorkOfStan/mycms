@@ -9,10 +9,8 @@
 namespace WorkOfStan\mycmsprojectnamespace;
 
 use GodsDev\Tools\Tools;
-use Symfony\Component\Yaml\Yaml;
 use Tracy\Debugger;
 use Webmozart\Assert\Assert;
-use WorkOfStan\MyCMS\L10n; // todo move to MyAdminProcess
 use WorkOfStan\MyCMS\MyAdminProcess;
 use WorkOfStan\mycmsprojectnamespace\TableAdmin;
 
@@ -20,7 +18,7 @@ define('PROCESS_LIMIT', 100); // used in self::getAgenda
 
 /**
  * AJAX and form handling for Admin UI
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
+ * (Last MyCMS/dist revision: 2022-03-05, v0.4.6)
  */
 class AdminProcess extends MyAdminProcess
 {
@@ -506,70 +504,4 @@ class AdminProcess extends MyAdminProcess
         }
         return $result;
     }
-
-    /**
-     * Process the "translation" action.
-     * generate translations. Note: this rewrites the translation files language-xx.inc.php
-     *
-     * @param array<mixed> $post $_POST (originally by reference, as the $post is changed, but the method dies anyway)
-     * @return void
-     */
-    /*
-    public function processTranslationsUpdate($post)
-    {
-        if (isset($post['translations'])) {
-            // new yml before legacy code makes changes to $post
-            if (
-                    !(isset($this->featureFlags['languageFileWriteIncOnlyNotYml'])
-                    && $this->featureFlags['languageFileWriteIncOnlyNotYml'])
-            ) {
-                $localisation = new L10n($this->prefixUiL10n, $this->MyCMS->TRANSLATIONS);
-                Assert::isArray($post['tr']); // array<array<string>>
-                Assert::isArray($post['new']); // array<string>
-                Assert::string($post['old_name']);
-                Assert::string($post['new_name']);
-                $localisation->updateLocalisation(
-                    $post['tr'],
-                    $post['new'],
-                    $post['old_name'],
-                    $post['new_name'],
-                    isset($post['delete']) && $post['delete'] === '1'
-                );
-            }
-
-            foreach (array_keys($this->MyCMS->TRANSLATIONS) as $code) {
-                // deprecated inc.php
-                $fp = fopen("language-$code.inc.php", 'w+');
-                Assert::resource($fp);
-                fwrite($fp, "<?php\n\n// MyCMS->getSessionLanguage expects \$translation=\n\$translation = [\n");
-
-                Assert::isArray($post['new']);
-                if ($post['new'][0]) {
-                    Assert::isArray($post['tr']);
-                    $post['tr'][$code][$post['new'][0]] = $post['new'][$code];
-                }
-                Assert::isArray($post['tr']);
-                Assert::isArray($post['tr'][$code]);
-                foreach ($post['tr'][$code] as $key => $value) {
-                    if ($key == $post['old_name']) {
-                        $key = $post['new_name'];
-                        $value = Tools::set($post['delete']) ? false : $value;
-                    }
-                    if ($value) {
-                        Assert::string($key);
-                        fwrite($fp, "    '" . strtr($key, array('&apos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
-                            . "' => '" . strtr($value, array('&appos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
-                            . "',\n");
-                    }
-                }
-                fwrite($fp, "];\n");
-                fclose($fp);
-            }
-            // finish
-            Tools::addMessage('info', $this->tableAdmin->translate('Processed.'));
-            $this->redir();
-        }
-    }
-     *
-     */
 }

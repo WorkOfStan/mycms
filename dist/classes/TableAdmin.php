@@ -24,20 +24,6 @@ class TableAdmin extends MyTableAdmin
     public function __construct(LogMysqli $dbms, $table, array $options = [])
     {
         parent::__construct($dbms, $table, $options);
-//        Assert::isArray($options['TRANSLATIONS']);
-//        $this->TRANSLATIONS = $options['TRANSLATIONS']; // TODO - why this here? // moved to MyTableLister
-        ////use Symfony\Component\Yaml\Yaml;
-//        $translationFile = 'conf/l10n/admin-' . Tools::setifempty($_SESSION['language'], 'en') . '.yml';
-//        // The union operator ( + ) might be more useful than array_merge.
-//        // The array_merge function does not preserve numeric key values.
-//        // If you need to preserve the numeric keys, then using + will do that.
-//        // TODO/Note: TRANSLATION is based on A project, rather than F project.
-//        //delete//$this->TRANSLATION += file_exists($translationFile) ? Yaml::parseFile($translationFile) : [];
-//        if (file_exists($translationFile)) {
-//            $tempYaml = Yaml::parseFile($translationFile);
-//            Assert::isArray($tempYaml);
-//            $this->TRANSLATION += $tempYaml;
-//        }
     }
 
     /**

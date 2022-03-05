@@ -10,6 +10,7 @@ use Webmozart\Assert\Assert;
 
 /**
  * Localisation class unifying capabilities of translation method
+ * Both read/update the yml
  *
  * @author rejthar@stanislavrejthar.com
  */
@@ -28,16 +29,6 @@ class L10n
 
     /** @var array<string> */
     protected $translation;
-
-    // as in MyTableLister
-    /** @ var array<string> Selected locale strings */
-//    public $TRANSLATION = [];
-
-    // as in MyTableLister
-    /** @ var array<string> Available languages for MyCMS */
-//    public $TRANSLATIONS = [
-//        'en' => 'English'
-//    ];
 
     /**
      *
@@ -113,36 +104,6 @@ class L10n
         return Tools::h($text); // HTML escaped
     }
 
-//    /**
-//     * Translate defined string to the language stored in $_SESSION['language'].
-//     * Returns original text if translation not found.
-//     * (From MyCMS::translate)
-//     * MyTableLister::translate
-//     *
-//     * @param string $id text to translate
-//     * @param int|null $options case transposition - null || [MB_CASE_UPPER|MB_CASE_LOWER|MB_CASE_TITLE|L_UCFIRST]
-//     * @return string
-//     */
-//    public function translateAsInMyCMS($id, $options = null)
-//    {
-//        if (
-//            !isset($this->translate[$id]) && DEBUG_VERBOSE
-//            && $_SESSION['language'] != DEFAULT_LANGUAGE
-//        ) {
-//            Debugger::log('Translation does not exist - ' . $id, ILogger::WARNING);
-//        }
-//        $result = array_key_exists($id, $this->translation) ? $this->translation[$id] : $id;
-//        if ($options === L_UCFIRST) {
-//            $result = mb_strtoupper(mb_substr($result, 0, 1)) . mb_substr($result, 1);
-//        } elseif (
-//            is_int($options) && ($options == MB_CASE_UPPER || $options == MB_CASE_LOWER || $options == MB_CASE_TITLE)
-//        ) {
-//            $result = mb_convert_case($result, $options);
-//        }
-//        return $result;
-//    }
-
-
     /**
      * Assert ISO 639-1 format of the language identifier
      *
@@ -204,18 +165,11 @@ class L10n
         throw new \Exception(
             "Missing expected '{$language}' language file both {$translationFile} and {$languageFile}"
         );
-
-/**
- *
-Admin:: section Translation
-Reads
-
-*/
     }
 
     /**
      * Update the localisation file
-     * // tr - delete + new / rename
+     * Called from MyAdminProcess::processTranslationsUpdate (post[tr] - post[delete] + post[new] / post[rename])
      *
      * @param array<array<string>> $allStrings
      * @param array<string> $newStrings
@@ -226,67 +180,25 @@ Reads
      */
     public function updateLocalisation(array $allStrings, array $newStrings, $oldName, $newName, $deleteFlag)
     {
-/**
- *
-AdminProcess::adminProcess
-Rewrites
-*/
-
-
-            //$postForYml = $post; // before legacy changes
         foreach ($this->enabledLanguages as $code) {
             $this->assertLanguage($code);
-            // new yml
             $yml = [];
-
-            // legacy inc.php
-//                $fp = fopen("language-$code.inc.php", 'w+');
-//                Assert::resource($fp);
-//                fwrite($fp, "<?php\n\n// MyCMS->getSessionLanguage expects \$translation=\n\$translation = [\n");
-
-            // common
-//                Assert::isArray($post['new']);
             if ($newStrings[0]) {
-//                    Assert::isArray($post['tr']);
-//                    Assert::isArray($post['tr'][$code]);
                 $allStrings[$code][$newStrings[0]] = $newStrings[$code];
             }
-//                Assert::isArray($post['tr']);
-//                Assert::isArray($post['tr'][$code]);
             foreach ($allStrings[$code] as $key => $value) {
                 if ($key == $oldName) {
                     $key = $newName;
                     $value = $deleteFlag ? false : $value;
                 }
                 if ($value) {
-                    // legacy inc.php
-//                        Assert::string($key);
-//                        fwrite($fp, "    '" . strtr($key, array('&apos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
-//                            . "' => '" . strtr($value, array('&appos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
-//                            . "',\n");
-                    // new yml
                     $yml[$key] = $value;
                 }
             }
-
-            // legacy inc.php
-//                fwrite($fp, "];\n");
-//                fclose($fp);
-
-            // new yml
-//                if (
-//                    !(isset($this->featureFlags['languageFileWriteIncOnlyNotYml'])
-//                    && $this->featureFlags['languageFileWriteIncOnlyNotYml'])
-//                ) {
-                // refactor into L10n
-                $yamlDump = Yaml::dump($yml);
-                // todo fix [warning] missing document start "---" (document-start)
-                file_put_contents($this->prefix . $code . '.yml', $yamlDump);
-                //$localisation = new L10n($this->prefixUiL10n);
-//                }
-
-            // new yml
-            // tr - delete + new / rename
+            // todo write only in case of changes
+            $yamlDump = Yaml::dump($yml);
+            // todo fix [warning] missing document start "---" (document-start)
+            file_put_contents($this->prefix . $code . '.yml', $yamlDump);
         }
     }
 }

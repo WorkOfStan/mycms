@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+- Less files in the application root folder
+
 ### `Added` for new features
 - dist: subscriber table, therefore subscription input box is working now
 - dist: featureFlag `newletter_input_box` can turn off both the (un)subscribe email input box and the POST value processing
@@ -13,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - App class handles the request dispatching instead of spagetti code in index.php
 - L10n (Localisation) class with loadLocalisation and translate methods common both for admin UI and MyCMS UI (instead of include php file with array for web UI and parsing yml for admin UI)
 - dist/Admin::sectionTranslations uses new L10n class instead of including language.inc.php file directly
-- dist/AdminProcess::processTranslationsUpdate method created instead of code being spagetti part of dist/AdminProcess::adminProcess
+- MyAdminProcess::processTranslationsUpdate method created instead of code being spagetti part of dist/AdminProcess::adminProcess
 
 ### `Deprecated` for soon-to-be removed features
 - using dist/language-xx.inc.php files (conf/l10n/language-xx.yml will be used instead) - just resave admin.php?translations to transform to the new format (unless turned off by featureFlag 'languageFileWriteIncOnlyNotYml')
@@ -21,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Removed` for now removed features
 - Texy
 - dist/process.php moved to dist::App class as part of run method
+- files dist/language-xx.inc.php were removed from the seed app, but are still supported by the MyCMS/dist (see deprecated section)
 
 ### `Fixed` for any bugfixes
 - yml style, add missing document start "---" (document-start); fix indentation
