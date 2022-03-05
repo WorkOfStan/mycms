@@ -47,16 +47,7 @@ class MyCMS extends MyCMSMonoLingual
     public $typeToTableMapping;
 
     /**
-     * Selected locale strings
-     * TODO: needed?
-     *
-     * @var array<string>
-     */
-    public $TRANSLATION;
-
-    /**
      * Available languages
-     * TODO: needed?
      *
      * @var array<string>
      */
@@ -97,19 +88,6 @@ class MyCMS extends MyCMSMonoLingual
             );
         if ($makeInclude) {
             $this->localisation->loadLocalisation($resultLanguage);
-//            $languageFile = DIR_TEMPLATE . '/../language-' . $resultLanguage . '.inc.php';
-//            if (!file_exists($languageFile)) {
-//                throw new \Exception("Missing expected language file {$languageFile}");
-//            }
-//            // include (as include_once triggers error in PHPUnit tests because of attempted repeated includes)
-//            include $languageFile; // MUST contain $translation = [...];
-//            // TODO instead of PHP file with array $translation, let's put localized texts into yaml.
-//            /** @ phpstan-ignore-next-line */
-//            if (!(isset($translation) && is_array($translation))) {
-//                throw new \Exception("Missing expected translation {$languageFile}");
-//            }
-//            /** @ phpstan-ignore-next-line */
-//            $this->TRANSLATION = $translation;
         }
         return $resultLanguage;
     }
@@ -117,7 +95,7 @@ class MyCMS extends MyCMSMonoLingual
     /**
      * Translate defined string to the language stored in $_SESSION['language'].
      * Returns original text if translation not found.
-     * TODO: refactor away of this wrapper
+     * TODO: refactor this wrapper away
      *
      * @param string $id text to translate
      * @param int|null $options case transposition - null || [MB_CASE_UPPER|MB_CASE_LOWER|MB_CASE_TITLE|L_UCFIRST]
@@ -126,20 +104,5 @@ class MyCMS extends MyCMSMonoLingual
     public function translate($id, $options = null)
     {
         return $this->localisation->translate($id, $options);
-//        if (
-//            !isset($this->TRANSLATION[$id]) && isset($_SESSION['test-translations'])
-//            && $_SESSION['language'] != DEFAULT_LANGUAGE
-//        ) {
-//            $this->logger->warning('Translation does not exist - ' . $id);
-//        }
-//        $result = isset($this->TRANSLATION[$id]) ? $this->TRANSLATION[$id] : $id;
-//        if ($options === L_UCFIRST) {
-//            $result = mb_strtoupper(mb_substr($result, 0, 1)) . mb_substr($result, 1);
-//        } elseif (
-//            is_int($options) && ($options == MB_CASE_UPPER || $options == MB_CASE_LOWER || $options == MB_CASE_TITLE)
-//        ) {
-//            $result = mb_convert_case($result, $options);
-//        }
-//        return $result;
     }
 }

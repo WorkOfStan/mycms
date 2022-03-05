@@ -32,7 +32,6 @@ class MyAdminProcess extends MyCommon
 
     /**
      * Feature flags that bubble down to latte and controller
-     * TODO: move to MyAdminProcess
      *
      * @var array<bool>
      */
@@ -40,7 +39,6 @@ class MyAdminProcess extends MyCommon
 
     /**
      * Folder and name prefix of localisation yml for the web UI (not admin UI)
-     * TODO: move to MyAdminProcess
      *
      * @var string
      */

@@ -12,7 +12,7 @@ require_once __DIR__ . '/../conf/config.php';
 
 /**
  * Tests of Controller (of MVC)
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
+ * (Last MyCMS/dist revision: 2022-03-05, v0.4.6)
  */
 class ControllerTest extends \PHPUnit_Framework_TestCase
 {
@@ -48,7 +48,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
                 $backyard->BackyardError
             ),
             'logger' => $backyard->BackyardError,
-            'prefixL10n' => __DIR__ . '/conf/L10nTest-',
+            'prefixL10n' => __DIR__ . '/../conf/l10n/language-',
             'templateAssignementParametricRules' => [],
             'TRANSLATIONS' => [
                 'cs' => 'Česky', // todo remove this line with DEFAULT_LANGUAGE and

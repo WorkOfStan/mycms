@@ -63,13 +63,8 @@ class MyTableLister
     /** @var array<array> all tables in the database */
     public $tables;
 
-    /** @var array<string> Selected locale strings */
-    public $TRANSLATION = [];
-
-    /** @var array<string> Available languages for MyCMS // TODO REMOVE THIS? */
-    public $TRANSLATIONS = [
-        'en' => 'English'
-    ];
+    /** @var array<string> Available languages for MyCMS */
+    public $TRANSLATIONS = [];
 
     /** @var array<string> arithmetical and logical operations for searching */
     public $WHERE_OPS = [
@@ -949,7 +944,7 @@ class MyTableLister
      *     $this->translate('list') --> "seznam"
      * @example: TRANSLATION['list'] = 'seznam'; $this->translate('list') --> "seznam",
      *     $this->translate('List') --> "Seznam"
-     * TODO: refactor away this wrapper
+     * TODO: refactor this wrapper away
      *
      * @param string $text
      * @param bool $escape escape for HTML? true by default
@@ -960,42 +955,6 @@ class MyTableLister
     public function translate($text, $escape = true, $changeCase = 0, $encoding = null)
     {
         return $this->localisation->translate($text, null, $encoding);
-//        $encoding = $encoding ?: mb_internal_encoding();
-//        $first = mb_substr($text, 0, 1, $encoding);
-//        $rest = mb_substr($text, 1, null, $encoding);
-//        if (isset($this->TRANSLATION[$text])) {
-//            $text = $this->TRANSLATION[$text];
-//        } else {
-//            $ucfirst = mb_strtoupper($first, $encoding);
-//            $lcfirst = mb_strtolower($first, $encoding);
-//            if (isset($this->TRANSLATION[$ucfirst . $rest])) {
-//                $text = $this->TRANSLATION[$ucfirst . $rest];
-//                $changeCase = 1;
-//            } elseif (isset($this->TRANSLATION[$lcfirst . $rest])) {
-//                $text = $this->TRANSLATION[$lcfirst . $rest];
-//                $changeCase = -1;
-//            } elseif (isset($this->TRANSLATION[mb_strtoupper($text, $encoding)])) {
-//                $text = $this->TRANSLATION[mb_strtoupper($text, $encoding)];
-//                $changeCase = 2;
-//            } elseif (isset($this->TRANSLATION[mb_strtolower($text, $encoding)])) {
-//                $text = $this->TRANSLATION[mb_strtolower($text, $encoding)];
-//                $changeCase = -2;
-//            } elseif (DEBUG_VERBOSE) {
-//                // if text isn't present in TRANSLATION array, let's log it to be translated
-//                error_log(
-//                    '[' . date("d-M-Y H:i:s") . '] ' .
-//                    (array_key_exists('language', $this->options) && is_string($this->options['language']) ?
-//                        $this->options['language'] : '') . '\\' . $text . PHP_EOL,
-//                    3,
-//                    'log/translate_admin_missing.log'
-//                );
-//            }
-//        }
-//        if ($changeCase) {
-//            $fn = $changeCase > 0 ? 'mb_strtoupper' : 'mb_strtolower';
-//            $text = $fn($first, $encoding) . (abs($changeCase) > 1 ? $fn($rest, $encoding) : $rest);
-//        }
-//        return $escape ? Tools::h($text) : $text;
     }
 
     /**

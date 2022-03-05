@@ -13,7 +13,7 @@ require_once __DIR__ . '/../conf/config.php';
 
 /**
  * Tests of Admin UI
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
+ * (Last MyCMS/dist revision: 2022-03-05, v0.4.6)
  */
 class AdminTest extends \PHPUnit_Framework_TestCase
 {
@@ -37,11 +37,6 @@ class AdminTest extends \PHPUnit_Framework_TestCase
         Debugger::enable(Debugger::DEVELOPMENT, __DIR__ . '/../log');
         $backyard = new Backyard($backyardConf);
         $mycmsOptions = [
-            'TRANSLATIONS' => [
-                'en' => 'English',
-                'zh' => '中文',
-            ],
-            'logger' => $backyard->BackyardError,
             // constants are defined by `new InitDatabase` in the alphabetically first test
             'dbms' => new LogMysqli(
                 DB_HOST . ":" . DB_PORT,
@@ -50,6 +45,11 @@ class AdminTest extends \PHPUnit_Framework_TestCase
                 DB_DATABASE,
                 $backyard->BackyardError
             ),
+            'logger' => $backyard->BackyardError,
+            'TRANSLATIONS' => [
+                'en' => 'English',
+                'zh' => '中文',
+            ],
         ];
         $this->myCms = new MyCMSProject($mycmsOptions);
         $_SESSION = [
@@ -64,12 +64,12 @@ class AdminTest extends \PHPUnit_Framework_TestCase
                 $mycmsOptions['dbms'],
                 '',
                 [
+                    'language' => 'en',
+                    'prefixL10n' => __DIR__ . '/../conf/l10n/admin-',
                     'TRANSLATIONS' => [
                         'cs' => 'Česky',
                         'en' => 'English',
                     ],
-                    'prefixL10n' => __DIR__ . '/../conf/l10n/admin-',
-                    'language' => 'en',
                 ]
             )
         ]);
