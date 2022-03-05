@@ -536,27 +536,27 @@ class AdminProcess extends MyAdminProcess
             // before legacy changes
 
                 // new yml
-                if (
+            if (
                     !(isset($this->featureFlags['languageFileWriteIncOnlyNotYml'])
                     && $this->featureFlags['languageFileWriteIncOnlyNotYml'])
-                ) {
-                    // refactor into L10n
+            ) {
+                // refactor into L10n
 //                    $yamlDump = Yaml::dump($yml);
-                    // todo add starting --- if not present, yet
+                // todo add starting --- if not present, yet
 //                    file_put_contents($this->prefixUiL10n . $code . '.yml', $yamlDump);
-                    $localisation = new L10n($this->prefixUiL10n, $this->MyCMS->TRANSLATIONS);
-                    Assert::isArray($post['tr']); // array<array<string>>
-                    Assert::isArray($post['new']); // array<string>
-                    Assert::string($post['old_name']);
-                    Assert::string($post['new_name']);
-                    $localisation->updateLocalisation(
-                        $post['tr'],
-                        $post['new'],
-                        $post['old_name'],
-                        $post['new_name'],
-                        isset($post['delete']) && $post['delete'] === 1 // TODO or '1' ??
-                    );
-                }
+                $localisation = new L10n($this->prefixUiL10n, $this->MyCMS->TRANSLATIONS);
+                Assert::isArray($post['tr']); // array<array<string>>
+                Assert::isArray($post['new']); // array<string>
+                Assert::string($post['old_name']);
+                Assert::string($post['new_name']);
+                $localisation->updateLocalisation(
+                    $post['tr'],
+                    $post['new'],
+                    $post['old_name'],
+                    $post['new_name'],
+                    isset($post['delete']) && $post['delete'] === 1 // TODO or '1' ??
+                );
+            }
 
             foreach (array_keys($this->MyCMS->TRANSLATIONS) as $code) {
                 // new yml

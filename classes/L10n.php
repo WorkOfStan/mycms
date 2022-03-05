@@ -233,61 +233,59 @@ Rewrites
 
 
             //$postForYml = $post; // before legacy changes
-            foreach (array_keys($this->enabledLanguages) as $code) {
-                $this->assertLanguage($code);
-                // new yml
-                $yml = [];
+        foreach (array_keys($this->enabledLanguages) as $code) {
+            $this->assertLanguage($code);
+            // new yml
+            $yml = [];
 
-                // legacy inc.php
+            // legacy inc.php
 //                $fp = fopen("language-$code.inc.php", 'w+');
 //                Assert::resource($fp);
 //                fwrite($fp, "<?php\n\n// MyCMS->getSessionLanguage expects \$translation=\n\$translation = [\n");
 
-                // common
+            // common
 //                Assert::isArray($post['new']);
-                if ($newStrings[0]) {
+            if ($newStrings[0]) {
 //                    Assert::isArray($post['tr']);
 //                    Assert::isArray($post['tr'][$code]);
-                    $allStrings[$code][$newStrings[0]] = $newStrings[$code];
-                }
+                $allStrings[$code][$newStrings[0]] = $newStrings[$code];
+            }
 //                Assert::isArray($post['tr']);
 //                Assert::isArray($post['tr'][$code]);
-                foreach ($allStrings[$code] as $key => $value) {
-                    if ($key == $oldName) {
-                        $key = $newName;
-                        $value = $deleteFlag ? false : $value;
-                    }
-                    if ($value) {
-                        // legacy inc.php
+            foreach ($allStrings[$code] as $key => $value) {
+                if ($key == $oldName) {
+                    $key = $newName;
+                    $value = $deleteFlag ? false : $value;
+                }
+                if ($value) {
+                    // legacy inc.php
 //                        Assert::string($key);
 //                        fwrite($fp, "    '" . strtr($key, array('&apos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
 //                            . "' => '" . strtr($value, array('&appos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
 //                            . "',\n");
-                        // new yml
-                        $yml[$key] = $value;
-                    }
+                    // new yml
+                    $yml[$key] = $value;
                 }
+            }
 
-                // legacy inc.php
+            // legacy inc.php
 //                fwrite($fp, "];\n");
 //                fclose($fp);
 
-                // new yml
+            // new yml
 //                if (
 //                    !(isset($this->featureFlags['languageFileWriteIncOnlyNotYml'])
 //                    && $this->featureFlags['languageFileWriteIncOnlyNotYml'])
 //                ) {
-                    // refactor into L10n
-                    $yamlDump = Yaml::dump($yml);
-                    // todo fix [warning] missing document start "---" (document-start)
-                    file_put_contents($this->prefix . $code . '.yml', $yamlDump);
-                    //$localisation = new L10n($this->prefixUiL10n);
+                // refactor into L10n
+                $yamlDump = Yaml::dump($yml);
+                // todo fix [warning] missing document start "---" (document-start)
+                file_put_contents($this->prefix . $code . '.yml', $yamlDump);
+                //$localisation = new L10n($this->prefixUiL10n);
 //                }
 
-                // new yml
-                // tr - delete + new / rename
-            }
-
-
+            // new yml
+            // tr - delete + new / rename
+        }
     }
 }
