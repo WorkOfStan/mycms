@@ -577,7 +577,8 @@ class MyTableLister
                         . Tools::escapeJs($value) . '",' . Tools::setifnull($_GET['op'][$key], 0) . ', "'
                         . addslashes(
                             (string) ((isset($_GET['val'][$key]) && (is_scalar($_GET['val'][$key])
-                            || is_null($_GET['val'][$key]) ) ) ? ( is_null($_GET['val'][$key]) ? '' : $_GET['val'][$key])
+                            || is_null($_GET['val'][$key]) ) )
+                            ? ( is_null($_GET['val'][$key]) ? '' : $_GET['val'][$key])
                             : '')
                         ) . '");' . PHP_EOL;
                 } else {

@@ -43,11 +43,6 @@ class L10n
     public function __construct($prefix)
     {
         $this->prefix = $prefix; // "$prefixXX.yml" where XX is the language e.g. 'conf/l10n/admin-'
-        // select language
-        // select folder .. i.e. prefix for yml (inc is deprecated in the root)
-        // read inc/yml
-        // write inc/yml
-        // translate
     }
 
     /**
@@ -77,59 +72,36 @@ class L10n
         $rest = mb_substr($key, 1, null, $encoding); // 2nd char till the end
         $text = $key; // fall-back
         if (array_key_exists($key, $this->translation)) {
-//            echo "exact";
             $text = $this->translation[$key];
         } else {
             $ucfirst = mb_strtoupper($first, $encoding);
             $lcfirst = mb_strtolower($first, $encoding);
-            // $changeCase - 0 = no change, 1 = first upper, -1 = first lower, 2 = all caps, -2 = all lower
             if (array_key_exists($ucfirst . $rest, $this->translation)) {
-//                echo "1";
                 $text = $this->translation[$ucfirst . $rest];
-//                $changeCase = 1;
-                //$text = mb_strtoupper($ucfirst, $encoding) . $rest;
                 $text = mb_strtolower(mb_substr($text, 0, 1, $encoding), $encoding)
                     . mb_substr($text, 1, null, $encoding);
             } elseif (array_key_exists($lcfirst . $rest, $this->translation)) {
-//                echo "-1";
                 $text = $this->translation[$lcfirst . $rest];
-//                $changeCase = -1;
-                //$text = mb_strtolower($lcfirst, $encoding) . $rest;
                 $text = mb_strtoupper(mb_substr($text, 0, 1, $encoding), $encoding)
                     . mb_substr($text, 1, null, $encoding);
             } elseif (array_key_exists(mb_strtoupper($key, $encoding), $this->translation)) {
-//                echo "2";
                 $text = mb_strtolower($this->translation[mb_strtoupper($key, $encoding)], $encoding);
-//                $changeCase = 2;
             } elseif (array_key_exists(mb_strtolower($key, $encoding), $this->translation)) {
-//                echo "-2";
                 $text = mb_strtoupper($this->translation[mb_strtolower($key, $encoding)], $encoding);
-//                $changeCase = -2;
             } elseif (DEBUG_VERBOSE) {
-//                echo "nothing";
                 // if text isn't present in $this->translation array, let's log it to be translated
                 error_log(
-                    '[' . date("d-M-Y H:i:s") . '] ' .
-                    // (array_key_exists('language', $this->options) && is_string($this->options['language']) ?
-                    //     $this->options['language'] : '')
-                    $this->selectedLanguage
-                    . '\\' . $key . PHP_EOL,
+                    '[' . date("d-M-Y H:i:s") . '] ' . $this->selectedLanguage . '\\' . $key . PHP_EOL,
                     3,
                     'log/translation_missing.log'
                 );
             }
         }
-//        if ($changeCase) {
-//            $fn = $changeCase > 0 ? 'mb_strtoupper' : 'mb_strtolower';
-//            $text = $fn($first, $encoding) . (abs($changeCase) > 1 ? $fn($rest, $encoding) : $rest);
-//        }
         if ($mbCaseMode === L_UCFIRST) {
-//            echo "L-UCFIRST";
             $text = mb_strtoupper(mb_substr($text, 0, 1, $encoding), $encoding) . mb_substr($text, 1, null, $encoding);
         } elseif (
             is_int($mbCaseMode) && in_array($mbCaseMode, [MB_CASE_UPPER, MB_CASE_LOWER, MB_CASE_TITLE])
         ) {
-//            echo "mbCaseMode";
             $text = mb_convert_case($text, $mbCaseMode, $encoding);
         }
         return Tools::h($text); // HTML escaped
@@ -178,39 +150,20 @@ class L10n
         $this->selectedLanguage = $language;
 
         // language
-//        Assert::isArray($options['TRANSLATIONS']);
-//        $this->TRANSLATIONS = $options['TRANSLATIONS'];
-        //$translationFile = 'conf/l10n/admin-' . Tools::setifempty($_SESSION['language'], 'en') . '.yml';
         $translationFile = $this->prefix . $language . '.yml';
 
-        // The union operator ( + ) might be more useful than array_merge.
-        // The array_merge function does not preserve numeric key values.
-        // If you need to preserve the numeric keys, then using + will do that.
-        // TODO/Note: TRANSLATION is based on A project, rather than F project.
-        //delete//$this->TRANSLATION += file_exists($translationFile) ? Yaml::parseFile($translationFile) : [];
-
-        //$languageFile = DIR_TEMPLATE . '/../language-' . $language . '.inc.php'; // deprecated
         // expected to transform APP_DIR/conf/l10n/file into APP_DIR
         $languageFile = dirname(dirname(dirname($this->prefix))) . '/language-' . $language . '.inc.php'; // deprecated
 
-        //Debugger::log("TEST LOGGING", ILogger::INFO);
         if (file_exists($translationFile)) {
             $tempYaml = Yaml::parseFile($translationFile);
             DEBUG_VERBOSE && Debugger::log("Yaml parse {$translationFile}", ILogger::INFO);
             Assert::isArray($tempYaml);
-            //$this->translation += $tempYaml;
             $this->translation = $tempYaml;
         } elseif (file_exists($languageFile)) {
-            // deprecated
+            // deprecated (read the $prefix.$language.'.inc.php')
             DEBUG_VERBOSE && Debugger::log("including {$languageFile} with \$translation array", ILogger::INFO);
-            // todo: read the $prefix.$language.'.inc.php'
-//            $languageFile = DIR_TEMPLATE . '/../language-' . $language . '.inc.php';
-//            if (!file_exists($languageFile)) {
-//                throw new \Exception("Missing expected language file {$languageFile}");
-//            }
-            // include (as include_once triggers error in PHPUnit tests because of attempted repeated includes)
             include $languageFile; // MUST contain $translation = [...];
-            // TODO instead of PHP file with array $translation, let's put localized texts into yaml.
             /** @phpstan-ignore-next-line */
             if (!(isset($translation) && is_array($translation))) {
                 throw new \Exception("Missing expected translation {$languageFile}");
@@ -220,24 +173,6 @@ class L10n
         } else {
             throw new \Exception("Missing expected language file both {$translationFile} and {$languageFile}");
         }
-/**
- *
- * see TableAdmin::__construct
- *
-220218 yml instead of inc.php
-MyCMS::getSessionLanguage
-If yml then read yml
-Else
-  //If-Else Deprecated
-  If inc.php then
-    Orig translation read
-    Log->warn
-  Else
-    // Keep
-    Exception
-  Fi
-Fi
-*/
 /**
  *
 Admin:: section Translation

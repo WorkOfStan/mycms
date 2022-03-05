@@ -35,9 +35,6 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
         if (!defined('DIR_TEMPLATE')) {
             define('DIR_TEMPLATE', __DIR__ . '/../dist/template'); // for Latte
         }
-//        if (!defined('DEFAULT_LANGUAGE')) {
-//            define('DEFAULT_LANGUAGE', 'tl');
-//        }
         $backyard = new Backyard($backyardConf);
         $mycmsOptions = [
             'TRANSLATIONS' => [

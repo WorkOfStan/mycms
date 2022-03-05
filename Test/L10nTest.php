@@ -23,8 +23,8 @@ class L10nTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        if (!defined(DEBUG_VERBOSE)) {
-            define(DEBUG_VERBOSE, false);
+        if (!defined('DEBUG_VERBOSE')) {
+            define('DEBUG_VERBOSE', false);
         }
         Debugger::enable(Debugger::DEVELOPMENT, __DIR__ . '/../log');
         $this->object = new L10n(__DIR__ . '/conf/L10nTest-');
@@ -154,10 +154,26 @@ class L10nTest extends \PHPUnit_Framework_TestCase
         ];
         foreach ($localisationTestArray as $key => $value) {
             $this->assertEquals($value, $this->object->translate($key), "Key: {$key}");
-            $this->assertEquals(mb_strtoupper(mb_substr($value, 0, 1)) . mb_substr($value, 1), $this->object->translate($key, L_UCFIRST), "L_UCFIRST Key: {$key}");
-            $this->assertEquals(mb_strtoupper($value), $this->object->translate($key, MB_CASE_UPPER), "MB_CASE_UPPER Key: {$key}");
-            $this->assertEquals(mb_strtolower($value), $this->object->translate($key, MB_CASE_LOWER), "MB_CASE_LOWER Key: {$key}");
-            $this->assertEquals(mb_convert_case($value, MB_CASE_TITLE), $this->object->translate($key, MB_CASE_TITLE), "MB_CASE_TITLE Key: {$key}");
+            $this->assertEquals(
+                mb_strtoupper(mb_substr($value, 0, 1)) . mb_substr($value, 1),
+                $this->object->translate($key, L_UCFIRST),
+                "L_UCFIRST Key: {$key}"
+            );
+            $this->assertEquals(
+                mb_strtoupper($value),
+                $this->object->translate($key, MB_CASE_UPPER),
+                "MB_CASE_UPPER Key: {$key}"
+            );
+            $this->assertEquals(
+                mb_strtolower($value),
+                $this->object->translate($key, MB_CASE_LOWER),
+                "MB_CASE_LOWER Key: {$key}"
+            );
+            $this->assertEquals(
+                mb_convert_case($value, MB_CASE_TITLE),
+                $this->object->translate($key, MB_CASE_TITLE),
+                "MB_CASE_TITLE Key: {$key}"
+            );
         }
     }
 
@@ -269,10 +285,27 @@ class L10nTest extends \PHPUnit_Framework_TestCase
         ];
         foreach ($localisationTestArray as $key => $value) {
             $this->assertEquals($value, $this->object->translate($key), "Key: {$key}");
-            $this->assertEquals(mb_strtoupper(mb_substr($value, 0, 1, $this->encoding), $this->encoding) . mb_substr($value, 1, null, $this->encoding), $this->object->translate($key, L_UCFIRST, $this->encoding), "L_UCFIRST Key: {$key}");
-            $this->assertEquals(mb_strtoupper($value, $this->encoding), $this->object->translate($key, MB_CASE_UPPER, $this->encoding), "MB_CASE_UPPER Key: {$key}");
-            $this->assertEquals(mb_strtolower($value, $this->encoding), $this->object->translate($key, MB_CASE_LOWER, $this->encoding), "MB_CASE_LOWER Key: {$key}");
-            $this->assertEquals(mb_convert_case($value, MB_CASE_TITLE, $this->encoding), $this->object->translate($key, MB_CASE_TITLE, $this->encoding), "MB_CASE_TITLE Key: {$key}");
+            $this->assertEquals(
+                mb_strtoupper(mb_substr($value, 0, 1, $this->encoding), $this->encoding)
+                    . mb_substr($value, 1, null, $this->encoding),
+                $this->object->translate($key, L_UCFIRST, $this->encoding),
+                "L_UCFIRST Key: {$key}"
+            );
+            $this->assertEquals(
+                mb_strtoupper($value, $this->encoding),
+                $this->object->translate($key, MB_CASE_UPPER, $this->encoding),
+                "MB_CASE_UPPER Key: {$key}"
+            );
+            $this->assertEquals(
+                mb_strtolower($value, $this->encoding),
+                $this->object->translate($key, MB_CASE_LOWER, $this->encoding),
+                "MB_CASE_LOWER Key: {$key}"
+            );
+            $this->assertEquals(
+                mb_convert_case($value, MB_CASE_TITLE, $this->encoding),
+                $this->object->translate($key, MB_CASE_TITLE, $this->encoding),
+                "MB_CASE_TITLE Key: {$key}"
+            );
         }
     }
 }

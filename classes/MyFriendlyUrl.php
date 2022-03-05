@@ -3,7 +3,6 @@
 namespace WorkOfStan\MyCMS;
 
 use Exception;
-use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use Webmozart\Assert\Assert;
 
