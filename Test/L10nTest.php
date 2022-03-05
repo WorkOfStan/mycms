@@ -26,6 +26,9 @@ class L10nTest extends \PHPUnit_Framework_TestCase
         if (!defined('DEBUG_VERBOSE')) {
             define('DEBUG_VERBOSE', false);
         }
+        if (!defined('L_UCFIRST')) {
+            define('L_UCFIRST', max(MB_CASE_UPPER, MB_CASE_LOWER, MB_CASE_TITLE) + 1);
+        }
         Debugger::enable(Debugger::DEVELOPMENT, __DIR__ . '/../log');
         $this->object = new L10n(__DIR__ . '/conf/L10nTest-');
         $this->object->loadLocalisation('tl'); // tl as test language
