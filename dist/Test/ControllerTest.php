@@ -39,11 +39,6 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         Debugger::enable(Debugger::DEVELOPMENT, __DIR__ . '/../log');
         $backyard = new Backyard($backyardConf);
         $mycmsOptions = [
-            'TRANSLATIONS' => [
-                'en' => 'English',
-                'zh' => '中文',
-            ],
-            'logger' => $backyard->BackyardError,
             // constants are defined by `new InitDatabase` in the alphabetically first test
             'dbms' => new LogMysqli(
                 DB_HOST . ':' . DB_PORT,
@@ -52,13 +47,24 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
                 DB_DATABASE,
                 $backyard->BackyardError
             ),
-            'templateAssignementParametricRules' => [],
+            'logger' => $backyard->BackyardError,
             'prefixL10n' => __DIR__ . '/conf/L10nTest-',
+            'templateAssignementParametricRules' => [],
+            'TRANSLATIONS' => [
+                'cs' => 'Česky', // todo remove this line with DEFAULT_LANGUAGE and
+                // fix the MyFriendlyUrl.php:207 Arg #2 not an array
+                // and WorkOfStan\mycmsprojectnamespace\Test\ControllerTest::testControllerContext
+                // Webmozart\Assert\InvalidArgumentException: Expected one of: "en", "zh". Got: "cs"
+                'en' => 'English',
+                'zh' => '中文',
+            ],
         ];
         $this->myCms = new MyCMSProject($mycmsOptions);
+        $get = []; // ['language' => 'en']; TODO use this definition when cs above removed
 
-        $_SESSION = []; //because $_SESSION is not defined in the PHPUnit mode
-        $this->language = $this->myCms->getSessionLanguage([], $_SESSION, false);
+        // set language as one of the TRANSLATIONS array above 'language' => 'en'
+        $_SESSION = []; // because $_SESSION is not defined in the PHPUnit mode
+        $this->language = $_SESSION['language'] = $this->myCms->getSessionLanguage($get, $_SESSION, false);
 
         //according to what you test, change $this->myCms->context before invoking
         //$this->object = new Controller; within Test methods
