@@ -17,6 +17,9 @@ class L10n
 {
     use \Nette\SmartObject;
 
+    /** @var array<string> Available languages for MyCMS */
+    public $enabledLanguages; // ['en' => 'English']
+
     /** @var string */
     protected $prefix;
 
@@ -39,10 +42,12 @@ class L10n
     /**
      *
      * @param string $prefix folder & prefix of the yml localisation file
+     * @param array<string> $enabledLanguages
      */
-    public function __construct($prefix)
+    public function __construct($prefix, array $enabledLanguages)
     {
         $this->prefix = $prefix; // "$prefixXX.yml" where XX is the language e.g. 'conf/l10n/admin-'
+        $this->enabledLanguages = $enabledLanguages;
     }
 
     /**
@@ -148,6 +153,7 @@ class L10n
         // Assert ISO 639-1 format
         Assert::string($language);
         Assert::length($language, 2);
+        Assert::inArray($language, $this->enabledLanguages);
         return $language;
     }
 
@@ -208,16 +214,80 @@ Reads
 
     /**
      * Update the localisation file
-     * TBD
+     * // tr - delete + new / rename
      *
+     * @param array<array<string>> $allStrings
+     * @param array<string> $newStrings
+     * @param string $oldName
+     * @param string $newName
+     * @param bool $deleteFlag
      * @return void
      */
-    public function updateLocalisation()
+    public function updateLocalisation(array $allStrings, array $newStrings, $oldName, $newName, $deleteFlag)
     {
 /**
  *
 AdminProcess::adminProcess
 Rewrites
 */
+
+
+            //$postForYml = $post; // before legacy changes
+            foreach (array_keys($this->enabledLanguages) as $code) {
+                $this->assertLanguage($code);
+                // new yml
+                $yml = [];
+
+                // legacy inc.php
+//                $fp = fopen("language-$code.inc.php", 'w+');
+//                Assert::resource($fp);
+//                fwrite($fp, "<?php\n\n// MyCMS->getSessionLanguage expects \$translation=\n\$translation = [\n");
+
+                // common
+//                Assert::isArray($post['new']);
+                if ($newStrings[0]) {
+//                    Assert::isArray($post['tr']);
+//                    Assert::isArray($post['tr'][$code]);
+                    $allStrings[$code][$newStrings[0]] = $newStrings[$code];
+                }
+//                Assert::isArray($post['tr']);
+//                Assert::isArray($post['tr'][$code]);
+                foreach ($allStrings[$code] as $key => $value) {
+                    if ($key == $oldName) {
+                        $key = $newName;
+                        $value = $deleteFlag ? false : $value;
+                    }
+                    if ($value) {
+                        // legacy inc.php
+//                        Assert::string($key);
+//                        fwrite($fp, "    '" . strtr($key, array('&apos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
+//                            . "' => '" . strtr($value, array('&appos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
+//                            . "',\n");
+                        // new yml
+                        $yml[$key] = $value;
+                    }
+                }
+
+                // legacy inc.php
+//                fwrite($fp, "];\n");
+//                fclose($fp);
+
+                // new yml
+//                if (
+//                    !(isset($this->featureFlags['languageFileWriteIncOnlyNotYml'])
+//                    && $this->featureFlags['languageFileWriteIncOnlyNotYml'])
+//                ) {
+                    // refactor into L10n
+                    $yamlDump = Yaml::dump($yml);
+                    // todo fix [warning] missing document start "---" (document-start)
+                    file_put_contents($this->prefix . $code . '.yml', $yamlDump);
+                    //$localisation = new L10n($this->prefixUiL10n);
+//                }
+
+                // new yml
+                // tr - delete + new / rename
+            }
+
+
     }
 }

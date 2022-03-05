@@ -620,7 +620,7 @@ class Admin extends MyAdmin
             . intval(100 / (count($this->MyCMS->TRANSLATIONS) + 1)) . '%">'
             . Tools::htmlInput('one', '', false, 'radio') . '</th>';
         $translations = $keys = [];
-        $localisation = new L10n($this->prefixUiL10n);
+        $localisation = new L10n($this->prefixUiL10n, $this->MyCMS->TRANSLATIONS);
         foreach ($this->MyCMS->TRANSLATIONS as $key => $value) {
             $output .= "<th>$value</th>";
             //include "language-$key.inc.php"; //delete

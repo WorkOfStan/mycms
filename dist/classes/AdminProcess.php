@@ -533,10 +533,30 @@ class AdminProcess extends MyAdminProcess
     public function processTranslationsUpdate($post)
     {
         if (isset($post['translations'])) {
-            //$postForYml = $post; // before legacy changes
+            // before legacy changes
+
+                // new yml
+                if (
+                    !(isset($this->featureFlags['languageFileWriteIncOnlyNotYml'])
+                    && $this->featureFlags['languageFileWriteIncOnlyNotYml'])
+                ) {
+                    // refactor into L10n
+//                    $yamlDump = Yaml::dump($yml);
+                    // todo add starting --- if not present, yet
+//                    file_put_contents($this->prefixUiL10n . $code . '.yml', $yamlDump);
+                    $localisation = new L10n($this->prefixUiL10n, $this->MyCMS->TRANSLATIONS);
+                    $localisation->updateLocalisation(
+                        $post['tr'],
+                        $post['new'],
+                        $post['old_name'],
+                        $post['new_name'],
+                        isset($post['delete']) && $post['delete'] === 1 // TODO or '1' ??
+                    );
+                }
+
             foreach (array_keys($this->MyCMS->TRANSLATIONS) as $code) {
                 // new yml
-                $yml = [];
+//                $yml = [];
 
                 // legacy inc.php
                 $fp = fopen("language-$code.inc.php", 'w+');
@@ -564,7 +584,7 @@ class AdminProcess extends MyAdminProcess
                             . "' => '" . strtr($value, array('&appos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
                             . "',\n");
                         // new yml
-                        $yml[$key] = $value;
+//                        $yml[$key] = $value;
                     }
                 }
 
@@ -573,16 +593,15 @@ class AdminProcess extends MyAdminProcess
                 fclose($fp);
 
                 // new yml
-                if (
-                    !(isset($this->featureFlags['languageFileWriteIncOnlyNotYml'])
-                    && $this->featureFlags['languageFileWriteIncOnlyNotYml'])
-                ) {
-                    // refactor into L10n
-                    $yamlDump = Yaml::dump($yml);
-                    // todo add starting --- if not present, yet
-                    file_put_contents($this->prefixUiL10n . $code . '.yml', $yamlDump);
-                    //$localisation = new L10n($this->prefixUiL10n);
-                }
+//                if (
+//                    !(isset($this->featureFlags['languageFileWriteIncOnlyNotYml'])
+//                    && $this->featureFlags['languageFileWriteIncOnlyNotYml'])
+//                ) {
+//                    // refactor into L10n
+////                    $yamlDump = Yaml::dump($yml);
+//                    // todo add starting --- if not present, yet
+////                    file_put_contents($this->prefixUiL10n . $code . '.yml', $yamlDump);
+//                }
 
                 // new yml
                 // tr - delete + new / rename

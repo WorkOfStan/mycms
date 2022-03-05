@@ -66,7 +66,7 @@ class MyTableLister
     /** @var array<string> Selected locale strings */
     public $TRANSLATION = [];
 
-    /** @var array<string> Available languages for MyCMS */
+    /** @var array<string> Available languages for MyCMS // TODO REMOVE THIS? */
     public $TRANSLATIONS = [
         'en' => 'English'
     ];
@@ -109,7 +109,8 @@ class MyTableLister
         $this->setTable($table);
         $this->rand = rand((int) 1e5, (int) (1e6 - 1));
         Assert::string($options['prefixL10n']);
-        $this->localisation = new L10n($options['prefixL10n']);
+        // TODO Change below to $options['TRANSLATIONS'] ?
+        $this->localisation = new L10n($options['prefixL10n'], $this->TRANSLATIONS);
         Assert::string($options['language']);
         $this->localisation->loadLocalisation($options['language']);
     }

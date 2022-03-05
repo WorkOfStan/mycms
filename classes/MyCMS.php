@@ -70,7 +70,7 @@ class MyCMS extends MyCMSMonoLingual
     public function __construct(array $myCmsConf = [])
     {
         parent::__construct($myCmsConf);
-        $this->localisation = new L10n($this->prefixL10n);
+        $this->localisation = new L10n($this->prefixL10n, $this->TRANSLATIONS);
     }
 
     /**
