@@ -30,6 +30,20 @@ class MyAdminProcess extends MyCommon
     /** @var int how many seconds may pass before admin's record-editing tab is considered closed */
     protected $ACTIVITY_TIME_LIMIT = 180;
 
+    /**
+     * Feature flags that bubble down to latte and controller
+     *
+     * @var array<bool>
+     */
+    protected $featureFlags;
+
+    /**
+     * Folder and name prefix of localisation yml for the web UI (not admin UI)
+     *
+     * @var string
+     */
+    protected $prefixUiL10n;
+
     /** @var MyTableAdmin */
     protected $tableAdmin;
 
@@ -604,6 +618,73 @@ class MyAdminProcess extends MyCommon
                 $result['success'] = false;
             }
             $this->exitJson($result); // terminates
+        }
+    }
+
+    /**
+     * Process the "translation" action.
+     * generate translations. Note: this rewrites the translation files language-xx.inc.php
+     *
+     * @param array<mixed> $post $_POST (originally by reference, as the $post is changed, but the method dies anyway)
+     * @return void
+     */
+    public function processTranslationsUpdate($post)
+    {
+        if (isset($post['translations'])) {
+            // new yml before legacy code makes changes to $post
+            if (
+                    !(isset($this->featureFlags['languageFileWriteIncOnlyNotYml'])
+                    && $this->featureFlags['languageFileWriteIncOnlyNotYml'])
+            ) {
+                $localisation = new L10n($this->prefixUiL10n, $this->MyCMS->TRANSLATIONS);
+                Assert::isArray($post['tr']); // array<array<string>>
+                Assert::isArray($post['new']); // array<string>
+                Assert::string($post['old_name']);
+                Assert::string($post['new_name']);
+                $localisation->updateLocalisation(
+                    $post['tr'],
+                    $post['new'],
+                    $post['old_name'],
+                    $post['new_name'],
+                    isset($post['delete']) && $post['delete'] === '1'
+                );
+            }
+
+            foreach (array_keys($this->MyCMS->TRANSLATIONS) as $code) {
+                // deprecated writing to inc.php
+                // update the file only if it still exists
+                if (file_exists("language-$code.inc.php")) {
+                    // TODO in the next version delete the inc.php file instead of updating it
+                    $fp = fopen("language-$code.inc.php", 'w+');
+                    Assert::resource($fp);
+                    fwrite($fp, "<?php\n\n// MyCMS->getSessionLanguage expects \$translation=\n\$translation = [\n");
+
+                    Assert::isArray($post['new']);
+                    if ($post['new'][0]) {
+                        Assert::isArray($post['tr']);
+                        $post['tr'][$code][$post['new'][0]] = $post['new'][$code];
+                    }
+                    Assert::isArray($post['tr']);
+                    Assert::isArray($post['tr'][$code]);
+                    foreach ($post['tr'][$code] as $key => $value) {
+                        if ($key == $post['old_name']) {
+                            $key = $post['new_name'];
+                            $value = Tools::set($post['delete']) ? false : $value;
+                        }
+                        if ($value) {
+                            Assert::string($key);
+                            fwrite($fp, "    '" . strtr($key, array('&apos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
+                                . "' => '" . strtr($value, array('&appos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
+                                . "',\n");
+                        }
+                    }
+                    fwrite($fp, "];\n");
+                    fclose($fp);
+                }
+            }
+            // finish
+            Tools::addMessage('info', $this->tableAdmin->translate('Processed.'));
+            $this->redir();
         }
     }
 

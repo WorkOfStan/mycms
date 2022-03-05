@@ -18,21 +18,17 @@ define('PROCESS_LIMIT', 100); // used in self::getAgenda
 
 /**
  * AJAX and form handling for Admin UI
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
+ * (Last MyCMS/dist revision: 2022-03-05, v0.4.6)
  */
 class AdminProcess extends MyAdminProcess
 {
     use \Nette\SmartObject;
 
-    /** @var TableAdmin */
-    protected $tableAdmin;
-
-    /**
-     * accepted attributes:
-     */
-
     /** @var array<array<string|array<string|int>>> */
     protected $agendas;
+
+    /** @var TableAdmin */
+    protected $tableAdmin;
 
     /**
      * Process admin commands. Most commands require admin logged in and/or CSRF check.
@@ -223,31 +219,7 @@ class AdminProcess extends MyAdminProcess
         $this->processLogout($post);
 
         // generate translations. Note: this rewrites the translation files language-xx.inc.php
-        if (isset($post['translations'])) {
-            foreach (array_keys($this->MyCMS->TRANSLATIONS) as $code) {
-                $fp = fopen("language-$code.inc.php", 'w+');
-                Assert::resource($fp);
-                fwrite($fp, "<?php\n\n// MyCMS->getSessionLanguage expects \$translation=\n\$translation = [\n");
-                if ($post['new'][0]) {
-                    $post['tr'][$code][$post['new'][0]] = $post['new'][$code];
-                }
-                foreach ($post['tr'][$code] as $key => $value) {
-                    if ($key == $post['old_name']) {
-                        $key = $post['new_name'];
-                        $value = Tools::set($post['delete']) ? false : $value;
-                    }
-                    if ($value) {
-                        fwrite($fp, "    '" . strtr($key, array('&apos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
-                            . "' => '" . strtr($value, array('&appos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
-                            . "',\n");
-                    }
-                }
-                fwrite($fp, "];\n");
-                fclose($fp);
-            }
-            Tools::addMessage('info', $this->tableAdmin->translate('Processed.'));
-            $this->redir();
-        }
+        $this->processTranslationsUpdate($post);
 
         // export table rows
         $this->processExport($post, $_GET);

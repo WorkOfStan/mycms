@@ -5,6 +5,7 @@ namespace WorkOfStan\mycmsprojectnamespace;
 use GodsDev\Tools\Tools;
 use Webmozart\Assert\Assert;
 //use WorkOfStan\MyCMS\ArrayStrict;
+use WorkOfStan\MyCMS\L10n;
 use WorkOfStan\MyCMS\MyAdmin;
 use WorkOfStan\mycmsprojectnamespace\MyCMSProject;
 
@@ -13,11 +14,25 @@ use function WorkOfStan\MyCMS\ThrowableFunctions\preg_match_all;
 
 /**
  * Admin UI
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
+ * (Last MyCMS/dist revision: 2022-03-05, v0.4.6)
  */
 class Admin extends MyAdmin
 {
     use \Nette\SmartObject;
+
+    /**
+     * Feature flags that bubble down to latte and controller
+     *
+     * @var array<bool>
+     */
+    protected $featureFlags;
+
+    /**
+     * Folder and name prefix of localisation yml for the web UI (not admin UI)
+     *
+     * @var string
+     */
+    protected $prefixUiL10n;
 
     /**
      * @var array<array<string>> tables and columns to search in admin
@@ -28,13 +43,6 @@ class Admin extends MyAdmin
         'content' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
         'product' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
     ];
-
-    /**
-     * Feature flags that bubble down to latte and controller
-     *
-     * @var array<bool>
-     */
-    protected $featureFlags;
 
     /**
      *
@@ -58,40 +66,40 @@ class Admin extends MyAdmin
         return
             // A Produkty k řazení
             (Tools::nonzero($this->featureFlags['order_hierarchy']) ? (
-                '<li class="nav-item' . (isset($_GET['products']) ? ' active' : '') .
-            '"><a href="?products" class="nav-link"><i class="fas fa-gift"></i> ' .
-            $this->tableAdmin->translate('Products') . '</a></li>'
+                '<li class="nav-item' . (isset($_GET['products']) ? ' active' : '')
+            . '"><a href="?products" class="nav-link"><i class="fas fa-gift"></i> '
+            . $this->tableAdmin->translate('Products') . '</a></li>'
             ) : '')
             // A Stránky k řazení
             . (Tools::nonzero($this->featureFlags['order_hierarchy']) ? (
-                '<li class="nav-item' . (isset($_GET['pages']) ? ' active' : '') .
-            '"><a href="?pages" class="nav-link"><i class="far fa-file-alt"></i> ' .
-            $this->tableAdmin->translate('Pages') . '</a></li>'
+                '<li class="nav-item' . (isset($_GET['pages']) ? ' active' : '')
+            . '"><a href="?pages" class="nav-link"><i class="far fa-file-alt"></i> '
+            . $this->tableAdmin->translate('Pages') . '</a></li>'
             ) : '')
             // URLs - (Friendly URL set-up and) check duplicities
-            . '<li class="nav-item' . (isset($_GET['urls']) ? ' active' : '') .
-            '"><a href="?urls" class="nav-link"><i class="fas fa-unlink"></i> URL</a></li>'
+            . '<li class="nav-item' . (isset($_GET['urls']) ? ' active' : '')
+            . '"><a href="?urls" class="nav-link"><i class="fas fa-unlink"></i> URL</a></li>'
             // F Divize a produkty k řazení (jako A Produkty k řazení)
             . (Tools::nonzero($this->featureFlags['order_hierarchy']) ? (
-                '<li class="nav-item"><a href="?divisions-products" class="nav-link' .
-            (isset($_GET['divisions-products']) ? ' active' : '') .
+                '<li class="nav-item"><a href="?divisions-products" class="nav-link'
+            . (isset($_GET['divisions-products']) ? ' active' : '') .
             '"><i class="fa fa-gift mr-1" aria-hidden="true"></i> ' .
             $this->tableAdmin->translate('Divisions and products') . '</a></li>'
             ) : '')
             // F drop-down menu
-            . '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle' .
-            (isset($_GET['urls']) || isset($_GET['translations']) ? ' active' : '') .
-            '" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"'
+            . '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle'
+            . (isset($_GET['urls']) || isset($_GET['translations']) ? ' active' : '')
+            . '" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"'
             . ' aria-haspopup="true" aria-expanded="true"><i class="fas fa-lightbulb"></i></a>'
             . '<div class="dropdown-menu" aria-labelledby="navbarDropdown">'
             // URLs - Friendly URL set-up (and check duplicities)
-            . '<a href="?urls" class="dropdown-item' . (isset($_GET['urls']) ? ' active' : '') .
-            '"><i class="fa fa-link mr-1" aria-hidden="true"></i> ' .
-            $this->tableAdmin->translate('Friendly URL') . '</a>'
+            . '<a href="?urls" class="dropdown-item' . (isset($_GET['urls']) ? ' active' : '')
+            . '"><i class="fa fa-link mr-1" aria-hidden="true"></i> '
+            . $this->tableAdmin->translate('Friendly URL') . '</a>'
             // F Překlady
-            . '<a href="?translations" class="dropdown-item' . (isset($_GET['translations']) ? ' active' : '') .
-            '"><i class="fa fa-globe mr-1" aria-hidden="true"></i> ' .
-            $this->tableAdmin->translate('Translations') . '</a>
+            . '<a href="?translations" class="dropdown-item' . (isset($_GET['translations']) ? ' active' : '')
+            . '"><i class="fa fa-globe mr-1" aria-hidden="true"></i> '
+            . $this->tableAdmin->translate('Translations') . '</a>
             </div></li>';
     }
 
@@ -141,9 +149,9 @@ class Admin extends MyAdmin
                                 ' <span class="badge badge-secondary">' . count($tmp) . '</span></summary>';
                             foreach ($tmp as $key => $value) {
                                 Assert::nullOrString($value);
-                                $output .= '<a href="?table=' . TAB_PREFIX . $i . '&amp;where[id]=' . $key .
-                                    '" target="_blank" title="' .
-                                    $this->tableAdmin->translate('Link will open in a new window') . '">'
+                                $output .= '<a href="?table=' . TAB_PREFIX . $i . '&amp;where[id]=' . $key
+                                    . '" target="_blank" title="'
+                                    . $this->tableAdmin->translate('Link will open in a new window') . '">'
                                     . '<i class="fas fa-external-link-alt"></i></a> ' .
                                     substr(Tools::h(strip_tags($value)), 0, 100) . '<br />' . PHP_EOL;
                             }
@@ -238,16 +246,16 @@ class Admin extends MyAdmin
                 //' AND LEFT(path,' . PATH_MODULE . ')="' .
                 //$this->MyCMS->escapeSQL($this->MyCMS->SETTINGS['PATH_CATEGORY']) . '"
                 //ORDER BY path');
-            $products = $this->MyCMS->fetchAndReindexStrictArray('SELECT category_id,id,name_' .
-                $_SESSION['language'] . ' AS product,'
+            $products = $this->MyCMS->fetchAndReindexStrictArray('SELECT category_id,id,name_'
+                . $_SESSION['language'] . ' AS product,'
                 //. 'image,' // TODO add image to the default dist app
                 . 'sort,active FROM ' . TAB_PREFIX . 'product ORDER BY sort');
             $perex = $this->MyCMS->fetchAndReindexStrictArray('SELECT '
                 //. 'product_id,' //TODO was used in A project to link certain content table rows to products.
                 // Reconsider here.
-                . 'id,type,active,TRIM(CONCAT(content_' .
-                $_SESSION['language'] . ', " ", CONCAT(LEFT(content_' .
-                $_SESSION['language'] . ', 50), "…"))) AS content
+                . 'id,type,active,TRIM(CONCAT(content_'
+                . $_SESSION['language'] . ', " ", CONCAT(LEFT(content_'
+                . $_SESSION['language'] . ', 50), "…"))) AS content
                 FROM ' . TAB_PREFIX . 'content '
                 . 'WHERE type IN ("perex", "claim", "testimonial") '
                 //. 'AND product_id IS NOT NULL ' // TODO see product_id above
@@ -255,16 +263,16 @@ class Admin extends MyAdmin
             foreach ($categories as $category) {
                 Assert::string($category['id']);
                 Assert::string($category['category']);
-                $output .= '<h4' . ($category['active'] == 1 ? '' : ' class="inactive"') . '><a href="?table=' .
-                    TAB_PREFIX . 'category&amp;where[id]=' . $category['id'] .
-                    '" title="' . $this->tableAdmin->translate('Edit') . '">'
+                $output .= '<h4' . ($category['active'] == 1 ? '' : ' class="inactive"') . '><a href="?table='
+                    . TAB_PREFIX . 'category&amp;where[id]=' . $category['id']
+                    . '" title="' . $this->tableAdmin->translate('Edit') . '">'
                     . '<i class="fas fa-edit"></i></a> '
-                    . '<button type="button" class="btn btn-sm d-inline category-switch" value="-1" data-id="' .
-                    (int) $category['id'] . '" title="' . $this->tableAdmin->translate('Move up') .
-                    '"><i class="fas fa-arrow-up"></i></button> '
-                    . '<button type="button" class="btn btn-sm d-inline category-switch" value="1" data-id="' .
-                    (int) $category['id'] . '" title="' . $this->tableAdmin->translate('Move down') .
-                    '"><i class="fas fa-arrow-down"></i></button> '
+                    . '<button type="button" class="btn btn-sm d-inline category-switch" value="-1" data-id="'
+                    . (int) $category['id'] . '" title="' . $this->tableAdmin->translate('Move up')
+                    . '"><i class="fas fa-arrow-up"></i></button> '
+                    . '<button type="button" class="btn btn-sm d-inline category-switch" value="1" data-id="'
+                    . (int) $category['id'] . '" title="' . $this->tableAdmin->translate('Move down')
+                    . '"><i class="fas fa-arrow-down"></i></button> '
                     . Tools::h($category['category'] ?: 'N/A') . '</h4>' . PHP_EOL;
                 $productLine = isset($products[$category['id']]) ? (isset($products[$category['id']][0]) ?
                     $products[$category['id']] : [$products[$category['id']]]) : [];
@@ -279,8 +287,8 @@ class Admin extends MyAdmin
                     Assert::isArray($product);
                     if ($product['sort'] != $i) {
                         if (
-                            $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'product SET sort=' . $i .
-                                ' WHERE id=' . (int) $product['id'])
+                            $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'product SET sort=' . $i
+                                . ' WHERE id=' . (int) $product['id'])
                         ) {
                             $product['sort'] = $i;
                         } else {
@@ -290,20 +298,20 @@ class Admin extends MyAdmin
                     }
                     $tmp = isset($perex[$product['id']]) && is_array($perex[$product['id']]) ?
                         (isset($perex[$product['id']][0]) ? $perex[$product['id']] : [$perex[$product['id']]]) : [];
-                    $output .= '<details class="ml-4' . ($product['active'] ? '' : ' inactive-item') .
-                        '"><summary class="d-inline-block"><a href="?table=' . TAB_PREFIX . 'product&amp;where[id]=' .
-                        $product['id'] . '" title="' . $this->tableAdmin->translate('Edit') .
-                        '"><i class="fas fa-edit"></i></a> '
-                        . '<button type="button" class="btn btn-xs d-inline product-switch" data-id="' .
-                        (int) $product['id'] . '" value="-1" title="' . $this->tableAdmin->translate('Move up') .
-                        '"><i class="fas fa-arrow-up"></i></button> '
-                        . '<button type="button" class="btn btn-xs d-inline product-switch" data-id="' .
-                        (int) $product['id'] . '" value="1" title="' . $this->tableAdmin->translate('Move down') .
-                        '"><i class="fas fa-arrow-down"></i></button>'
-                        . '<span' . ($product['active'] ? '' : ' class="inactive"') . '> ' .
-                        Tools::h((string) $product['product']) . '</span>'
-                        . ' <sup class="product-texts badge badge-' . (count($tmp) ? 'secondary' : 'warning') .
-                        '"><small>' . count($tmp) . '</small></sup>'
+                    $output .= '<details class="ml-4' . ($product['active'] ? '' : ' inactive-item')
+                        . '"><summary class="d-inline-block"><a href="?table=' . TAB_PREFIX . 'product&amp;where[id]='
+                        . $product['id'] . '" title="' . $this->tableAdmin->translate('Edit')
+                        . '"><i class="fas fa-edit"></i></a> '
+                        . '<button type="button" class="btn btn-xs d-inline product-switch" data-id="'
+                        . (int) $product['id'] . '" value="-1" title="' . $this->tableAdmin->translate('Move up')
+                        . '"><i class="fas fa-arrow-up"></i></button> '
+                        . '<button type="button" class="btn btn-xs d-inline product-switch" data-id="'
+                        . (int) $product['id'] . '" value="1" title="' . $this->tableAdmin->translate('Move down')
+                        . '"><i class="fas fa-arrow-down"></i></button>'
+                        . '<span' . ($product['active'] ? '' : ' class="inactive"') . '> '
+                        . Tools::h((string) $product['product']) . '</span>'
+                        . ' <sup class="product-texts badge badge-' . (count($tmp) ? 'secondary' : 'warning')
+                        . '"><small>' . count($tmp) . '</small></sup>'
                         // TODO implement image field
                         //. ' <sup class="product-images badge badge-' .
                         //(file_exists((string) $product['image']) ? 'secondary' : 'warning') .
@@ -313,20 +321,20 @@ class Admin extends MyAdmin
                         . '</summary>';
                     foreach ($tmp as $row) {
                         Assert::isArray($row);
-                        $output .= '<div class="ml-5' . ($row['active'] ? '' : ' inactive') . '"><a href="?table=' .
-                            TAB_PREFIX . 'content&amp;where[id]=' . $row['id'] . '"><i class="fas fa-edit"></i></a> '
-                            . '<sup>' . $row['type'] . '</sup> ' . Tools::h(strip_tags((string) $row['content'])) .
-                            '</div>' . PHP_EOL;
+                        $output .= '<div class="ml-5' . ($row['active'] ? '' : ' inactive') . '"><a href="?table='
+                            . TAB_PREFIX . 'content&amp;where[id]=' . $row['id'] . '"><i class="fas fa-edit"></i></a> '
+                            . '<sup>' . $row['type'] . '</sup> ' . Tools::h(strip_tags((string) $row['content']))
+                            . '</div>' . PHP_EOL;
                     }
                     $output .= '<div class="ml-5"><a href="?table=' . TAB_PREFIX .
                         'content&amp;where[]=&amp;prefill[type]=perex&amp;prefill[product_id]=' . $product['id'] . '">'
-                        . '<i class="far fa-plus-square"></i></a> ' . $this->tableAdmin->translate('New record') .
-                        '</div>' . PHP_EOL
+                        . '<i class="far fa-plus-square"></i></a> ' . $this->tableAdmin->translate('New record')
+                        . '</div>' . PHP_EOL
                         . '</details>' . PHP_EOL;
                     $i++;
                 }
-                $output .= '<a href="?table=' . TAB_PREFIX . 'product&amp;where[]=&amp;prefill[category_id]=' .
-                    $category['id'] . '&amp;prefill[sort]=' . $i . '" class="ml-4">'
+                $output .= '<a href="?table=' . TAB_PREFIX . 'product&amp;where[]=&amp;prefill[category_id]='
+                    . $category['id'] . '&amp;prefill[sort]=' . $i . '" class="ml-4">'
                     . '<i class="far fa-plus-square"></i></a> ' . $this->tableAdmin->translate('New record');
             }
             $query = $this->MyCMS->dbms->queryStrictObject('SELECT id,name_' . $_SESSION['language'] .
@@ -337,12 +345,12 @@ class Admin extends MyAdmin
                     '"><i class="fa fa-edit"></i></a> ' . Tools::h($row['title']) . '<br />' . PHP_EOL;
             }
             $output .= '<footer>
-                    <button type="button" class="btn btn-sm btn-secondary" id="products-actives" title="' .
-                $this->tableAdmin->translate('Toggle inactive') . '"><i class="far fa-eye-slash"></i></button>
-                    <button type="button" class="btn btn-sm btn-secondary" id="products-texts" title="' .
-                $this->tableAdmin->translate('Toggle number of texts') . '">#<i class="far fa-file"></i></button>
-                    <button type="button" class="btn btn-sm btn-secondary" id="products-images" title="' .
-                $this->tableAdmin->translate('Toggle image thumbnails') . '"><i class="far fa-image"></i></button>
+                    <button type="button" class="btn btn-sm btn-secondary" id="products-actives" title="'
+                . $this->tableAdmin->translate('Toggle inactive') . '"><i class="far fa-eye-slash"></i></button>
+                    <button type="button" class="btn btn-sm btn-secondary" id="products-texts" title="'
+                . $this->tableAdmin->translate('Toggle number of texts') . '">#<i class="far fa-file"></i></button>
+                    <button type="button" class="btn btn-sm btn-secondary" id="products-images" title="'
+                . $this->tableAdmin->translate('Toggle image thumbnails') . '"><i class="far fa-image"></i></button>
                 </footer></div>';
         } elseif (isset($_GET['pages'])) { // pages // TODO make it work in Dist
             $output .= '<h1>' . $this->tableAdmin->translate('Pages') . '</h1><div id="agenda-pages">';
@@ -407,8 +415,8 @@ class Admin extends MyAdmin
                     . '</details>' . PHP_EOL;
                 */
             }
-            $articles = $this->MyCMS->fetchAndReindex('SELECT 0, id, IF(content_' . $_SESSION['language'] .
-                ' = "", LEFT(CONCAT(code, " ", content_' . $_SESSION['language'] . '), 100),'
+            $articles = $this->MyCMS->fetchAndReindex('SELECT 0, id, IF(content_' . $_SESSION['language']
+                . ' = "", LEFT(CONCAT(code, " ", content_' . $_SESSION['language'] . '), 100),'
                 . ' content_' . $_SESSION['language'] . ') AS content
                 FROM ' . TAB_PREFIX . 'content');
                 //. ' WHERE category_id IS NULL AND product_id IS NULL'); // used in project A - TODO reconsider
@@ -422,26 +430,26 @@ class Admin extends MyAdmin
                 ) {
                     foreach ($tmp as $key => $category) {
                         Assert::string($category);
-                        $output .= '<a href="?table=' . TAB_PREFIX . 'category&amp;where[id]=' . $key .
-                            '" class="ml-3"><i class="fa fa-edit"></i></a> ' . strip_tags($category) .
-                            '<br />' . PHP_EOL;
+                        $output .= '<a href="?table=' . TAB_PREFIX . 'category&amp;where[id]=' . $key
+                            . '" class="ml-3"><i class="fa fa-edit"></i></a> ' . strip_tags($category)
+                            . '<br />' . PHP_EOL;
                     }
                 }
                 Assert::isIterable($articles[0]);
                 foreach ($articles[0] as $article) {
                     Assert::isArray($article);
                     Assert::string($article['id']);
-                    $output .= '<a href="?table=' . TAB_PREFIX . 'content&amp;where[id]=' . $article['id'] .
-                        '" class="ml-3"><i class="far fa-file"></i></a> ' . strip_tags((string) $article['content']) .
-                        '<br />' . PHP_EOL;
+                    $output .= '<a href="?table=' . TAB_PREFIX . 'content&amp;where[id]=' . $article['id']
+                        . '" class="ml-3"><i class="far fa-file"></i></a> ' . strip_tags((string) $article['content'])
+                        . '<br />' . PHP_EOL;
                 }
                 $output .= '</details>';
             }
             $output .= '<footer>
-                    <button type="button" class="btn btn-sm btn-secondary mr-2" id="pages-actives" title="' .
-                $this->tableAdmin->translate('Toggle inactive') . '"><i class="far fa-eye-slash"></i></button>
-                    <button type="button" class="btn btn-sm btn-secondary mr-2" id="pages-toggle" title="' .
-                $this->tableAdmin->translate('Open/close') . '" data-open="1"><i class="fas fa-caret-right"></i>'
+                    <button type="button" class="btn btn-sm btn-secondary mr-2" id="pages-actives" title="'
+                . $this->tableAdmin->translate('Toggle inactive') . '"><i class="far fa-eye-slash"></i></button>
+                    <button type="button" class="btn btn-sm btn-secondary mr-2" id="pages-toggle" title="'
+                . $this->tableAdmin->translate('Open/close') . '" data-open="1"><i class="fas fa-caret-right"></i>'
                 . ' <i class="fas fa-caret-down"></i></button></footer></div>';
         }
         return $output;
@@ -466,18 +474,18 @@ class Admin extends MyAdmin
         $parents = $this->MyCMS->fetchAll('SELECT '
 //                . 'division_id,'
             . 'id,name_' . $_SESSION['language'] .
-            ' AS product,' . ($tmp = 'sort+IF(id=' . Tools::set($_SESSION['product-switch'], 0) . ',' .
-            Tools::set($_SESSION['product-delta'], 0) . ',0)') . ' AS sort,active FROM ' . TAB_PREFIX .
-            'product'
+            ' AS product,' . ($tmp = 'sort+IF(id=' . Tools::set($_SESSION['product-switch'], 0) . ','
+            . Tools::set($_SESSION['product-delta'], 0) . ',0)') . ' AS sort,active FROM ' . TAB_PREFIX
+            . 'product'
             //. ' WHERE parent_product_id = 0'
             . ' ORDER BY '
             //. 'division_id,'
             . $tmp);
         $children = $this->MyCMS->fetchAll('SELECT '
 //                . 'parent_product_id,'
-            . 'id,name_' . $_SESSION['language'] .
-            ' AS product,' . ($tmp = 'sort+IF(id=' . Tools::set($_SESSION['product-switch'], 0) . ',' .
-            Tools::set($_SESSION['product-delta'], 0) . ',0)') . ' AS sort,active'
+            . 'id,name_' . $_SESSION['language']
+            . ' AS product,' . ($tmp = 'sort+IF(id=' . Tools::set($_SESSION['product-switch'], 0) . ','
+            . Tools::set($_SESSION['product-delta'], 0) . ',0)') . ' AS sort,active'
             . ' FROM ' . TAB_PREFIX . 'product'
             //. ' WHERE parent_product_id <> 0'
             . ' ORDER BY '
@@ -492,8 +500,8 @@ class Admin extends MyAdmin
                     ($division['active'] == 1 ? '' : ' class="inactive"') . '><a href="?table=' . TAB_PREFIX .
                     'division&amp;where[id]=' . $divisionId . '" title="' . $this->tableAdmin->translate('Edit') . '">'
                     . '<i class="fa fa-edit" aria-hidden="true"></i></a> '
-                    . '<button type="button" class="btn btn-sm d-inline" name="division-up" value="' . $divisionId .
-                    '" title="' . $this->tableAdmin->translate('Move up') . '">'
+                    . '<button type="button" class="btn btn-sm d-inline" name="division-up" value="' . $divisionId
+                    . '" title="' . $this->tableAdmin->translate('Move up') . '">'
                     . '<i class="fa fa-arrow-up" aria-hidden="true"></i></button> '
                     . '<button type="button" class="btn btn-sm d-inline mr-2" name="division-down" value="'
                     . $divisionId
@@ -507,15 +515,15 @@ class Admin extends MyAdmin
                 if (!empty($parents)) {
                     foreach ($parents as $parent) {
                         if ($parent['division_id'] == $divisionId) {
-                            $output .= '<details class="ml-4"><summary class="d-inline-block"><a href="?table=' .
-                                TAB_PREFIX . 'product&amp;where[id]=' . $parent['id'] . '" target="_blank" title="' .
-                                $this->tableAdmin->translate('Link will open in a new window') .
-                                '"><i class="fa fa-external-link" aria-hidden="true"></i></a> '
-                                . '<button type="button" class="btn btn-xs d-inline" name="product-up" value="' .
-                                $parent['id'] . '" title="' . $this->tableAdmin->translate('Move up') . '">'
+                            $output .= '<details class="ml-4"><summary class="d-inline-block"><a href="?table='
+                                . TAB_PREFIX . 'product&amp;where[id]=' . $parent['id'] . '" target="_blank" title="'
+                                . $this->tableAdmin->translate('Link will open in a new window')
+                                . '"><i class="fa fa-external-link" aria-hidden="true"></i></a> '
+                                . '<button type="button" class="btn btn-xs d-inline" name="product-up" value="'
+                                . $parent['id'] . '" title="' . $this->tableAdmin->translate('Move up') . '">'
                                 . '<i class="fa fa-arrow-up" aria-hidden="true"></i></button> '
-                                . '<button type="button" class="btn btn-xs d-inline mr-2" name="product-down" value="' .
-                                $parent['id'] . '" title="' . $this->tableAdmin->translate('Move down') . '">'
+                                . '<button type="button" class="btn btn-xs d-inline mr-2" name="product-down" value="'
+                                . $parent['id'] . '" title="' . $this->tableAdmin->translate('Move down') . '">'
                                 . '<i class="fa fa-arrow-down" aria-hidden="true"></i></button>';
                             $sort[1]++;
                             if ($sort[1] != $parent['sort']) {
@@ -527,19 +535,19 @@ class Admin extends MyAdmin
                                 foreach ($children as $child) {
                                     if ($child['parent_product_id'] == $parent['id']) {
                                         Assert::string($child['product']);
-                                        $tmp [] = '<div class="ml-4"><a href="?table=' .
-                                            TAB_PREFIX . 'product&amp;where[id]=' . $child['id'] .
-                                            '" target="_blank" title="' . $this->tableAdmin->translate('Edit') .
-                                            '"><i class="fa fa-external-link" aria-hidden="true"></i></a> ' .
-                                            '<button type="button" class="btn btn-xs d-inline" '
-                                            . 'name="product-up" value="' .
-                                            $child['id'] . '" title="' . $this->tableAdmin->translate('Move up') .
-                                            '"><i class="fa fa-arrow-up" aria-hidden="true"></i></button> ' .
-                                            '<button type="button" class="btn btn-xs d-inline mr-2" '
-                                            . 'name="product-down" ' .
-                                            'value="' . $child['id'] .
-                                            '" title="' . $this->tableAdmin->translate('Move down') .
-                                            '"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>'
+                                        $tmp [] = '<div class="ml-4"><a href="?table='
+                                            . TAB_PREFIX . 'product&amp;where[id]=' . $child['id']
+                                            . '" target="_blank" title="' . $this->tableAdmin->translate('Edit')
+                                            . '"><i class="fa fa-external-link" aria-hidden="true"></i></a> '
+                                            . '<button type="button" class="btn btn-xs d-inline" '
+                                            . 'name="product-up" value="'
+                                            . $child['id'] . '" title="' . $this->tableAdmin->translate('Move up')
+                                            . '"><i class="fa fa-arrow-up" aria-hidden="true"></i></button> '
+                                            . '<button type="button" class="btn btn-xs d-inline mr-2" '
+                                            . 'name="product-down" '
+                                            . 'value="' . $child['id']
+                                            . '" title="' . $this->tableAdmin->translate('Move down')
+                                            . '"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>'
                                             . Tools::h($child['product'])
                                             . '</div>';
                                         $sort[2]++;
@@ -573,8 +581,8 @@ class Admin extends MyAdmin
             . '<button name="export-offline" type="submit" class="btn btn-sm invisible">Export off-line</button>'
             . '</form>';
         foreach ($correctOrder as $value) {
-            $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . (count($value) == 3 ? 'division' : 'product') .
-                ' SET sort = ' . $value[1] . ' WHERE id = ' . $value[0]);
+            $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . (count($value) == 3 ? 'division' : 'product')
+                . ' SET sort = ' . $value[1] . ' WHERE id = ' . $value[0]);
         }
         unset(
             $_SESSION['division-switch'],
@@ -601,30 +609,30 @@ class Admin extends MyAdmin
             $found = array_merge($found, $matches[2]);
         }
         $found = array_unique($found);
-        $output = '<h1><i class="fa fa-globe"></i> ' . $this->tableAdmin->translate('Translations') .
-            '</h1><div id="agenda-translations">'
-            . '<form action="" method="post" onsubmit="return confirm(\'' .
-            $this->tableAdmin->translate('Are you sure?') . '\')">'
+        $output = '<h1><i class="fa fa-globe"></i> ' . $this->tableAdmin->translate('Translations')
+            . '</h1><div id="agenda-translations">'
+            . '<form action="" method="post" onsubmit="return confirm(\''
+            . $this->tableAdmin->translate('Are you sure?') . '\')">'
             . Tools::htmlInput('translations', '', 1, array('type' => 'hidden'))
             . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden')
             . Tools::htmlInput('old_name', '', '', array('type' => 'hidden', 'id' => 'old_name'))
-            . '<table class="table table-striped"><thead><tr><th style="width:' .
-            intval(100 / (count($this->MyCMS->TRANSLATIONS) + 1)) . '%">' .
-            Tools::htmlInput('one', '', false, 'radio') . '</th>';
+            . '<table class="table table-striped"><thead><tr><th style="width:'
+            . intval(100 / (count($this->MyCMS->TRANSLATIONS) + 1)) . '%">'
+            . Tools::htmlInput('one', '', false, 'radio') . '</th>';
         $translations = $keys = [];
+        $localisation = new L10n($this->prefixUiL10n, $this->MyCMS->TRANSLATIONS);
         foreach ($this->MyCMS->TRANSLATIONS as $key => $value) {
             $output .= "<th>$value</th>";
-            include "language-$key.inc.php";
-            $translations[$key] = $translation;
-            $keys = array_merge($keys, array_keys($translation));
+            $translations[$key] = $localisation->readLocalisation($key);
+            $keys = array_merge($keys, array_keys($translations[$key]));
         }
         $output .= '</tr></thead><tbody>' . PHP_EOL;
         $keys = array_unique($keys);
         natcasesort($keys);
         foreach ($keys as $key) {
-            $output .= '<tr><th>' .
-                Tools::htmlInput('one', '', $key, array('type' => 'radio', 'class' => 'translation')) . ' ' .
-                Tools::h((string) $key) . '</th>';
+            $output .= '<tr><th>'
+                . Tools::htmlInput('one', '', $key, array('type' => 'radio', 'class' => 'translation')) . ' '
+                . Tools::h((string) $key) . '</th>';
             foreach ($this->MyCMS->TRANSLATIONS as $code => $value) {
                 $output .= '<td>' . Tools::htmlInput(
                     "tr[$code][$key]",
@@ -654,14 +662,14 @@ class Admin extends MyAdmin
             ) . '</td>';
         }
         $output .= '</tr></tbody></table>
-            <button name="translations" type="submit" class="btn btn-secondary"><i class="fa fa-save"></i> ' .
-            $this->tableAdmin->translate('Save') . '</button>
+            <button name="translations" type="submit" class="btn btn-secondary"><i class="fa fa-save"></i> '
+            . $this->tableAdmin->translate('Save') . '</button>
             <button name="delete" type="submit" class="btn btn-secondary" value="1"><i class="fa fa-dot-circle"></i>
             <i class="fa fa-trash"></i> ' . $this->tableAdmin->translate('Delete') . '</button>
-            <fieldset class="d-inline-block position-relative"><div class="input-group" id="rename-fieldset">' .
-            '<div class="input-group-prepend">
-              <button class="btn btn-secondary" type="submit"><i class="fa fa-dot-circle"></i> ' .
-            '<i class="fa fa-i-cursor"></i> ' . $this->tableAdmin->translate('Rename') . '</button>
+            <fieldset class="d-inline-block position-relative"><div class="input-group" id="rename-fieldset">'
+            . '<div class="input-group-prepend">
+              <button class="btn btn-secondary" type="submit"><i class="fa fa-dot-circle"></i> '
+            . '<i class="fa fa-i-cursor"></i> ' . $this->tableAdmin->translate('Rename') . '</button>
             </div>'
             . Tools::htmlInput('new_name', '', '', array('class' => 'form-control', 'id' => 'new_name'))
             . '</div></fieldset>
@@ -685,10 +693,10 @@ class Admin extends MyAdmin
     {
         // One place to set Friendly URL for all pages
         // originally code F (delete this line later)
-        $output = '<h1><i class="fa fa-link"></i> ' . $this->tableAdmin->translate('Friendly URL') .
-            '</h1><div id="agenda-urls">'
-            . '<form action="" method="post" class="friendly-urls" onsubmit="return confirm(\'' .
-            $this->tableAdmin->translate('Are you sure?') . '\')">'
+        $output = '<h1><i class="fa fa-link"></i> ' . $this->tableAdmin->translate('Friendly URL')
+            . '</h1><div id="agenda-urls">'
+            . '<form action="" method="post" class="friendly-urls" onsubmit="return confirm(\''
+            . $this->tableAdmin->translate('Are you sure?') . '\')">'
             . Tools::htmlInput('urls', '', 1, ['type' => 'hidden'])
             . Tools::htmlInput('token', '', end($_SESSION['token']), 'hidden');
         $urls = []; // all URLs, all language versions with a link to what it links to (product, page, … id, etc.)
@@ -713,11 +721,11 @@ class Admin extends MyAdmin
         foreach ($urls as $value) {
             Assert::isArray($value);
             if ($lastType != $value['_table'] . '-' . $value['type']) {
-                $output .= '<h3 class="lead">' . Tools::h($lastType = $value['_table'] . '-' . $value['type']) .
-                    '</h3>' . PHP_EOL;
+                $output .= '<h3 class="lead">' . Tools::h($lastType = $value['_table'] . '-' . $value['type'])
+                    . '</h3>' . PHP_EOL;
             }
-            $output .= '<div class="mb-3"><div><a href="?table=' . urlencode(TAB_PREFIX . $value['_table']) .
-                '&where[id]=' . (int) $value['id'] . '" target="_blank">'
+            $output .= '<div class="mb-3"><div><a href="?table=' . urlencode(TAB_PREFIX . $value['_table'])
+                . '&where[id]=' . (int) $value['id'] . '" target="_blank">'
                 . '<i class="fa fa-external-link"></i></a> ' .
                 (Tools::h($value['name_' . DEFAULT_LANGUAGE]) ?: '<i>N/A</i>') . '</div>';
             foreach ($langs as $key => $lang) {
@@ -725,8 +733,8 @@ class Admin extends MyAdmin
                 $value['fill'] = rtrim('/' . Tools::wrap($TYPE2PATH[$lastType], '', '/') .
                     /* $value['id'] . '-' . */ Tools::webalize($value["name_$lang"]), '-');
                 $output .= '<div class="input-group input-group-sm">'
-                    . '<div class="input-group-prepend"><tt class="input-group-text btn" title="' .
-                    $this->tableAdmin->translate('Fill up') . '">' . $lang . '</tt></div>'
+                    . '<div class="input-group-prepend"><tt class="input-group-text btn" title="'
+                    . $this->tableAdmin->translate('Fill up') . '">' . $lang . '</tt></div>'
                     . Tools::htmlInput(
                         'url-' . urlencode($value['_table']) . '-' . $value['id'] . '-' . $lang,
                         '',
@@ -747,8 +755,8 @@ class Admin extends MyAdmin
                 '',
                 array('type' => 'checkbox', 'id' => 'only-empty', 'label-after' => true, 'label-class' => 'mx-1')
             ) . '
-            <button class="btn btn-secondary btn-check-up" type="button"><i class="fa fa-eye"></i> ' .
-            $this->tableAdmin->translate('Check up') . '</button>
+            <button class="btn btn-secondary btn-check-up" type="button"><i class="fa fa-eye"></i> '
+            . $this->tableAdmin->translate('Check up') . '</button>
             </p></form>';
 
         // Identify duplicit URLs
@@ -782,8 +790,8 @@ class Admin extends MyAdmin
         foreach (array_keys($urls) as $url) {
             $sql = [];
             foreach (['category', 'content', 'product'] as $table) {
-                $sql [] = "SELECT '$table' AS type,id,name" . '_' . $_SESSION['language'] .
-                    " AS name FROM " . TAB_PREFIX . "$table WHERE " .
+                $sql [] = "SELECT '$table' AS type,id,name" . '_' . $_SESSION['language']
+                    . " AS name FROM " . TAB_PREFIX . "$table WHERE " .
                     Tools::arrayListed(
                         array_keys($this->tableAdmin->TRANSLATIONS),
                         0,
@@ -793,12 +801,12 @@ class Admin extends MyAdmin
                     );
             }
             $query = $this->MyCMS->fetchAll(implode(" UNION\n", $sql));
-            $output .= '<details><summary>' . Tools::h((string) $url) . ' <sup class="badge badge-secondary">' .
-                count($query) . '</sup></summary>';
+            $output .= '<details><summary>' . Tools::h((string) $url) . ' <sup class="badge badge-secondary">'
+                . count($query) . '</sup></summary>';
             foreach ($query as $row) {
-                $output .= '<div class="ml-2"><a href="?table=' . TAB_PREFIX . $row['type'] . '&amp;where[id]=' .
-                    $row['id'] . '"><i class="fa fa-table"></i> ' . Tools::h((string) $row['name']) .
-                    ' (' .
+                $output .= '<div class="ml-2"><a href="?table=' . TAB_PREFIX . $row['type'] . '&amp;where[id]='
+                    . $row['id'] . '"><i class="fa fa-table"></i> ' . Tools::h((string) $row['name'])
+                    . ' (' .
 //                    $this->tableAdmin->translate(
                     $row['type']
 //                        )
@@ -809,9 +817,9 @@ class Admin extends MyAdmin
         }
         $output .= (count($urls) ? '' : '<i>' . $this->tableAdmin->translate('None') . '</i>')
             . '</div><footer class="mt-2">'
-            . (count($urls) ? '<button type="button" class="btn btn-sm btn-secondary mr-2" id="urls-toggle" title="' .
-            $this->tableAdmin->translate('Open/close') .
-            '" data-open="1"><i class="fas fa-caret-right"></i> <i class="fas fa-caret-down"></i></button>' : '')
+            . (count($urls) ? '<button type="button" class="btn btn-sm btn-secondary mr-2" id="urls-toggle" title="'
+            . $this->tableAdmin->translate('Open/close')
+            . '" data-open="1"><i class="fas fa-caret-right"></i> <i class="fas fa-caret-down"></i></button>' : '')
             . '</footer>';
         return $output;
     }

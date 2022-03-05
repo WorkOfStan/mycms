@@ -22,9 +22,9 @@
         <exclude-pattern>db/migrations/*.php</exclude-pattern>
         <!-- TODO Ignore `Line exceeds 120 characters` until fixed -->
         <exclude-pattern>classes/My*Admin*.php</exclude-pattern>
-        <exclude-pattern>classes/MyTableLister.php</exclude-pattern>
+        <!--exclude-pattern>classes/MyTableLister.php</exclude-pattern-->
         <exclude-pattern>dist/classes/AdminProcess.php</exclude-pattern>
-        <exclude-pattern>dist/classes/TableAdmin.php</exclude-pattern>
+        <!--exclude-pattern>dist/classes/TableAdmin.php</exclude-pattern-->
         <!-- Don't apply `Line exceeds 120 characters` to this parameter rich test -->
         <exclude-pattern>Test/FriendlyUrlTest.php</exclude-pattern>
     </rule>

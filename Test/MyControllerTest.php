@@ -38,10 +38,12 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
         $backyard = new Backyard($backyardConf);
         $mycmsOptions = [
             'TRANSLATIONS' => [
+                'tl' => 'Test language', // so that `tl` is allowed
                 'en' => 'English',
                 'zh' => '中文',
             ],
             'logger' => $backyard->BackyardError,
+            'prefixL10n' => __DIR__ . '/conf/L10nTest-',
         ];
         $this->myCms = new MyCMS($mycmsOptions);
         //$this->object = new MyController;
@@ -65,7 +67,10 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function testControllerNoContext()
     {
-        $this->object = new MyController($this->myCms);
+        $controllerOptions = [
+            'session' => ['language' => 'tl'],
+        ];
+        $this->object = new MyController($this->myCms, $controllerOptions);
         $this->assertEquals(['template' => 'home', 'context' => [
                 'pageTitle' => '',
 //                'applicationDir' => dirname($_SERVER['PHP_SELF']) . '/',
@@ -79,8 +84,11 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function testControllerContext()
     {
+        $controllerOptions = [
+            'session' => ['language' => 'tl'],
+        ];
         $this->myCms->context = ['1' => '2', '3' => '4', 'c'];
-        $this->object = new MyController($this->myCms);
+        $this->object = new MyController($this->myCms, $controllerOptions);
         $this->assertEquals(['template' => 'home', 'context' => $this->myCms->context], $this->object->run());
     }
 
@@ -92,11 +100,11 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
     public function testGetVars()
     {
         $this->myCms->context = ['1' => '2', '3' => '4', 'c'];
-        $options = [
+        $controllerOptions = [
             'get' => ['v1' => 'getSth'],
             'session' => ['v1' => 'getSth'],
         ];
-        $this->object = new MyController($this->myCms, $options);
-        $this->assertEquals($options, $this->object->getVars());
+        $this->object = new MyController($this->myCms, $controllerOptions);
+        $this->assertEquals($controllerOptions, $this->object->getVars());
     }
 }

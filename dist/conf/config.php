@@ -2,7 +2,7 @@
 
 /**
  * Config for the project
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
+ * (Last MyCMS/dist revision: 2022-03-05, v0.4.6)
  *
  * EDIT ONLY AS PART OF GIT REPOSITORY
  * FOR LOCAL CHANGES USE config.local.php
@@ -63,13 +63,13 @@ $myCmsConf = [
         'cookies-policy' => 'Recently visited',
         'sitemap' => 'sitemap'
     ],
+    'prefixL10n' => __DIR__ . '/l10n/language-',
     'SETTINGS' => [
         'domain' => 'MYCMSPROJECTSPECIFIC.com',
         'form-email' => 'seidl@gods.cz',
         'PATH_HOME' => '0000000001',
         'PATH_CATEGORY' => '0000000002', // used in Admin::projectSpecificSections TODO explain
     ],
-    'WEBSITE' => [], // this will be filled with $WEBSITE['cs'] or $WEBSITE['en'] according to the current language
     /**
      * RULES for switchParametric are configured in 'templateAssignementParametricRules': map GET parameters to template
      * (Note: 'param' also catches 'param/', so that if server configuration 301 /api/item?id=14 => /api/item/?id=14 ,
@@ -100,7 +100,8 @@ $myCmsConf = [
         'article' => 'content',
         'category' => 'category',
         'product' => 'product',
-    ]
+    ],
+    'WEBSITE' => [], // this will be filled with $WEBSITE['cs'] or $WEBSITE['en'] according to the current language
 ];
 $WEBSITE = [
     'en' => [
@@ -209,6 +210,7 @@ $backyardConf['mail_for_admin_enabled'] = (
 $featureFlags = array_merge(
     [
         'console_log_list_values' => false,
+        'languageFileWriteIncOnlyNotYml' => false, // deprecated
         'offline_dev' => false,
         'order_hierarchy' => false, // as used in A and F projects - just for testing before ready for Dist
     ],

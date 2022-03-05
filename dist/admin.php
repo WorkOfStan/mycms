@@ -2,7 +2,7 @@
 
 /**
  * Admin
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
+ * (Last MyCMS/dist revision: 2022-03-05, v0.4.6)
  */
 
 use Tracy\Debugger;
@@ -71,25 +71,28 @@ $tableAdmin = new TableAdmin(
     $MyCMS->dbms,
     (isset($_GET['table']) ? $_GET['table'] : ''),
     [
+        'language' => (isset($_SESSION['language']) && $_SESSION['language']) ? $_SESSION['language'] : 'en',
+        'prefixL10n' => __DIR__ . '/conf/l10n/admin-',
         'SETTINGS' => $MyCMS->SETTINGS,
-        'language' => $_SESSION['language'],
         'TRANSLATIONS' => $MyCMS->TRANSLATIONS,
     ]
 );
 
-
 $MyCMS->csrfStart();
 if (isset($_POST) && is_array($_POST) && !empty($_POST)) {
     $adminProcess = new AdminProcess($MyCMS, [
+        'agendas' => $AGENDAS,
+        'featureFlags' => $featureFlags,
+        'prefixUiL10n' => $myCmsConf['prefixL10n'],
         'tableAdmin' => $tableAdmin,
-        'agendas' => $AGENDAS
     ]);
     $adminProcess->adminProcess($_POST);
 }
 $admin = new Admin($MyCMS, [
     'agendas' => $AGENDAS,
-    'tableAdmin' => $tableAdmin,
     'featureFlags' => $featureFlags,
+    'prefixUiL10n' => $myCmsConf['prefixL10n'],
+    'tableAdmin' => $tableAdmin,
     // to replace default CSS and/or JS in admin.php, uncomment the array below
 //    'clientSideResources' => [
 //        'css' => [
