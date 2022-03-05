@@ -5,7 +5,7 @@ namespace WorkOfStan\MyCMS\Test;
 use Tracy\Debugger;
 use WorkOfStan\MyCMS\L10n;
 
-//require_once __DIR__ . '/../conf/config.php';
+require_once __DIR__ . '/../conf/config.php';
 
 class L10nTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,12 +23,12 @@ class L10nTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        if (!defined('DEBUG_VERBOSE')) {
-            define('DEBUG_VERBOSE', false);
-        }
+//        if (!defined('DEBUG_VERBOSE')) {
+//            define('DEBUG_VERBOSE', false);
+//        }
         Debugger::enable(Debugger::DEVELOPMENT, __DIR__ . '/../log');
         $this->object = new L10n(__DIR__ . '/conf/L10nTest-');
-        $this->object->loadLocalisation('TL'); // TL as test language
+        $this->object->loadLocalisation('tl'); // tl as test language
         $this->encoding = 'UTF-8';
     }
 
@@ -148,9 +148,6 @@ class L10nTest extends \PHPUnit_Framework_TestCase
         $localisationTestArray = [
             'Not in the yml (test)' => 'Not in the yml (test)',
             'low start not in the yml (test)' => 'low start not in the yml (test)',
-//            'starting with lower case. OK.' => 'začátek s malým písmenem. OK.',
-//            'all lower case' => 'vše malými písmeny',
-//            'UPPER CASE' => 'VŠE VELKÝMI PÍSMENY',
         ];
         foreach ($localisationTestArray as $key => $value) {
             $this->assertEquals($value, $this->object->translate($key), "Key: {$key}");
