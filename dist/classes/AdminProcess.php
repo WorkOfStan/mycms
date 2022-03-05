@@ -573,8 +573,10 @@ class AdminProcess extends MyAdminProcess
                 fclose($fp);
 
                 // new yml
-                if(!(isset($this->featureFlags['languageFileWriteIncOnlyNotYml'])
-                    && $this->featureFlags['languageFileWriteIncOnlyNotYml'])) {
+                if (
+                    !(isset($this->featureFlags['languageFileWriteIncOnlyNotYml'])
+                    && $this->featureFlags['languageFileWriteIncOnlyNotYml'])
+                ) {
                     // refactor into L10n
                     $yamlDump = Yaml::dump($yml);
                     // todo add starting --- if not present, yet
@@ -584,7 +586,6 @@ class AdminProcess extends MyAdminProcess
 
                 // new yml
                 // tr - delete + new / rename
-
             }
             // finish
             Tools::addMessage('info', $this->tableAdmin->translate('Processed.'));
