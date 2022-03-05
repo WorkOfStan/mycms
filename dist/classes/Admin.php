@@ -623,9 +623,6 @@ class Admin extends MyAdmin
         $localisation = new L10n($this->prefixUiL10n, $this->MyCMS->TRANSLATIONS);
         foreach ($this->MyCMS->TRANSLATIONS as $key => $value) {
             $output .= "<th>$value</th>";
-            //include "language-$key.inc.php"; //delete
-            //$translations[$key] = $translation; //delete
-            //$keys = array_merge($keys, array_keys($translation)); //delete
             $translations[$key] = $localisation->readLocalisation($key);
             $keys = array_merge($keys, array_keys($translations[$key]));
         }

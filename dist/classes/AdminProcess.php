@@ -29,22 +29,6 @@ class AdminProcess extends MyAdminProcess
     /** @var array<array<string|array<string|int>>> */
     protected $agendas;
 
-    /**
-     * Feature flags that bubble down to latte and controller
-     * TODO: move to MyAdminProcess
-     *
-     * @var array<bool>
-     */
-    protected $featureFlags;
-
-    /**
-     * Folder and name prefix of localisation yml for the web UI (not admin UI)
-     * TODO: move to MyAdminProcess
-     *
-     * @var string
-     */
-    protected $prefixUiL10n;
-
     /** @var TableAdmin */
     protected $tableAdmin;
 
@@ -530,20 +514,15 @@ class AdminProcess extends MyAdminProcess
      * @param array<mixed> $post $_POST (originally by reference, as the $post is changed, but the method dies anyway)
      * @return void
      */
+    /*
     public function processTranslationsUpdate($post)
     {
         if (isset($post['translations'])) {
-            // before legacy changes
-
-                // new yml
+            // new yml before legacy code makes changes to $post
             if (
                     !(isset($this->featureFlags['languageFileWriteIncOnlyNotYml'])
                     && $this->featureFlags['languageFileWriteIncOnlyNotYml'])
             ) {
-                // refactor into L10n
-//                    $yamlDump = Yaml::dump($yml);
-                // todo add starting --- if not present, yet
-//                    file_put_contents($this->prefixUiL10n . $code . '.yml', $yamlDump);
                 $localisation = new L10n($this->prefixUiL10n, $this->MyCMS->TRANSLATIONS);
                 Assert::isArray($post['tr']); // array<array<string>>
                 Assert::isArray($post['new']); // array<string>
@@ -554,24 +533,19 @@ class AdminProcess extends MyAdminProcess
                     $post['new'],
                     $post['old_name'],
                     $post['new_name'],
-                    isset($post['delete']) && $post['delete'] === 1 // TODO or '1' ??
+                    isset($post['delete']) && $post['delete'] === '1'
                 );
             }
 
             foreach (array_keys($this->MyCMS->TRANSLATIONS) as $code) {
-                // new yml
-//                $yml = [];
-
-                // legacy inc.php
+                // deprecated inc.php
                 $fp = fopen("language-$code.inc.php", 'w+');
                 Assert::resource($fp);
                 fwrite($fp, "<?php\n\n// MyCMS->getSessionLanguage expects \$translation=\n\$translation = [\n");
 
-                // common
                 Assert::isArray($post['new']);
                 if ($post['new'][0]) {
                     Assert::isArray($post['tr']);
-//                    Assert::isArray($post['tr'][$code]);
                     $post['tr'][$code][$post['new'][0]] = $post['new'][$code];
                 }
                 Assert::isArray($post['tr']);
@@ -582,37 +556,20 @@ class AdminProcess extends MyAdminProcess
                         $value = Tools::set($post['delete']) ? false : $value;
                     }
                     if ($value) {
-                        // legacy inc.php
                         Assert::string($key);
                         fwrite($fp, "    '" . strtr($key, array('&apos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
                             . "' => '" . strtr($value, array('&appos;' => "\\'", "'" => "\\'", '&amp;' => '&'))
                             . "',\n");
-                        // new yml
-//                        $yml[$key] = $value;
                     }
                 }
-
-                // legacy inc.php
                 fwrite($fp, "];\n");
                 fclose($fp);
-
-                // new yml
-//                if (
-//                    !(isset($this->featureFlags['languageFileWriteIncOnlyNotYml'])
-//                    && $this->featureFlags['languageFileWriteIncOnlyNotYml'])
-//                ) {
-//                    // refactor into L10n
-////                    $yamlDump = Yaml::dump($yml);
-//                    // todo add starting --- if not present, yet
-////                    file_put_contents($this->prefixUiL10n . $code . '.yml', $yamlDump);
-//                }
-
-                // new yml
-                // tr - delete + new / rename
             }
             // finish
             Tools::addMessage('info', $this->tableAdmin->translate('Processed.'));
             $this->redir();
         }
     }
+     *
+     */
 }

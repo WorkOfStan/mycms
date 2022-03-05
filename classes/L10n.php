@@ -48,6 +48,7 @@ class L10n
     {
         $this->prefix = $prefix; // "$prefixXX.yml" where XX is the language e.g. 'conf/l10n/admin-'
         $this->enabledLanguages = array_keys($enabledLanguages);
+        DEBUG_VERBOSE && Debugger::barDump($enabledLanguages, 'List of enabled languages in the prefix ' . $prefix);
     }
 
     /**
@@ -233,7 +234,7 @@ Rewrites
 
 
             //$postForYml = $post; // before legacy changes
-        foreach (array_keys($this->enabledLanguages) as $code) {
+        foreach ($this->enabledLanguages as $code) {
             $this->assertLanguage($code);
             // new yml
             $yml = [];

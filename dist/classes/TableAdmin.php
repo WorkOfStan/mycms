@@ -24,8 +24,8 @@ class TableAdmin extends MyTableAdmin
     public function __construct(LogMysqli $dbms, $table, array $options = [])
     {
         parent::__construct($dbms, $table, $options);
-        Assert::isArray($options['TRANSLATIONS']);
-        $this->TRANSLATIONS = $options['TRANSLATIONS']; // TODO - why this here?
+//        Assert::isArray($options['TRANSLATIONS']);
+//        $this->TRANSLATIONS = $options['TRANSLATIONS']; // TODO - why this here? // moved to MyTableLister
         ////use Symfony\Component\Yaml\Yaml;
 //        $translationFile = 'conf/l10n/admin-' . Tools::setifempty($_SESSION['language'], 'en') . '.yml';
 //        // The union operator ( + ) might be more useful than array_merge.

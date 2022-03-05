@@ -109,7 +109,8 @@ class MyTableLister
         $this->setTable($table);
         $this->rand = rand((int) 1e5, (int) (1e6 - 1));
         Assert::string($options['prefixL10n']);
-        // TODO Change below to $options['TRANSLATIONS'] ?
+        Assert::isArray($options['TRANSLATIONS']);
+        $this->TRANSLATIONS = $options['TRANSLATIONS'];
         $this->localisation = new L10n($options['prefixL10n'], $this->TRANSLATIONS);
         Assert::string($options['language']);
         $this->localisation->loadLocalisation($options['language']);
