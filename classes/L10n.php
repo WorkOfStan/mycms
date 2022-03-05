@@ -9,10 +9,7 @@ use Tracy\ILogger;
 use Webmozart\Assert\Assert;
 
 /**
- * Localisation
- *  ... Translation
- * (Last MyCMS/dist revision: 2022-02-23, v0.4.6)
- * TODO: move to MyCMS core
+ * Localisation class unifying capabilities of translation method
  *
  * @author rejthar@stanislavrejthar.com
  */
@@ -192,9 +189,11 @@ class L10n
         // TODO/Note: TRANSLATION is based on A project, rather than F project.
         //delete//$this->TRANSLATION += file_exists($translationFile) ? Yaml::parseFile($translationFile) : [];
 
-        $languageFile = DIR_TEMPLATE . '/../language-' . $language . '.inc.php'; // deprecated
+        //$languageFile = DIR_TEMPLATE . '/../language-' . $language . '.inc.php'; // deprecated
+        // expected to transform APP_DIR/conf/l10n/file into APP_DIR
+        $languageFile = dirname(dirname(dirname($this->prefix))) . '/language-' . $language . '.inc.php'; // deprecated
 
-        Debugger::log("TEST LOGGING", ILogger::INFO);
+        //Debugger::log("TEST LOGGING", ILogger::INFO);
         if (file_exists($translationFile)) {
             $tempYaml = Yaml::parseFile($translationFile);
             DEBUG_VERBOSE && Debugger::log("Yaml parse {$translationFile}", ILogger::INFO);

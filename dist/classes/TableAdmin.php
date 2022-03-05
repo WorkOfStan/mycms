@@ -3,14 +3,13 @@
 namespace WorkOfStan\mycmsprojectnamespace;
 
 use GodsDev\Tools\Tools;
-use Symfony\Component\Yaml\Yaml;
 use Webmozart\Assert\Assert;
 use WorkOfStan\MyCMS\LogMysqli;
 use WorkOfStan\MyCMS\MyTableAdmin;
 
 /**
  * Project specific adaptations of database tables in Admin UI
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
+ * (Last MyCMS/dist revision: 2022-03-05, v0.4.6)
  */
 class TableAdmin extends MyTableAdmin
 {
@@ -27,6 +26,7 @@ class TableAdmin extends MyTableAdmin
         parent::__construct($dbms, $table, $options);
         Assert::isArray($options['TRANSLATIONS']);
         $this->TRANSLATIONS = $options['TRANSLATIONS']; // TODO - why this here?
+        ////use Symfony\Component\Yaml\Yaml;
 //        $translationFile = 'conf/l10n/admin-' . Tools::setifempty($_SESSION['language'], 'en') . '.yml';
 //        // The union operator ( + ) might be more useful than array_merge.
 //        // The array_merge function does not preserve numeric key values.

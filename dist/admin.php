@@ -2,7 +2,7 @@
 
 /**
  * Admin
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
+ * (Last MyCMS/dist revision: 2022-03-05, v0.4.6)
  */
 
 use Tracy\Debugger;
@@ -74,7 +74,7 @@ $tableAdmin = new TableAdmin(
         'SETTINGS' => $MyCMS->SETTINGS,
         'language' => (isset($_SESSION['language']) && $_SESSION['language']) ? $_SESSION['language'] : 'en',
         'TRANSLATIONS' => $MyCMS->TRANSLATIONS,
-        'prefixL10n' => __DIR__ . 'conf/l10n/admin-',
+        'prefixL10n' => __DIR__ . '/conf/l10n/admin-',
     ]
 );
 
