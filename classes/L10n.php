@@ -136,6 +136,21 @@ class L10n
 //        return $result;
 //    }
 
+
+    /**
+     * Assert ISO 639-1 format of the language identifier
+     *
+     * @param string $language
+     * @return string
+     */
+    private function assertLanguage($language)
+    {
+        // Assert ISO 639-1 format
+        Assert::string($language);
+        Assert::length($language, 2);
+        return $language;
+    }
+
     /**
      * Load the localisation file
      *
@@ -144,12 +159,19 @@ class L10n
      */
     public function loadLocalisation($language)
     {
-        // Assert ISO 639-1 format
-        Assert::string($language);
-        Assert::length($language, 2);
-        $this->selectedLanguage = $language;
+        $this->selectedLanguage = $this->assertLanguage($language);
+        $this->translation = $this->readLocalisation($language);
+    }
 
-        // language
+    /**
+     * Returns the localisation string array
+     *
+     * @param string $language
+     * @return string[]
+     */
+    public function readLocalisation($language)
+    {
+        $this->assertLanguage($language);
         $translationFile = $this->prefix . $language . '.yml';
 
         // expected to transform APP_DIR/conf/l10n/file into APP_DIR
@@ -159,8 +181,9 @@ class L10n
             $tempYaml = Yaml::parseFile($translationFile);
             DEBUG_VERBOSE && Debugger::log("Yaml parse {$translationFile}", ILogger::INFO);
             Assert::isArray($tempYaml);
-            $this->translation = $tempYaml;
-        } elseif (file_exists($languageFile)) {
+            return $tempYaml;
+        }
+        if (file_exists($languageFile)) {
             // deprecated (read the $prefix.$language.'.inc.php')
             DEBUG_VERBOSE && Debugger::log("including {$languageFile} with \$translation array", ILogger::INFO);
             include $languageFile; // MUST contain $translation = [...];
@@ -169,10 +192,10 @@ class L10n
                 throw new \Exception("Missing expected translation {$languageFile}");
             }
             /** @phpstan-ignore-next-line */
-            $this->translation = $translation;
-        } else {
-            throw new \Exception("Missing expected language file both {$translationFile} and {$languageFile}");
+            return $translation;
         }
+        throw new \Exception("Missing expected '{$language}' language file both {$translationFile} and {$languageFile}");
+
 /**
  *
 Admin:: section Translation

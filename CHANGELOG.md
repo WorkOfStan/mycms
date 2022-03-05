@@ -8,10 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Added` for new features
 - dist: subscriber table, therefore subscription input box is working now
 - dist: featureFlag `newletter_input_box` can turn off both the (un)subscribe email input box and the POST value processing
-- L10n (Localisation) class with loadLocalisation and translate methods common both for admin and MyCMS
 
 ### `Changed` for changes in existing functionality
 - App class handles the request dispatching instead of spagetti code in index.php
+- L10n (Localisation) class with loadLocalisation and translate methods common both for admin UI and MyCMS UI (instead of include php file with array for web UI and parsing yml for admin UI)
+- dist/Admin::sectionTranslations uses new L10n class instead of including language.inc.php file directly
 
 ### `Deprecated` for soon-to-be removed features
 
@@ -23,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - yml style, add missing document start "---" (document-start); fix indentation
 
 ### `Security` in case of vulnerabilities
-- changes touched the CSRF mechanism, so CSRF was successfully tested
+- App class changes touched the CSRF mechanism, so CSRF was successfully tested
 
 ## [0.4.5] - 2022-02-10
 

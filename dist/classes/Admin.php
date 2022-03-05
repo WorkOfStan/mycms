@@ -5,6 +5,7 @@ namespace WorkOfStan\mycmsprojectnamespace;
 use GodsDev\Tools\Tools;
 use Webmozart\Assert\Assert;
 //use WorkOfStan\MyCMS\ArrayStrict;
+use WorkOfStan\MyCMS\L10n;
 use WorkOfStan\MyCMS\MyAdmin;
 use WorkOfStan\mycmsprojectnamespace\MyCMSProject;
 
@@ -13,11 +14,25 @@ use function WorkOfStan\MyCMS\ThrowableFunctions\preg_match_all;
 
 /**
  * Admin UI
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
+ * (Last MyCMS/dist revision: 2022-03-05, v0.4.6)
  */
 class Admin extends MyAdmin
 {
     use \Nette\SmartObject;
+
+    /**
+     * Feature flags that bubble down to latte and controller
+     *
+     * @var array<bool>
+     */
+    protected $featureFlags;
+
+    /**
+     * Folder and name prefix of localisation yml for the web UI (not admin UI)
+     *
+     * @var string
+     */
+    protected $prefixUiL10n;
 
     /**
      * @var array<array<string>> tables and columns to search in admin
@@ -28,13 +43,6 @@ class Admin extends MyAdmin
         'content' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
         'product' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
     ];
-
-    /**
-     * Feature flags that bubble down to latte and controller
-     *
-     * @var array<bool>
-     */
-    protected $featureFlags;
 
     /**
      *
@@ -612,11 +620,14 @@ class Admin extends MyAdmin
             . intval(100 / (count($this->MyCMS->TRANSLATIONS) + 1)) . '%">'
             . Tools::htmlInput('one', '', false, 'radio') . '</th>';
         $translations = $keys = [];
+        $localisation = new L10n($this->prefixUiL10n);
         foreach ($this->MyCMS->TRANSLATIONS as $key => $value) { // TODO refactor using L10n
             $output .= "<th>$value</th>";
-            include "language-$key.inc.php";
-            $translations[$key] = $translation;
-            $keys = array_merge($keys, array_keys($translation));
+            //include "language-$key.inc.php";
+            //$translations[$key] = $translation;
+            //$keys = array_merge($keys, array_keys($translation));
+            $translations[$key] = $localisation->readLocalisation($key);
+            $keys = array_merge($keys, array_keys($translations[$key]));
         }
         $output .= '</tr></thead><tbody>' . PHP_EOL;
         $keys = array_unique($keys);

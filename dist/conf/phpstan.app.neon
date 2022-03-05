@@ -116,9 +116,9 @@ parameters:
       #  paths:
       #    - ../process.php
       #    #- ../api/dummy/index.php
-      -
-        message: '#Undefined variable: \$translation#'
-        path: ../classes/Admin.php
+      #-
+      #  message: '#Undefined variable: \$translation#'
+      #  path: ../classes/Admin.php
       # The exceptions concerning always false/true compensate for environment dependent variables.
       -
         message: '#Right side of && is always false.#'
