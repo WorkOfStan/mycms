@@ -53,6 +53,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
                 $backyard->BackyardError
             ),
             'templateAssignementParametricRules' => [],
+            'prefixL10n' => __DIR__ . '/conf/L10nTest-',
         ];
         $this->myCms = new MyCMSProject($mycmsOptions);
 

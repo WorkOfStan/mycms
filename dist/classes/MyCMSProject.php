@@ -6,8 +6,6 @@ use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use Webmozart\Assert\Assert;
 use WorkOfStan\Backyard\Backyard;
-use WorkOfStan\Backyard\BackyardError;
-use WorkOfStan\MyCMS\LogMysqli;
 use WorkOfStan\MyCMS\MyCMS;
 use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
 use WorkOfStan\mycmsprojectnamespace\Utils;

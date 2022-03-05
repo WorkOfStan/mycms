@@ -2,9 +2,10 @@
 
 namespace WorkOfStan\MyCMS\Test;
 
+use Tracy\Debugger;
 use WorkOfStan\MyCMS\L10n;
 
-require_once __DIR__ . '/../conf/config.php';
+//require_once __DIR__ . '/../conf/config.php';
 
 class L10nTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,6 +23,10 @@ class L10nTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        if (!defined(DEBUG_VERBOSE)) {
+            define(DEBUG_VERBOSE, false);
+        }
+        Debugger::enable(Debugger::DEVELOPMENT, __DIR__ . '/../log');
         $this->object = new L10n(__DIR__ . '/conf/L10nTest-');
         $this->object->loadLocalisation('TL'); // TL as test language
         $this->encoding = 'UTF-8';

@@ -68,7 +68,7 @@ class AdminTest extends \PHPUnit_Framework_TestCase
                         'cs' => 'Česky',
                         'en' => 'English',
                     ],
-                    'prefixL10n' => __DIR__ . '/admin-', // just a sample
+                    'prefixL10n' => __DIR__ . '/../conf/l10n/admin-',
                     'language' => 'en',
                 ]
             )
