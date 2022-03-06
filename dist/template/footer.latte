@@ -1,4 +1,4 @@
-<footer class="footer">
+{* (Last MyCMS/dist revision: 2022-03-06, v0.4.6) *}<footer class="footer">
     <div class="footer__nav">
         <div class="container">
             <ul>
@@ -16,10 +16,10 @@
                 <input type="email" name="newsletter" id="newsletter-email" placeholder="{="Zde uveďte Vaši e-mailovou adresu"|translate}" required>
                 <input type="hidden" name="token" value="{$token}">
                 <div class="submit-form">
-                    <span><span>{="By subscribing you agree to our handling of your {personal data}."|translate|replace:'{':'<a href="?page=personal-data" target="_blank">'|replace:'}':'</a>'|noescape}</span></span>
+                    <span><span>{="By subscribing you agree to our handling of your {personal data}."|translate|replace:'{','<a href="?page=personal-data" target="_blank">'|replace:'}','</a>'|noescape}</span></span>
                     <button type="submit" class="button--red">{="Subscribe"|translate}</button>
                 </div>
-                <span class="only-mobile">{="By subscribing you agree to our handling of your {personal data}."|translate|replace:'{':'<a href="?page=personal-data" target="_blank">'|replace:'}':'</a>'|noescape}</span>
+                <span class="only-mobile">{="By subscribing you agree to our handling of your {personal data}."|translate|replace:'{','<a href="?page=personal-data" target="_blank">'|replace:'}','</a>'|noescape}</span>
             </form>
 
         </div>

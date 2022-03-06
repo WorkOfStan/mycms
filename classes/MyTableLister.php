@@ -63,6 +63,12 @@ class MyTableLister
     /** @var array<array> all tables in the database */
     public $tables;
 
+    /**
+     * @var array<string> Selected locale strings
+     * DEPRECATED keep this declaration just for backward compatibility
+     */
+    public $TRANSLATION = [];
+
     /** @var array<string> Available languages for MyCMS */
     public $TRANSLATIONS = [];
 
