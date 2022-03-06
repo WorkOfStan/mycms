@@ -26,13 +26,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - dist: featureFlag `newletter_input_box` can turn off both the (un)subscribe email input box and the POST value processing
 
 ### Changed
+- **BREAKING CHANGE** dist/Test/AdminTest.php TableAdmin declaration expects language and prefixL10n
+- **BREAKING CHANGE** dist/Test/ControllerTest.php MUST accomodate language both in GET and _SESSION as the checks are stricter in L10n
 - App class handles the request dispatching instead of spagetti code in index.php
 - L10n (Localisation) class with loadLocalisation and translate methods common both for admin UI and MyCMS UI (instead of include php file with array for web UI and parsing yml for admin UI)
 - dist/Admin::sectionTranslations uses new L10n class instead of including language.inc.php file directly
 - MyAdminProcess::processTranslationsUpdate method created instead of code being spagetti part of dist/AdminProcess::adminProcess
 
 ### Deprecated
-- using dist/language-xx.inc.php files (conf/l10n/language-xx.yml will be used instead) - just resave admin.php?translations to transform to the new format (unless turned off by featureFlag 'languageFileWriteIncOnlyNotYml')
+- using dist/language-xx.inc.php files (conf/l10n/language-xx.yml will be used instead) - just add $myCmsConf['prefixL10n'] to config.php and resave admin.php?translations to transform to the new format (unless turned off by featureFlag 'languageFileWriteIncOnlyNotYml')
 
 ### Removed
 - Texy
@@ -41,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - yml style, add missing document start "---" (document-start); fix indentation
+- dist/footer.latte Colon as argument separator is deprecated, use comma instead
 
 ### Security
 - App class changes touched the CSRF mechanism, so CSRF was successfully tested

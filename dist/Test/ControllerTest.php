@@ -12,18 +12,21 @@ require_once __DIR__ . '/../conf/config.php';
 
 /**
  * Tests of Controller (of MVC)
- * (Last MyCMS/dist revision: 2022-03-05, v0.4.6)
+ * (Last MyCMS/dist revision: 2022-03-06, v0.4.6)
  */
 class ControllerTest extends \PHPUnit_Framework_TestCase
 {
+    /** @var mixed[] */
+    protected $get;
+
+    /** @var string */
+    protected $language;
+
     /** @var MyCMSProject */
     protected $myCms;
 
     /** @var Controller */
     protected $object;
-
-    /** @var string */
-    protected $language;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -38,6 +41,10 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         error_reporting(E_ALL); // incl E_NOTICE
         Debugger::enable(Debugger::DEVELOPMENT, __DIR__ . '/../log');
         $backyard = new Backyard($backyardConf);
+        if (!defined('DB_HOST')) {
+            // if set-up of constants didn't happen in the first test according to alphabet
+            new \WorkOfStan\MyCMS\InitDatabase('testing', __DIR__ . '/../');
+        }
         $mycmsOptions = [
             // constants are defined by `new InitDatabase` in the alphabetically first test
             'dbms' => new LogMysqli(
@@ -51,20 +58,17 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             'prefixL10n' => __DIR__ . '/../conf/l10n/language-',
             'templateAssignementParametricRules' => [],
             'TRANSLATIONS' => [
-                'cs' => 'Česky', // todo remove this line with DEFAULT_LANGUAGE and
-                // fix the MyFriendlyUrl.php:207 Arg #2 not an array
-                // and WorkOfStan\mycmsprojectnamespace\Test\ControllerTest::testControllerContext
-                // Webmozart\Assert\InvalidArgumentException: Expected one of: "en", "zh". Got: "cs"
                 'en' => 'English',
                 'zh' => '中文',
             ],
         ];
         $this->myCms = new MyCMSProject($mycmsOptions);
-        $get = []; // ['language' => 'en']; TODO use this definition when cs above removed
 
-        // set language as one of the TRANSLATIONS array above 'language' => 'en'
-        $_SESSION = []; // because $_SESSION is not defined in the PHPUnit mode
-        $this->language = $_SESSION['language'] = $this->myCms->getSessionLanguage($get, $_SESSION, false);
+        // set language in $_SESSION and $this->get as one of the TRANSLATIONS array above
+        // this settings is equivalent to going to another language homepage from the DEFAULT_LANGUAGE homepage
+        $this->get = ['language' => 'en'];
+        $_SESSION = ['language' => 'en']; // because $_SESSION is not defined in the PHPUnit mode
+        $this->language = $_SESSION['language'] = $this->myCms->getSessionLanguage($this->get, $_SESSION, false);
 
         //according to what you test, change $this->myCms->context before invoking
         //$this->object = new Controller; within Test methods
@@ -88,7 +92,12 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function testControllerNoContext()
     {
-        $this->object = new Controller($this->myCms, ['language' => $this->language, 'httpMethod' => 'GET']);
+        $this->object = new Controller($this->myCms, [
+            'language' => $this->language,
+            'httpMethod' => 'GET',
+            'session' => $_SESSION,
+            'get' => $this->get,
+            ]);
         $controller = $this->object->run();
         $this->assertArraySubset(['template' => 'home', 'context' => []], $controller);
     }
@@ -101,7 +110,11 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     public function testControllerContext()
     {
         $this->myCms->context = ['1' => '2', '3' => '4', 'c'];
-        $this->object = new Controller($this->myCms, ['httpMethod' => 'GET']);
+        $this->object = new Controller($this->myCms, [
+            'httpMethod' => 'GET',
+            'session' => $_SESSION,
+            'get' => $this->get,
+            ]);
         $this->assertArraySubset(
             ['template' => 'home', 'context' => $this->myCms->context],
             $this->object->run()
@@ -116,10 +129,11 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     public function testControllerAbout()
     {
         $this->object = new Controller($this->myCms, [
-            'get' => [
+            'get' => array_merge($this->get, [
                 'about' => '',
-            ],
+            ]),
             'httpMethod' => 'GET',
+            'session' => $_SESSION,
         ]);
         $controller = $this->object->run();
         $this->assertArrayHasKey('template', $controller);
