@@ -41,7 +41,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         error_reporting(E_ALL); // incl E_NOTICE
         Debugger::enable(Debugger::DEVELOPMENT, __DIR__ . '/../log');
         $backyard = new Backyard($backyardConf);
-        if(!defined('DB_HOST')){
+        if (!defined('DB_HOST')) {
             // if set-up of constants didn't happen in the first test according to alphabet
             new \WorkOfStan\MyCMS\InitDatabase('testing', __DIR__ . '/../');
         }
@@ -97,8 +97,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             'httpMethod' => 'GET',
             'session' => $_SESSION,
             'get' => $this->get,
-            ]
-        );
+            ]);
         $controller = $this->object->run();
         $this->assertArraySubset(['template' => 'home', 'context' => []], $controller);
     }
@@ -115,8 +114,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             'httpMethod' => 'GET',
             'session' => $_SESSION,
             'get' => $this->get,
-            ]
-        );
+            ]);
         $this->assertArraySubset(
             ['template' => 'home', 'context' => $this->myCms->context],
             $this->object->run()
