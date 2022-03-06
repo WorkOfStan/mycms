@@ -109,7 +109,11 @@ class MyTableLister
         $this->getTables();
         $this->setTable($table);
         $this->rand = rand((int) 1e5, (int) (1e6 - 1));
-        Assert::string($options['prefixL10n']);
+        if (array_key_exists('prefixL10n', $options)) { // the condition is due to a deprecated backward compatibility
+            Assert::string($options['prefixL10n']); // only this line is relevant
+        } else {
+            $options['prefixL10n'] = '';
+        }
         Assert::isArray($options['TRANSLATIONS']);
         $this->TRANSLATIONS = $options['TRANSLATIONS'];
         $this->localisation = new L10n($options['prefixL10n'], $this->TRANSLATIONS);
