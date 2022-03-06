@@ -143,7 +143,7 @@ class L10n
         $translationFile = $this->prefix . $language . '.yml';
 
         // expected to transform APP_DIR/conf/l10n/file into APP_DIR
-        $languageFile = ($this->prefix != '' ? dirname(dirname(dirname($this->prefix))) : DIR_TEMPLATE . '/../')
+        $languageFile = ($this->prefix != '' ? dirname(dirname(dirname($this->prefix))) : DIR_TEMPLATE . '/..')
             . '/language-' . $language . '.inc.php'; // deprecated
 
         if (file_exists($translationFile)) {
