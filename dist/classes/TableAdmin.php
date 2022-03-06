@@ -9,7 +9,7 @@ use WorkOfStan\MyCMS\MyTableAdmin;
 
 /**
  * Project specific adaptations of database tables in Admin UI
- * (Last MyCMS/dist revision: 2022-03-05, v0.4.6)
+ * (Last MyCMS/dist revision: 2022-03-06, v0.4.6+)
  */
 class TableAdmin extends MyTableAdmin
 {
@@ -59,7 +59,8 @@ class TableAdmin extends MyTableAdmin
                 $result = $this->outputForeignId(
                     "fields[$field]",
                     'SELECT p.id,product_' . DEFAULT_LANGUAGE . ',division_' . DEFAULT_LANGUAGE .
-                    ' FROM ' . TAB_PREFIX . 'product p LEFT JOIN ' . TAB_PREFIX . 'division d ON p.division_id = d.id'
+                    ' FROM `' . TAB_PREFIX . 'product` p LEFT JOIN `' . TAB_PREFIX
+                    . 'division` d ON p.division_id = d.id'
                     . ' WHERE IFNULL(p.parent_product_id, 0) = 0 ORDER BY d.sort,p.sort',
                     $value,
                     ['class' => 'form-control', 'exclude' => $tempExclude]
@@ -114,8 +115,8 @@ class TableAdmin extends MyTableAdmin
                 $result = $this->translate('Parent category') . ':<br />'
                     . Tools::htmlInput('path-original', '', $value, 'hidden')
                     . '<select class="form-control" name="path-parent" id="path' . $this->rand . '"><option />';
-                $rows = $this->dbms->fetchAll('SELECT path,category_' . $_SESSION['language'] . ' AS category FROM '
-                    . TAB_PREFIX . 'category ORDER BY path');
+                $rows = $this->dbms->fetchAll('SELECT path,category_' . $_SESSION['language'] . ' AS category FROM `'
+                    . TAB_PREFIX . 'category` ORDER BY path');
                 if (is_array($rows)) {
                     foreach ($rows as $row) {
                         $result .= Tools::htmlOption(
@@ -138,8 +139,8 @@ class TableAdmin extends MyTableAdmin
                 $result = '<select class="form-control" name="fields[product_id]" id="' . $field . $this->rand
                     . '"><option />';
                 $rows = $this->dbms->fetchAll('SELECT p.id,category_' . $_SESSION['language'] . ' AS category,product_'
-                    . $_SESSION['language'] . ' AS title FROM ' . TAB_PREFIX . 'product p LEFT JOIN '
-                    . TAB_PREFIX . 'category c ON p.category_id = c.id ORDER BY c.path,p.sort');
+                    . $_SESSION['language'] . ' AS title FROM `' . TAB_PREFIX . 'product` p LEFT JOIN `'
+                    . TAB_PREFIX . 'category` c ON p.category_id = c.id ORDER BY c.path,p.sort');
                 if (is_array($rows)) {
                     $tmp = null;
                     foreach ($rows as $row) {

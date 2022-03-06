@@ -116,7 +116,7 @@ class MyAdminProcess extends MyCommon
     public function processActivity(&$post)
     {
         if (isset($post['activity'], $post['table'], $post['id'])) {
-            $admins = $this->MyCMS->fetchAll('SELECT id,activity,admin FROM ' . TAB_PREFIX . 'admin');
+            $admins = $this->MyCMS->fetchAll('SELECT id,activity,admin FROM `' . TAB_PREFIX . 'admin`');
             $coeditors = []; // possible other admin(s) editing this record
             $online = []; // other admins online
             $time = time();
@@ -154,7 +154,7 @@ class MyAdminProcess extends MyCommon
                 } elseif ($tabs) {
                     $online += $admin['admin'];
                 }
-                $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'admin SET activity = "' . $this->MyCMS->escapeSQL(json_encode($tabs ?: [])) . '" WHERE id = ' . (int) $admin['id']);
+                $this->MyCMS->dbms->query('UPDATE `' . TAB_PREFIX . 'admin` SET activity = "' . $this->MyCMS->escapeSQL(json_encode($tabs ?: [])) . '" WHERE id = ' . (int) $admin['id']);
             }
             $this->exitJson(['success' => true, 'coeditors' => $coeditors, 'online' => $online]);
         }
@@ -504,7 +504,7 @@ class MyAdminProcess extends MyCommon
             Assert::scalar($post['token']);
             if (!isset($post['token']) || !$this->MyCMS->csrfCheck((int) $post['token'])) {
                 // let it fall to 'Error occured logging You in.'
-            } elseif ($row = $this->MyCMS->fetchSingle('SELECT * FROM ' . TAB_PREFIX . 'admin WHERE admin="' . $this->MyCMS->escapeSQL($post['user']) . '"')) {
+            } elseif ($row = $this->MyCMS->fetchSingle('SELECT * FROM `' . TAB_PREFIX . 'admin` WHERE admin="' . $this->MyCMS->escapeSQL($post['user']) . '"')) {
                 Assert::string($post['password']);
                 Assert::isArray($row);
                 Assert::string($row['salt']);
@@ -699,7 +699,7 @@ class MyAdminProcess extends MyCommon
         if (isset($post['activate-user'], $post['active']) && is_numeric($post['activate-user'])) {
             $result = [
                 'data' => ['id' => $post['activate-user']],
-                'success' => $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'admin SET active="' . ($post['active'] ? 1 : 0) . '" WHERE id=' . (int) $post['activate-user'] . ' AND admin<>"' . $this->MyCMS->escapeSQL($_SESSION['user']) . '"') && $this->MyCMS->dbms->affected_rows,
+                'success' => $this->MyCMS->dbms->query('UPDATE `' . TAB_PREFIX . 'admin` SET active="' . ($post['active'] ? 1 : 0) . '" WHERE id=' . (int) $post['activate-user'] . ' AND admin<>"' . $this->MyCMS->escapeSQL($_SESSION['user']) . '"') && $this->MyCMS->dbms->affected_rows,
             ];
             $result['messages'] = $result['success'] ? ($post['active'] ? 'User activated.' : 'User deactivated.') : ($post['active'] ? 'Error activating the user.' : 'Error deactivating the user.');
             $result['messages'] = $this->tableAdmin->translate($result['messages']);
@@ -723,7 +723,7 @@ class MyAdminProcess extends MyCommon
             return; // return void
         }
         $row = $this->MyCMS->fetchSingle(
-            'SELECT * FROM ' . TAB_PREFIX . 'admin WHERE admin="' . $this->MyCMS->escapeSQL($_SESSION['user']) . '"'
+            'SELECT * FROM `' . TAB_PREFIX . 'admin` WHERE admin="' . $this->MyCMS->escapeSQL($_SESSION['user']) . '"'
         );
         Assert::string($post['old-password']);
         Assert::isArray($row);
@@ -731,7 +731,7 @@ class MyAdminProcess extends MyCommon
         if ($row && $row['active'] === '1' && $row['password_hashed'] == sha1($post['old-password'] . $row['salt'])) {
             Assert::string($post['new-password']);
             $result = $this->MyCMS->dbms->query(
-                'UPDATE ' . TAB_PREFIX . 'admin SET password_hashed="' . $this->MyCMS->escapeSQL(
+                'UPDATE `' . TAB_PREFIX . 'admin` SET password_hashed="' . $this->MyCMS->escapeSQL(
                     sha1($post['new-password'] . $row['salt'])
                 ) . '" WHERE admin="' . $this->MyCMS->escapeSQL($_SESSION['user']) . '"',
                 1, // log errors
@@ -764,7 +764,7 @@ class MyAdminProcess extends MyCommon
             $salt = mt_rand((int) 1e8, (int) 1e9);
             Tools::resolve(
                 $this->MyCMS->dbms->queryStrictBool(
-                    'INSERT INTO ' . TAB_PREFIX . 'admin SET admin="' . $this->MyCMS->escapeSQL($post['user']) .
+                    'INSERT INTO `' . TAB_PREFIX . 'admin` SET admin="' . $this->MyCMS->escapeSQL($post['user']) .
                     '", password_hashed="' . $this->MyCMS->escapeSQL(sha1($post['password'] . (string) $salt)) .
                     '", salt=' . (string) $salt . ', rights=2',
                     1,
@@ -789,7 +789,7 @@ class MyAdminProcess extends MyCommon
         if (isset($post['delete-user'])) {
             Assert::string($post['delete-user']);
             Tools::resolve(
-                $this->MyCMS->dbms->queryStrictBool('DELETE FROM ' . TAB_PREFIX . 'admin WHERE admin="' . $this->MyCMS->escapeSQL($post['delete-user']) . '" LIMIT 1'),
+                $this->MyCMS->dbms->queryStrictBool('DELETE FROM `' . TAB_PREFIX . 'admin` WHERE admin="' . $this->MyCMS->escapeSQL($post['delete-user']) . '" LIMIT 1'),
                 $this->tableAdmin->translate('User deleted.'),
                 $this->tableAdmin->translate('Error occured deleting the user.')
             );

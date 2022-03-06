@@ -324,7 +324,7 @@ class MyAdmin extends MyCommon
         if (isset($_GET['delete-user'])) {
             $result .= '<h2><small>' . $this->tableAdmin->translate('Delete user') . '</small></h2>
                 <div class="alert alert-warning mt-3" style="display:none;"><i class="fas fa-exclamation-triangle"></i> <span id="activate-user-message"></span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-            if ($users = $this->MyCMS->fetchAll('SELECT id,admin,active FROM ' . TAB_PREFIX . 'admin')) {
+            if ($users = $this->MyCMS->fetchAll('SELECT id,admin,active FROM `' . TAB_PREFIX . 'admin`')) {
                 $result .= '<ul class="list-group list-group-flush">';
                 foreach ($users as $user) {
                     Assert::string($user['admin']);
