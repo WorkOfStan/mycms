@@ -14,7 +14,7 @@ use function WorkOfStan\MyCMS\ThrowableFunctions\preg_match_all;
 
 /**
  * Admin UI
- * (Last MyCMS/dist revision: 2022-03-05, v0.4.6)
+ * (Last MyCMS/dist revision: 2022-03-06, v0.4.6+)
  */
 class Admin extends MyAdmin
 {
@@ -140,7 +140,7 @@ class Admin extends MyAdmin
                             $tmp = $this->MyCMS->fetchAndReindex(
                                 'SELECT id,IF(name_' . $_SESSION['language'] . ' NOT LIKE "",name_'
                                 . $_SESSION['language'] . ', content_' . $_SESSION['language'] . ')'
-                                . ' FROM ' . TAB_PREFIX . $i . ' WHERE category_id=' . (int) $_GET['where']['id']
+                                . ' FROM `' . TAB_PREFIX . $i . '` WHERE category_id=' . (int) $_GET['where']['id']
                             )
                         ) {
                             $output .= '<hr /><details><summary>' .
@@ -167,7 +167,7 @@ class Admin extends MyAdmin
 //                        ' <span class="badge badge-secondary">';
 //                    if ($tmp = $this->MyCMS->fetchAndReindex('SELECT id,name_' . $_SESSION['language'] .
 //                        ' AS name,content_' . $_SESSION['language'] . ' AS content'
-//                        . ' FROM ' . TAB_PREFIX . 'content WHERE product_id=' . (int) $_GET['where']['id'])) {
+//                        . ' FROM `' . TAB_PREFIX . 'content` WHERE product_id=' . (int) $_GET['where']['id'])) {
 //                        $output .= count($tmp) . '</span></summary>';
 //                        foreach ($tmp as $key => $row) {
 //                            $output .= '<a href="?table=' . TAB_PREFIX . 'content&amp;where[id]=' . $key .
@@ -240,7 +240,7 @@ class Admin extends MyAdmin
         if (isset($_GET['products'])) {
             $output .= '<h1>' . $this->tableAdmin->translate('Products') . '</h1><div id="agenda-products">';
             $categories = $this->MyCMS->fetchAll('SELECT id,name_' . $_SESSION['language'] . ' AS category,active
-                FROM ' . TAB_PREFIX . 'category');
+                FROM `' . TAB_PREFIX . 'category`');
                 // TODO reconsider code below from project A
                 //. ' WHERE LENGTH(path)=' . (strlen($this->MyCMS->SETTINGS['PATH_CATEGORY']) + PATH_MODULE) .
                 //' AND LEFT(path,' . PATH_MODULE . ')="' .
@@ -249,14 +249,14 @@ class Admin extends MyAdmin
             $products = $this->MyCMS->fetchAndReindexStrictArray('SELECT category_id,id,name_'
                 . $_SESSION['language'] . ' AS product,'
                 //. 'image,' // TODO add image to the default dist app
-                . 'sort,active FROM ' . TAB_PREFIX . 'product ORDER BY sort');
+                . 'sort,active FROM `' . TAB_PREFIX . 'product` ORDER BY sort');
             $perex = $this->MyCMS->fetchAndReindexStrictArray('SELECT '
                 //. 'product_id,' //TODO was used in A project to link certain content table rows to products.
                 // Reconsider here.
                 . 'id,type,active,TRIM(CONCAT(content_'
                 . $_SESSION['language'] . ', " ", CONCAT(LEFT(content_'
                 . $_SESSION['language'] . ', 50), "…"))) AS content
-                FROM ' . TAB_PREFIX . 'content '
+                FROM `' . TAB_PREFIX . 'content` '
                 . 'WHERE type IN ("perex", "claim", "testimonial") '
                 //. 'AND product_id IS NOT NULL ' // TODO see product_id above
                 . 'ORDER BY FIELD(type, "testimonial", "claim", "perex")');
@@ -337,8 +337,9 @@ class Admin extends MyAdmin
                     . $category['id'] . '&amp;prefill[sort]=' . $i . '" class="ml-4">'
                     . '<i class="far fa-plus-square"></i></a> ' . $this->tableAdmin->translate('New record');
             }
-            $query = $this->MyCMS->dbms->queryStrictObject('SELECT id,name_' . $_SESSION['language'] .
-                ' AS product,sort,active FROM ' . TAB_PREFIX . 'product WHERE category_id IN (0, NULL) ORDER BY sort');
+            $query = $this->MyCMS->dbms->queryStrictObject('SELECT id,name_' . $_SESSION['language']
+                . ' AS product,sort,active FROM `' . TAB_PREFIX
+                . 'product` WHERE category_id IN (0, NULL) ORDER BY sort');
             $output .= $query->num_rows ? '<h4><i>' . $this->tableAdmin->translate('None') . '</i></h4>' . PHP_EOL : '';
             while ($row = $query->fetch_assoc()) {
                 $output .= '<a href="?table=' . TAB_PREFIX . 'product&amp;where[id]=' . $row['id'] .
@@ -357,7 +358,7 @@ class Admin extends MyAdmin
             $categories = $this->MyCMS->fetchAndReindexStrictArray('SELECT id,'
                 //. 'path,' // TODO path was used in A project. Reconsider here.
                 . 'active,name_' .
-                $_SESSION['language'] . ' AS category FROM ' . TAB_PREFIX . 'category');
+                $_SESSION['language'] . ' AS category FROM `' . TAB_PREFIX . 'category`');
                 // TODO path was used in A project. Reconsider here.
                 // . ' WHERE LEFT(path, ' . PATH_MODULE . ')="'
                 // . $this->MyCMS->escapeSQL($this->MyCMS->SETTINGS['PATH_HOME']) . '" ORDER BY path');
@@ -367,7 +368,7 @@ class Admin extends MyAdmin
                 . 'id,active,IF(content_' .
                 $_SESSION['language'] . ' = "", LEFT(CONCAT(code, " ", content_' .
                 $_SESSION['language'] . '), 100),content_' . $_SESSION['language'] . ') AS content
-                FROM ' . TAB_PREFIX . 'content');
+                FROM `' . TAB_PREFIX . 'content`');
                 //. ' WHERE category_id > 0'); // TODO category_id was used in A project to link content rows.
                 //Reconsider here.
             //\Tracy\Debugger::barDump($categories, 'CATEGORIES'); // temp
@@ -418,13 +419,13 @@ class Admin extends MyAdmin
             $articles = $this->MyCMS->fetchAndReindex('SELECT 0, id, IF(content_' . $_SESSION['language']
                 . ' = "", LEFT(CONCAT(code, " ", content_' . $_SESSION['language'] . '), 100),'
                 . ' content_' . $_SESSION['language'] . ') AS content
-                FROM ' . TAB_PREFIX . 'content');
+                FROM `' . TAB_PREFIX . 'content`');
                 //. ' WHERE category_id IS NULL AND product_id IS NULL'); // used in project A - TODO reconsider
             if ($articles) {
                 $output .= '<details><summary><tt>NULL</tt></summary>';
                 if (
                     $tmp = $this->MyCMS->fetchAndReindex(
-                        'SELECT id,name_' . $_SESSION['language'] . ' AS name FROM ' . TAB_PREFIX . 'category'
+                        'SELECT id,name_' . $_SESSION['language'] . ' AS name FROM `' . TAB_PREFIX . 'category`'
                     )
                         //. ' WHERE path IS NULL') // TODO reconsider this from project A
                 ) {
@@ -469,14 +470,14 @@ class Admin extends MyAdmin
             . '* FROM mycmsprojectspecific_content LIMIT 0'); // always return empty set - replace by working code below
 //            . 'id,division_' . $_SESSION['language'] .
 //            ' AS division,' . ($tmp = 'sort+IF(id=' . Tools::set($_SESSION['division-switch'], 0) . ',' .
-//            Tools::set($_SESSION['division-delta'], 0) . ',0)') . ' AS sort,active FROM ' . TAB_PREFIX .
-//            'division ORDER BY ' . $tmp);
+//            Tools::set($_SESSION['division-delta'], 0) . ',0)') . ' AS sort,active FROM `' . TAB_PREFIX .
+//            'division` ORDER BY ' . $tmp);
         $parents = $this->MyCMS->fetchAll('SELECT '
 //                . 'division_id,'
             . 'id,name_' . $_SESSION['language'] .
             ' AS product,' . ($tmp = 'sort+IF(id=' . Tools::set($_SESSION['product-switch'], 0) . ','
-            . Tools::set($_SESSION['product-delta'], 0) . ',0)') . ' AS sort,active FROM ' . TAB_PREFIX
-            . 'product'
+            . Tools::set($_SESSION['product-delta'], 0) . ',0)') . ' AS sort,active FROM `' . TAB_PREFIX
+            . 'product`'
             //. ' WHERE parent_product_id = 0'
             . ' ORDER BY '
             //. 'division_id,'
@@ -581,8 +582,8 @@ class Admin extends MyAdmin
             . '<button name="export-offline" type="submit" class="btn btn-sm invisible">Export off-line</button>'
             . '</form>';
         foreach ($correctOrder as $value) {
-            $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . (count($value) == 3 ? 'division' : 'product')
-                . ' SET sort = ' . $value[1] . ' WHERE id = ' . $value[0]);
+            $this->MyCMS->dbms->query('UPDATE `' . TAB_PREFIX . (count($value) == 3 ? 'division' : 'product')
+                . '` SET sort = ' . $value[1] . ' WHERE id = ' . $value[0]);
         }
         unset(
             $_SESSION['division-switch'],
@@ -704,7 +705,7 @@ class Admin extends MyAdmin
         // Todo queryStrictArray
         $query = $this->MyCMS->dbms->queryStrictNonEmptyArray(
             'SELECT id,"content" AS _table,type,' . Tools::arrayListed($langs, 0, ',', 'url_') . ',' .
-            Tools::arrayListed($langs, 0, ',', 'name_') . ' FROM ' . TAB_PREFIX . 'content WHERE type IN ('
+            Tools::arrayListed($langs, 0, ',', 'name_') . ' FROM `' . TAB_PREFIX . 'content` WHERE type IN ('
             . '"article", "page", "news"' // list of types to be listed for Friendly URL settings
             . ') ORDER BY type'
         );
@@ -775,7 +776,7 @@ class Admin extends MyAdmin
         ) {
             foreach (array_keys($this->tableAdmin->TRANSLATIONS) as $i) {
                 $query = $this->MyCMS->fetchAll("SELECT COUNT(url_$i) AS _count, url_$i AS url"
-                    . " FROM " . TAB_PREFIX . "$table GROUP BY url ORDER BY _count DESC");
+                    . ' FROM `' . TAB_PREFIX . "{$table}` GROUP BY url ORDER BY _count DESC");
                 foreach ($query as $row) {
                     // Tools::add($urls[$row['url']], $row['_count']); // next line is more static analysis friendly:
                     $urls[$row['url']] = (isset($urls[$row['url']]) ? $urls[$row['url']] : 0) + $row['_count'];
@@ -791,7 +792,7 @@ class Admin extends MyAdmin
             $sql = [];
             foreach (['category', 'content', 'product'] as $table) {
                 $sql [] = "SELECT '$table' AS type,id,name" . '_' . $_SESSION['language']
-                    . " AS name FROM " . TAB_PREFIX . "$table WHERE " .
+                    . ' AS name FROM `' . TAB_PREFIX . "{$table}` WHERE " .
                     Tools::arrayListed(
                         array_keys($this->tableAdmin->TRANSLATIONS),
                         0,

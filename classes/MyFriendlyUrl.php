@@ -214,7 +214,7 @@ class MyFriendlyUrl extends MyCommon
             REDIRECTOR_ENABLED && $this->verboseBarDump(
                 (
                     $found = $this->MyCMS->fetchSingle(
-                        'SELECT `new_url` FROM ' . TAB_PREFIX . 'redirector WHERE `old_url`="' . $interestingPath
+                        'SELECT `new_url` FROM `' . TAB_PREFIX . 'redirector` WHERE `old_url`="' . $interestingPath
                         . '" AND `active` = "1"'
                     )
                 ),
@@ -427,7 +427,7 @@ class MyFriendlyUrl extends MyCommon
      */
     private function prepareTableSelect($token, $type, $table)
     {
-        return 'SELECT id,"' . $type . '" AS type FROM ' . TAB_PREFIX . $table . ' WHERE active=1 AND '
+        return 'SELECT id,"' . $type . '" AS type FROM `' . TAB_PREFIX . $table . '` WHERE active=1 AND '
             // usually type is stored in a dedicated table of the same name,
             // otherwise a column type within the table is expected
             . ($type === $table ? '' : 'type like "' . $type . '" AND ')

@@ -11,7 +11,7 @@ use WorkOfStan\MyCMS\ProjectCommon;
 
 /**
  * Functions specific to the project (that are not in its own model)
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
+ * (Last MyCMS/dist revision: 2022-03-06, v0.4.6+)
  */
 class ProjectSpecific extends ProjectCommon
 {
@@ -41,21 +41,21 @@ class ProjectSpecific extends ProjectCommon
         $query = $this->MyCMS->dbms->queryStrictObject('SELECT '
             . 'CONCAT("?article&id=", id) AS link' // for FriendlyUrl refactor with $this->getLinkSql
             . ',content_' . $this->language . ' AS title,LEFT(description_' . $this->language . ',1000) AS description
-            FROM ' . TAB_PREFIX . 'content WHERE active="1" AND type IN ("page", "news") AND (content_'
+            FROM `' . TAB_PREFIX . 'content` WHERE active="1" AND type IN ("page", "news") AND (content_'
             . $this->language . ' LIKE "%' . $q . '%" OR description_' . $this->language . ' LIKE "%' . $q . '%")
             UNION
             SELECT '
             . 'CONCAT("?category&id=", id) AS link' // for FriendlyUrl refactor with $this->getLinkSql
             . ',category_' . $this->language . ' AS title,LEFT(description_'
             . $this->language . ',1000) AS description
-            FROM ' . TAB_PREFIX . 'category WHERE active="1" AND (category_' . $this->language
+            FROM `' . TAB_PREFIX . 'category` WHERE active="1" AND (category_' . $this->language
             . ' LIKE "%' . $q . '%" OR description_' . $this->language . ' LIKE "%' . $q . '%")
             UNION
             SELECT '
             . 'CONCAT("?product=", id) AS link' // for FriendlyUrl refactor with $this->getLinkSql
             . ',product_' . $this->language
             . ' AS title,LEFT(description_' . $this->language . ',200) AS description
-            FROM ' . TAB_PREFIX . 'product WHERE product_' . $this->language
+            FROM `' . TAB_PREFIX . 'product` WHERE product_' . $this->language
             // TODO Expected at least 1 space after "+"; 0 found ask CRS2
             . ' LIKE "%' . $q . '%" OR description_' . $this->language . ' LIKE "%' . $q . '%"
             LIMIT ' . (int) $limit . ' OFFSET ' . (int) $offset);
@@ -141,7 +141,7 @@ class ProjectSpecific extends ProjectCommon
             . ' co.content_' . $options['language'] . ' AS title,'
             . ' co.perex_' . $options['language'] . ' AS perex,'
             . ' co.description_' . $options['language'] . ' AS description '
-            . ' FROM ' . TAB_PREFIX . 'content co LEFT JOIN ' . TAB_PREFIX . 'category ca ON co.category_id=ca.id '
+            . ' FROM `' . TAB_PREFIX . 'content` co LEFT JOIN `' . TAB_PREFIX . 'category` ca ON co.category_id=ca.id '
             . ' WHERE co.active="1"'
             . (is_null($code) ? '' : Tools::wrap($this->MyCMS->escapeSQL($code), ' AND co.code="', '"'))
             . (is_null($id) ? '' : Tools::wrap(intval($id), ' AND co.id=')) .
@@ -195,7 +195,7 @@ class ProjectSpecific extends ProjectCommon
             . ' added,'
             . ' name_' . $options['language'] . ' AS title,'
             . ' content_' . $options['language'] . ' AS description'
-            . ' FROM ' . TAB_PREFIX . 'category WHERE active="1"'
+            . ' FROM `' . TAB_PREFIX . 'category` WHERE active="1"'
             . (is_null($code) ? '' : Tools::wrap($this->MyCMS->escapeSQL($code), ' AND code="', '"'))
             . (is_null($id) ? '' : Tools::wrap(intval($id), ' AND id=')) . ' LIMIT 1'
         );
@@ -228,7 +228,7 @@ class ProjectSpecific extends ProjectCommon
             // friendly URL, ovšem relativní, tedy bez jazyka.
             // Je to příprava pro forced 301 SEO a pro hreflang funkcionalitu.
             . ',' . $this->getLinkSql('?product&id=', $this->language)
-            . ' FROM ' . TAB_PREFIX . 'product WHERE active="1" AND'
+            . ' FROM `' . TAB_PREFIX . 'product` WHERE active="1" AND'
             . ' name_' . $this->language . ' NOT LIKE "" AND' // hide product language variants with empty title
             . ' id=' . intval($id) . ' LIMIT 1'
         );
@@ -259,7 +259,7 @@ class ProjectSpecific extends ProjectCommon
         }
         $result = $this->MyCMS->fetchAndReindex('SELECT '
                 . $this->getLinkSql("?category&id=", $this->language)
-                . ' ,category_' . $this->language . ' AS category FROM ' . TAB_PREFIX . 'category'
+                . ' ,category_' . $this->language . ' AS category FROM `' . TAB_PREFIX . 'category`'
                 . ' WHERE active="1" AND path IN (' . substr($sql, 1) . ')');
         // fix of PHPStan: should return array<array<string>|string>|false
         // but returns array<array<array<string|null>|string|null>|string>
@@ -301,7 +301,7 @@ class ProjectSpecific extends ProjectCommon
     {
         Tools::setifnotset($options['level'], 0);
         if ($options['level'] && Tools::nonzero($options['path'])) {
-            $tempKeys = $this->MyCMS->fetchAndReindex('SELECT id FROM ' . TAB_PREFIX . 'category
+            $tempKeys = $this->MyCMS->fetchAndReindex('SELECT id FROM `' . TAB_PREFIX . 'category`
                 WHERE LEFT(path, ' . strlen($options['path']) . ')="' . $this->MyCMS->escapeSQL($options['path']) . '"
                 AND LENGTH(path) > ' . strlen($options['path']) . '
                 AND LENGTH(path) <= ' . (strlen($options['path']) + (int) $options['level'] * PATH_MODULE));
@@ -318,7 +318,7 @@ class ProjectSpecific extends ProjectCommon
                 . $this->getLinkSql("?article&id=", $this->language) . ' ,
             content_' . $this->language . ' AS title,
             perex_' . $this->language . ' AS description
-            FROM ' . TAB_PREFIX . 'content co LEFT JOIN ' . TAB_PREFIX . 'category ca ON co.category_id=ca.id
+            FROM `' . TAB_PREFIX . 'content` co LEFT JOIN `' . TAB_PREFIX . 'category` ca ON co.category_id=ca.id
             WHERE co.active="1" AND category_id IN(' . Tools::arrayListed($category_id, 8) . ')'
                 . Tools::wrap(Tools::setifnull($options['except_id']), ' AND co.id<>'));
     }
@@ -333,7 +333,7 @@ class ProjectSpecific extends ProjectCommon
     public function getSitemap(array $options = [])
     {
         $pages = $this->MyCMS->fetchAndReindex('SELECT path,id,category_' . $options['language']
-            . ' AS category,path FROM ' . TAB_PREFIX . 'category WHERE LEFT(path, ' . PATH_MODULE . ')="'
+            . ' AS category,path FROM `' . TAB_PREFIX . 'category` WHERE LEFT(path, ' . PATH_MODULE . ')="'
             . $this->MyCMS->escapeSQL($options['PATH_HOME']) . '" ORDER BY path');
         if ($pages === false) {
             throw new Exception('Sitemap retrieval failed.');

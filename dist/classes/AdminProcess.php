@@ -18,7 +18,7 @@ define('PROCESS_LIMIT', 100); // used in self::getAgenda
 
 /**
  * AJAX and form handling for Admin UI
- * (Last MyCMS/dist revision: 2022-03-05, v0.4.6)
+ * (Last MyCMS/dist revision: 2022-03-06, v0.4.6+)
  */
 class AdminProcess extends MyAdminProcess
 {
@@ -142,7 +142,7 @@ class AdminProcess extends MyAdminProcess
         // move category up/down
         if (
             isset($post['category-switch'], $post['id']) && ($path = $this->MyCMS->fetchSingle(
-                'SELECT path FROM ' . TAB_PREFIX . 'category WHERE id=' . $post['id']
+                'SELECT path FROM `' . TAB_PREFIX . 'category` WHERE id=' . $post['id']
             ))
         ) {
             Assert::string($path);
@@ -157,18 +157,18 @@ class AdminProcess extends MyAdminProcess
                 );
             Debugger::barDump($neighbour, 'neighbour'); // debug
             $edits = $this->MyCMS->fetchAndReindex(
-                'SELECT id,path FROM ' . TAB_PREFIX . 'category WHERE LEFT(path, ' . strlen($path) . ') IN ("'
+                'SELECT id,path FROM `' . TAB_PREFIX . 'category` WHERE LEFT(path, ' . strlen($path) . ') IN ("'
                 . $this->MyCMS->escapeSQL($neighbour) . '")'
             );
             if (is_array($edits) && $edits) {
                 $editsPath = $this->MyCMS->fetchAndReindex(
-                    'SELECT id,path FROM ' . TAB_PREFIX . 'category WHERE LEFT(path, ' . strlen($path) . ') IN ("'
+                    'SELECT id,path `FROM ' . TAB_PREFIX . 'category` WHERE LEFT(path, ' . strlen($path) . ') IN ("'
                     . $this->MyCMS->escapeSQL($path) . '")'
                 );
                 Assert::isArray($editsPath);
                 $edits += (array) $editsPath;
-                $this->MyCMS->dbms->query('LOCK TABLES ' . TAB_PREFIX . 'category WRITE');
-                $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'category SET path=NULL WHERE id IN ('
+                $this->MyCMS->dbms->query('LOCK TABLES `' . TAB_PREFIX . 'category` WRITE');
+                $this->MyCMS->dbms->query('UPDATE `' . TAB_PREFIX . 'category` SET path=NULL WHERE id IN ('
                     . Tools::arrayListed(array_keys($edits), 8) . ')');
                 $i = 0;
                 foreach ($edits as $key => $value) {
@@ -179,7 +179,7 @@ class AdminProcess extends MyAdminProcess
                             $path
                         ) ? 1 : -1) * $post['category-switch']), PATH_MODULE, '0', STR_PAD_LEFT)
                         . substr($value, $strlen);
-                    $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'category SET path="'
+                    $this->MyCMS->dbms->query('UPDATE `' . TAB_PREFIX . 'category` SET path="'
                         . $this->MyCMS->escapeSQL($tmp) . '" WHERE id="' . $this->MyCMS->escapeSQL($key) . '"');
                     $i++;
                 }
@@ -196,17 +196,17 @@ class AdminProcess extends MyAdminProcess
             // Note: F code uses also $post['product-delta']
             isset($post['product-switch'], $post['id']) &&
             ($product = $this->MyCMS->dbms->queryStrictObject(
-                'SELECT category_id,sort FROM ' . TAB_PREFIX . 'product WHERE id=' . (int) $post['id']
+                'SELECT category_id,sort FROM `' . TAB_PREFIX . 'product` WHERE id=' . (int) $post['id']
             )->fetch_assoc())
         ) {
-            $id = $this->MyCMS->fetchSingle('SELECT id FROM ' . TAB_PREFIX . 'product WHERE category_id='
+            $id = $this->MyCMS->fetchSingle('SELECT id FROM `' . TAB_PREFIX . 'product` WHERE category_id='
                 . (int) $product['category_id'] . ' AND sort' . ($post['product-switch'] == 1 ? '>' : '<')
                 . $product['sort'] . ' ORDER BY sort' . ($post['product-switch'] == 1 ? '' : ' DESC') . ' LIMIT 1');
             if ($id) {
                 Assert::string($id);
-                $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'product SET sort='
+                $this->MyCMS->dbms->query('UPDATE `' . TAB_PREFIX . 'product` SET sort='
                     . $product['sort'] . ' WHERE id=' . $id);
-                $this->MyCMS->dbms->query('UPDATE ' . TAB_PREFIX . 'product SET sort='
+                $this->MyCMS->dbms->query('UPDATE `' . TAB_PREFIX . 'product` SET sort='
                     . ($product['sort'] + $post['product-switch']) . ' WHERE id=' . (int) $post['id']);
                 Tools::addMessage('info', $this->tableAdmin->translate('Order change processed.'));
                 die(json_encode(['success' => 1, 'errors' => '']));

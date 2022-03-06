@@ -11,7 +11,7 @@ use WorkOfStan\mycmsprojectnamespace\ProjectSpecific;
 
 /**
  * Friendly URL set-up
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
+ * (Last MyCMS/dist revision: 2022-03-06, v0.4.6+)
  */
 class FriendlyUrl extends MyFriendlyUrl
 {
@@ -92,7 +92,7 @@ class FriendlyUrl extends MyFriendlyUrl
                 $content = $this->MyCMS->dbms->fetchStringArray(
                     'SELECT id, name_' . $this->language . ' AS name,'
                     . $this->projectSpecific->getLinkSql("?article&id=", $this->language)
-                    . ' FROM ' . TAB_PREFIX . 'content WHERE active = 1 AND '
+                    . ' FROM `' . TAB_PREFIX . 'content` WHERE active = 1 AND '
                     . (is_numeric($outputValue) ? ' id = "' . $this->MyCMS->dbms->escapeSQL(
                         $outputValue
                     ) . '"' : ' code LIKE "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"')
@@ -105,7 +105,7 @@ class FriendlyUrl extends MyFriendlyUrl
                 }
                 $content = $this->MyCMS->dbms->fetchStringArray('SELECT id, name_' . $this->language . ' AS title,'
                     . $this->projectSpecific->getLinkSql("?category=", $this->language)
-                    . ' FROM ' . TAB_PREFIX . 'category WHERE active = 1 '
+                    . ' FROM `' . TAB_PREFIX . 'category` WHERE active = 1 '
                     . ' AND id = "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"');
                 Debugger::barDump($content, 'category');
                 return is_null($content) ? self::PAGE_NOT_FOUND : (string) $content['link'];

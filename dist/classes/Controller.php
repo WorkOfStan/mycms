@@ -14,7 +14,7 @@ use WorkOfStan\mycmsprojectnamespace\ProjectSpecific;
 
 /**
  * Controller (of MVC)
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
+ * (Last MyCMS/dist revision: 2022-03-06, v0.4.6+)
  */
 class Controller extends MyController
 {
@@ -134,7 +134,7 @@ class Controller extends MyController
                     // který obsahuje potenciálně friendly URL, ovšem relativní, tedy bez jazyka.
                     // Je to příprava pro forced 301 SEO a pro hreflang funkcionalitu.
                     . ',' . $this->projectSpecific->getLinkSql('?article&id=', $this->language)
-                    . ' FROM ' . TAB_PREFIX . 'content WHERE active="1" AND'
+                    . ' FROM `' . TAB_PREFIX . 'content` WHERE active="1" AND'
                     . ' type LIKE "article" AND'
                     . $articleIdentifier
                     . ' LIMIT 1'

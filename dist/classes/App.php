@@ -15,7 +15,7 @@ use WorkOfStan\mycmsprojectnamespace\Utils;
 
 /**
  * App class handles the request dispatching in index.php
- * (Last MyCMS/dist revision: 2022-02-15, v0.4.6)
+ * (Last MyCMS/dist revision: 2022-03-06, v0.4.6+)
  */
 class App extends MyCommon
 {
@@ -104,7 +104,7 @@ class App extends MyCommon
                 $this->post['newsletter']
             ) {
                 if (
-                    $this->MyCMS->dbms->query('INSERT INTO ' . TAB_PREFIX . 'subscriber SET email="'
+                    $this->MyCMS->dbms->query('INSERT INTO `' . TAB_PREFIX . 'subscriber` SET email="'
                         . $this->MyCMS->escapeSQL($this->post['newsletter'])
                         . '", info="' . $this->server['REMOTE_ADDR'] . '"')
                 ) {
