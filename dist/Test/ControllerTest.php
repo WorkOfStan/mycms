@@ -65,7 +65,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         $this->myCms = new MyCMSProject($mycmsOptions);
 
         // set language in $_SESSION and $this->get as one of the TRANSLATIONS array above
-        // this is equivalent to go the other language homepage from the DEFAULT_LANGUAGE homepage
+        // this settings is equivalent to going to another language homepage from the DEFAULT_LANGUAGE homepage
         $this->get = ['language' => 'en'];
         $_SESSION = ['language' => 'en']; // because $_SESSION is not defined in the PHPUnit mode
         $this->language = $_SESSION['language'] = $this->myCms->getSessionLanguage($this->get, $_SESSION, false);
