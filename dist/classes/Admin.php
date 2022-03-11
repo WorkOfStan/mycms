@@ -145,16 +145,18 @@ class Admin extends MyAdmin
                         ) {
                             $output .= '<hr /><details><summary>' .
                                 // uncomment 'content' cond. if some content table rows would be linked to a category
-                                $this->tableAdmin->translate(//$i == 'content' ? 'Content linked to this category' :
-                                    'Products linked to this category') .
-                                ' <span class="badge badge-secondary">' . count($tmp) . '</span></summary>';
+                                $this->tableAdmin->translate(
+                                    //$i == 'content' ? 'Content linked to this category' :
+                                    'Products linked to this category'
+                                )
+                                . ' <span class="badge badge-secondary">' . count($tmp) . '</span></summary>';
                             foreach ($tmp as $key => $value) {
                                 Assert::nullOrString($value);
                                 $output .= '<a href="?table=' . TAB_PREFIX . $i . '&amp;where[id]=' . $key
                                     . '" target="_blank" title="'
                                     . $this->tableAdmin->translate('Link will open in a new window') . '">'
-                                    . '<i class="fas fa-external-link-alt"></i></a> ' .
-                                    substr(Tools::h(strip_tags($value)), 0, 100) . '<br />' . PHP_EOL;
+                                    . '<i class="fas fa-external-link-alt"></i></a> '
+                                    . substr(Tools::h(strip_tags($value)), 0, 100) . '<br />' . PHP_EOL;
                             }
                             $output .= '</details>';
                         }
@@ -171,23 +173,23 @@ class Admin extends MyAdmin
 //                        . ' FROM `' . TAB_PREFIX . 'content` WHERE product_id=' . (int) $_GET['where']['id'])) {
 //                        $output .= count($tmp) . '</span></summary>';
 //                        foreach ($tmp as $key => $row) {
-//                            $output .= '<a href="?table=' . TAB_PREFIX . 'content&amp;where[id]=' . $key .
-//                                '" target="_blank" title="' .
-//                                $this->tableAdmin->translate('Link will open in a new window') . '">'
-//                                . '<i class="fas fa-external-link-alt"></i> ' .
-//                                Tools::h(mb_substr(strip_tags($row['content']), 0, 100)) . ' ' .
-//                                Tools::h(mb_substr(strip_tags($row['description']), 0, 100)) .
-//                                '…</a><br />' . PHP_EOL;
+//                            $output .= '<a href="?table=' . TAB_PREFIX . 'content&amp;where[id]=' . $key
+//                                . '" target="_blank" title="'
+//                                . $this->tableAdmin->translate('Link will open in a new window') . '">'
+//                                . '<i class="fas fa-external-link-alt"></i> '
+//                                . Tools::h(mb_substr(strip_tags($row['content']), 0, 100)) . ' '
+//                                . Tools::h(mb_substr(strip_tags($row['description']), 0, 100))
+//                                . '…</a><br />' . PHP_EOL;
 //                        }
 //                    } else {
 //                        $output .= '0</span></summary>';
 //                    }
 //                    $output .= '<footer>';
 //                    foreach (['testimonial', 'claim', 'perex'] as $i) {
-//                        $output .= '<a href="?table=' . TAB_PREFIX . 'content&amp;where[]=&amp;prefill[type]=' . $i .
-//                            '&amp;prefill[product_id]=' . Tools::ifnull($_GET['where']['id'], '') . '" '
-//                            . 'title="' . $this->tableAdmin->translate('New row') .
-//                            ' (' . $this->tableAdmin->translate('Link will open in a new window') . ')" '
+//                        $output .= '<a href="?table=' . TAB_PREFIX . 'content&amp;where[]=&amp;prefill[type]=' . $i
+//                            . '&amp;prefill[product_id]=' . Tools::ifnull($_GET['where']['id'], '') . '" '
+//                            . 'title="' . $this->tableAdmin->translate('New row')
+//                            . ' (' . $this->tableAdmin->translate('Link will open in a new window') . ')" '
 //                            . 'target="_blank"><i class="far fa-plus-square"></i>'
 //                            . ' <i class="fas fa-external-link-alt"></i> ' . $i . '</a>';
 //                    }
