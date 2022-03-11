@@ -235,7 +235,7 @@ class Controller extends MyController
                     // Update & try to send
                     $tempItemB = $this->MyCMS->dbms->query(
                         "UPDATE `" . TAB_PREFIX . "content` SET `added` = CURRENT_TIMESTAMP"
-                        . " WHERE `mycmsprojectspecific_content`.`code` = 'last_email_sent';"
+                        . " WHERE `mycmsprojectspecific_content`.`code` = 'last_email_sent';" // TODO TAB_PREFIX???
                     );
                     Assert::notFalse($tempItemB, 'Update query failed');
                     // Note: sending emails may be turned off in config.php - Debugger::barDump('MAIL SENDING INACTIVE')

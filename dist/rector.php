@@ -47,10 +47,10 @@ return static function (ContainerConfigurator $containerConfigurator): void {
     //
     // RENAME TO THE APP NAMESPACE
     $services->set(RenameNamespaceRector::class)
-        ->call('configure', [[
-            RenameNamespaceRector::OLD_TO_NEW_NAMESPACES => [
-                'WorkOfStan\mycmsprojectnamespace' => 'WorkOfStan\YourRepoName',
-            ],]]);
+        ->configure([
+            'WorkOfStan\mycmsprojectnamespace' => 'WorkOfStan\YourRepoName',
+        ]);
     //TODO: fix unnecessary long object names, such as `new \WorkOfStan\YourRepoName\ProjectSpecific`
     //when `use WorkOfStan\YourRepoName\ProjectSpecific;` was used
+    //TODO consider using just string replace instead of the rector engine
 };

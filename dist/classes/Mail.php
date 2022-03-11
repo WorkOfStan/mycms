@@ -20,16 +20,10 @@ class Mail extends MyCommon
 {
     use \Nette\SmartObject;
 
-    /**
-     *
-     * @var LoggerInterface
-     */
+    /** @var LoggerInterface */
     private $logger;
 
-    /**
-     *
-     * @var Swift_Mailer
-     */
+    /** @var Swift_Mailer */
     private $mailer = null;
 
     /** @var bool */

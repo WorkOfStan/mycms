@@ -43,7 +43,7 @@ final class ContentExample extends AbstractMigration
 
         $productSample = [
             [
-                'id' => 1, // TODO ověřit, zda lze vynutit id
+                'id' => 1, // yes, it is possible to set the selected id
                 'category_id' => 1,
                 'name_cs' => 'Produkt 1',
                 'content_cs' => null,
@@ -60,7 +60,7 @@ final class ContentExample extends AbstractMigration
                 'context' => '[]',
             ],
             [
-                'id' => 2, // TODO ověřit, zda lze vynutit id
+                'id' => 2, // yes, it is possible to set the selected id
                 'category_id' => 1,
                 'name_cs' => 'Produkt 2',
                 'content_cs' => null,
@@ -77,7 +77,7 @@ final class ContentExample extends AbstractMigration
                 'context' => '[]',
             ],
             [
-                'id' => 3, // TODO ověřit, zda lze vynutit id
+                'id' => 3, // yes, it is possible to set the selected id
                 'category_id' => 1,
 //                'name_cs' => 'Produkt 3',
 //                'content_cs' => null,
@@ -94,7 +94,7 @@ final class ContentExample extends AbstractMigration
                 'context' => '[]',
             ],
             [
-                'id' => 4, // TODO ověřit, zda lze vynutit id
+                'id' => 4, // yes, it is possible to set the selected id
                 'category_id' => 1,
 //                'name_cs' => 'Produkt 4',
 //                'content_cs' => null,
@@ -111,7 +111,7 @@ final class ContentExample extends AbstractMigration
                 'context' => '[]',
             ],
             [
-                'id' => 5, // TODO ověřit, zda lze vynutit id
+                'id' => 5, // yes, it is possible to set the selected id
                 'category_id' => 1,
                 'name_cs' => 'Produkt 5',
                 'content_cs' => null,

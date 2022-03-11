@@ -43,7 +43,7 @@ script/autotrack.V.V.V.js and script/autotrack.V.V.V.js.map are manually taken f
 
 ## MyCMS dist deployment
 * Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder.
-* Replace the string `mycmsprojectnamespace` with your project namespace in composer.json and BY RUNNING `vendor/bin/rector process --dry-run` (of course before you have to `composer require rector/rector --dev` and after remove `--dry-run`).
+* Replace the string `mycmsprojectnamespace` with your project namespace in composer.json and in rector.php BEFORE RUNNING `vendor/bin/rector process --dry-run` (of course before you have to `composer require rector/rector --dev` and after remove `--dry-run`).
 * Replace the string `MYCMSPROJECTSPECIFIC` with other site specific information (Brand, Twitter address, phone number, database name, name of icon in manifest.json etc.).
 * Default *admin.php* credentials are *john* / *Ew7Ri561*   - MUST be deleted after the real admin account is set up.
 * Change `define('MYCMS_SECRET', 'u7-r!!T7.&&7y6ru');` //16-byte random string, unique per project in `conf/config.php`

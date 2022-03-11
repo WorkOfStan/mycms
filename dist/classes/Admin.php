@@ -144,7 +144,8 @@ class Admin extends MyAdmin
                             )
                         ) {
                             $output .= '<hr /><details><summary>' .
-                                $this->tableAdmin->translate($i == 'content' ? 'Content linked to this category' :
+                                // uncomment 'content' cond. if some content table rows would be linked to a category
+                                $this->tableAdmin->translate(//$i == 'content' ? 'Content linked to this category' :
                                     'Products linked to this category') .
                                 ' <span class="badge badge-secondary">' . count($tmp) . '</span></summary>';
                             foreach ($tmp as $key => $value) {
@@ -467,6 +468,7 @@ class Admin extends MyAdmin
         $output = '<h1>' . $this->tableAdmin->translate('Divisions and products') . '</h1><div id="agenda-products">';
         // TODO consider implementing from project F
         $divisions = $this->MyCMS->fetchAndReindexStrictArray('SELECT '
+            // TODO TAB_PREFIX below instead of mycmsprojectspecific_
             . '* FROM mycmsprojectspecific_content LIMIT 0'); // always return empty set - replace by working code below
 //            . 'id,division_' . $_SESSION['language'] .
 //            ' AS division,' . ($tmp = 'sort+IF(id=' . Tools::set($_SESSION['division-switch'], 0) . ',' .

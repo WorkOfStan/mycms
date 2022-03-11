@@ -55,8 +55,8 @@ define('RECAPTCHA_SECRET', '...');
 //(Never turn USE_CAPTCHA off however for environment available over internet.)
 //feature flags (use keys without spaces to avoid problems in javascript)
 $featureFlags = [
-//    'offline_dev' => true,
 //    'console_log_list_values' => true,
+//    'offline_dev' => true,
 //    'order_hierarchy' => true, // as used in A and F projects - just for testing before ready for Dist
     'newsletter_input_box' => true,
 ];
