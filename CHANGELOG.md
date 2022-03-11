@@ -6,10 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### `Added` for new features
+- admin-de.yml language file for German variant of Admin UI
+- LogMysqli: add several `$this->showSqlBarPanel();` statements in order to display SQL statements in case of Exception
 
 ### `Changed` for changes in existing functionality
 
 ### `Deprecated` for soon-to-be removed features
+- dist/rector.php (TODO consider using just string replace instead of the rector engine)
 
 ### `Removed` for now removed features
 

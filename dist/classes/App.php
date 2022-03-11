@@ -21,10 +21,7 @@ class App extends MyCommon
 {
     use \Nette\SmartObject;
 
-    /**
-     *
-     * @var Backyard
-     */
+    /** @var Backyard */
     protected $backyard;
 
     /** @var bool */
