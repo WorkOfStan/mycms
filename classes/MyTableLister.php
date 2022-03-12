@@ -4,6 +4,7 @@ namespace WorkOfStan\MyCMS;
 
 use Exception;
 use GodsDev\Tools\Tools;
+use Tracy\Debugger;
 use Webmozart\Assert\Assert;
 use WorkOfStan\MyCMS\L10n;
 
@@ -108,6 +109,7 @@ class MyTableLister
         Assert::string($options['language']);
         $this->localisation->loadLocalisation($options['language']);
         $this->get = $_GET; // TODO inject GET in _construct arguments
+        DEBUG_VERBOSE && Debugger::barDump($this->get, '$_GET');
     }
 
     /**
@@ -217,7 +219,7 @@ class MyTableLister
     }
 
     /**
-     * Compose a SELECT SQL statement with given columns and _GET variables
+     * Compose a SELECT SQL statement with given columns and _GET variables to display within Admin UI
      *
      * @param array<string> $columns
      * @param array<mixed> $vars &$vars variables used to filter records
@@ -327,16 +329,25 @@ class MyTableLister
         foreach ($tempArr as $key => $value) {
             Assert::string($value); // number represented as string
             if (isset(array_keys($columns)[(int) $value - 1])) {
-                Assert::isArray($vars['desc']);
-                $result['order by'] .= ',' . array_values($columns)[(int) $value - 1]
+                if (!array_key_exists('desc', $vars) || !is_array($vars['desc'])) {
+                    $vars['desc'] = [];
+                }
+                // fix foreign-link columns for sorting
+                $columnIdentifier = array_values($columns)[(int) $value - 1];
+                if(strpos($columnIdentifier, ' AS ') !== false) {
+                    $tempColumnIdentifier = explode(' AS ', $columnIdentifier);
+                    $columnIdentifier = $tempColumnIdentifier[1];
+                }
+                $result['order by'] .= ', ' . $columnIdentifier
                     . (isset($vars['desc'][$key]) && $vars['desc'][$key] ? ' DESC' : '');
             }
         }
-        $result['select'] = 'SELECT SQL_CALC_FOUND_ROWS ' . implode(',', $columns) . ' FROM '
-            . $this->escapeDbIdentifier($this->table) . $result['join']
-            . Tools::wrap(substr($result['where'], 4), ' WHERE ')
-            . Tools::wrap(substr($result['order by'], 1), ' ORDER BY ');
-        $result['sql'] = $result['select'] . ' LIMIT ' . $result['offset'] . ', ' . $result['limit'];
+        $result['select'] = 'SELECT SQL_CALC_FOUND_ROWS ' . implode(',', $columns) . PHP_EOL . 'FROM '
+            . $this->escapeDbIdentifier($this->table) . $result['join'] . PHP_EOL
+            . Tools::wrap(substr($result['where'], 4), PHP_EOL . 'WHERE ')
+            . Tools::wrap(substr($result['order by'], 1), PHP_EOL . 'ORDER BY ');
+        $result['sql'] = $result['select'] . PHP_EOL . 'LIMIT ' . $result['offset'] . ', ' . $result['limit'];
+        DEBUG_VERBOSE && Debugger::barDump($result['sql'], 'selectSQL result[sql]');
         return $result;
     }
 
@@ -472,7 +483,7 @@ class MyTableLister
         }
         $sql = $this->selectSQL($columns, $this->get);
         Assert::string($sql['sql']);
-        $query = $this->dbms->query($sql['sql']);
+        $query = $this->dbms->queryStrictObject($sql['sql']);
         $options['total-rows'] = $this->dbms->fetchSingle('SELECT FOUND_ROWS()');
         $output = Tools::htmlInput('total-rows', '', $options['total-rows'], 'hidden');
         if (!$options['read-only']) {
@@ -623,7 +634,10 @@ class MyTableLister
      */
     protected function viewTable($query, array $columns, array $options)
     {
-        Tools::setifnull($this->get['sort']);
+        if (!array_key_exists('sort', $this->get)) {
+            $this->get['sort'] = null;
+        }
+        Assert::isArray($this->get['sort']); // TODO is the previous condition really needed?
         $output = '<form action="" method="post" enctype="multipart/form-data" data-rand="' . $this->rand . '">'
             . PHP_EOL
             . '<table class="table table-bordered table-striped table-admin" data-order="0" id="table-admin'
@@ -637,15 +651,15 @@ class MyTableLister
             ) . '</th>');
         $i = 1;
         foreach ($columns as $key => $value) {
-            Assert::isArray($this->get['sort']);
+            // sort?-1:1 toggles the sorting by this column // TODO toggle ASC/DESC/OFF
             $output .= '<th scope="col" '
                 . (count($this->get['sort']) == 1 && $this->get['sort'][0] == $i ? ' class="active"' : '') . '>'
                 . '<div class="column-menu"><a href="?' . Tools::urlChange(['desc' => null, 'sort' => null])
-                . '&amp;sort[0]=' . ($i * ($this->get['sort'][0] == $i ? -1 : 1)) . '" title="'
+                . '&amp;sort[0]=' . ($i * (in_array($i, $this->get['sort']) ? -1 : 1)) . '" title="'
                 . $this->translateColumn($key) . '">' . Tools::h($key) . '</a>'
                 . '<span class="op">'
                 . '<a href="?' . Tools::urlChange(['sort%5B0%5D' => null]) . '&amp;sort%5B0%5D='
-                . ($i * ($this->get['sort'][0] == $i ? -1 : 1))
+                . ($i * (in_array($i, $this->get['sort']) ? -1 : 1))
                 . '&amp;desc[0]=1" class="desc ml-1 px-1"><i class="fas fa-long-arrow-alt-down"></i></a>'
                 . '<a href="#" data-column="' . $i . '" class="filter px-1">=</a>'
                 . '</span></div>'
