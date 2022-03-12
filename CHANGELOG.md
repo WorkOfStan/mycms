@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Changed` for changes in existing functionality
 - MyCommon::verboseBarDump Dumper::LOCATION => false hides where the dump originated as this is not the original place anyway, show it in the title instead
+- nicer formatting Admin UI table SQL statement
 
 ### `Deprecated` for soon-to-be removed features
 - dist/rector.php (TODO consider using just string replace instead of the rector engine)
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Fixed` for any bugfixes
 - SQL syntax: TAB_PREFIX may need backticks around its name
 - fix filtering of tables in Admin UI (Assert::string instead of integer in MyTableLister)
+- fix sorting of tables in Admin UI with foreign-link
 
 ### `Security` in case of vulnerabilities
 
