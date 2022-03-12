@@ -26,7 +26,6 @@ class AdminProcess extends MyAdminProcess
 
     /** @var array<array<string|array<string|int>>> */
     protected $agendas;
-
     /** @var TableAdmin */
     protected $tableAdmin;
 

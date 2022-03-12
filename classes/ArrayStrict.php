@@ -88,7 +88,7 @@ class ArrayStrict
     }
 
     /**
-     * Throws an Exception if the $field is not set
+     * Returns the value of the field or throws an Exception if the $field is not set
      *
      * @param string $field
      * @return mixed

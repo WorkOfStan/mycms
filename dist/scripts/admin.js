@@ -686,7 +686,7 @@ function standardDocumentReady()
     });
     // toggles Export, Edit, Clone buttons based on row selection
     $('table.table-admin thead input[type=checkbox].check-all').on('change', function () {
- // "check all" checkbox
+        // "check all" checkbox
         $(this).closest('table').find('tr td.multi-options input[type=checkbox]').prop('checked', $(this).prop('checked'));
         updateNumberOfSelectedRows(this);
     });

@@ -1,7 +1,18 @@
-/* global $, AOS, FEATURE_FLAGS, ga, TOKEN */
+/* global $, AOS, API_BASE FEATURE_FLAGS, ga, TOKEN */
+
+/**
+ * JavaScript client-side of MyCMS webpages
+ * (Last MyCMS/dist revision: 2022-03-12, v0.4.6+)
+ */
 
 // scroll effects
 FEATURE_FLAGS['offline_dev'] || AOS.init();
+
+/**
+ * API_BASE_DIR is path to which just a noun can be added to address the API
+ * @type String
+ */
+let API_BASE_DIR = API_BASE + 'api/';
 
 $(document).ready(function () {
     // carousel
@@ -56,5 +67,50 @@ $(document).ready(function () {
         // TODO: test trigger Google Analytics event on search open
         ga('send', 'event', 'search', 'toggle');
     });
+
+    // item creation - TODO CHANGE THIS EXAMPLE CODE TO A LIVE DEMONSTRATION
+    $('form[name="form-instance"] [type=button]').on('click', function () {
+        //if (!$('input[name="name"]').val()) {
+        //    alert('Nová položka musí mít jméno.');
+        //    return false;
+        //}
+        // init parameters
+        let url = API_BASE_DIR + 'instance?keep-token';
+        let event_id = ($('select[name="event_id"]').length) ? $('select[name="event_id"]').val() : $('input[name="event_id"]').val();
+        //if (event_id === '') {
+        //    event_id = 1; // the default event id
+        //}
+        let data = {
+            'id': event_id,
+            'quantity': $('input[name="quantity"]').val(),
+            'created': $('input[name="created"]').val(),
+            'token': TOKEN
+        };
+
+        // launch request
+        ajaxPostRequest(url, data);
+    });
+
+    /**
+     * Wrapper for ajax call
+     * @param {string} url
+     * @param {object} data
+     * @returns {void}
+     */
+    function ajaxPostRequest(url, data)
+    {
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            data: data,
+            type: 'POST',
+            success: function (data) {
+                if (data.success) {
+                    // console.log(data); // debug
+                    location.reload();
+                }
+            }
+        });
+    }
 
 });

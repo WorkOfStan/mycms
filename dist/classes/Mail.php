@@ -20,14 +20,12 @@ class Mail extends MyCommon
 {
     use \Nette\SmartObject;
 
-    /** @var LoggerInterface */
-    private $logger;
-
-    /** @var Swift_Mailer */
-    private $mailer = null;
-
     /** @var bool */
     private $atLeastPHP7;
+    /** @var LoggerInterface */
+    private $logger;
+    /** @var Swift_Mailer */
+    private $mailer = null;
 
     /**
      * @param MyCMS $MyCMS

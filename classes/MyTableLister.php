@@ -18,10 +18,8 @@ class MyTableLister
 
     /** @var string current database */
     protected $database;
-
     /** @var LogMysqli database management system */
     protected $dbms;
-
     /** @var array<int|string> factory setting defaults */
     protected $DEFAULTS = [
         'PAGESIZE' => 100,
@@ -31,47 +29,37 @@ class MyTableLister
         'PAGES_AROUND' => 2, // used in pagination
         'FOREIGNLINK' => '-link' //suffix added to POST variables for links
     ];
-
     /** @var array<array> all fields in the table */
     public $fields;
-
+    /** @var array<array<mixed>|string> TODO is $_GET really just recursive array with string values??? */
+    protected $get;
     /** @var L10n */
     protected $localisation;
-
     /** @var array<string|array<string>> display options */
     protected $options;
-
     /**
      * Folder and name prefix of localisation yml
      *
      * @var string
      */
     protected $prefixL10n;
-
     /** @var int random item used in HTML */
     public $rand;
-
     /** @var string JavaScript code gathered to show the listing */
     public $script;
-
     /** @var string table to list */
     protected $table;
-
     /** @var array<array> possible table settings, stored in its comment */
     public $tableContext = null;
-
     /** @var array<array> all tables in the database */
     public $tables;
-
     /**
      * @var array<string> Selected locale strings
      * DEPRECATED keep this declaration just for backward compatibility
      */
     public $TRANSLATION = [];
-
     /** @var array<string> Available languages for MyCMS */
     public $TRANSLATIONS = [];
-
     /** @var array<string> arithmetical and logical operations for searching */
     public $WHERE_OPS = [
         '=',
@@ -119,6 +107,7 @@ class MyTableLister
         $this->localisation = new L10n($options['prefixL10n'], $this->TRANSLATIONS);
         Assert::string($options['language']);
         $this->localisation->loadLocalisation($options['language']);
+        $this->get = $_GET; // TODO inject GET in _construct arguments
     }
 
     /**
@@ -243,7 +232,7 @@ class MyTableLister
             'sql' => ''
         ];
         if (isset($vars['limit'])) {
-            Assert::integer($vars['limit']);
+            Assert::string($vars['limit']); // number passed as string
             $result['limit'] = $vars['limit'] ? (int) $vars['limit'] : $this->DEFAULTS['PAGESIZE'];
         } else {
             $result['limit'] = $this->DEFAULTS['PAGESIZE'];
@@ -252,7 +241,7 @@ class MyTableLister
             $result['limit'] = $this->DEFAULTS['PAGESIZE'];
         }
         if (isset($vars['offset'])) {
-            Assert::integer($vars['offset']);
+            Assert::string($vars['offset']); // number passed as string
             $result['offset'] = max((int) $vars['offset'], 0);
         } else {
             $result['offset'] = 0;
@@ -336,7 +325,7 @@ class MyTableLister
         $tempArr = Tools::setifempty($vars['sort'], []);
         Assert::isIterable($tempArr);
         foreach ($tempArr as $key => $value) {
-            Assert::integer($value);
+            Assert::string($value); // number represented as string
             if (isset(array_keys($columns)[(int) $value - 1])) {
                 Assert::isArray($vars['desc']);
                 $result['order by'] .= ',' . array_values($columns)[(int) $value - 1]
@@ -481,7 +470,7 @@ class MyTableLister
         if (!($columns = $this->getColumns($tempGetColumnsOptions))) {
             return '';
         }
-        $sql = $this->selectSQL($columns, $_GET);
+        $sql = $this->selectSQL($columns, $this->get);
         Assert::string($sql['sql']);
         $query = $this->dbms->query($sql['sql']);
         $options['total-rows'] = $this->dbms->fetchSingle('SELECT FOUND_ROWS()');
@@ -499,8 +488,8 @@ class MyTableLister
             $output .= $this->viewTable($query, $columns, $options)
                 . $this->pagination($sql['limit'], (int) $options['total-rows'], null, $options);
         }
-        Assert::string($options['total-rows']); // TODO: if it throws exception just type cast to string
-        return $output . ((!$options['total-rows'] && isset($_GET['col'])) ?
+        Assert::string($options['total-rows']); // TODO: if it throws exception just type-cast to string
+        return $output . ((!$options['total-rows'] && isset($this->get['col'])) ?
             ('<p class="alert alert-danger"><small>' . $this->translate('No records found.') . '</small></p>') :
             ('<p class="text-info"><small>' . $this->translate('Total rows: ') . $options['total-rows']
             . '.</small></p>'));
@@ -556,7 +545,7 @@ class MyTableLister
             . Tools::htmlInput(
                 'textsize',
                 '',
-                Tools::setifnull($_GET['textsize'], $this->DEFAULTS['TEXTSIZE']),
+                Tools::setifnull($this->get['textsize'], $this->DEFAULTS['TEXTSIZE']),
                 ['size' => 3, 'class' => 'text-right']
             )
             . '
@@ -566,49 +555,56 @@ class MyTableLister
             . Tools::htmlInput(
                 'limit',
                 '',
-                Tools::setifnull($_GET['limit'], $this->DEFAULTS['PAGESIZE']),
+                Tools::setifnull($this->get['limit'], $this->DEFAULTS['PAGESIZE']),
                 ['size' => 3, 'class' => 'text-right']
             ) . '
             </label>'
-            . Tools::htmlInput('offset', '', Tools::setifnull($_GET['offset'], 0), 'hidden') . '
+            . Tools::htmlInput('offset', '', Tools::setifnull($this->get['offset'], 0), 'hidden') . '
             <button type="submit" class="btn btn-sm ml-1" title="' . $this->translate('View') . '"/>
                 <span class="glyphicon glyphicon-list-alt fa fa-list-alt"></span>
             </button>
             </fieldset></form>
             <script type="text/javascript">
             LISTED_FIELDS=[' . Tools::arrayListed(array_keys($this->fields), 4, ',', '"', '"') . '];' . PHP_EOL;
-        if (isset($_GET['col'], $_GET['op']) && is_array($_GET['col'])) {
-            foreach ($_GET['col'] as $key => $value) {
+        if (isset($this->get['col'], $this->get['op']) && is_array($this->get['col'])) {
+            foreach ($this->get['col'] as $key => $value) {
+                Assert::isArray($this->get['val']);
+                Assert::isArray($this->get['col']);
+                Assert::isArray($this->get['op']);
                 if ($value) {
+                    Assert::string($value);
                     $this->script .= 'addSearchRow($(\'#search-div' . $this->rand . '\'), "'
-                        . Tools::escapeJs($value) . '",' . Tools::setifnull($_GET['op'][$key], 0) . ', "'
+                        . Tools::escapeJs($value) . '",' . Tools::setifnull($this->get['op'][$key], 0) . ', "'
                         . addslashes(
-                            (string) ((isset($_GET['val'][$key]) && (is_scalar($_GET['val'][$key])
-                            || is_null($_GET['val'][$key]) ) )
-                            ? ( is_null($_GET['val'][$key]) ? '' : $_GET['val'][$key])
+                            (string) ((isset($this->get['val'][$key]) && (is_scalar($this->get['val'][$key])
+                            || is_null($this->get['val'][$key]) ) )
+                            ? ( is_null($this->get['val'][$key]) ? '' : $this->get['val'][$key])
                             : '')
                         ) . '");' . PHP_EOL;
                 } else {
-                    unset($_GET['col'][$key], $_GET['op'][$key], $_GET['val'][$key]);
+                    unset($this->get['col'][$key], $this->get['op'][$key], $this->get['val'][$key]);
                 }
             }
         }
-        Tools::setifnull($_GET['sort'], []);
-        Tools::setifnull($_GET['desc'], []);
-        if (count($_GET['sort'])) {
-            foreach ($_GET['sort'] as $key => $value) {
+        Tools::setifnull($this->get['sort'], []);
+        Tools::setifnull($this->get['desc'], []);
+        Assert::isArray($this->get['sort']);
+        if (count($this->get['sort'])) {
+            foreach ($this->get['sort'] as $key => $value) {
                 if ($value) {
+                    Assert::string($value);
                     $this->script .= 'addSortRow($(\'#sort-div' . $this->rand . '\'), "' . Tools::escapeJs($value)
-                        . '",' . (isset($_GET['desc']) && $_GET['desc'] ? 'true' : 'false') . ');' . PHP_EOL;
+                        . '",' . (isset($this->get['desc']) && $this->get['desc'] ? 'true' : 'false') . ');' . PHP_EOL;
                 } else {
-                    unset($_GET['sort'][$key], $_GET['desc'][$key]);
+                    Assert::isArray($this->get['desc']);
+                    unset($this->get['sort'][$key], $this->get['desc'][$key]);
                 }
             }
         }
-        if (!isset($_GET['sort']) || !$_GET['sort']) {
+        if (!isset($this->get['sort']) || !$this->get['sort']) {
             $this->script .= '$(\'#sort-div' . $this->rand . '\').hide();' . PHP_EOL;
         }
-        if (!isset($_GET['col']) || !$_GET['col']) {
+        if (!isset($this->get['col']) || !$this->get['col']) {
             $this->script .= '$(\'#search-div' . $this->rand . '\').hide();' . PHP_EOL;
         }
         $this->script .= '$(\'#toggle-div' . $this->rand . '\').hide();' . PHP_EOL
@@ -627,7 +623,7 @@ class MyTableLister
      */
     protected function viewTable($query, array $columns, array $options)
     {
-        Tools::setifnull($_GET['sort']);
+        Tools::setifnull($this->get['sort']);
         $output = '<form action="" method="post" enctype="multipart/form-data" data-rand="' . $this->rand . '">'
             . PHP_EOL
             . '<table class="table table-bordered table-striped table-admin" data-order="0" id="table-admin'
@@ -641,14 +637,15 @@ class MyTableLister
             ) . '</th>');
         $i = 1;
         foreach ($columns as $key => $value) {
+            Assert::isArray($this->get['sort']);
             $output .= '<th scope="col" '
-                . (count($_GET['sort']) == 1 && $_GET['sort'][0] == $i ? ' class="active"' : '') . '>'
+                . (count($this->get['sort']) == 1 && $this->get['sort'][0] == $i ? ' class="active"' : '') . '>'
                 . '<div class="column-menu"><a href="?' . Tools::urlChange(['desc' => null, 'sort' => null])
-                . '&amp;sort[0]=' . ($i * ($_GET['sort'] == $i ? -1 : 1)) . '" title="' . $this->translateColumn($key)
-                . '">' . Tools::h($key) . '</a>'
+                . '&amp;sort[0]=' . ($i * ($this->get['sort'][0] == $i ? -1 : 1)) . '" title="'
+                . $this->translateColumn($key) . '">' . Tools::h($key) . '</a>'
                 . '<span class="op">'
                 . '<a href="?' . Tools::urlChange(['sort%5B0%5D' => null]) . '&amp;sort%5B0%5D='
-                . ($i * ($_GET['sort'] == $i ? -1 : 1))
+                . ($i * ($this->get['sort'][0] == $i ? -1 : 1))
                 . '&amp;desc[0]=1" class="desc ml-1 px-1"><i class="fas fa-long-arrow-alt-down"></i></a>'
                 . '<a href="#" data-column="' . $i . '" class="filter px-1">=</a>'
                 . '</span></div>'
@@ -763,7 +760,7 @@ class MyTableLister
     {
         $title = $this->translate('Go to page');
         if (is_null($offset)) {
-            $offset = max(isset($_GET['offset']) ? (int) $_GET['offset'] : 0, 0);
+            $offset = max(isset($this->get['offset']) ? (int) $this->get['offset'] : 0, 0);
         }
         $rowsPerPage = max($rowsPerPage, 1);
         $pages = (int) ceil($totalRows / $rowsPerPage);

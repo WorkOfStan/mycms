@@ -18,10 +18,6 @@ class ProjectSpecific extends ProjectCommon
     use \Nette\SmartObject;
 
     /**
-     * accepted attributes:
-     */
-
-    /**
      * Search for specified text in the database, return results
      * TODO: make this method useful for dist project as a demonstration (inspired by A project)
      *
