@@ -634,10 +634,8 @@ class MyTableLister
      */
     protected function viewTable($query, array $columns, array $options)
     {
-        if (!array_key_exists('sort', $this->get)) {
-            $this->get['sort'] = null;
-        }
-        Assert::isArray($this->get['sort']); // TODO is the previous condition really needed?
+        Assert::keyExists($this->get, 'sort');
+        Assert::isArray($this->get['sort']);
         $output = '<form action="" method="post" enctype="multipart/form-data" data-rand="' . $this->rand . '">'
             . PHP_EOL
             . '<table class="table table-bordered table-striped table-admin" data-order="0" id="table-admin'
