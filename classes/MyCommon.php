@@ -3,6 +3,7 @@
 namespace WorkOfStan\MyCMS;
 
 use Tracy\Debugger;
+use Tracy\Dumper;
 
 /**
  * Generic ancestor for classes that uses MyCMS
@@ -56,7 +57,12 @@ class MyCommon
     protected function verboseBarDump($var, $title = null, array $options = [])
     {
         if ($this->verbose == true) {
-            Debugger::barDump($var, $title, $options);
+            Debugger::barDump(
+                $var,
+                $title . ' @ ' . debug_backtrace()[0]['file'] . '&line=' . debug_backtrace()[0]['line'],
+                // Dumper::LOCATION => false .. hide where the dump originated as it is not the original place anyway
+                array_merge([Dumper::LOCATION => false], $options)
+            );
         }
         return $var;
     }
@@ -69,12 +75,16 @@ class MyCommon
      * @param  array<mixed> $options of Debugger::barDump
      *   where array keys are [Dumper::DEPTH, Dumper::TRUNCATE, Dumper::LOCATION, Dumper::LAZY]
      * @return string variable itself
-     * TODO: https://tracy.nette.org/en/dumper LOCATION_CLASS and LOCATION_SOURCE in order to see where dump originated
      */
     protected function verboseBarDumpString($var, $title = null, array $options = [])
     {
         if ($this->verbose == true) {
-            Debugger::barDump($var, $title, $options);
+            Debugger::barDump(
+                $var,
+                $title . ' @ ' . debug_backtrace()[0]['file'] . '&line=' . debug_backtrace()[0]['line'],
+                // Dumper::LOCATION => false .. hide where the dump originated as it is not the original place anyway
+                array_merge([Dumper::LOCATION => false], $options)
+            );
         }
         return $var;
     }
