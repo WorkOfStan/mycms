@@ -21,30 +21,22 @@ class Controller extends MyController
 {
     use \Nette\SmartObject;
 
-    //project specific accepted attributes:
-
-    /** @var string */
-    protected $httpMethod;
-
-    /** @var string */
-    protected $language; // = DEFAULT_LANGUAGE;
-
-    /** @var Mail */
-    protected $mail;
-
-    /** @var ProjectSpecific */
-    private $projectSpecific;
-
-    /** @var string */
-    protected $requestUri; // = ''; // default is homepage
-
     /**
      * Feature flags that bubble down to latte and controller
      *
      * @var array<bool>
      */
     protected $featureFlags;
-
+    /** @var string */
+    protected $httpMethod;
+    /** @var string */
+    protected $language; // = DEFAULT_LANGUAGE;
+    /** @var Mail */
+    protected $mail;
+    /** @var ProjectSpecific */
+    private $projectSpecific;
+    /** @var string */
+    protected $requestUri; // = ''; // default is homepage
     /**
      * Bleeds information within determineTemplate method
      *

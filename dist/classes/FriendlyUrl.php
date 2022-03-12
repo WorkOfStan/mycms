@@ -19,16 +19,12 @@ class FriendlyUrl extends MyFriendlyUrl
 
     /** @var array<mixed> content of array_merge($_GET, $_POST) */
     protected $get;
-
     /** @var string */
     protected $language = DEFAULT_LANGUAGE; // default is Czech
-
     /** @var ProjectSpecific */
     private $projectSpecific;
-
     /** @var string */
     protected $requestUri = ''; // default is homepage
-
     /** @var string */
     protected $userAgent = '';
 
@@ -82,7 +78,7 @@ class FriendlyUrl extends MyFriendlyUrl
         $get = new ArrayStrict($this->get);
         switch ($outputKey) {
 //            case 'api-list':
-//                return null; // TODO (bodylog): is case 'api-list' really necessary? or not? explore and explain.
+//                return null; // TODO (bodylog): is case 'api-list' really necessary? or not?  Just not to forget?
             case 'article':
                 if (empty($outputValue)) {
                     return isset($this->get['offset']) ? "?article&offset=" . $get->integer('offset') : "?article";

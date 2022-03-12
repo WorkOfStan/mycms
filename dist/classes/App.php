@@ -23,35 +23,26 @@ class App extends MyCommon
 
     /** @var Backyard */
     protected $backyard;
-
     /** @var bool */
     protected $developmentEnvironment;
-
     /**
      * Feature flags that bubble down to latte and controller
      *
      * @var array<bool>
      */
     protected $featureFlags;
-
     /** @var mixed[] */
     protected $get;
-
     /** @var MyCMSProject extends the inherited MyCMS */
     protected $MyCMS;
-
     /** @var mixed[] */
     protected $myCmsConf;
-
     /** @var mixed[] */
     protected $post;
-
     /** @var mixed[] */
     protected $session;
-
     /** @var string[] */
     protected $server;
-
     /** @var array<array<array<string|array<array<string>>>>> (TODO: explore - one more array layer??) */
     protected $WEBSITE;
 

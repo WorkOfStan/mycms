@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Fixed` for any bugfixes
 - SQL syntax: TAB_PREFIX may need backticks around its name
+- fix filtering of tables in Admin UI (Assert::string instead of integer in MyTableLister)
 
 ### `Security` in case of vulnerabilities
 
