@@ -6,6 +6,7 @@ use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use Tracy\ILogger;
 use Webmozart\Assert\Assert;
+use WorkOfStan\MyCMS\ArrayStrict;
 use WorkOfStan\MyCMS\MyCMS;
 use WorkOfStan\MyCMS\MyController;
 use WorkOfStan\mycmsprojectnamespace\FriendlyUrl;
@@ -110,6 +111,8 @@ class Controller extends MyController
         Debugger::barDump($this->httpMethod, 'REQUEST_METHOD');
         // language is already properly set, so set it to ProjectSpecific object
         $this->projectSpecific = new ProjectSpecific($this->MyCMS, ['language' => $this->language]);
+        $get = new ArrayStrict($this->get);
+
         switch ($this->MyCMS->template) {
             case self::TEMPLATE_DEFAULT:
                 return true;

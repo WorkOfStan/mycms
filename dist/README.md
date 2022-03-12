@@ -224,8 +224,11 @@ Examples of settings:
 ```php
 $tmp = $language;
 $AGENDAS = array(
+    // table division with rows named according to division_language
     'division' => array('column' => 'division_' . $tmp),
+    // type=='page' from the table content with rows named according to value in the code field or?? page_language
     'page' => array('table' => 'content', 'where' => 'type="page"', 'column' => "\0CONCAT(code,'|',page_$tmp)"),
+    // type=='news' from the table content with rows named according to value in the field content_language, new itme "news" comes with predefined type 'news'
     'news' => array('table' => 'content', 'where' => 'type="news"', 'column' => 'content_' . $tmp, 'prefill' => array('type' => 'news')),
     'slide' => array('table' => 'content', 'where' => 'type="slide"', 'column' => 'content_' . $tmp, 'prefill' => array('type' => 'event')),
     'event' => array('table' => 'content', 'where' => 'type="event"', 'column' => "\0CONCAT(page_$tmp,'|',content_$tmp)", 'prefill' => array('type' => 'event')),
@@ -384,6 +387,66 @@ while in `conf/config.local.php` the flag can be turned on/off as needed on any 
 Feature flag is propagated to Class Admin, Controller, to JavaScript and to Latte.
 
 E.g. featureFlag `newletter_input_box` can hide both the (un)subscribe email input box and the POST value processing when set to false.
+
+### How to add code for flow of the new data collection `Lorem`
+1) Model
+- phinx create: data structure + default values
+- classes/Models/LoremModel.php with CRUD methods to access data structure
+
+2) View
+- (uncomment API_BASE and APPLICATION_DIR_LANGUAGE in template/@layout.latte)
+- template/form-add-lorem.latte include to e.g. template/home.latte
+- add a listener of HTML form within form-add-lorem.latte to index.js
+```javascript
+$('form[name="form-lorem"] [type=button]').on('click', function () {
+    let url = API_BASE_DIR + 'lorem?keep-token'; // api set in 'templateAssignementParametricRules' in config.php, see below 
+    let data = {
+        'id': event_id,
+        'quantity': $('input[name="quantity"]').val(),
+        'created': $('input[name="created"]').val(),
+        'token': TOKEN
+    };
+    ajaxPostRequest(url, data);
+});
+```
+- add this data collection as agenda to admin.php
+
+3) Controller
+- config.php $myCmsConf['templateAssignementParametricRules']['api/lorem'] => ['template' => 'apiLorem'],
+- FriendlyUrl.php::switchParametric `case 'api-lorem': return null;` // TODO (bodylog): is case 'api-lorem' really necessary? or not? explore and explain.
+- Controller.php
+```php
+/** @var LoremModel */
+protected $loremModel;
+// __construct
+$this->loremModel = new LoremModel($MyCMS->dbms);
+
+//method prepareTemplate
+    //$get contains data sent by ajaxPostRequest - validation is necessary
+    //switch ($this->MyCMS->template) {
+    case 'apiLorem':
+        switch ($this->httpMethod) {
+            case 'GET':
+                $this->MyCMS->context['json'] = $this->loremModel->read($get);
+                return true;
+            case 'POST':
+                if (!$this->get['id']) {
+                    $this->MyCMS->context['json'] = $this->loremModel->create($get);
+                    return true;
+                }
+                $this->MyCMS->context['json'] = $this->loremModel->update($get);
+                return true;
+            case 'DELETE':
+                $this->MyCMS->context['json'] = $this->loremModel->delete($get);
+                return true;
+        }
+        $this->MyCMS->context['messageFailure'] = $this->MyCMS->translate('Item API failed.');
+        Debugger::log(
+            "Undefined requestMethod {$this->httpMethod} for template {$this->MyCMS->template}",
+            ILogger::ERROR
+        );
+        return false;
+```
 
 ## TROUBLESHOOTING
 

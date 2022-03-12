@@ -69,6 +69,7 @@ class MyCommon
      * @param  array<mixed> $options of Debugger::barDump
      *   where array keys are [Dumper::DEPTH, Dumper::TRUNCATE, Dumper::LOCATION, Dumper::LAZY]
      * @return string variable itself
+     * TODO: https://tracy.nette.org/en/dumper LOCATION_CLASS and LOCATION_SOURCE in order to see where dump originated
      */
     protected function verboseBarDumpString($var, $title = null, array $options = [])
     {

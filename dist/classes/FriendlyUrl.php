@@ -11,27 +11,23 @@ use WorkOfStan\mycmsprojectnamespace\ProjectSpecific;
 
 /**
  * Friendly URL set-up
- * (Last MyCMS/dist revision: 2022-03-06, v0.4.6+)
+ * (Last MyCMS/dist revision: 2022-03-12, v0.4.6+)
  */
 class FriendlyUrl extends MyFriendlyUrl
 {
     use \Nette\SmartObject;
 
-    /**
-     * accepted attributes:
-     */
-
     /** @var array<mixed> content of array_merge($_GET, $_POST) */
     protected $get;
 
     /** @var string */
-    protected $requestUri = ''; // default is homepage
+    protected $language = DEFAULT_LANGUAGE; // default is Czech
 
     /** @var ProjectSpecific */
     private $projectSpecific;
 
     /** @var string */
-    protected $language = DEFAULT_LANGUAGE; // default is Czech
+    protected $requestUri = ''; // default is homepage
 
     /** @var string */
     protected $userAgent = '';
@@ -85,6 +81,8 @@ class FriendlyUrl extends MyFriendlyUrl
         $this->projectSpecific->language($this->language);
         $get = new ArrayStrict($this->get);
         switch ($outputKey) {
+//            case 'api-list':
+//                return null; // TODO (bodylog): is case 'api-list' really necessary? or not? explore and explain.
             case 'article':
                 if (empty($outputValue)) {
                     return isset($this->get['offset']) ? "?article&offset=" . $get->integer('offset') : "?article";
@@ -117,7 +115,10 @@ class FriendlyUrl extends MyFriendlyUrl
                 return is_null($content) ? self::PAGE_NOT_FOUND : (string) $content['link'];
             default:
                 Debugger::log(
-                    "switchParametric: undefined friendlyfyUrl for {$outputKey} => {$outputValue}",
+                    Debugger::barDump(
+                        "switchParametric: undefined friendlyfyUrl for {$outputKey} => {$outputValue}",
+                        ILogger::ERROR
+                    ),
                     ILogger::ERROR
                 );
         }
