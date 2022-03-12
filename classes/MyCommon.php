@@ -57,9 +57,14 @@ class MyCommon
     protected function verboseBarDump($var, $title = null, array $options = [])
     {
         if ($this->verbose == true) {
+            $backtrace = debug_backtrace();
             Debugger::barDump(
                 $var,
-                $title . ' @ ' . debug_backtrace()[0]['file'] . '&line=' . debug_backtrace()[0]['line'],
+                $title . (
+                    (isset($backtrace[0]['file']) && isset($backtrace[0]['line'])) ?
+                    (' @ ' . $backtrace[0]['file'] . $backtrace[0]['line']) :
+                    ''
+                ),
                 // Dumper::LOCATION => false .. hide where the dump originated as it is not the original place anyway
                 array_merge([Dumper::LOCATION => false], $options)
             );
@@ -79,9 +84,14 @@ class MyCommon
     protected function verboseBarDumpString($var, $title = null, array $options = [])
     {
         if ($this->verbose == true) {
+            $backtrace = debug_backtrace();
             Debugger::barDump(
                 $var,
-                $title . ' @ ' . debug_backtrace()[0]['file'] . '&line=' . debug_backtrace()[0]['line'],
+                $title . (
+                    (isset($backtrace[0]['file']) && isset($backtrace[0]['line'])) ?
+                    (' @ ' . $backtrace[0]['file'] . $backtrace[0]['line']) :
+                    ''
+                ),
                 // Dumper::LOCATION => false .. hide where the dump originated as it is not the original place anyway
                 array_merge([Dumper::LOCATION => false], $options)
             );
