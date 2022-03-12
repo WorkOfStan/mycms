@@ -1,5 +1,10 @@
 /* global $, AOS, API_BASE FEATURE_FLAGS, ga, TOKEN */
 
+/**
+ * JavaScript client-side of MyCMS webpages
+ * (Last MyCMS/dist revision: 2022-03-12, v0.4.6+)
+ */
+
 // scroll effects
 FEATURE_FLAGS['offline_dev'] || AOS.init();
 

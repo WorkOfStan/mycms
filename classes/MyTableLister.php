@@ -53,6 +53,11 @@ class MyTableLister
     public $tableContext = null;
     /** @var array<array> all tables in the database */
     public $tables;
+    /**
+     * @var array<string> Selected locale strings
+     * DEPRECATED keep this declaration just for backward compatibility
+     */
+    public $TRANSLATION = [];
     /** @var array<string> Available languages for MyCMS */
     public $TRANSLATIONS = [];
     /** @var array<string> arithmetical and logical operations for searching */
