@@ -334,7 +334,7 @@ class MyTableLister
                 }
                 // fix foreign-link columns for sorting
                 $columnIdentifier = array_values($columns)[(int) $value - 1];
-                if(strpos($columnIdentifier, ' AS ') !== false) {
+                if (strpos($columnIdentifier, ' AS ') !== false) {
                     $tempColumnIdentifier = explode(' AS ', $columnIdentifier);
                     $columnIdentifier = $tempColumnIdentifier[1];
                 }
