@@ -191,7 +191,7 @@ For each language a corresponding file `language-xx.inc.php` is expected.
 (`cs` is considered as the default language, so it is accessible directly in application root),
 where page resouces may be in folders `styles|assets|fonts|images|scripts` which ignore the language directory.
 
-If DEBUG_VERBOSE is true and admin UI uses untranslated string, it is logged to `log/translate_admin_missing.log` to be translated. (This log can be safely deleted.)
+If DEBUG_VERBOSE is true and admin UI uses untranslated string, it is logged to `log/translation_missing_' . date("Y-m-d") . '.log` to be translated. (This log can be safely deleted.)
 
 Localised strings for admin UI are loaded from conf/l10n/admin-XX.yml (if present).
 
@@ -200,6 +200,8 @@ Default language set in [conf/config.php](conf/config.php) as constant `'DEFAULT
 is the language in which the web starts without any additional information about language
 (such as language folder or session).
 The default language is typically shown in the application root.
+
+Note: if there's just one language used, set the DEFAULT_LANGUAGE and available TRANSLATIONS the same. But let class MyCMSProject extend MyCMS which in turn extends MyCMSMonoLingual, not directly, because of many dependencies of code to the langauge management present in MyCMS.
 
 #### Accepted structures of URL
 

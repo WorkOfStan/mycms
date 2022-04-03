@@ -90,7 +90,7 @@ class L10n
                 error_log(
                     '[' . date("d-M-Y H:i:s") . '] ' . $this->selectedLanguage . '\\' . $key . PHP_EOL,
                     3,
-                    'log/translation_missing.log'
+                    'log/translation_missing_' . date("Y-m-d") . '.log'
                 );
             }
         }
