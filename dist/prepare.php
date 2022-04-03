@@ -46,6 +46,6 @@ $myCmsConf['dbms'] = new LogMysqli(
 );
 $MyCMS = new MyCMSProject($myCmsConf);
 //set $_SESSION['language'] also in PHPUnit test (do not set TRANSLATION by include, as language may be redetermined)
-$_SESSION['language'] = $MyCMS->getSessionLanguage($_GET, $_SESSION, false);
+$_SESSION['language'] = $MyCMS->getSessionLanguage($_GET, $_SESSION, false); // don't use if MyCMSMonolingual is parent
 //language might change later//$MyCMS->WEBSITE = $WEBSITE[$_SESSION['language']];
 //define('PATH_CATEGORY', $MyCMS->SETTINGS['PATH_CATEGORY']); // TODO unused in this application

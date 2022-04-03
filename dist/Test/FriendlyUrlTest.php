@@ -979,9 +979,15 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
                     "Redirect '{$singleUrl['redirect_contains']}' needle is not in the haystack {$url}"
                 );
             }
-            if (
-                isset($singleUrl['allow_redirect']) && $singleUrl['allow_redirect'] && isset($result['REDIRECT_URL'])
-            ) {//fixes e.g. http to https 301 redirect
+            /**
+             * @phpstan-ignore-next-line
+             * Offset 'allow_redirect' on array{relative_url: '?product&id=1'|'?product&id=1&x=y'|'alfa?product&id=2',
+             * http_status: 200|301, allow_redirect: bool, contains_text?: 'Produkt 1'|'Produkt 2',
+             * is_json: false}|array{relative_url: 'alfa?product&id=2', http_status: 301, allow_redirect: false,
+             * redirect_contains: '/?product&id=2'|'/beta', is_json: false} in isset() always exists and is not nullable
+             */
+            if (isset($singleUrl['allow_redirect']) && $singleUrl['allow_redirect'] && isset($result['REDIRECT_URL'])) {
+                //fixes e.g. http to https 301 redirect
                 $result = $this->backyard->Http->getData(
                     $this->apiBaseDomain . $result['REDIRECT_URL'],
                     'PHPUnit/' . \PHPUnit_Runner_Version::id() . ' ' . __FUNCTION__
@@ -993,6 +999,13 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
                 ($result['HTTP_CODE'] === 0),
                 "URL {$url} is not available. (Is \$backyardConf['web_address'] properly configured?)"
             );
+            /**
+             * @phpstan-ignore-next-line
+             * Offset 'http_status' on array{relative_url: '?product&id=1'|'?product&id=1&x=y'|'alfa?product&id=2',
+             * http_status: 200|301, allow_redirect: bool, contains_text?: 'Produkt 1'|'Produkt 2',
+             * is_json: false}|array{relative_url: 'alfa?product&id=2', http_status: 301, allow_redirect: bool,
+             * redirect_contains: '/?product&id=2'|'/beta', is_json: false} in isset() always exists and is not nullable
+             */
             if (isset($singleUrl['http_status']) && $singleUrl['http_status']) {
                 $this->assertEquals(
                     $singleUrl['http_status'],
@@ -1009,6 +1022,13 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
                     "Needle '{$singleUrl['contains_text']}' is not in the haystack {$url}"
                 );
             }
+            /**
+             * @phpstan-ignore-next-line
+             * Offset 'is_json' on array{relative_url: '?product&id=1'|'?product&id=1&x=y'|'alfa?product&id=2',
+             * http_status: 200|301, allow_redirect: bool, contains_text?: 'Produkt 1'|'Produkt 2',
+             * is_json: false}|array{relative_url: 'alfa?product&id=2', http_status: 301, allow_redirect: bool,
+             * redirect_contains: '/?product&id=2'|'/beta', is_json: false} in isset() always exists and is not nullable
+             */
             if (isset($singleUrl['is_json']) && $singleUrl['is_json']) {
                 /**
                  * @phpstan-ignore-next-line Parameter #1 $json of function json_decode expects string, mixed given.

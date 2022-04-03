@@ -190,7 +190,7 @@ class MyFriendlyUrl extends MyCommon
         //language reset if path requires it
         if (isset($matches[1]) && !(substr($interestingPath, 0, strlen('/assets/')) === '/assets/')) {
             // non-existent page resources SHOULD NOT change the web language to the default
-            // transforms 'en/' to 'en' //$makeInclude=false as $this->MyCMS->TRANSLATION is already set.
+            // transforms 'en/' to 'en' // $makeInclude=false as $this->MyCMS->TRANSLATION is already set.
             $this->verboseBarDump(
                 $this->language = $this->MyCMS->getSessionLanguage(
                     ['language' => substr($matches[1], 0, 2)],

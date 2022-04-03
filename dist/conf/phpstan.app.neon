@@ -50,12 +50,12 @@ parameters:
     ignoreErrors:
       # TODO ALPHABETICALLY ORDER
       # The exceptions concerning always false/true compensate for environment dependent variables.
-      -
-        message: '#Right side of && is always false.#'
-        path: ../Test/FriendlyUrlTest.php
-      -
-        message: '#Right side of && is always true.#'
-        path: ../Test/FriendlyUrlTest.php
+      #-
+      #  message: '#Right side of && is always false.#'
+      #  path: ../Test/FriendlyUrlTest.php
+      #-
+      #  message: '#Right side of && is always true.#'
+      #  path: ../Test/FriendlyUrlTest.php
       # Compensate for PHPUnit where $_POST may not be defined
       -
         message: '#Result of && is always true.#'
