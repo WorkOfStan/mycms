@@ -122,6 +122,34 @@ class MyTableAdmin extends MyTableLister
     }
 
     /**
+     * Return value for
+     * Output appropriate HTML input item for given field.
+     *
+     * @param array<string|bool|null> $field
+     * @param string $key
+     * @param array<string> $record
+     * @param array<mixed> $options
+     * @return string
+     */
+    private function outputFieldValue(array $field, $key, array $record, array $options)
+    {
+        $value = isset($record[$key]) ? $record[$key] : false;
+        if (Tools::among($record, false, [])) {
+            if (is_array($options['prefill']) && isset($options['prefill'][$key]) && is_scalar($options['prefill'][$key])) {
+                $value = $options['prefill'][$key];
+                if (Tools::among($field['type'], 'datetime', 'timestamp') && $options['prefill'][$key] == 'now') {
+                    return date('Y-m-d\TH:i:s');
+                }
+            } elseif ($field['default']) {
+                return $field['default'];
+            }
+        } elseif (Tools::among($field['type'], 'datetime', 'timestamp') && Tools::among($value, '0000-00-00', '0000-00-00 00:00:00', '0000-00-00T00:00:00')) {
+            return '';
+        }
+        return $value
+    }
+
+    /**
      * Output appropriate HTML input item for given field.
      *
      * @param array<string|bool|null> $field
@@ -132,7 +160,8 @@ class MyTableAdmin extends MyTableLister
      */
     protected function outputField(array $field, $key, array $record, array $options)
     {
-        $value = isset($record[$key]) ? $record[$key] : false;
+        $value = outputFieldValue ($field, $key, $record, $options);
+        /* isset($record[$key]) ? $record[$key] : false;
         if (Tools::among($record, false, [])) {
             if (is_array($options['prefill']) && isset($options['prefill'][$key]) && is_scalar($options['prefill'][$key])) {
                 $value = $options['prefill'][$key];
@@ -144,7 +173,7 @@ class MyTableAdmin extends MyTableLister
             }
         } elseif (Tools::among($field['type'], 'datetime', 'timestamp') && Tools::among($value, '0000-00-00', '0000-00-00 00:00:00', '0000-00-00T00:00:00')) {
             $value = '';
-        }
+        } */
         $output = (Tools::set($options['layout-row'], false) ? '' : '<tr><td>')
             . '<label for="' . Tools::h($key) . $this->rand . '">' . $this->translateColumn($key) . ':</label>'
             . ($options['layout-row'] ? ' ' : '</td><td>')
@@ -407,6 +436,30 @@ class MyTableAdmin extends MyTableLister
     }
 
     /**
+     * Calculate module for
+     * Output HTML select for picking a path (project-specific)
+     * TODO: What is the point here? This method wasn't used neither in A nor in F project.
+     *
+     * @param array<string> $name of the table (without prefix) and main column
+     * @return int
+     */
+    private function outputSelectPathModule(array $name)
+    {
+        $module = $this->dbms->query(
+            'SHOW FULL COLUMNS FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name['table'])
+            . ' WHERE FIELD="' . $this->escapeSQL($name['column']) . '"'
+        );
+        if ($module && $module !== true) {
+            $tempArr = $module->fetch_assoc();
+            Assert::isArray($tempArr);
+            $module = json_decode($tempArr['Comment'], true);
+            Assert::isArray($module);
+            return isset($module['module']) && $module['module'] ? $module['module'] : 10;
+        } //else {
+        return 10;
+    }
+
+    /**
      * Output HTML select for picking a path (project-specific)
      * TODO: What is the point here? This method wasn't used neither in A nor in F project.
      *
@@ -422,7 +475,8 @@ class MyTableAdmin extends MyTableLister
         if (!is_array($name)) {
             $name = ['table' => $name, 'column' => $name];
         }
-        $module = $this->dbms->query(
+        $module = outputSelectPathModule($name);
+        /* $this->dbms->query(
             'SHOW FULL COLUMNS FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name['table'])
             . ' WHERE FIELD="' . $this->escapeSQL($name['column']) . '"'
         );
@@ -434,7 +488,7 @@ class MyTableAdmin extends MyTableLister
             $module = isset($module['module']) && $module['module'] ? $module['module'] : 10;
         } else {
             $module = 10;
-        }
+        }*/
         $result = '<select name="' . MyTools::h(isset($options['name']) ? $options['name'] : 'path_id')
             . '" class="' . MyTools::h(isset($options['class']) ? $options['class'] : '')
             . '" id="' . MyTools::h(isset($options['id']) ? $options['id'] : '') . '">'
@@ -629,20 +683,21 @@ class MyTableAdmin extends MyTableLister
             }
         }
         if ($sql && isset($command)) {
+            // Todo escape dbms respective; todo insert sql variable directly
             $sql = $command . ' ' . Tools::escapeDbIdentifier($this->table) . ' SET ' . mb_substr($sql, 1) . Tools::wrap($command == 'UPDATE' ? mb_substr($where, 5) : '', ' WHERE ') . ($command == 'UPDATE' ? ' LIMIT 1' : '');
-            //@todo add message when UPDATE didn't change anything
-            if (
-                $this->resolveSQL(
-                    $sql,
-                    $this->translate('Record saved.'),
-                    $this->translate('Could not save the record.') . ' #%errno%: %error%'
-                )
-            ) {
-                return true;
-            } else {
-                //@todo if unsuccessful, store data being saved to session
-                return false;
-            }
+            //Del//@todo add message when UPDATE didn't change anything
+            //if (
+            return $this->resolveSQL(
+                $sql,
+                $this->translate('Record saved.'),
+                $this->translate('Could not save the record.') . ' #%errno%: %error%'
+            );
+            //) {
+            //    return true;
+            //} else {
+            //    //@todo if unsuccessful, store data being saved to session
+            //    return false;
+            //}
         } else {
             Tools::addMessage('info', $this->translate('Nothing to save.'));
             return 0; // no records to save (e.g. in case no checkboxes checked in a form)
