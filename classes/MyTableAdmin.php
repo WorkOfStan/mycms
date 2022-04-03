@@ -160,7 +160,7 @@ class MyTableAdmin extends MyTableLister
      */
     protected function outputField(array $field, $key, array $record, array $options)
     {
-        $value = outputFieldValue ($field, $key, $record, $options);
+        $value = outputFieldValue($field, $key, $record, $options);
         /* isset($record[$key]) ? $record[$key] : false;
         if (Tools::among($record, false, [])) {
             if (is_array($options['prefill']) && isset($options['prefill'][$key]) && is_scalar($options['prefill'][$key])) {
