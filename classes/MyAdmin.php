@@ -6,6 +6,7 @@ use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use Tracy\ILogger;
 use Webmozart\Assert\Assert;
+use WorkOfStan\MyCMS\Latte\MyCustomFilters;
 use WorkOfStan\MyCMS\MyCMS;
 use WorkOfStan\MyCMS\Render;
 use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
@@ -844,7 +845,9 @@ class MyAdmin extends MyCommon
     }
 
     /**
-     * @return never
+     * Latte render of Admin UI
+     *
+     * @return void
      */
     public function renderAdmin()
     {
@@ -855,7 +858,7 @@ class MyAdmin extends MyCommon
             'htmlbody' => $this->outputAdminBody(),
         ];
         $render = new Render('admin-ui', $params);
-        $customFilters = new CustomFilters($this->MyCMS);
+        $customFilters = new MyCustomFilters($this->MyCMS);
         $render->renderLatte(
             DIR_TEMPLATE_CACHE,
             [$customFilters, 'common'],

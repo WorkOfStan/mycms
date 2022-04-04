@@ -43,6 +43,18 @@ class Render
     }
 
     /**
+     * Prefer project specific template over inherited template
+     *
+     * @return string
+     */
+    private function getTemplateFile()
+    {
+        $projectTemplate = 'template/' . $this->template . '.latte';
+        $inheritedTemplate = 'vendor/workofstan/mycms/' . $projectTemplate;
+        return file_exists($projectTemplate) ? $projectTemplate : $inheritedTemplate;
+    }
+
+    /**
      * Latte initialization & Mark-up output
      *
      * @param string $dirTemplateCache
@@ -72,7 +84,7 @@ class Render
         $Latte->addFilter(null, $customFilters);
         Debugger::barDump($params, 'Params');
         Debugger::barDump($_SESSION, 'Session'); // mainly for $_SESSION['language']
-        $Latte->render('template/' . $this->template . '.latte', $params); // @todo make it configurable
+        $Latte->render($this->getTemplateFile(), $params); // @todo make it configurable
         unset($_SESSION['messages']);
         //$this->dbms->showSqlBarPanel();
     }
