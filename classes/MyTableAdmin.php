@@ -129,7 +129,7 @@ class MyTableAdmin extends MyTableLister
      * @param string $key
      * @param array<string> $record
      * @param array<mixed> $options
-     * @return string
+     * @return bool|float|int|string
      */
     private function outputFieldValue(array $field, $key, array $record, array $options)
     {
@@ -146,7 +146,7 @@ class MyTableAdmin extends MyTableLister
         } elseif (Tools::among($field['type'], 'datetime', 'timestamp') && Tools::among($value, '0000-00-00', '0000-00-00 00:00:00', '0000-00-00T00:00:00')) {
             return '';
         }
-        return $value
+        return $value;
     }
 
     /**
@@ -160,7 +160,7 @@ class MyTableAdmin extends MyTableLister
      */
     protected function outputField(array $field, $key, array $record, array $options)
     {
-        $value = outputFieldValue($field, $key, $record, $options);
+        $value = $this->outputFieldValue($field, $key, $record, $options);
         /* isset($record[$key]) ? $record[$key] : false;
         if (Tools::among($record, false, [])) {
             if (is_array($options['prefill']) && isset($options['prefill'][$key]) && is_scalar($options['prefill'][$key])) {
@@ -475,7 +475,7 @@ class MyTableAdmin extends MyTableLister
         if (!is_array($name)) {
             $name = ['table' => $name, 'column' => $name];
         }
-        $module = outputSelectPathModule($name);
+        $module = $this->outputSelectPathModule($name);
         /* $this->dbms->query(
             'SHOW FULL COLUMNS FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name['table'])
             . ' WHERE FIELD="' . $this->escapeSQL($name['column']) . '"'
@@ -683,21 +683,13 @@ class MyTableAdmin extends MyTableLister
             }
         }
         if ($sql && isset($command)) {
-            // Todo escape dbms respective; todo insert sql variable directly
-            $sql = $command . ' ' . Tools::escapeDbIdentifier($this->table) . ' SET ' . mb_substr($sql, 1) . Tools::wrap($command == 'UPDATE' ? mb_substr($where, 5) : '', ' WHERE ') . ($command == 'UPDATE' ? ' LIMIT 1' : '');
-            //Del//@todo add message when UPDATE didn't change anything
-            //if (
             return $this->resolveSQL(
-                $sql,
+                $command . ' ' . $this->dbms->escapeDbIdentifier($this->table) . ' SET ' . mb_substr($sql, 1)
+                . Tools::wrap($command == 'UPDATE' ? mb_substr($where, 5) : '', ' WHERE ')
+                . ($command == 'UPDATE' ? ' LIMIT 1' : ''),
                 $this->translate('Record saved.'),
                 $this->translate('Could not save the record.') . ' #%errno%: %error%'
             );
-            //) {
-            //    return true;
-            //} else {
-            //    //@todo if unsuccessful, store data being saved to session
-            //    return false;
-            //}
         } else {
             Tools::addMessage('info', $this->translate('Nothing to save.'));
             return 0; // no records to save (e.g. in case no checkboxes checked in a form)

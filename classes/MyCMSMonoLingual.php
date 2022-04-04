@@ -7,6 +7,7 @@ use Psr\Log\LoggerInterface;
 use Tracy\Debugger;
 use Webmozart\Assert\Assert;
 use WorkOfStan\MyCMS\LogMysqli;
+use WorkOfStan\MyCMS\Render;
 use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
 
 /**
@@ -207,21 +208,24 @@ class MyCMSMonoLingual
      */
     public function renderLatte($dirTemplateCache, $customFilters, array $params)
     {
-        Debugger::getBar()->addPanel(
-            new BarPanelTemplate('Template: ' . $this->template, $this->context)
-        );
-        if (isset($_SESSION['user'])) {
-            Debugger::getBar()->addPanel(
-                new BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION)
-            );
-        }
-        $Latte = new \Latte\Engine();
-        $Latte->setTempDirectory($dirTemplateCache);
-        $Latte->addFilter(null, $customFilters);
-        Debugger::barDump($params, 'Params');
-        Debugger::barDump($_SESSION, 'Session'); // mainly for $_SESSION['language']
-        $Latte->render('template/' . $this->template . '.latte', $params); // @todo make it configurable
-        unset($_SESSION['messages']);
+        // TODO - isn't $this->context redundant? everything goes in $params anyway...???
+        $render = new Render($this->template, $this->context);
+        $render->renderLatte($dirTemplateCache, $customFilters, $params);
+//        Debugger::getBar()->addPanel(
+//            new BarPanelTemplate('Template: ' . $this->template, $this->context)
+//        );
+//        if (isset($_SESSION['user'])) {
+//            Debugger::getBar()->addPanel(
+//                new BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION)
+//            );
+//        }
+//        $Latte = new \Latte\Engine();
+//        $Latte->setTempDirectory($dirTemplateCache);
+//        $Latte->addFilter(null, $customFilters);
+//        Debugger::barDump($params, 'Params');
+//        Debugger::barDump($_SESSION, 'Session'); // mainly for $_SESSION['language']
+//        $Latte->render('template/' . $this->template . '.latte', $params); // @todo make it configurable
+//        unset($_SESSION['messages']);
         $this->dbms->showSqlBarPanel();
     }
 
