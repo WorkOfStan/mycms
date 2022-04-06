@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - admin-de.yml language file for German variant of Admin UI
 - LogMysqli: add several `$this->showSqlBarPanel();` statements in order to display SQL statements in case of Exception
 - App can use either inherited Latte templates or override it with modified templates
-- inheritance-*.latte added where new includeSelect SHOULD be implemented
+- latte inheritance test pages (inheritance-*.latte added where new includeSelect SHOULD be implemented)
 
 ### `Changed` for changes in existing functionality
 - MyCommon::verboseBarDump Dumper::LOCATION => false hides where the dump originated as this is not the original place anyway, show it in the title instead
