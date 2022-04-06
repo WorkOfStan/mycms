@@ -9,12 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - admin-de.yml language file for German variant of Admin UI
 - LogMysqli: add several `$this->showSqlBarPanel();` statements in order to display SQL statements in case of Exception
 - App can use either inherited Latte templates or override it with modified templates
+- inheritance-*.latte added where new includeSelect SHOULD be implemented
 
 ### `Changed` for changes in existing functionality
 - MyCommon::verboseBarDump Dumper::LOCATION => false hides where the dump originated as this is not the original place anyway, show it in the title instead
 - nicer formatting Admin UI table SQL statement
 - Logging of untranslated strings when DEBUG_VERBOSE into `'log/translation_missing_' . date("Y-m-d") . '.log'` (instead of swelling translation_missing.log)
-- Admin UI can be rendered by Latte (instead directly from MyAdmin methods) if $featureFlags['admin_latte_render'] set to true (still experimental)
+- Admin UI can be rendered by Latte (instead directly from MyAdmin methods) if $featureFlags['admin_latte_render'] set to true (still experimental because library vs app references MUST be solved)
 
 ### `Deprecated` for soon-to-be removed features
 - dist/rector.php (TODO consider using just string replace instead of the rector engine)

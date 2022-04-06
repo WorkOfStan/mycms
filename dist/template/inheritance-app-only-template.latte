@@ -1,0 +1,9 @@
+{* App only template latte *}
+{layout '@inheritance-prefer-app-layout.latte'}
+{block htmlbody}
+    App only template latte -
+    {$htmlbody}
+    {include 'inheritance-prefer-app-include.latte'}
+    {include 'inheritance-app-only-include.latte'}
+    {include 'inheritance-library-only-include.latte'}
+{/block}

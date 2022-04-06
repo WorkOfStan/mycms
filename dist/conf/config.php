@@ -209,7 +209,8 @@ $backyardConf['mail_for_admin_enabled'] = (
 // default values for feature flags (use keys without spaces to avoid problems in javascript)
 $featureFlags = array_merge(
     [
-        'admin_latte_render' => false, // admin legacy output in methods or the new latte rendering (experimental)
+        'admin_latte_render' => false, // admin legacy output in methods or the new latte rendering; experimental:
+        // because library vs app references MUST be solved - TODO try implement includeSelect into inheritance-*.latte
         'console_log_list_values' => false,
         'languageFileWriteIncOnlyNotYml' => false, // deprecated
         'offline_dev' => false,

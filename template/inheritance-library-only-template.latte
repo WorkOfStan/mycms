@@ -1,0 +1,10 @@
+{* template latte - library only version *}
+{layout '@inheritance-prefer-app-layout.latte'}
+{block htmlbody}
+    Library only template -
+    template latte where app version should be used instead of library version
+    {$htmlbody}
+    {include 'inheritance-prefer-app-include.latte'}
+    {include 'inheritance-app-only-include.latte'}
+    {include 'inheritance-library-only-include.latte'}
+{/block}
