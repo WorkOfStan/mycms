@@ -857,11 +857,15 @@ class MyAdmin extends MyCommon
             'htmlhead' => $this->outputHead($this->getPageTitle()),
             'htmlbody' => $this->outputAdminBody(),
         ];
-        $render = new Render('admin-ui', $params);
         $customFilters = new MyCustomFilters($this->MyCMS);
+        $render = new Render('admin-ui'
+            //, $params
+            , DIR_TEMPLATE_CACHE,
+            [$customFilters, 'common']
+        );
         $render->renderLatte(
-            DIR_TEMPLATE_CACHE,
-            [$customFilters, 'common'],
+//            DIR_TEMPLATE_CACHE,
+//            [$customFilters, 'common'],
             $params
         );
         $this->endAdmin();

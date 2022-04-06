@@ -19,31 +19,39 @@ class Render
 {
     use \Nette\SmartObject;
 
-    /**
-     * which Latte template to load
-     * @var string
-     */
-    public $template;
+    /** @var callable */
+    private $customFilters;
+    /** @var string */
+    private $dirTemplateCache;
+    /** @var string Latte template to load */
+    private $template;
     /**
      * variables for template rendering
-     * @var array<array<mixed>|false|int|null|string>
+     * @ ar array<array<mixed>|false|int|null|string>
      */
-    public $context = [];
+    // public $context = [];
 
     /**
      * Constructor
      *
      * @param string $template
-     * @param array<array<mixed>|false|int|null|string> $context
+     * @ param array<array<mixed>|false|int|null|string> $context
+     * @param string $dirTemplateCache
+     * @param callable $customFilters
      */
-    public function __construct($template, array $context)
+    public function __construct($template //, array $context
+        , $dirTemplateCache, $customFilters
+        )
     {
         $this->template = $template;
-        $this->context = $context;
+//        $this->context = $context;
+        $this->dirTemplateCache = $dirTemplateCache;
+        $this->customFilters = $customFilters;
     }
 
     /**
      * Prefer project specific template over inherited template
+     * TODO maybe use as filter for Latte
      *
      * @return string
      */
@@ -57,21 +65,23 @@ class Render
     /**
      * Latte initialization & Mark-up output
      *
-     * @param string $dirTemplateCache
-     * @param callable $customFilters
+     * @ param string $dirTemplateCache
+     * @ param callable $customFilters
      * @param array<mixed> $params
      * @return void
      */
-    public function renderLatte($dirTemplateCache, $customFilters, array $params)
+    public function renderLatte(//$dirTemplateCache, $customFilters,
+        array $params)
     {
         // TODO context is maybe not necessary as everything is in params anyway
         Debugger::getBar()->addPanel(
             new BarPanelTemplate(
                 'Template: ' . $this->template,
-                [
-                    'context' => $this->context,
-                    'params' => $params
-                ]
+//                [
+//                    'context' => $this->context,
+//                    'params' =>
+                    $params
+//                ]
             )
         );
         if (isset($_SESSION['user'])) {
@@ -80,8 +90,8 @@ class Render
             );
         }
         $Latte = new \Latte\Engine();
-        $Latte->setTempDirectory($dirTemplateCache);
-        $Latte->addFilter(null, $customFilters);
+        $Latte->setTempDirectory($this->dirTemplateCache);
+        $Latte->addFilter(null, $this->customFilters);
         Debugger::barDump($params, 'Params');
         Debugger::barDump($_SESSION, 'Session'); // mainly for $_SESSION['language']
         $Latte->render($this->getTemplateFile(), $params); // @todo make it configurable

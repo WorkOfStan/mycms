@@ -209,8 +209,12 @@ class MyCMSMonoLingual
     public function renderLatte($dirTemplateCache, $customFilters, array $params)
     {
         // TODO - isn't $this->context redundant? everything goes in $params anyway...???
-        $render = new Render($this->template, $this->context);
-        $render->renderLatte($dirTemplateCache, $customFilters, $params);
+        $render = new Render($this->template
+            , $dirTemplateCache, $customFilters
+//            , $this->context
+            );
+        $render->renderLatte(//$dirTemplateCache, $customFilters,
+            $params);
 //        Debugger::getBar()->addPanel(
 //            new BarPanelTemplate('Template: ' . $this->template, $this->context)
 //        );
