@@ -4,11 +4,9 @@ namespace WorkOfStan\MyCMS;
 
 use Exception;
 use Psr\Log\LoggerInterface;
-use Tracy\Debugger;
 use Webmozart\Assert\Assert;
 use WorkOfStan\MyCMS\LogMysqli;
 use WorkOfStan\MyCMS\Render;
-use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
 
 /**
  * Class for a MyCMS object without translations.
@@ -208,28 +206,8 @@ class MyCMSMonoLingual
      */
     public function renderLatte($dirTemplateCache, $customFilters, array $params)
     {
-        // TODO - isn't $this->context redundant? everything goes in $params anyway...???
-        $render = new Render($this->template
-            , $dirTemplateCache, $customFilters
-//            , $this->context
-            );
-        $render->renderLatte(//$dirTemplateCache, $customFilters,
-            $params);
-//        Debugger::getBar()->addPanel(
-//            new BarPanelTemplate('Template: ' . $this->template, $this->context)
-//        );
-//        if (isset($_SESSION['user'])) {
-//            Debugger::getBar()->addPanel(
-//                new BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION)
-//            );
-//        }
-//        $Latte = new \Latte\Engine();
-//        $Latte->setTempDirectory($dirTemplateCache);
-//        $Latte->addFilter(null, $customFilters);
-//        Debugger::barDump($params, 'Params');
-//        Debugger::barDump($_SESSION, 'Session'); // mainly for $_SESSION['language']
-//        $Latte->render('template/' . $this->template . '.latte', $params); // @todo make it configurable
-//        unset($_SESSION['messages']);
+        $render = new Render($this->template, $dirTemplateCache, $customFilters);
+        $render->renderLatte($params);
         $this->dbms->showSqlBarPanel();
     }
 

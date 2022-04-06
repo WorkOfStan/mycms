@@ -25,26 +25,17 @@ class Render
     private $dirTemplateCache;
     /** @var string Latte template to load */
     private $template;
-    /**
-     * variables for template rendering
-     * @ ar array<array<mixed>|false|int|null|string>
-     */
-    // public $context = [];
 
     /**
      * Constructor
      *
      * @param string $template
-     * @ param array<array<mixed>|false|int|null|string> $context
      * @param string $dirTemplateCache
      * @param callable $customFilters
      */
-    public function __construct($template //, array $context
-        , $dirTemplateCache, $customFilters
-        )
+    public function __construct($template, $dirTemplateCache, $customFilters)
     {
         $this->template = $template;
-//        $this->context = $context;
         $this->dirTemplateCache = $dirTemplateCache;
         $this->customFilters = $customFilters;
     }
@@ -70,20 +61,12 @@ class Render
      * @param array<mixed> $params
      * @return void
      */
-    public function renderLatte(//$dirTemplateCache, $customFilters,
-        array $params)
+    public function renderLatte(array $params)
     {
-        // TODO context is maybe not necessary as everything is in params anyway
-        Debugger::getBar()->addPanel(
-            new BarPanelTemplate(
-                'Template: ' . $this->template,
-//                [
-//                    'context' => $this->context,
-//                    'params' =>
-                    $params
-//                ]
-            )
-        );
+        $displayParams = $params;
+        // TODO till the Admin UI isn't done properly hide HTML handed over in a variable
+        unset($displayParams['htmlhead'], $displayParams['htmlbody']);
+        Debugger::getBar()->addPanel(new BarPanelTemplate('Template: ' . $this->template, $displayParams));
         if (isset($_SESSION['user'])) {
             Debugger::getBar()->addPanel(
                 new BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION)
@@ -94,8 +77,7 @@ class Render
         $Latte->addFilter(null, $this->customFilters);
         Debugger::barDump($params, 'Params');
         Debugger::barDump($_SESSION, 'Session'); // mainly for $_SESSION['language']
-        $Latte->render($this->getTemplateFile(), $params); // @todo make it configurable
+        $Latte->render($this->getTemplateFile(), $params); // @todo make template source configurable
         unset($_SESSION['messages']);
-        //$this->dbms->showSqlBarPanel();
     }
 }
