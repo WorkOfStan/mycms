@@ -200,6 +200,11 @@ class Controller extends MyController
                 $this->MyCMS->context['totalRows'] = ($this->MyCMS->context['list'] === []) ? 0 :
                     count($this->MyCMS->context['list']);
                 return true;
+            case 'inheritance-app-only-template':
+            case 'inheritance-library-only-template':
+            case 'inheritance-prefer-app-template':
+                $this->MyCMS->context['htmlbody'] = 'HTML body of ' . $this->MyCMS->template;
+                return true;
             case 'item-1':
                 $this->MyCMS->context['pageTitle'] = $this->MyCMS->translate('Demo page') . ' 1';
                 return true;

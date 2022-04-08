@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - LogMysqli: add several `$this->showSqlBarPanel();` statements in order to display SQL statements in case of Exception
 - class Render to take care of Latte rendering both for App UI and Admin UI
 - App can use either inherited Latte templates or override it with modified templates
-- Latte inheritance test pages (inheritance-*.latte added where new includeSelect SHOULD be implemented)
+- Latte inheritance test pages (inheritance-*.latte added where new include inherite.latte is demonstrated)
+- instead of simply {include $latte} call {include 'inherite.latte', latte => $latte} so that the preferred existing version of latte is used
 
 ### `Changed` for changes in existing functionality
 - MyCommon::verboseBarDump Dumper::LOCATION => false hides where the dump originated as this is not the original place anyway, show it in the title instead

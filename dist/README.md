@@ -367,6 +367,8 @@ Logs are in folder `log`:
 
 [`latte` templates](https://latte.nette.org/) are used.
 
+In order to take advantage of inheriting latte from MyCMS call `{include 'inherite.latte', latte => $latte}` instead of simply `{include $latte}`.
+
 ## Visual style
 
 Pages have view-TEMPLATE class in <body/> to allow for exceptions.
