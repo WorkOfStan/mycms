@@ -2,7 +2,7 @@
 {* instead of simply {include $latte} call {include 'inherite.latte', latte => $latte} so that the preferred existing version of latte is used *}
 {* outer try is for library, inner try is for app - TODO consider splitting it *}
 {try}
-    {include '../../../' . $latte} {* library version should prefer the app version *}
+    {include '../../../../template/' . $latte} {* library version should prefer the app version *}
 {else}
     {try}
         {include $latte} {* app prefers app, mycms uses its own *}
