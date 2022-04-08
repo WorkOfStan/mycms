@@ -14,7 +14,8 @@
         "ext-mbstring": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4|^5"
+        "phpunit/phpunit": "^4|^5",
+        "phpstan/phpstan-webmozart-assert": "^1.1"
     },
     "suggest": {
         "ext-iconv": "for Tools::webalize()",
