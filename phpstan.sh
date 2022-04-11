@@ -1,21 +1,25 @@
 #!/bin/bash
 
-# color constants
-HIGHLIGHT='\033[1;36m' # light cyan
-NC='\033[0m' # No Color
+# output string param1 with color highlighting
+section_title() {
+    # color constants
+    #HIGHLIGHT='\033[1;36m' # light cyan
+    #NC='\033[0m' # No Color
+    printf "\033[1;36m%s\033[0m\n" "$1"
+}
 
-printf "${HIGHLIGHT}* initialize the vendor folder, if needed${NC}\n"
+section_title "* initialize the vendor folder, if needed"
 composer install -a --prefer-dist --no-progress
 
 #composer require --dev phpstan/phpstan-phpunit --prefer-dist --no-progress
 # Note: rector/rector:0.11.60 => phpstan/phpstan:0.12.99 (i.e. prevents phpstan/phpstan:1.0.2)
 #composer require --dev rector/rector --prefer-dist --no-progress
 
-printf "${HIGHLIGHT}* require --dev phpstan${NC}\n"
+section_title "* require --dev phpstan"
 composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
 
-printf "${HIGHLIGHT}* phpunit${NC}\n"
+section_title "* phpunit"
 vendor/bin/phpunit
 
-printf "${HIGHLIGHT}* phpstan${NC}\n"
+section_title "* phpstan"
 vendor/bin/phpstan.phar --configuration=conf/phpstan.webmozart-assert.neon analyse . --memory-limit 300M --pro
