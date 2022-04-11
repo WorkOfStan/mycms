@@ -161,19 +161,6 @@ class MyTableAdmin extends MyTableLister
     protected function outputField(array $field, $key, array $record, array $options)
     {
         $value = $this->outputFieldValue($field, $key, $record, $options);
-        /* isset($record[$key]) ? $record[$key] : false;
-        if (Tools::among($record, false, [])) {
-            if (is_array($options['prefill']) && isset($options['prefill'][$key]) && is_scalar($options['prefill'][$key])) {
-                $value = $options['prefill'][$key];
-                if (Tools::among($field['type'], 'datetime', 'timestamp') && $options['prefill'][$key] == 'now') {
-                    $value = date('Y-m-d\TH:i:s');
-                }
-            } elseif ($field['default']) {
-                $value = $field['default'];
-            }
-        } elseif (Tools::among($field['type'], 'datetime', 'timestamp') && Tools::among($value, '0000-00-00', '0000-00-00 00:00:00', '0000-00-00T00:00:00')) {
-            $value = '';
-        } */
         $output = (Tools::set($options['layout-row'], false) ? '' : '<tr><td>')
             . '<label for="' . Tools::h($key) . $this->rand . '">' . $this->translateColumn($key) . ':</label>'
             . ($options['layout-row'] ? ' ' : '</td><td>')
@@ -455,7 +442,7 @@ class MyTableAdmin extends MyTableLister
             $module = json_decode($tempArr['Comment'], true);
             Assert::isArray($module);
             return isset($module['module']) && $module['module'] ? $module['module'] : 10;
-        } //else {
+        }
         return 10;
     }
 
@@ -476,19 +463,6 @@ class MyTableAdmin extends MyTableLister
             $name = ['table' => $name, 'column' => $name];
         }
         $module = $this->outputSelectPathModule($name);
-        /* $this->dbms->query(
-            'SHOW FULL COLUMNS FROM ' . Tools::escapeDbIdentifier(TAB_PREFIX . $name['table'])
-            . ' WHERE FIELD="' . $this->escapeSQL($name['column']) . '"'
-        );
-        if ($module && $module !== true) {
-            $tempArr = $module->fetch_assoc();
-            Assert::isArray($tempArr);
-            $module = json_decode($tempArr['Comment'], true);
-            Assert::isArray($module);
-            $module = isset($module['module']) && $module['module'] ? $module['module'] : 10;
-        } else {
-            $module = 10;
-        }*/
         $result = '<select name="' . MyTools::h(isset($options['name']) ? $options['name'] : 'path_id')
             . '" class="' . MyTools::h(isset($options['class']) ? $options['class'] : '')
             . '" id="' . MyTools::h(isset($options['id']) ? $options['id'] : '') . '">'
