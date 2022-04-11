@@ -367,7 +367,10 @@ Logs are in folder `log`:
 
 [`latte` templates](https://latte.nette.org/) are used.
 
-In order to take advantage of inheriting latte from MyCMS call `{include 'inherite.latte', latte => $latte}` instead of simply `{include $latte}`.
+In order to take advantage of inheriting latte from MyCMS call `{include 'inherite.latte', latte => $latte}` instead of simply `{include $latte}`, so that the preferred (app over library) existing version of Latte is used.
+As file_exists function doesn't work in Latte, template and layout MUST however be both present together either in the library folder or in the app folder.
+Also when variables are passed to included fragments, it MUST happen in the same folder (either library or app).
+The idea is to have the default templates in the MyCMS library in order to quickly deploy. If you start working with the templates however, you should maintain them in the app folder.
 
 ## Visual style
 

@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - nicer formatting Admin UI table SQL statement
 - Logging of untranslated strings when DEBUG_VERBOSE into `'log/translation_missing_' . date("Y-m-d") . '.log'` (instead of swelling translation_missing.log)
 - Admin UI can be rendered by Latte (instead directly from MyAdmin methods) if $featureFlags['admin_latte_render'] set to true (still experimental because library vs app references MUST be solved)
+- Default Latte templates moved from app part of templates to library part of templates in order to quickly deploy. If you start working with the templates however, you should maintain them in the app folder.
 
 ### `Deprecated` for soon-to-be removed features
 - dist/rector.php (TODO consider using just string replace instead of the rector engine)
