@@ -6,7 +6,9 @@ use GodsDev\Tools\Tools;
 use Tracy\Debugger;
 use Tracy\ILogger;
 use Webmozart\Assert\Assert;
+use WorkOfStan\MyCMS\Latte\MyCustomFilters;
 use WorkOfStan\MyCMS\MyCMS;
+use WorkOfStan\MyCMS\Render;
 use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
 
 use function WorkOfStan\MyCMS\ThrowableFunctions\glob;
@@ -812,22 +814,9 @@ class MyAdmin extends MyCommon
     }
 
     /**
-     * Return the HTML output of the complete administration page.
-     * TODO: consider rewrite as Latte
-     *
-     * Expected global variables:
-     * * $_GET
-     * * $_SESSION
-     * * $_SERVER['SCRIPT_NAME']
-     *
-     * Expected constants:
-     * * DIR_ASSETS
-     * * TAB_PREFIX
-     * * EXPAND_INFIX
-     *
-     * @return string
+     * @return void
      */
-    public function outputAdmin()
+    public function prepareAdmin()
     {
         $this->MyCMS->csrfStart();
 
@@ -853,9 +842,35 @@ class MyAdmin extends MyCommon
             }
             $_GET['table'] = $_GET['media'] = $_GET['user'] = null;
         }
-        $output = '<!DOCTYPE html><html lang="' . Tools::h($_SESSION['language']) . '">'
-            . $this->outputHead($this->getPageTitle())
-            . '<body>' . PHP_EOL . '<header>'
+    }
+
+    /**
+     * Latte render of Admin UI
+     *
+     * @return void
+     */
+    public function renderAdmin()
+    {
+        $this->prepareAdmin();
+        $params = [
+            'language' => Tools::h($_SESSION['language']),
+            'htmlhead' => $this->outputHead($this->getPageTitle()),
+            'htmlbody' => $this->outputAdminBody(),
+        ];
+        $customFilters = new MyCustomFilters($this->MyCMS);
+        $render = new Render('admin-ui', DIR_TEMPLATE_CACHE, [$customFilters, 'common']);
+        $render->renderLatte($params);
+        $this->endAdmin();
+    }
+
+    /**
+     * HTML of Admin UI body
+     *
+     * @return string
+     */
+    private function outputAdminBody()
+    {
+        $output = '<header>'
             . $this->outputNavigation()
             . '</header>' . PHP_EOL . '<div class="container-fluid row">' . PHP_EOL;
         if (isset($_SESSION['user']) && $_SESSION['user']) {
@@ -896,8 +911,34 @@ class MyAdmin extends MyCommon
         if (isset($_SESSION['user'])) {
             $output .= $this->outputImageSelector();
         }
-        $output .= $this->outputBodyEnd()
-            . '</body>' . PHP_EOL . '</html>';
+        $output .= $this->outputBodyEnd();
+        return $output;
+    }
+
+    /**
+     * Return the HTML output of the complete administration page.
+     * TODO: consider rewrite as Latte
+     *
+     * Expected global variables:
+     * * $_GET
+     * * $_SESSION
+     * * $_SERVER['SCRIPT_NAME']
+     *
+     * Expected constants:
+     * * DIR_ASSETS
+     * * TAB_PREFIX
+     * * EXPAND_INFIX
+     *
+     * @return string
+     */
+    public function outputAdmin()
+    {
+        $this->prepareAdmin();
+        $output = '<!DOCTYPE html><html lang="' . Tools::h($_SESSION['language']) . '">';
+        $output .= $this->outputHead($this->getPageTitle());
+        $output .= '<body>' . PHP_EOL;
+        $output .= $this->outputAdminBody();
+        $output .= '</body>' . PHP_EOL . '</html>';
         return $output;
     }
 

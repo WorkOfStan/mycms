@@ -101,5 +101,11 @@ $admin = new Admin($MyCMS, [
 //        ]
 //    ]
     ]);
-echo $admin->outputAdmin();
-$admin->endAdmin();
+if (isset($featureFlags['admin_latte_render']) && $featureFlags['admin_latte_render']) {
+    // new version since 0.4.7 or higer
+    $admin->renderAdmin();
+} else {
+    // legacy till 0.4.6
+    echo $admin->outputAdmin();
+    $admin->endAdmin();
+}

@@ -795,7 +795,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
      */
     public function testPageStatusOverHttp()
     {
-        $urlsToBeCheckedAny = [
+        $urlsToBeCheckedAlways = [
             [
                 // so that isset() test of offsets 'allow_redirect', 'http_status', 'is_json' allowed by PHPStan
                 'relative_url' => '', // home
@@ -834,6 +834,28 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
                 'http_status' => 200,
                 'allow_redirect' => true,
                 'contains_text' => 'Adresa:',
+                'is_json' => false
+            ],
+            // Latte template inheritance
+            [
+                'relative_url' => 'inh-app-only',
+                'http_status' => 200,
+                'allow_redirect' => false,
+                'contains_text' => 'App only template latte',
+                'is_json' => false
+            ],
+            [
+                'relative_url' => 'inh-library-only',
+                'http_status' => 200,
+                'allow_redirect' => false,
+                'contains_text' => 'layout of the library only version',
+                'is_json' => false
+            ],
+            [
+                'relative_url' => 'inh-prefer-app',
+                'http_status' => 200,
+                'allow_redirect' => false,
+                'contains_text' => 'App template overriding library template',
                 'is_json' => false
             ],
         ];
@@ -959,7 +981,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
         ];
 
         $urlsToBeChecked = array_merge(
-            $urlsToBeCheckedAny,
+            $urlsToBeCheckedAlways,
             FRIENDLY_URL ?
             (FORCE_301 ? $urlsToBeCheckedFriendlyUrlTrueForce301True : $urlsToBeCheckedFriendlyUrlTrueForce301False)
             : (FORCE_301 ? $urlsToBeCheckedFriendlyUrlFalseForce301True : $urlsToBeCheckedFriendlyUrlFalseForce301False)

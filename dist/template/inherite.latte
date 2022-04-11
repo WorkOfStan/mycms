@@ -1,0 +1,12 @@
+{* inherite.latte requires $latte which equals to the filename of latte including the extension *}
+{* instead of simply {include $latte} call {include 'inherite.latte', latte => $latte} so that the preferred existing version of latte is used *}
+{* outer try is for library, inner try is for app - TODO consider splitting it *}
+{try}
+    {include '../../../../template/' . $latte} {* library version should prefer the app version *}
+{else}
+    {try}
+        {include $latte} {* app prefers app, mycms uses its own *}
+    {else}
+        {include '../vendor/workofstan/mycms/template/' . $latte} {* fallback to the library version *}
+    {/try}
+{/try}

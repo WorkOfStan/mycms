@@ -89,6 +89,9 @@ $myCmsConf = [
         // TODO add api/examples
         'article' => ['template' => 'article', 'idcode' => true], // general articles
         'category' => ['template' => 'category'], // categories of products
+        'inh-app-only' => ['template' => 'inheritance-app-only-template'], // test page for latte inheritance
+        'inh-library-only' => ['template' => 'inheritance-library-only-template'], // test page for latte inheritance
+        'inh-prefer-app' => ['template' => 'inheritance-prefer-app-template'], // test page for latte inheritance
         'item-1' => ['template' => 'item-1'], // custom template
         'item-B' => ['template' => 'item-B'], // custom template
         'item-gama' => ['template' => 'item-gama'], // custom template
@@ -209,6 +212,8 @@ $backyardConf['mail_for_admin_enabled'] = (
 // default values for feature flags (use keys without spaces to avoid problems in javascript)
 $featureFlags = array_merge(
     [
+        'admin_latte_render' => false, // admin legacy output in methods or the new latte rendering; experimental:
+        // because library vs app references MUST be solved - TODO try implement includeSelect into inheritance-*.latte
         'console_log_list_values' => false,
         'languageFileWriteIncOnlyNotYml' => false, // deprecated
         'offline_dev' => false,

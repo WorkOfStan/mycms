@@ -1,2 +1,3 @@
+# keep here only the templates relevant for this app in order to keep maintenance simple and hence security high
 Order Allow,Deny
 Deny from all
