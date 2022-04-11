@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# color constants
+HIGHLIGHT='\033[1;36m' # light cyan
+NC='\033[0m' # No Color
+
 echo "To work on low performing environments, the script accepts number of seconds as parameter to be used as a waiting time between steps."
 paramSleepSec=0
 [ "$1" ] && [ "$1" -ge 0 ] && paramSleepSec=$1
@@ -10,14 +14,23 @@ if [[ ! -f "conf/config.local.dist.php" || ! -f "phinx.yml" ]]; then
     exit 0
 fi
 
+printf "${HIGHLIGHT}* composer update${NC}\n"
 composer update -a --prefer-dist --no-progress
 sleep "$paramSleepSec"s
+
+printf "${HIGHLIGHT}* phinx${NC}\n"
 vendor/bin/phinx migrate -e development
 sleep "$paramSleepSec"s
+
+printf "${HIGHLIGHT}* phinx testing${NC}\n"
 # In order to properly unit test all features, set-up a test database, put its credentials to testing section of phinx.yml and run phinx migration -e testing before phpunit
 # Drop tables in the testing database if changes were made to migrations
 vendor/bin/phinx migrate -e testing
 sleep "$paramSleepSec"s
+
+printf "${HIGHLIGHT}* phpunit${NC}\n"
 vendor/bin/phpunit
 sleep "$paramSleepSec"s
+
+printf "${HIGHLIGHT}* sass${NC}\n"
 sass styles/index.sass styles/index.css
