@@ -468,10 +468,13 @@ class MyFriendlyUrl extends MyCommon
     /**
      * Project specific function that SHOULD be overidden in child class
      * Returns Friendly Url string for type=id URL if it is available or it returns type=id
+     * If the rule is not defined, then info level message is logged by backyard logger if info level is logged
      *
      * @param string $outputKey `type`
      * @param string $outputValue `id`
-     * @return string|null null (do not change the output) or string (URL - friendly or parametric)
+     * @return string|null
+     *     null: do not change the output even if it means returning "?{$outputKey}={$outputValue}"
+     *     string: URL - friendly or parametric
      */
     protected function switchParametric($outputKey, $outputValue)
     {
@@ -513,7 +516,7 @@ class MyFriendlyUrl extends MyCommon
         $result = $this->switchParametric($outputKey, $outputValue);
         $this->MyCMS->logger->info(
             $this->verboseBarDumpString(
-                "{$params} friendlyfyUrl to " . print_r($result, true),
+                "{$params} friendlyfyUrl " . (is_null($result) ? 'unchanged' : 'to ' . print_r($result, true)),
                 'friendlyfyUrl result'
             )
         );
