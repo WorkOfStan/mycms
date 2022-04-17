@@ -31,6 +31,7 @@
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
+    "sort-packages": true,
     "autoload": {
         "psr-4": {
             "WorkOfStan\\mycmsprojectnamespace\\": ["classes/"]
