@@ -53,11 +53,11 @@ script/autotrack.V.V.V.js and script/autotrack.V.V.V.js.map are manually taken f
 
 Create database with `Collation=utf8_general_ci`
 
-Create `phinx.yml` based on `phinx.dist.yml` including the name of the database created above
+Run `build.sh` to
+- create `phinx.yml` based on `phinx.dist.yml` including the name of the database created above
+- create `conf/config.local.php` based on `config.local.dist.php` including the phinx environment to be used and change any settings you like.
 
-Create `conf/config.local.php` based on `config.local.dist.php` including the phinx environment to be used and change any settings you like.
-
-Run `build.sh` (see below)
+Edit these two files; then run `build.sh` again (see below)
 
 ### Deployment minutia
 `Under construction` mode may be turned on (for non admin IP adresses i.e. not in `$debugIpArray`) by adding

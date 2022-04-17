@@ -68,7 +68,7 @@ jobs:
           # Use composer.json for key, if composer.lock is not committed.
           key: ${{ runner.os }}-PHP${{ matrix.php-version }}-vendor-${{ hashFiles('**/composer.json') }}
           # key: ${{ runner.os }}-PHP${{ matrix.php-version }}-vendor-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-PHP${{ matrix.php-version }}-vendor-
+          #restore-keys: ${{ runner.os }}-PHP${{ matrix.php-version }}-vendor-
 
       - name: Cache dist composer dependencies
         uses: actions/cache@v3
@@ -79,7 +79,7 @@ jobs:
           # Use composer.json for key, if composer.lock is not committed.
           key: ${{ runner.os }}-PHP${{ matrix.php-version }}-dist-vendor-${{ hashFiles('**/dist/composer.json') }}
           # key: ${{ runner.os }}-PHP${{ matrix.php-version }}-vendor-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-PHP${{ matrix.php-version }}-dist-vendor-
+          #restore-keys: ${{ runner.os }}-PHP${{ matrix.php-version }}-dist-vendor-
 
       - name: Validate composer.json and composer.lock
         if: ${{ steps.vendor-cache.outputs.cache-hit != 'true' }}

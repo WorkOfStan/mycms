@@ -3,7 +3,6 @@
 namespace WorkOfStan\mycmsprojectnamespace;
 
 use Tracy\Debugger;
-use Tracy\ILogger;
 use WorkOfStan\MyCMS\ArrayStrict;
 use WorkOfStan\MyCMS\MyCMS;
 use WorkOfStan\MyCMS\MyFriendlyUrl;
@@ -66,10 +65,13 @@ class FriendlyUrl extends MyFriendlyUrl
 
     /**
      * Returns Friendly Url string for type=id URL if it is available or it returns type=id
+     * If the rule is not defined, then info level message is logged by backyard logger if info level is logged
      *
      * @param string $outputKey `type`
      * @param string $outputValue `id`
-     * @return string|null null (do not change the output) or string (URL - friendly or parametric)
+     * @return string|null
+     *     null: do not change the output even if it means returning "?{$outputKey}={$outputValue}"
+     *     string: URL - friendly or parametric
      */
     protected function switchParametric($outputKey, $outputValue)
     {
@@ -77,8 +79,6 @@ class FriendlyUrl extends MyFriendlyUrl
         $this->projectSpecific->language($this->language);
         $get = new ArrayStrict($this->get);
         switch ($outputKey) {
-//            case 'api-list':
-//                return null; // TODO (bodylog): is case 'api-list' really necessary? or not?  Just not to forget?
             case 'article':
                 if (empty($outputValue)) {
                     return isset($this->get['offset']) ? "?article&offset=" . $get->integer('offset') : "?article";
@@ -103,20 +103,16 @@ class FriendlyUrl extends MyFriendlyUrl
                     . ' AND id = "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"');
                 Debugger::barDump($content, 'category');
                 return is_null($content) ? self::PAGE_NOT_FOUND : (string) $content['link'];
-            case 'language':
+            case 'language': // not necessary, just to make this visible
                 return null; // i.e. do not change the output or return "?{$outputKey}={$outputValue}";
             case 'product':
                 $content = $this->projectSpecific->getProduct((int) $outputValue);
                 Debugger::barDump($content, 'product');
                 return is_null($content) ? self::PAGE_NOT_FOUND : (string) $content['link'];
             default:
-                Debugger::log(
-                    Debugger::barDump(
-                        "switchParametric: undefined friendlyfyUrl for {$outputKey} => {$outputValue}",
-                        ILogger::ERROR
-                    ),
-                    ILogger::ERROR
-                );
+                $tempInfo = "switchParametric: undefined friendlyfyUrl for {$outputKey} => {$outputValue}";
+                $this->MyCMS->logger->info($tempInfo);
+                Debugger::barDump($tempInfo, 'switchParametric: undefined');
         }
         return null;
     }

@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Admin UI can be rendered by Latte (instead directly from MyAdmin methods) if $featureFlags['admin_latte_render'] set to true (still experimental because library vs app references MUST be solved)
 - Default Latte templates moved from app part of templates to library part of templates in order to quickly deploy. If you start working with the templates however, you should maintain them in the app folder.
 - color highlighting of sections of scripts build.sh and phpstan.sh
+- relax dist/FriendlyUrl::switchParametric - if there's no rule to produce a friendly URL, don't report error not changing it, only an info
+- dist/composer.json: Keeps packages sorted by name when adding new one
+- GitHub Actions: only use cache with an exact key hit
 
 ### `Deprecated` for soon-to-be removed features
 - dist/rector.php (TODO consider using just string replace instead of the rector engine)
