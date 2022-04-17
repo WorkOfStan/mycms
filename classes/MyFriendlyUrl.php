@@ -468,7 +468,7 @@ class MyFriendlyUrl extends MyCommon
     /**
      * Project specific function that SHOULD be overidden in child class
      * Returns Friendly Url string for type=id URL if it is available or it returns type=id
-     * If the rule is not defined, then info level message is logged by backyard logger if info level is logged
+     * If the rule is not defined, then log info level message by backyard logger (if info level is logged)
      *
      * @param string $outputKey `type`
      * @param string $outputValue `id`
