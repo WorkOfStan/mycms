@@ -37,12 +37,14 @@ class MyAdmin extends MyCommon
             'scripts/admin.js?v=' . PAGE_RESOURCE_VERSION,
         ],
         'css' => [
+// Todo first line only if proper flag!
+            'styles/admin.css.php?v=' . PAGE_RESOURCE_VERSION, // MyCMS
             'styles/bootstrap.css',
             'styles/font-awesome.css',
             'styles/ie10-viewport-bug-workaround.css',
             'styles/bootstrap-datetimepicker.css',
             'styles/summernote.css',
-            'styles/admin.css?v=' . PAGE_RESOURCE_VERSION,
+            'styles/admin.css?v=' . PAGE_RESOURCE_VERSION, // App
         ],
     ];
 
