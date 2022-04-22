@@ -37,8 +37,6 @@ class MyAdmin extends MyCommon
             'scripts/admin.js?v=' . PAGE_RESOURCE_VERSION,
         ],
         'css' => [
-// Todo first line only if proper flag!
-            'styles/admin.css.php?v=' . PAGE_RESOURCE_VERSION, // MyCMS
             'styles/bootstrap.css',
             'styles/font-awesome.css',
             'styles/ie10-viewport-bug-workaround.css',
@@ -47,6 +45,13 @@ class MyAdmin extends MyCommon
             'styles/admin.css?v=' . PAGE_RESOURCE_VERSION, // App
         ],
     ];
+
+    /**
+     * Feature flags that bubble down to latte and controller
+     * TODO: remove from Admin as redundant
+     * @var array<bool>
+     */
+    protected $featureFlags;
 
     /** @var array<string> */
     public $HTMLHeaders = [
@@ -59,7 +64,7 @@ class MyAdmin extends MyCommon
     ];
 
     /**
-     * @var array<array> tables and columns to search in admin
+     * @var array<array<string>> tables and columns to search in admin
      * table => [id, field1 to be searched in, field2 to be searched in...]
      */
     protected $searchColumns = [];
@@ -87,6 +92,9 @@ class MyAdmin extends MyCommon
                 $this->tableAdmin = $this->TableAdmin;
             }
         }
+        if(Tools::nonzero($this->featureFlags['admin_latte_render'])){
+array_unshift($this->clientSideResources['css'], 'styles/admin.css.php?v=' . PAGE_RESOURCE_VERSION); // MyCMS
+}
     }
 
     /**
