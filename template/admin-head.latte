@@ -1,0 +1,13 @@
+{* required: $pageTitle, $HTMLHeaders, clientSideResources['css'] *}
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">';
+    {foreach $HTMLHeaders as $headerKey => $headerValue}
+    <meta name="{$headerKey}" content="{$headerValue}">
+    {/foreach}
+    <title>{$pageTitle ? $pageTitle . " · " : ""}CMS Admin</title>
+    {foreach $clientSideResources['css'] as $cssUri}
+    <link rel="stylesheet" href="{$cssUri}" />
+    {/foreach}  
+</head>
