@@ -447,8 +447,39 @@ array_unshift($this->clientSideResources['css'], 'styles/admin.css.php?v=' . PAG
     }
 
     /**
+     * The inline script for the HTML end
+     *
+     * @return string
+     */
+    protected function outputBodyEndInlineScript()
+    {
+        $tmp = array_flip(explode('|', 'descending|Really delete?|New record|Passwords don\'t match!|Please, fill necessary data.|'
+                . 'Select at least one file and try again.|Select at least one record and try again.|No files|Edit|'
+                . 'variable|value|name|size|modified|Select|No records found.|Please, choose a new name.|Wrong input'));
+        foreach ($tmp as $key => $value) {
+            $tmp[$key] = $this->tableAdmin->translate($key, false);
+        }
+        return 'WHERE_OPS = ' . json_encode($this->tableAdmin->WHERE_OPS) . ';' . PHP_EOL
+            . 'TRANSLATE = ' . json_encode($tmp) . ';' . PHP_EOL
+            . 'TAB_PREFIX = "' . TAB_PREFIX . '";' . PHP_EOL
+            . 'EXPAND_INFIX = "' . EXPAND_INFIX . '";' . PHP_EOL
+            . 'TOKEN = ' . end($_SESSION['token']) . ';' . PHP_EOL
+            . 'ASSETS_SUBFOLDERS = ' . json_encode($this->ASSETS_SUBFOLDERS) . ';' . PHP_EOL
+            . 'DIR_ASSETS = ' . json_encode(DIR_ASSETS) . ';' . PHP_EOL
+            . '$(document).ready(function(){' . PHP_EOL
+            . $this->tableAdmin->script . PHP_EOL
+            // AdminRecordName displays changes in red next to the main h2
+            . 'if (typeof(AdminRecordName) != "undefined") {' . PHP_EOL
+            . '    $("h2 .AdminRecordName").text(AdminRecordName.replaceAll(/<\/?[a-z][^>]*>/i, "").substr(0, 50));'
+            . PHP_EOL
+            . '}' . PHP_EOL
+            . '});' . PHP_EOL;
+    }
+
+    /**
      * Output (in HTML) the end part of administration page.
-     * This method also modifies $this->script.
+     * It's a list of scripts and an inline script
+     * This method also modifies $this->script.  (Todo ??? Really)
      *
      * @return string
      */
@@ -469,28 +500,8 @@ array_unshift($this->clientSideResources['css'], 'styles/admin.css.php?v=' . PAG
             . '<script type="text/javascript" src="scripts/summernote.js"></script>'
 //            . '<script type="text/javascript" src="scripts/admin.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
             . '<script type="text/javascript" src="scripts/admin-specific.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
-            . '<script type="text/javascript">' . PHP_EOL;
-        $tmp = array_flip(explode('|', 'descending|Really delete?|New record|Passwords don\'t match!|Please, fill necessary data.|'
-                . 'Select at least one file and try again.|Select at least one record and try again.|No files|Edit|'
-                . 'variable|value|name|size|modified|Select|No records found.|Please, choose a new name.|Wrong input'));
-        foreach ($tmp as $key => $value) {
-            $tmp[$key] = $this->tableAdmin->translate($key, false);
-        }
-        $result .= 'WHERE_OPS = ' . json_encode($this->tableAdmin->WHERE_OPS) . ';' . PHP_EOL
-            . 'TRANSLATE = ' . json_encode($tmp) . ';' . PHP_EOL
-            . 'TAB_PREFIX = "' . TAB_PREFIX . '";' . PHP_EOL
-            . 'EXPAND_INFIX = "' . EXPAND_INFIX . '";' . PHP_EOL
-            . 'TOKEN = ' . end($_SESSION['token']) . ';' . PHP_EOL
-            . 'ASSETS_SUBFOLDERS = ' . json_encode($this->ASSETS_SUBFOLDERS) . ';' . PHP_EOL
-            . 'DIR_ASSETS = ' . json_encode(DIR_ASSETS) . ';' . PHP_EOL
-            . '$(document).ready(function(){' . PHP_EOL
-            . $this->tableAdmin->script . PHP_EOL
-            // AdminRecordName displays changes in red next to the main h2
-            . 'if (typeof(AdminRecordName) != "undefined") {' . PHP_EOL
-            . '    $("h2 .AdminRecordName").text(AdminRecordName.replaceAll(/<\/?[a-z][^>]*>/i, "").substr(0, 50));'
-            . PHP_EOL
-            . '}' . PHP_EOL
-            . '});' . PHP_EOL
+            . '<script type="text/javascript">' . PHP_EOL
+            . $this->outputBodyEndInlineScript()
             . ' </script>';
         return $result;
     }
@@ -862,9 +873,23 @@ array_unshift($this->clientSideResources['css'], 'styles/admin.css.php?v=' . PAG
     public function renderAdmin()
     {
         $this->prepareAdmin();
+$this->clientSideResources['js'] = array_merge(
+$this->clientSideResources['js'],
+[
+  // scripts listed in outputBodyEnd
+          'scripts/jquery.sha1.js',
+        'scripts/summernote.js',
+//            . '<script type="text/javascript" src="scripts/admin.js?v=' . PAGE_RESOURCE_VERSION . '"></script>'. // Todo why  charset="utf-8" ??
+            'scripts/admin-specific.js?v=' . PAGE_RESOURCE_VERSION// todo why  charset="utf-8" ?? 
+]
+);
         $params = [
             'language' => Tools::h($_SESSION['language']),
-            'htmlhead' => $this->outputHead($this->getPageTitle()),
+            //'htmlhead' => $this->outputHead($this->getPageTitle()),
+            'pageTitle' => $this->getPageTitle(),
+            'HTMLHeaders'=>$this->HTMLHeaders, 
+            'clientSideResources'=>$this->clientSideResources,
+            'inlineJavaScript' => outputBodyEndInlineScript(),
             'htmlbody' => $this->outputAdminBody(),
         ];
         $customFilters = new MyCustomFilters($this->MyCMS);
@@ -921,7 +946,9 @@ array_unshift($this->clientSideResources['css'], 'styles/admin.css.php?v=' . PAG
         if (isset($_SESSION['user'])) {
             $output .= $this->outputImageSelector();
         }
+        if(!Tools::nonzero($this->featureFlags['admin_latte_render'])){
         $output .= $this->outputBodyEnd();
+}
         return $output;
     }
 
