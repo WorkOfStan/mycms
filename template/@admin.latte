@@ -11,6 +11,12 @@
             {include 'user-agendas.latte'}
         </div>
         *}
-        {block htmlbody}{/block}
+        {block htmlbody}{/block} 
+    {foreach $clientSideResources['js'] as $jsUri}
+        <script type="text/javascript" src="{$jsUri}"></script>
+    {/foreach}
+    <script type="text/javascript">{* todo only unempty *}
+        {$inlineJavaScript}
+    </script>
     </body>
 </html>
