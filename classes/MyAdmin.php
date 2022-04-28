@@ -98,10 +98,10 @@ class MyAdmin extends MyCommon
                 $this->tableAdmin = $this->TableAdmin;
             }
         }
-        if(Tools::nonzero($this->featureFlags['admin_latte_render'])){
-array_unshift($this->clientSideResources['css'], 'styles/admin.css.php?v=' . PAGE_RESOURCE_VERSION); // MyCMS
-}
-$this->template ='admin-ui';
+        if (Tools::nonzero($this->featureFlags['admin_latte_render'])) {
+            array_unshift($this->clientSideResources['css'], 'styles/admin.css.php?v=' . PAGE_RESOURCE_VERSION); //MyCMS
+        }
+        $this->template = 'admin-ui';
     }
 
     /**
@@ -130,6 +130,7 @@ $this->template ='admin-ui';
 
     /**
      * Output (in HTML) the <head> section of admin
+     * LEGACY
      *
      * @param string $title used in <title>
      * @return string
@@ -450,6 +451,7 @@ $this->template ='admin-ui';
         }
         $result .= '</div></details>';
         $this->tableAdmin->script .= '$("#agendas > summary").click();';
+        Debugger::barDump($this->tableAdmin->script, 'TA script fill-in'); // debug
         return $result;
     }
 
@@ -466,6 +468,7 @@ $this->template ='admin-ui';
         foreach ($tmp as $key => $value) {
             $tmp[$key] = $this->tableAdmin->translate($key, false);
         }
+        Debugger::barDump($this->tableAdmin->script, 'TA script retrieve'); // debug
         return 'WHERE_OPS = ' . json_encode($this->tableAdmin->WHERE_OPS) . ';' . PHP_EOL
             . 'TRANSLATE = ' . json_encode($tmp) . ';' . PHP_EOL
             . 'TAB_PREFIX = "' . TAB_PREFIX . '";' . PHP_EOL
@@ -480,7 +483,7 @@ $this->template ='admin-ui';
             . '    $("h2 .AdminRecordName").text(AdminRecordName.replaceAll(/<\/?[a-z][^>]*>/i, "").substr(0, 50));'
             . PHP_EOL
             . '}' . PHP_EOL
-            . '});' . PHP_EOL;
+            . '});';
     }
 
     /**
@@ -509,7 +512,7 @@ $this->template ='admin-ui';
 //            . '<script type="text/javascript" src="scripts/admin.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
             . '<script type="text/javascript" src="scripts/admin-specific.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
             . '<script type="text/javascript">' . PHP_EOL
-            . $this->outputBodyEndInlineScript()
+            . $this->outputBodyEndInlineScript() . PHP_EOL
             . ' </script>';
         return $result;
     }
@@ -881,22 +884,22 @@ $this->template ='admin-ui';
     public function renderAdmin()
     {
         $this->prepareAdmin();
-$this->clientSideResources['js'] = array_merge(
-$this->clientSideResources['js'],
-[
-  // scripts listed in outputBodyEnd
-          'scripts/jquery.sha1.js',
-        'scripts/summernote.js',
-//            . '<script type="text/javascript" src="scripts/admin.js?v=' . PAGE_RESOURCE_VERSION . '"></script>'. // Todo why  charset="utf-8" ??
-            'scripts/admin-specific.js?v=' . PAGE_RESOURCE_VERSION// todo why  charset="utf-8" ?? 
-]
-);
+        $this->clientSideResources['js'] = array_merge(
+            $this->clientSideResources['js'],
+            [
+                // scripts listed in outputBodyEnd
+                'scripts/jquery.sha1.js',
+                'scripts/summernote.js',
+                'scripts/admin-specific.js?v=' . PAGE_RESOURCE_VERSION
+            ]
+        );
+        $htmlbody = $this->outputAdminBody(); // MUST precede outputBodyEndInlineScript method so that $this->tableAdmin->script is already populated
         $params = [
-            'clientSideResources'=>$this->clientSideResources,
-            'inlineJavaScript' => outputBodyEndInlineScript(),
-            'htmlbody' => $this->outputAdminBody(),
+            'clientSideResources' => $this->clientSideResources,
+            'inlineJavaScript' => $this->outputBodyEndInlineScript(),
+            'htmlbody' => $htmlbody,
             //'htmlhead' => $this->outputHead($this->getPageTitle()),
-            'HTMLHeaders'=>$this->HTMLHeaders, 
+            'HTMLHeaders' => $this->HTMLHeaders,
             'language' => Tools::h($_SESSION['language']),
             'pageTitle' => $this->getPageTitle(),
             'token' => end($_SESSION['token']), // for login

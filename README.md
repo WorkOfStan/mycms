@@ -170,6 +170,23 @@ While running `vendor/bin/phpunit` from `dist` will result in using MyCMS classe
 GitHub actions' version of PHPUnit uses config file [phpunit-github-actions.xml](phpunit-github-actions.xml) that ignores `Distribution Test Suite`
 because MySQLi environment isn't prepared (yet) and HTTP requests to self can't work in CLI only environment.
 
+### Reusing workflows
+As dist/.github/workflows [reuses](https://docs.github.com/en/actions/using-workflows/reusing-workflows) some .github/workflows through workflow_call,
+it is imperative not to introduce ANY BREAKING CHANGES there.
+The reused workflow may be referenced by a branch, tag or commit and doesn't support [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+```sh
+    # Working examples
+    uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@main # ok, but all encompassing
+    uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@v0.4.6 # it works
+
+    # Failing examples
+    uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@v0.4
+    uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@^v0.4
+    uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@^0.4
+    uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@v0    
+```
+Therefore, if a breaking change MUST be introduce, create another workflow to be reused instead of changing the existing one!
+
 ### PHPStan
 
 Till PHP<7.1 is supported, neither `phpstan/phpstan-webmozart-assert` nor `rector/rector` can't be required-dev in composer.json.

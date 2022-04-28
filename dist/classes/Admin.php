@@ -22,7 +22,7 @@ class Admin extends MyAdmin
 
     /**
      * Feature flags that bubble down to latte and controller
-     *
+     * TODO: remove from here  as redundant (it is already in MyAdmin)
      * @var array<bool>
      */
     protected $featureFlags;
@@ -779,9 +779,8 @@ class Admin extends MyAdmin
             ] as $table
         ) {
             foreach (array_keys($this->tableAdmin->TRANSLATIONS) as $i) {
-                $query = $this->MyCMS->fetchAll("SELECT COUNT(url_$i) AS _count, url_$i AS url"
-                    . ' FROM `' . TAB_PREFIX . "{$table}` GROUP BY url ORDER BY _count DESC");
-                foreach ($query as $row) {
+                foreach ($this->MyCMS->dbms->fetchAll("SELECT COUNT(url_$i) AS _count, url_$i AS url"
+                    . ' FROM `' . TAB_PREFIX . "{$table}` GROUP BY url ORDER BY _count DESC") as $row) {
                     // Tools::add($urls[$row['url']], $row['_count']); // next line is more static analysis friendly:
                     $urls[$row['url']] = (isset($urls[$row['url']]) ? $urls[$row['url']] : 0) + $row['_count'];
                 }
