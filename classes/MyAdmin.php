@@ -76,6 +76,12 @@ class MyAdmin extends MyCommon
     protected $tableAdmin;
 
     /**
+     * which Latte template to load
+     * @var string
+     */
+    public $template;
+
+    /**
      *
      * @param MyCMS $MyCMS
      * @param array<mixed> $options that overrides default values within constructor
@@ -95,6 +101,7 @@ class MyAdmin extends MyCommon
         if(Tools::nonzero($this->featureFlags['admin_latte_render'])){
 array_unshift($this->clientSideResources['css'], 'styles/admin.css.php?v=' . PAGE_RESOURCE_VERSION); // MyCMS
 }
+$this->template ='admin-ui';
     }
 
     /**
@@ -893,7 +900,7 @@ $this->clientSideResources['js'],
             'htmlbody' => $this->outputAdminBody(),
         ];
         $customFilters = new MyCustomFilters($this->MyCMS);
-        $render = new Render('admin-ui', DIR_TEMPLATE_CACHE, [$customFilters, 'common']);
+        $render = new Render($this->template, DIR_TEMPLATE_CACHE, [$customFilters, 'common']);
         $render->renderLatte($params);
         $this->endAdmin();
     }
@@ -954,7 +961,7 @@ $this->clientSideResources['js'],
 
     /**
      * Return the HTML output of the complete administration page.
-     * TODO: consider rewrite as Latte
+     * Legacy - being redone as renderAdmin TODO: consider rewrite as Latte
      *
      * Expected global variables:
      * * $_GET
