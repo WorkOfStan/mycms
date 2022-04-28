@@ -106,6 +106,7 @@ class MyAdmin extends MyCommon
 
     /**
      * Ends Admin rendering with TracyPanels
+     * LEGACY
      *
      * @return void
      */
@@ -907,7 +908,7 @@ class MyAdmin extends MyCommon
         $customFilters = new MyCustomFilters($this->MyCMS);
         $render = new Render($this->template, DIR_TEMPLATE_CACHE, [$customFilters, 'common']);
         $render->renderLatte($params);
-        $this->endAdmin();
+        $this->MyCMS->dbms->showSqlBarPanel();
     }
 
     /**
