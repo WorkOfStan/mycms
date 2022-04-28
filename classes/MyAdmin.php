@@ -520,6 +520,7 @@ class MyAdmin extends MyCommon
 
     /**
      * Output (in HTML) the Bootstrap dialog for ImageSelector
+     * LEGACY
      *
      * @return string
      */
@@ -601,6 +602,7 @@ class MyAdmin extends MyCommon
 
     /**
      * Output (in HTML) the admin's layout footer
+     * LEGACY
      *
      * @return string
      */
@@ -896,6 +898,7 @@ class MyAdmin extends MyCommon
         );
         $htmlbody = $this->outputAdminBody(); // MUST precede outputBodyEndInlineScript method so that $this->tableAdmin->script is already populated
         $params = [
+            'authUser' => (int) (isset($_SESSION['user']) && $_SESSION['user']), // 0 vs 1
             'clientSideResources' => $this->clientSideResources,
             'inlineJavaScript' => $this->outputBodyEndInlineScript(),
             'htmlbody' => $htmlbody,
@@ -954,12 +957,12 @@ class MyAdmin extends MyCommon
         if (isset($_SESSION['user'])) {
             $output .= $this->outputDashboard();
         }
-        $output .= '</main></div>' . PHP_EOL
-            . $this->outputFooter();
-        if (isset($_SESSION['user'])) {
-            $output .= $this->outputImageSelector();
-        }
-        if(!Tools::nonzero($this->featureFlags['admin_latte_render'])){
+        $output .= '</main></div>' . PHP_EOL;
+        if (!Tools::nonzero($this->featureFlags['admin_latte_render'])) {
+            $output .= $this->outputFooter();
+            if (isset($_SESSION['user'])) {
+                $output .= $this->outputImageSelector();
+            }
             $output .= $this->outputBodyEnd();
         }
         return $output;
