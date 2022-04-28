@@ -487,6 +487,7 @@ $this->template ='admin-ui';
      * Output (in HTML) the end part of administration page.
      * It's a list of scripts and an inline script
      * This method also modifies $this->script.  (Todo ??? Really)
+     * LEGACY
      *
      * @return string
      */
@@ -891,13 +892,14 @@ $this->clientSideResources['js'],
 ]
 );
         $params = [
-            'language' => Tools::h($_SESSION['language']),
-            //'htmlhead' => $this->outputHead($this->getPageTitle()),
-            'pageTitle' => $this->getPageTitle(),
-            'HTMLHeaders'=>$this->HTMLHeaders, 
             'clientSideResources'=>$this->clientSideResources,
             'inlineJavaScript' => outputBodyEndInlineScript(),
             'htmlbody' => $this->outputAdminBody(),
+            //'htmlhead' => $this->outputHead($this->getPageTitle()),
+            'HTMLHeaders'=>$this->HTMLHeaders, 
+            'language' => Tools::h($_SESSION['language']),
+            'pageTitle' => $this->getPageTitle(),
+            'token' => end($_SESSION['token']), // for login
         ];
         $customFilters = new MyCustomFilters($this->MyCMS);
         $render = new Render($this->template, DIR_TEMPLATE_CACHE, [$customFilters, 'common']);
@@ -933,7 +935,7 @@ $this->clientSideResources['js'],
         (isset($_SESSION['user']) && Tools::set($_GET['search'])) {
             $output .= $this->outputSearchResults($_GET['search']);
         }
-        // table listing/editing
+        // table listing/editing - TODO even for unlogged???
         if ($_GET['table']) {
             $output .= $this->outputTable();
         } elseif (isset($_GET['media'])) { // media upload etc.
@@ -954,8 +956,8 @@ $this->clientSideResources['js'],
             $output .= $this->outputImageSelector();
         }
         if(!Tools::nonzero($this->featureFlags['admin_latte_render'])){
-        $output .= $this->outputBodyEnd();
-}
+            $output .= $this->outputBodyEnd();
+        }
         return $output;
     }
 
