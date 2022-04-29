@@ -19,8 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - nicer formatting Admin UI table SQL statement
 - Logging of untranslated strings when DEBUG_VERBOSE into `'log/translation_missing_' . date("Y-m-d") . '.log'` (instead of swelling translation_missing.log)
 - Admin UI can be rendered by Latte (instead directly from MyAdmin methods) if $featureFlags['admin_latte_render'] set to true (still experimental because library vs app references MUST be solved)
-- Admin UI in Latte mode receives params including token and authUser (0=anonymous, 1=logged-in) 
-- **BREAKING CHANGE (feature flagged)** if $featureFlags['admin_latte_render']===false dist/styles/admin.css.php MUST be present (to link rel admin.css deep in vendor folder) and admin.php code has to be updated to alternatively use the latte rendering
+- Admin UI in Latte mode receives params including token and authUser (0=anonymous, 1=logged-in)
+- **BREAKING CHANGE (feature flagged)** if $featureFlags['admin_latte_render']===false `dist/styles/admin.css.php` MUST be present (to link rel `admin.css` deep in vendor folder) and admin.php code has to be updated to alternatively use the latte rendering
 - Default Latte templates moved from app part of templates to library part of templates in order to quickly deploy. If you start working with the templates however, you should maintain them in the app folder.
 - color highlighting of sections of scripts build.sh and phpstan.sh
 - relax dist/FriendlyUrl::switchParametric - if there's no rule to produce a friendly URL, don't report error not changing it, only an info
