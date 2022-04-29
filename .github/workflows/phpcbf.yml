@@ -33,4 +33,4 @@ jobs:
       # make the changes between checkout and push
       # https://github.com/marketplace/actions/git-commit-push-changes
       - name: push
-        uses: actions-x/commit@v5
+        uses: actions-x/commit@v6
