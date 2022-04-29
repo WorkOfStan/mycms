@@ -779,8 +779,10 @@ class Admin extends MyAdmin
             ] as $table
         ) {
             foreach (array_keys($this->tableAdmin->TRANSLATIONS) as $i) {
-                foreach ($this->MyCMS->dbms->fetchAll("SELECT COUNT(url_$i) AS _count, url_$i AS url"
-                    . ' FROM `' . TAB_PREFIX . "{$table}` GROUP BY url ORDER BY _count DESC") as $row) {
+                foreach (
+                    $this->MyCMS->dbms->fetchAll("SELECT COUNT(url_$i) AS _count, url_$i AS url"
+                    . ' FROM `' . TAB_PREFIX . "{$table}` GROUP BY url ORDER BY _count DESC") as $row
+                ) {
                     // Tools::add($urls[$row['url']], $row['_count']); // next line is more static analysis friendly:
                     $urls[$row['url']] = (isset($urls[$row['url']]) ? $urls[$row['url']] : 0) + $row['_count'];
                 }
