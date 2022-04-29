@@ -16,6 +16,8 @@ use function WorkOfStan\MyCMS\ThrowableFunctions\preg_replaceString;
 
 /**
  * Parent for deployed Admin instance
+ * Some HTML code is already in admin-*.latte and can be overriden in the App
+ * Some aspects of the visualisation can be adapted by the Admin methods overriding those in MyAdmin
  *
  */
 class MyAdmin extends MyCommon
