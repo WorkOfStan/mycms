@@ -452,7 +452,7 @@ class MyAdmin extends MyCommon
         }
         $result .= '</div></details>';
         $this->tableAdmin->script .= '$("#agendas > summary").click();';
-        Debugger::barDump($this->tableAdmin->script, 'TA script fill-in'); // debug
+        //Debugger::barDump($this->tableAdmin->script, 'TA script fill-in'); // debug
         return $result;
     }
 
@@ -469,7 +469,7 @@ class MyAdmin extends MyCommon
         foreach ($tmp as $key => $value) {
             $tmp[$key] = $this->tableAdmin->translate($key, false);
         }
-        Debugger::barDump($this->tableAdmin->script, 'TA script retrieve'); // debug
+        //Debugger::barDump($this->tableAdmin->script, 'TA script retrieve'); // debug
         return 'WHERE_OPS = ' . json_encode($this->tableAdmin->WHERE_OPS) . ';' . PHP_EOL
             . 'TRANSLATE = ' . json_encode($tmp) . ';' . PHP_EOL
             . 'TAB_PREFIX = "' . TAB_PREFIX . '";' . PHP_EOL
@@ -686,8 +686,9 @@ class MyAdmin extends MyCommon
         $result = '';
         foreach ($this->searchColumns as $key => $value) {
             $id = array_shift($value);
+            Assert::string($id);
             $sql = 'SELECT ' . $this->tableAdmin->escapeDbIdentifier($id) . ','
-                . $this->tableAdmin->escapeDbIdentifier(strtr(reset($value), ['_#' => '_' . $_SESSION['language']]))
+                . $this->tableAdmin->escapeDbIdentifier(strtr((string) reset($value), ['_#' => '_' . $_SESSION['language']]))
                 . ' FROM ' . $this->tableAdmin->escapeDbIdentifier(TAB_PREFIX . $key);
             $where = '';
             foreach ($value as $item) {
@@ -908,7 +909,7 @@ class MyAdmin extends MyCommon
             'pageTitle' => $this->getPageTitle(),
             'token' => end($_SESSION['token']), // for login
         ];
-        $customFilters = new MyCustomFilters($this->MyCMS);
+        $customFilters = new MyCustomFilters($this->MyCMS, [$this->tableAdmin, 'translate']);
         $render = new Render($this->template, DIR_TEMPLATE_CACHE, [$customFilters, 'common']);
         $render->renderLatte($params);
         $this->MyCMS->dbms->showSqlBarPanel();
@@ -970,7 +971,7 @@ class MyAdmin extends MyCommon
 
     /**
      * Return the HTML output of the complete administration page.
-     * Legacy - being redone as renderAdmin TODO: consider rewrite as Latte
+     * Legacy - being redone as renderAdmin using Latte
      *
      * Expected global variables:
      * * $_GET

@@ -9,8 +9,7 @@ use Webmozart\Assert\Assert;
 use WorkOfStan\MyCMS\MyCMS;
 
 /**
- * Custom project-specific filters for Latte.
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
+ * MyCMS specific filters for Latte.
  */
 class MyCustomFilters
 {
@@ -22,14 +21,20 @@ class MyCustomFilters
     /** var ProjectSpecific */
 //    private $projectSpecific;
 
+    /** @var callable|null */
+    protected $translateMethod;
+
     /**
      *
      * @param MyCMS $MyCMS
+     * @param callable $translateMethod to be used instead of the translate method within MyCMS
+     * TODO consider constructing the class only with translate method and MyCMS as optional
      */
-    public function __construct(MyCMS $MyCMS)
+    public function __construct(MyCMS $MyCMS, $translateMethod = null)
     {
         $this->MyCMS = $MyCMS;
-//        $this->projectSpecific = new ProjectSpecific($this->MyCMS);
+        $this->translateMethod = $translateMethod;
+        //$this->projectSpecific = new ProjectSpecific($this->MyCMS);
     }
 
     /**
@@ -92,7 +97,13 @@ class MyCustomFilters
      */
     public function translate($text)
     {
-        return $this->MyCMS->translate($text);
+        if (is_null($this->translateMethod)) {
+            return $this->MyCMS->translate($text);
+        }
+        Assert::isCallable($this->translateMethod);
+        $result = call_user_func($this->translateMethod, $text);
+        Assert::string($result);
+        return $result;
     }
 
     /**
