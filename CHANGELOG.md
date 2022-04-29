@@ -12,12 +12,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - App can use either inherited Latte templates or override it with modified templates
 - Latte inheritance test pages (inheritance-*.latte added where new include inherite.latte is demonstrated) including PHPUnit FriendlyUrlTest::testPageStatusOverHttp
 - instead of simply {include $latte} call {include 'inherite.latte', latte => $latte} so that the preferred existing version of latte is used
+- new parameter to MyCustomFilters allows for another translate method (in order to use $tableAdmin->translate instead of $MyCMS->translate for Admin UI)
 
 ### `Changed` for changes in existing functionality
 - MyCommon::verboseBarDump Dumper::LOCATION => false hides where the dump originated as this is not the original place anyway, show it in the title instead
 - nicer formatting Admin UI table SQL statement
 - Logging of untranslated strings when DEBUG_VERBOSE into `'log/translation_missing_' . date("Y-m-d") . '.log'` (instead of swelling translation_missing.log)
 - Admin UI can be rendered by Latte (instead directly from MyAdmin methods) if $featureFlags['admin_latte_render'] set to true (still experimental because library vs app references MUST be solved)
+- Admin UI in Latte mode receives params including token and authUser (0=anonymous, 1=logged-in)
+- **BREAKING CHANGE (feature flagged)** if $featureFlags['admin_latte_render']===false `dist/styles/admin.css.php` MUST be present (to link rel `admin.css` deep in vendor folder) and admin.php code has to be updated to alternatively use the latte rendering
 - Default Latte templates moved from app part of templates to library part of templates in order to quickly deploy. If you start working with the templates however, you should maintain them in the app folder.
 - color highlighting of sections of scripts build.sh and phpstan.sh
 - relax dist/FriendlyUrl::switchParametric - if there's no rule to produce a friendly URL, don't report error not changing it, only an info
@@ -26,8 +29,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Deprecated` for soon-to-be removed features
 - dist/rector.php (TODO consider using just string replace instead of the rector engine)
+- Admin UI in Latte mode doesn't use Admin::outputImageSelector and/or Admin::outputFooter, so before turning on the Admin Latte, move the custom code to the corresponding lattes
 
 ### `Removed` for now removed features
+- attributes type and charset (as in `<script type="text/javascript" src="scripts/admin.js?v=1" charset="utf-8">`) are obsolete
 
 ### `Fixed` for any bugfixes
 - SQL syntax: TAB_PREFIX may need backticks around its name

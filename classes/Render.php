@@ -56,8 +56,6 @@ class Render
     /**
      * Latte initialization & Mark-up output
      *
-     * @ param string $dirTemplateCache
-     * @ param callable $customFilters
      * @param array<mixed> $params
      * @return void
      */
@@ -65,7 +63,8 @@ class Render
     {
         $displayParams = $params;
         // TODO till the Admin UI isn't done properly hide HTML handed over in a variable
-        unset($displayParams['htmlhead'], $displayParams['htmlbody']);
+        //unset($displayParams['htmlhead']);
+        unset($displayParams['htmlbody']);
         Debugger::getBar()->addPanel(new BarPanelTemplate('Template: ' . $this->template, $displayParams));
         if (isset($_SESSION['user'])) {
             Debugger::getBar()->addPanel(

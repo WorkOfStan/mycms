@@ -16,6 +16,8 @@ use function WorkOfStan\MyCMS\ThrowableFunctions\preg_replaceString;
 
 /**
  * Parent for deployed Admin instance
+ * Some HTML code is already in admin-*.latte and can be overriden in the App
+ * Some aspects of the visualisation can be adapted by the Admin methods overriding those in MyAdmin
  *
  */
 class MyAdmin extends MyCommon
@@ -28,7 +30,7 @@ class MyAdmin extends MyCommon
     /** @var array<string> */
     protected $ASSETS_SUBFOLDERS = [];
 
-    /** @var array<array<string>> client-side resources - css, js, fonts etc. */
+    /** @var array<array<string>> expected client-side resources - css, js, fonts etc. */
     protected $clientSideResources = [
         'js' => [
             'scripts/jquery.js',
@@ -42,9 +44,16 @@ class MyAdmin extends MyCommon
             'styles/ie10-viewport-bug-workaround.css',
             'styles/bootstrap-datetimepicker.css',
             'styles/summernote.css',
-            'styles/admin.css?v=' . PAGE_RESOURCE_VERSION,
+            'styles/admin.css?v=' . PAGE_RESOURCE_VERSION, // App
         ],
     ];
+
+    /**
+     * Feature flags that bubble down to latte and controller
+     * TODO: remove from Admin as redundant
+     * @var array<bool>
+     */
+    protected $featureFlags;
 
     /** @var array<string> */
     public $HTMLHeaders = [
@@ -57,7 +66,7 @@ class MyAdmin extends MyCommon
     ];
 
     /**
-     * @var array<array> tables and columns to search in admin
+     * @var array<array<string>> tables and columns to search in admin
      * table => [id, field1 to be searched in, field2 to be searched in...]
      */
     protected $searchColumns = [];
@@ -67,6 +76,12 @@ class MyAdmin extends MyCommon
 
     /** @var MyTableAdmin */
     protected $tableAdmin;
+
+    /**
+     * which Latte template to load
+     * @var string
+     */
+    public $template;
 
     /**
      *
@@ -85,10 +100,15 @@ class MyAdmin extends MyCommon
                 $this->tableAdmin = $this->TableAdmin;
             }
         }
+        if (Tools::nonzero($this->featureFlags['admin_latte_render'])) {
+            array_unshift($this->clientSideResources['css'], 'styles/admin.css.php?v=' . PAGE_RESOURCE_VERSION); //MyCMS
+        }
+        $this->template = 'admin-ui';
     }
 
     /**
      * Ends Admin rendering with TracyPanels
+     * LEGACY
      *
      * @return void
      */
@@ -103,6 +123,7 @@ class MyAdmin extends MyCommon
     /**
      * As vendor folder has usually denied access from browser,
      * the content of the standard admin.css MUST be available through this method
+     * LEGACY
      *
      * @return string
      */
@@ -113,6 +134,7 @@ class MyAdmin extends MyCommon
 
     /**
      * Output (in HTML) the <head> section of admin
+     * LEGACY
      *
      * @param string $title used in <title>
      * @return string
@@ -433,12 +455,46 @@ class MyAdmin extends MyCommon
         }
         $result .= '</div></details>';
         $this->tableAdmin->script .= '$("#agendas > summary").click();';
+        //Debugger::barDump($this->tableAdmin->script, 'TA script fill-in'); // debug
         return $result;
     }
 
     /**
+     * The inline script for the HTML end
+     *
+     * @return string
+     */
+    protected function outputBodyEndInlineScript()
+    {
+        $tmp = array_flip(explode('|', 'descending|Really delete?|New record|Passwords don\'t match!|Please, fill necessary data.|'
+                . 'Select at least one file and try again.|Select at least one record and try again.|No files|Edit|'
+                . 'variable|value|name|size|modified|Select|No records found.|Please, choose a new name.|Wrong input'));
+        foreach ($tmp as $key => $value) {
+            $tmp[$key] = $this->tableAdmin->translate($key, false);
+        }
+        //Debugger::barDump($this->tableAdmin->script, 'TA script retrieve'); // debug
+        return 'WHERE_OPS = ' . json_encode($this->tableAdmin->WHERE_OPS) . ';' . PHP_EOL
+            . 'TRANSLATE = ' . json_encode($tmp) . ';' . PHP_EOL
+            . 'TAB_PREFIX = "' . TAB_PREFIX . '";' . PHP_EOL
+            . 'EXPAND_INFIX = "' . EXPAND_INFIX . '";' . PHP_EOL
+            . 'TOKEN = ' . end($_SESSION['token']) . ';' . PHP_EOL
+            . 'ASSETS_SUBFOLDERS = ' . json_encode($this->ASSETS_SUBFOLDERS) . ';' . PHP_EOL
+            . 'DIR_ASSETS = ' . json_encode(DIR_ASSETS) . ';' . PHP_EOL
+            . '$(document).ready(function(){' . PHP_EOL
+            . $this->tableAdmin->script . PHP_EOL
+            // AdminRecordName displays changes in red next to the main h2
+            . 'if (typeof(AdminRecordName) != "undefined") {' . PHP_EOL
+            . '    $("h2 .AdminRecordName").text(AdminRecordName.replaceAll(/<\/?[a-z][^>]*>/i, "").substr(0, 50));'
+            . PHP_EOL
+            . '}' . PHP_EOL
+            . '});';
+    }
+
+    /**
      * Output (in HTML) the end part of administration page.
-     * This method also modifies $this->script.
+     * It's a list of scripts and an inline script
+     * This method also modifies $this->script.  (Todo ??? Really)
+     * LEGACY
      *
      * @return string
      */
@@ -459,34 +515,15 @@ class MyAdmin extends MyCommon
             . '<script type="text/javascript" src="scripts/summernote.js"></script>'
 //            . '<script type="text/javascript" src="scripts/admin.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
             . '<script type="text/javascript" src="scripts/admin-specific.js?v=' . PAGE_RESOURCE_VERSION . '" charset="utf-8"></script>'
-            . '<script type="text/javascript">' . PHP_EOL;
-        $tmp = array_flip(explode('|', 'descending|Really delete?|New record|Passwords don\'t match!|Please, fill necessary data.|'
-                . 'Select at least one file and try again.|Select at least one record and try again.|No files|Edit|'
-                . 'variable|value|name|size|modified|Select|No records found.|Please, choose a new name.|Wrong input'));
-        foreach ($tmp as $key => $value) {
-            $tmp[$key] = $this->tableAdmin->translate($key, false);
-        }
-        $result .= 'WHERE_OPS = ' . json_encode($this->tableAdmin->WHERE_OPS) . ';' . PHP_EOL
-            . 'TRANSLATE = ' . json_encode($tmp) . ';' . PHP_EOL
-            . 'TAB_PREFIX = "' . TAB_PREFIX . '";' . PHP_EOL
-            . 'EXPAND_INFIX = "' . EXPAND_INFIX . '";' . PHP_EOL
-            . 'TOKEN = ' . end($_SESSION['token']) . ';' . PHP_EOL
-            . 'ASSETS_SUBFOLDERS = ' . json_encode($this->ASSETS_SUBFOLDERS) . ';' . PHP_EOL
-            . 'DIR_ASSETS = ' . json_encode(DIR_ASSETS) . ';' . PHP_EOL
-            . '$(document).ready(function(){' . PHP_EOL
-            . $this->tableAdmin->script . PHP_EOL
-            // AdminRecordName displays changes in red next to the main h2
-            . 'if (typeof(AdminRecordName) != "undefined") {' . PHP_EOL
-            . '    $("h2 .AdminRecordName").text(AdminRecordName.replaceAll(/<\/?[a-z][^>]*>/i, "").substr(0, 50));'
-            . PHP_EOL
-            . '}' . PHP_EOL
-            . '});' . PHP_EOL
+            . '<script type="text/javascript">' . PHP_EOL
+            . $this->outputBodyEndInlineScript() . PHP_EOL
             . ' </script>';
         return $result;
     }
 
     /**
      * Output (in HTML) the Bootstrap dialog for ImageSelector
+     * LEGACY
      *
      * @return string
      */
@@ -568,6 +605,7 @@ class MyAdmin extends MyCommon
 
     /**
      * Output (in HTML) the admin's layout footer
+     * LEGACY
      *
      * @return string
      */
@@ -651,8 +689,9 @@ class MyAdmin extends MyCommon
         $result = '';
         foreach ($this->searchColumns as $key => $value) {
             $id = array_shift($value);
+            Assert::string($id);
             $sql = 'SELECT ' . $this->tableAdmin->escapeDbIdentifier($id) . ','
-                . $this->tableAdmin->escapeDbIdentifier(strtr(reset($value), ['_#' => '_' . $_SESSION['language']]))
+                . $this->tableAdmin->escapeDbIdentifier(strtr((string) reset($value), ['_#' => '_' . $_SESSION['language']]))
                 . ' FROM ' . $this->tableAdmin->escapeDbIdentifier(TAB_PREFIX . $key);
             $where = '';
             foreach ($value as $item) {
@@ -852,15 +891,31 @@ class MyAdmin extends MyCommon
     public function renderAdmin()
     {
         $this->prepareAdmin();
+        $this->clientSideResources['js'] = array_merge(
+            $this->clientSideResources['js'],
+            [
+                // scripts listed in outputBodyEnd
+                'scripts/jquery.sha1.js',
+                'scripts/summernote.js',
+                'scripts/admin-specific.js?v=' . PAGE_RESOURCE_VERSION
+            ]
+        );
+        $htmlbody = $this->outputAdminBody(); // MUST precede outputBodyEndInlineScript method so that $this->tableAdmin->script is already populated
         $params = [
+            'authUser' => (int) (isset($_SESSION['user']) && $_SESSION['user']), // 0 vs 1
+            'clientSideResources' => $this->clientSideResources,
+            'inlineJavaScript' => $this->outputBodyEndInlineScript(),
+            'htmlbody' => $htmlbody,
+            //'htmlhead' => $this->outputHead($this->getPageTitle()),
+            'HTMLHeaders' => $this->HTMLHeaders,
             'language' => Tools::h($_SESSION['language']),
-            'htmlhead' => $this->outputHead($this->getPageTitle()),
-            'htmlbody' => $this->outputAdminBody(),
+            'pageTitle' => $this->getPageTitle(),
+            'token' => end($_SESSION['token']), // for login
         ];
-        $customFilters = new MyCustomFilters($this->MyCMS);
-        $render = new Render('admin-ui', DIR_TEMPLATE_CACHE, [$customFilters, 'common']);
+        $customFilters = new MyCustomFilters($this->MyCMS, [$this->tableAdmin, 'translate']);
+        $render = new Render($this->template, DIR_TEMPLATE_CACHE, [$customFilters, 'common']);
         $render->renderLatte($params);
-        $this->endAdmin();
+        $this->MyCMS->dbms->showSqlBarPanel();
     }
 
     /**
@@ -891,7 +946,7 @@ class MyAdmin extends MyCommon
         (isset($_SESSION['user']) && Tools::set($_GET['search'])) {
             $output .= $this->outputSearchResults($_GET['search']);
         }
-        // table listing/editing
+        // table listing/editing - TODO even for unlogged???
         if ($_GET['table']) {
             $output .= $this->outputTable();
         } elseif (isset($_GET['media'])) { // media upload etc.
@@ -906,18 +961,20 @@ class MyAdmin extends MyCommon
         if (isset($_SESSION['user'])) {
             $output .= $this->outputDashboard();
         }
-        $output .= '</main></div>' . PHP_EOL
-            . $this->outputFooter();
-        if (isset($_SESSION['user'])) {
-            $output .= $this->outputImageSelector();
+        $output .= '</main></div>' . PHP_EOL;
+        if (!Tools::nonzero($this->featureFlags['admin_latte_render'])) {
+            $output .= $this->outputFooter();
+            if (isset($_SESSION['user'])) {
+                $output .= $this->outputImageSelector();
+            }
+            $output .= $this->outputBodyEnd();
         }
-        $output .= $this->outputBodyEnd();
         return $output;
     }
 
     /**
      * Return the HTML output of the complete administration page.
-     * TODO: consider rewrite as Latte
+     * Legacy - being redone as renderAdmin using Latte
      *
      * Expected global variables:
      * * $_GET

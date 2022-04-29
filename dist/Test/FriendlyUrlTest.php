@@ -1002,7 +1002,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
                 );
             }
             /**
-             * @phpstan-ignore-next-line
+             * @ phpstan-ignore-next-line (220428 isn't reported as error anymore, 220429 it is again)
              * Offset 'allow_redirect' on array{relative_url: '?product&id=1'|'?product&id=1&x=y'|'alfa?product&id=2',
              * http_status: 200|301, allow_redirect: bool, contains_text?: 'Produkt 1'|'Produkt 2',
              * is_json: false}|array{relative_url: 'alfa?product&id=2', http_status: 301, allow_redirect: false,

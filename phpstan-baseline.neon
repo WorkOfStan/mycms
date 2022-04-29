@@ -11,10 +11,10 @@ parameters:
 			count: 1
 			path: classes/MyAdmin.php
 
-		-
-			message: "#^Property WorkOfStan\\\\MyCMS\\\\MyAdmin\\:\\:\\$searchColumns type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: classes/MyAdmin.php
+		#-
+		#	message: "#^Property WorkOfStan\\\\MyCMS\\\\MyAdmin\\:\\:\\$searchColumns type has no value type specified in iterable type array\\.$#"
+		#	count: 1
+		#	path: classes/MyAdmin.php
 
 		-
 			message: "#^Property WorkOfStan\\\\MyCMS\\\\MyAdmin\\:\\:\\$tableAdmin \\(WorkOfStan\\\\MyCMS\\\\MyTableAdmin\\) in empty\\(\\) is not falsy\\.$#"
