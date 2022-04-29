@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="{$language}">
-    {include 'inherite.latte', latte => 'admin-head.latte'}
+{include 'inherite.latte', latte => 'admin-head.latte'}
     <body>
         {*
         <header>
@@ -18,8 +18,8 @@
     {foreach $clientSideResources['js'] as $jsUri}
         <script type="text/javascript" src="{$jsUri}"></script>
     {/foreach}
-    <script n:ifcontent>
-        {$inlineJavaScript|noescape}
-    </script>
+        <script n:ifcontent>
+            {$inlineJavaScript|noescape}
+        </script>
     </body>
 </html>

@@ -14,7 +14,7 @@ use function WorkOfStan\MyCMS\ThrowableFunctions\preg_match_all;
 
 /**
  * Admin UI
- * (Last MyCMS/dist revision: 2022-03-06, v0.4.6+)
+ * (Last MyCMS/dist revision: 2022-04-29, v0.4.6+)
  */
 class Admin extends MyAdmin
 {
@@ -22,7 +22,7 @@ class Admin extends MyAdmin
 
     /**
      * Feature flags that bubble down to latte and controller
-     * TODO: remove from here  as redundant (it is already in MyAdmin)
+     * TODO: remove from here as redundant (it is already in MyAdmin)
      * @var array<bool>
      */
     protected $featureFlags;
@@ -831,12 +831,15 @@ class Admin extends MyAdmin
     /**
      * As vendor folder has usually denied access from browser,
      * the content of the standard admin.css MUST be available through this method
+     * LEGACY
      *
      * @return string
      */
     public function getAdminCss()
     {
-        return parent::getAdminCss() . PHP_EOL . file_get_contents(__DIR__ . '/../styles/admin.css') . PHP_EOL;
+        //admin.css of the App is expected in the MyAdmin resources anyway, so no reason to duplicate it here
+        //return parent::getAdminCss() . PHP_EOL . file_get_contents(__DIR__ . '/../styles/admin.css') . PHP_EOL;
+        return parent::getAdminCss() . PHP_EOL;
     }
 
     /**

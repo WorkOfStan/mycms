@@ -30,7 +30,7 @@ class MyAdmin extends MyCommon
     /** @var array<string> */
     protected $ASSETS_SUBFOLDERS = [];
 
-    /** @var array<array<string>> client-side resources - css, js, fonts etc. */
+    /** @var array<array<string>> expected client-side resources - css, js, fonts etc. */
     protected $clientSideResources = [
         'js' => [
             'scripts/jquery.js',
@@ -123,6 +123,7 @@ class MyAdmin extends MyCommon
     /**
      * As vendor folder has usually denied access from browser,
      * the content of the standard admin.css MUST be available through this method
+     * LEGACY
      *
      * @return string
      */
