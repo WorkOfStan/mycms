@@ -37,6 +37,7 @@ class Admin extends MyAdmin
     /**
      * @var array<array<string>> tables and columns to search in admin
      * table => [id, field1 to be searched in, field2 to be searched in...]
+     * TODO move to config.php
      */
     protected $searchColumns = [
         'category' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
@@ -58,7 +59,10 @@ class Admin extends MyAdmin
     /**
      * Output (in HTML) the project-specific links in the navigation section of admin
      * TODO: navázat na další features
+     * TODO: move to template/admin-special-menu-links.latte
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
+     * @see template/admin-special-menu-links.latte
      * @return string
      */
     protected function outputSpecialMenuLinks()
@@ -833,7 +837,7 @@ class Admin extends MyAdmin
     /**
      * As vendor folder has usually denied access from browser,
      * the content of the standard admin.css MUST be available through this method
-     * LEGACY
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
      *
      * @return string
      */

@@ -108,8 +108,8 @@ class MyAdmin extends MyCommon
 
     /**
      * Ends Admin rendering with TracyPanels
-     * LEGACY
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
      * @return void
      */
     public function endAdmin()
@@ -123,8 +123,8 @@ class MyAdmin extends MyCommon
     /**
      * As vendor folder has usually denied access from browser,
      * the content of the standard admin.css MUST be available through this method
-     * LEGACY
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
      * @return string
      */
     public function getAdminCss()
@@ -134,8 +134,9 @@ class MyAdmin extends MyCommon
 
     /**
      * Output (in HTML) the <head> section of admin
-     * LEGACY
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
+     * @see template/admin-head.latte
      * @param string $title used in <title>
      * @return string
      */
@@ -225,6 +226,8 @@ class MyAdmin extends MyCommon
     /**
      * Output (in HTML) the project-specific links in the navigation section of admin
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
+     * @see template/admin-special-menu-links.latte
      * @return string
      */
     protected function outputSpecialMenuLinks()
@@ -235,6 +238,8 @@ class MyAdmin extends MyCommon
     /**
      * Output (in HTML) the project-specific links in the settings section of admin
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
+     * @see template/admin-special-settings-links.latte
      * @return string
      */
     protected function outputSpecialSettingsLinks()
@@ -494,8 +499,9 @@ class MyAdmin extends MyCommon
      * Output (in HTML) the end part of administration page.
      * It's a list of scripts and an inline script
      * This method also modifies $this->script.  (Todo ??? Really)
-     * LEGACY
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
+     * @see template/@admin.latte
      * @return string
      */
     protected function outputBodyEnd()
@@ -523,8 +529,9 @@ class MyAdmin extends MyCommon
 
     /**
      * Output (in HTML) the Bootstrap dialog for ImageSelector
-     * LEGACY
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
+     * @see template/admin-output-image-selector.latte
      * @return string
      */
     protected function outputImageSelector()
@@ -605,8 +612,9 @@ class MyAdmin extends MyCommon
 
     /**
      * Output (in HTML) the admin's layout footer
-     * LEGACY
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
+     * @see template/@admin.latte
      * @return string
      */
     protected function outputFooter()
@@ -974,7 +982,6 @@ class MyAdmin extends MyCommon
 
     /**
      * Return the HTML output of the complete administration page.
-     * Legacy - being redone as renderAdmin using Latte
      *
      * Expected global variables:
      * * $_GET
@@ -986,6 +993,8 @@ class MyAdmin extends MyCommon
      * * TAB_PREFIX
      * * EXPAND_INFIX
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
+     * @see MyAdmin::renderAdmin()
      * @return string
      */
     public function outputAdmin()
