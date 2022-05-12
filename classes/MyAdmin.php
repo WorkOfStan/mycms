@@ -65,6 +65,9 @@ class MyAdmin extends MyCommon
         'author' => '',
     ];
 
+    /** @var array<mixed> parameters for rendering set outside */
+    protected $renderParams = [];
+
     /**
      * @var array<array<string>> tables and columns to search in admin
      * table => [id, field1 to be searched in, field2 to be searched in...]
@@ -909,15 +912,8 @@ class MyAdmin extends MyCommon
             ]
         );
         $htmlbody = $this->outputAdminBody(); // MUST precede outputBodyEndInlineScript method so that $this->tableAdmin->script is already populated
-        $switches = [];
-        // test for presence of a string in_array is simpler than testing for existance and value of a boolean array
-        foreach (['change-password', 'create-user', 'delete-user', 'logout', 'media', 'user'] as $switch) {
-            // todo $_GET be replaced by an object property
-            if (isset($_GET[$switch])) {
-                $switches[] = $switch;
-            }
-        }
-        $params = [
+   //     $switches = [];
+        $params = array_merge($this->renderParams, [
             'authUser' => (int) (isset($_SESSION['user']) && $_SESSION['user']), // 0 vs 1
             'clientSideResources' => $this->clientSideResources,
             'inlineJavaScript' => $this->outputBodyEndInlineScript(),
@@ -928,11 +924,22 @@ class MyAdmin extends MyCommon
             'language' => Tools::h($_SESSION['language']),
             'pageTitle' => $this->getPageTitle(),
             'searchString' => (isset($_GET['search']) && $_GET['search']) ? $_GET['search'] : '',
-            'switches' => $switches,
+            //'switches' => $switches,
             'token' => end($_SESSION['token']), // for login
             'translations' => $this->tableAdmin->TRANSLATIONS, // languages for which translations are available
             'username' => (isset($_SESSION['user']) && $_SESSION['user']) ? $_SESSION['user'] : null,
-        ];
+        ]);
+        // Inherites switches
+        if(!array_key_exists('switches', $params)){
+            $params['switches']=[];
+        }
+        // test for presence of a string in_array is simpler than testing for existance and value of a boolean array
+        foreach (['change-password', 'create-user', 'delete-user', 'logout', 'media', 'user'] as $switch) {
+            // todo $_GET be replaced by an object property
+            if (isset($_GET[$switch])) {
+                $params['switches'][] = $switch;
+            }
+        }
         $customFilters = new MyCustomFilters($this->MyCMS, [$this->tableAdmin, 'translate']);
         $render = new Render($this->template, DIR_TEMPLATE_CACHE, [$customFilters, 'common']);
         $render->renderLatte($params);
