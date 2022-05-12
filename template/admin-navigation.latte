@@ -1,52 +1,43 @@
-{* the navigation section of admin *}
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-    <a class="nav-item mr-2" href="' . Tools::h($_SERVER['SCRIPT_NAME']) . '" title="{="Dashboard"|translate}"><i class="fa fa-tachometer-alt"></i></a>
-    <button class="btn btn-secondary btn-sm" title="{="Search"|translate}" type="submit" id="nav-search-button"><i class="fa fa-search"></i></button>
-    <a data-toggle="popover" data-trigger="focus" title="" data-content="" id="realtime-message" data-placement="bottom" tabindex="0"></a>
-    <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" aria-expanded="false" data-target="#navbar-content" aria-controls="navbar-content"><span class="navbar-toggler-icon mr-1"></span></button>
-    <div class="collapse navbar-collapse" id="navbar-content">
-        <ul class="navbar-nav mr-auto">
-        {if $authUser}
-            {include 'inherite.latte', latte => 'admin-special-menu-links.latte'}
-            <li class="nav-item' . (isset($_GET['media']) ? ' active' : '') . '"><a href="?media" class="nav-link"><i class="fa fa-video"></i> {="Media"|translate}</a></li>
-            <li class="nav-item dropdown' . (isset($_GET['user']) ? ' active' : '') . '">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{="User"|translate}"><i class="fa fa-user"></i> {="User"|translate}</a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown" id="user-dropdown-menu">
-                    <a href="" class="dropdown-item disabled"><i class="fa fa-user"></i> {$username}</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item' . (isset($_GET['logout']) ? ' active' : '') . '" href="?user&amp;logout"><i class="fa fa-sign-out-alt mr-1"></i> {="Logout"|translate}</a>
-                    <a class="dropdown-item' . (isset($_GET['change-password']) ? ' active' : '') . '" href="?user&amp;change-password"><i class="fa fa-id-card mr-1"></i> {="Change password"|translate}</a>
-                    <a class="dropdown-item' . (isset($_GET['create-user']) ? ' active' : '') . '" href="?user&amp;create-user"><i class="fa fa-user-plus mr-1"></i> {="Create user"|translate}</a>
-                    <a class="dropdown-item' . (isset($_GET['delete-user']) ? ' active' : '') . '" href="?user&amp;delete-user"><i class="fa fa-user-times mr-1"></i> {="Delete user"|translate}</a>
+{* the navigation section of admin; required $language, $searchString, $switches, $translations, $username *}
+            <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+                <a class="nav-item mr-2" href="admin.php"{* orignally more universal Tools::h($_SERVER['SCRIPT_NAME']) was used *} title="{="Dashboard"|translate}"><i class="fa fa-tachometer-alt"></i></a>
+                <button class="btn btn-secondary btn-sm" title="{="Search"|translate}" type="submit" id="nav-search-button"><i class="fa fa-search"></i></button>
+                <a data-toggle="popover" data-trigger="focus" title="" data-content="" id="realtime-message" data-placement="bottom" tabindex="0"></a>
+                <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" aria-expanded="false" data-target="#navbar-content" aria-controls="navbar-content"><span class="navbar-toggler-icon mr-1"></span></button>
+                <div class="collapse navbar-collapse" id="navbar-content">
+                    <ul class="navbar-nav mr-auto">
+                    {if $authUser}
+                        {include 'inherite.latte', latte => 'admin-special-menu-links.latte'}
+                        <li class="nav-item{if in_array('media', $switches)} active{/if}"><a href="?media" class="nav-link"><i class="fa fa-video"></i> {="Media"|translate}</a></li>
+                        <li class="nav-item dropdown{if in_array('user', $switches)} active{/if}">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{="User"|translate}"><i class="fa fa-user"></i> {="User"|translate}</a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown" id="user-dropdown-menu">
+                                <a href="" class="dropdown-item disabled"><i class="fa fa-user"></i> {$username}</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item{if in_array('logout', $switches)} active{/if}" href="?user&amp;logout"><i class="fa fa-sign-out-alt mr-1"></i> {="Logout"|translate}</a>
+                                <a class="dropdown-item{if in_array('change-password', $switches)} active{/if}" href="?user&amp;change-password"><i class="fa fa-id-card mr-1"></i> {="Change password"|translate}</a>
+                                <a class="dropdown-item{if in_array('create-user', $switches)} active{/if}" href="?user&amp;create-user"><i class="fa fa-user-plus mr-1"></i> {="Create user"|translate}</a>
+                                <a class="dropdown-item{if in_array('delete-user', $switches)} active{/if}" href="?user&amp;delete-user"><i class="fa fa-user-times mr-1"></i> {="Delete user"|translate}</a>
+                            </div>
+                        </li>
+                    {/if}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{="Settings"|translate}"><i class="fa fa-cog"></i> {="Settings"|translate}</a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            {foreach $translations as $key => $value}
+                                <a class="dropdown-item{if $key == $language} active{/if}" href="?language={$key}"{* originally more complex Tools::urlChange(['language' => $key]) was used *}><i class="fa fa-language mr-1"></i> {$value}</a>
+                            {/foreach}
+                            {if $authUser}
+                                {*         //TODO fix following code, that hides sidebar but leaves the vertical line and narrows the content view
+                                        //<div class="dropdown-divider"></div><a class="dropdown-item" href="" id="toggle-nav" title="{="Toggle sidebar"|translate}"><i class="fa fa-columns mr-1"></i> {="Sidebar"|translate}</a>
+                                *}
+                                {include 'inherite.latte', latte => 'admin-special-settings-links.latte'}
+                            {/if}
+                            </div>
+                        </li>
+                    </ul>
                 </div>
-            </li>
-        {/if}
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{="Settings"|translate}"><i class="fa fa-cog"></i> {="Settings"|translate}</a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                {foreach $this->tableAdmin->TRANSLATIONS as $key => $value}
-                    <a class="dropdown-item' . ($key == $_SESSION['language'] ? ' active' : '') . '" href="?' . Tools::urlChange(['language' => $key]) . '"><i class="fa fa-language mr-1"></i> ' . Tools::h($value) . </a>
-                {/foreach}
-                {if $authUser}
-                    {*         //TODO fix following code, that hides sidebar but leaves the vertical line and narrows the content view
-                            //<div class="dropdown-divider"></div><a class="dropdown-item" href="" id="toggle-nav" title="{="Toggle sidebar"|translate}"><i class="fa fa-columns mr-1"></i> {="Sidebar"|translate}</a>
-                    *}
-                    {include 'inherite.latte', latte => 'admin-special-settings-links.latte'}
-                {/if}
-                </div>
-            </li>
-        </ul>
-    </div>
-
-{* todo really replaced ??? if $authUser *}
-    <form n:if="$authUser" class="collapse mt-md-0" id="nav-search-form">
-        Tools::htmlInput(
-            'search',
-            '',
-            Tools::set($_GET['search'], ''),
-            ['class' => 'form-control', 'placeholder' => $this->tableAdmin->translate('Search'), 'required' => true, 'id' => 'nav-search-input']
-        )
-    </form>
-{* /if *}
-
-</nav>
+                <form n:if="$authUser" class="collapse mt-md-0" id="nav-search-form">
+                    <input class="form-control" placeholder="{="Search"|translate}" required id="nav-search-input" type="text" name="search" value="{$searchString}"/>
+                </form>
+            </nav>

@@ -927,6 +927,7 @@ class MyAdmin extends MyCommon
             'HTMLHeaders' => $this->HTMLHeaders,
             'language' => Tools::h($_SESSION['language']),
             'pageTitle' => $this->getPageTitle(),
+            'searchString' => (isset($_GET['search']) && $_GET['search']) ? $_GET['search'] : '',
             'switches' => $switches,
             'token' => end($_SESSION['token']), // for login
             'translations' => $this->tableAdmin->TRANSLATIONS, // languages for which translations are available
@@ -945,9 +946,13 @@ class MyAdmin extends MyCommon
      */
     private function outputAdminBody()
     {
-        $output = '<header>'
-            . $this->outputNavigation()
-            . '</header>' . PHP_EOL . '<div class="container-fluid row">' . PHP_EOL;
+        $output = '';
+        if (!Tools::nonzero($this->featureFlags['admin_latte_render'])) {
+            $output .= '<header>'
+                . $this->outputNavigation()
+                . '</header>' . PHP_EOL;
+        }
+        $output .= '<div class="container-fluid row">' . PHP_EOL;
         if (isset($_SESSION['user']) && $_SESSION['user']) {
             $output .= '<a href="#" id="v-divider"></a>';
             $output .= '<nav class="col-md-3 bg-light sidebar order-last" id="admin-sidebar">'
