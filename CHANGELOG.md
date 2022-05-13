@@ -27,10 +27,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - relax dist/FriendlyUrl::switchParametric - if there's no rule to produce a friendly URL, don't report error not changing it, only an info
 - dist/composer.json: Keeps packages sorted by name when adding new one
 - GitHub Actions: only use cache with an exact key hit
+- MyAdmin::renderAdmin() $switches as parameter of Latté instead of working with $_GET in the template
 
 ### `Deprecated` for soon-to-be removed features
 - dist/rector.php (TODO consider using just string replace instead of the rector engine)
-- Admin UI in Latte mode doesn't use Admin::outputImageSelector and/or Admin::outputFooter, so before turning on the Admin Latte, move the custom code to the corresponding lattes
+- Admin UI in Latte mode doesn't use Admin::endAdmin(), Admin::getAdminCss(), Admin::outputAdmin(), Admin::outputBodyEnd(), Admin::outputFooter(), Admin::outputHead(), Admin::outputImageSelector(), Admin::outputNavigation(), Admin::outputSpecialMenuLinks(), Admin::outputSpecialSettingsLinks(), so before turning on the Admin Latte, move the custom code to the corresponding lattes
 
 ### `Removed` for now removed features
 - attributes type and charset (as in `<script type="text/javascript" src="scripts/admin.js?v=1" charset="utf-8">`) are obsolete
