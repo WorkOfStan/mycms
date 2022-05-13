@@ -172,6 +172,8 @@ class MyAdmin extends MyCommon
     /**
      * Output (in HTML) the navigation section of admin
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
+     * @see template/admin-navigation.latte
      * @return string
      */
     protected function outputNavigation()
@@ -978,7 +980,7 @@ class MyAdmin extends MyCommon
         (isset($_SESSION['user']) && Tools::set($_GET['search'])) {
             $output .= $this->outputSearchResults($_GET['search']);
         }
-        // table listing/editing - TODO even for unlogged???
+        // table listing/editing - for unlogged reset in prepareAdmin()
         if ($_GET['table']) {
             $output .= $this->outputTable();
         } elseif (isset($_GET['media'])) { // media upload etc.
