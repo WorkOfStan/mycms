@@ -5,18 +5,19 @@
 {* TODO enrich inherited $switches *}
 
             {* A Produkty k řazení *}
-            <li n:if="!$featureFlags['order_hierarchy']" class="nav-item' . (isset($_GET['products']) ? ' active' : '')
-            . '"><a href="?products" class="nav-link"><i class="fas fa-gift"></i> '
+            <li n:if="!$featureFlags['order_hierarchy']" class="nav-item
+{if in_array('products', $switches)} active{/if}"><a href="?products" class="nav-link"><i class="fas fa-gift"></i> '
             {="Products"|translate}</a></li>
 
             {* A Stránky k řazení *}
-            <li n:if="!$featureFlags['order_hierarchy']" class="nav-item' . (isset($_GET['pages']) ? ' active' : '')
-            . '"><a href="?pages" class="nav-link"><i class="far fa-file-alt"></i> '
+            <li n:if="!$featureFlags['order_hierarchy']" class="nav-item
+{if in_array('pages', $switches)} active{/if}">
+            <a href="?pages" class="nav-link"><i class="far fa-file-alt"></i> '
             {="Pages"|translate}</a></li>
             
             {* URLs - (Friendly URL set-up and) check duplicities *}
-            <li class="nav-item' . (isset($_GET['urls']) ? ' active' : '')
-            . '"><a href="?urls" class="nav-link"><i class="fas fa-unlink"></i> URL</a></li>
+            <li class="nav-item
+{if in_array('urls', $switches)} active{/if}"><a href="?urls" class="nav-link"><i class="fas fa-unlink"></i> URL</a></li>
             
             {* F Divize a produkty k řazení (jako A Produkty k řazení) *}
             <li n:if="!$featureFlags['order_hierarchy']" class="nav-item"><a href="?divisions-products" class="nav-link'
