@@ -88,12 +88,14 @@ if (isset($_POST) && is_array($_POST) && !empty($_POST)) {
     ]);
     $adminProcess->adminProcess($_POST);
 }
-$admin = new Admin($MyCMS, [
+$params = [
     'agendas' => $AGENDAS,
     'featureFlags' => $featureFlags,
     'prefixUiL10n' => $myCmsConf['prefixL10n'],
-    // Todo conf-admin.php once the MyAdmin is in Latte - based on config.php settings?
-    'renderParams' => ['switches' => ['divisions-products', 'pages', 'products', 'translations', 'urls']],
+    // Todo conf-admin.php once the MyAdmin is fully in Latte - default values based on config.php settings?
+    'renderParams' => [
+//        'switches' => []
+        ],
     'tableAdmin' => $tableAdmin,
     // to replace default CSS and/or JS in admin.php, uncomment the array below
 //    'clientSideResources' => [
@@ -102,7 +104,13 @@ $admin = new Admin($MyCMS, [
 //        'js' => [
 //        ]
 //    ]
-    ]);
+];
+foreach (['divisions-products', 'pages', 'products', 'translations', 'urls'] as $switch) {
+    if (isset($_GET[$switch])) {
+        $params['renderParams']['switches'][] = $switch;
+    }
+}
+$admin = new Admin($MyCMS, $params);
 if (isset($featureFlags['admin_latte_render']) && $featureFlags['admin_latte_render']) {
     // new version since 0.4.7 or higer
     $admin->renderAdmin();

@@ -166,6 +166,7 @@ class App extends MyCommon
 
         $this->MyCMS->renderLatte(
             DIR_TEMPLATE_CACHE,
+            //[$customFilters, 'loader'], // TODO use this with $Latte->addFilterLoader($this->customFilters)
             [$customFilters, 'common'],
             array_merge(
                 [

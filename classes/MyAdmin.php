@@ -943,6 +943,7 @@ class MyAdmin extends MyCommon
             }
         }
         $customFilters = new MyCustomFilters($this->MyCMS, [$this->tableAdmin, 'translate']);
+        // TODO use [$customFilters, 'loader'] with $Latte->addFilterLoader($this->customFilters)
         $render = new Render($this->template, DIR_TEMPLATE_CACHE, [$customFilters, 'common']);
         $render->renderLatte($params);
         $this->MyCMS->dbms->showSqlBarPanel();

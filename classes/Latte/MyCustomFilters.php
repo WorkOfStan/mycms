@@ -41,6 +41,8 @@ class MyCustomFilters
      *
      * @param string $filter
      * @param mixed $value
+     * @deprecated 0.4.7 Latte::2.11.3 Notice: Engine::addFilter(null, ...) is deprecated, use addFilterLoader()
+     * @see self::loader()
      * @return string|void
      */
     public function common($filter, $value)
@@ -57,6 +59,22 @@ class MyCustomFilters
             Assert::string($result);
             return $result;
         }
+    }
+
+    /**
+     * Filter loader expected by $latte->addFilterLoader()
+     * @see https://latte.nette.org/en/develop#toc-filter-loaders
+     * TODO: requires latte/latte::^2.10.8 which requires php: >=7.1 <8.2
+     *
+     * @param string $filter
+     * @return callable|null
+     */
+    public function loader(string $filter) //: ?callable
+    {
+        if (method_exists($this, $filter)) {
+            return [$this, $filter];
+        }
+        return null;
     }
 
     /**
