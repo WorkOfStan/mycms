@@ -92,6 +92,8 @@ $admin = new Admin($MyCMS, [
     'agendas' => $AGENDAS,
     'featureFlags' => $featureFlags,
     'prefixUiL10n' => $myCmsConf['prefixL10n'],
+    // Todo conf-admin.php once the MyAdmin is in Latte - based on config.php settings?
+    'renderParams' => ['switches' => ['pages', 'products', 'translations', 'urls']],
     'tableAdmin' => $tableAdmin,
     // to replace default CSS and/or JS in admin.php, uncomment the array below
 //    'clientSideResources' => [
