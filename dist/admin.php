@@ -2,7 +2,7 @@
 
 /**
  * Admin
- * (Last MyCMS/dist revision: 2022-03-05, v0.4.6)
+ * (Last MyCMS/dist revision: 2022-05-13, v0.4.6+)
  */
 
 use Tracy\Debugger;
@@ -93,7 +93,7 @@ $admin = new Admin($MyCMS, [
     'featureFlags' => $featureFlags,
     'prefixUiL10n' => $myCmsConf['prefixL10n'],
     // Todo conf-admin.php once the MyAdmin is in Latte - based on config.php settings?
-    'renderParams' => ['switches' => ['pages', 'products', 'translations', 'urls']],
+    'renderParams' => ['switches' => ['divisions-products', 'pages', 'products', 'translations', 'urls']],
     'tableAdmin' => $tableAdmin,
     // to replace default CSS and/or JS in admin.php, uncomment the array below
 //    'clientSideResources' => [
