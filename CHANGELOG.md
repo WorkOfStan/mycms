@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Changed` for changes in existing functionality
 - MyCommon::verboseBarDump Dumper::LOCATION => false hides where the dump originated as this is not the original place anyway, show it in the title instead
 - nicer formatting Admin UI table SQL statement
-- Logging of untranslated strings when DEBUG_VERBOSE into `'log/translation_missing_' . date("Y-m-d") . '.log'` (instead of swelling translation_missing.log)
+- Logging of untranslated strings when DEBUG_VERBOSE into monthly rotating `'log/translation_missing_' . date("Y-m") . '.log'` (instead of one big swelling translation_missing.log)
 - Admin UI can be rendered by Latte (instead directly from MyAdmin methods) if $featureFlags['admin_latte_render'] set to true (still experimental because main part of body is prerendered as HTML)
 - Admin UI in Latte mode receives params including token and authUser (0=anonymous, 1=logged-in)
 - **BREAKING CHANGE (feature flagged)** if $featureFlags['admin_latte_render']===false `dist/styles/admin.css.php` MUST be present (to link rel `admin.css` deep in vendor folder) and admin.php code has to be updated to alternatively use the latte rendering
