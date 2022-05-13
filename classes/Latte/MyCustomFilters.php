@@ -67,7 +67,8 @@ class MyCustomFilters
      * TODO: requires latte/latte::^2.10.8 which requires php: >=7.1 <8.2
      *
      * @param string $filter
-     * @return callable|null
+     * @ todo return callable|null
+     * @return array<$this|string>|null
      */
     public function loader(string $filter) //: ?callable
     {

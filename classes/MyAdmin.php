@@ -914,7 +914,6 @@ class MyAdmin extends MyCommon
             ]
         );
         $htmlbody = $this->outputAdminBody(); // MUST precede outputBodyEndInlineScript method so that $this->tableAdmin->script is already populated
-   //     $switches = [];
         $params = array_merge($this->renderParams, [
             'authUser' => (int) (isset($_SESSION['user']) && $_SESSION['user']), // 0 vs 1
             'clientSideResources' => $this->clientSideResources,
@@ -926,14 +925,13 @@ class MyAdmin extends MyCommon
             'language' => Tools::h($_SESSION['language']),
             'pageTitle' => $this->getPageTitle(),
             'searchString' => (isset($_GET['search']) && $_GET['search']) ? $_GET['search'] : '',
-            //'switches' => $switches,
             'token' => end($_SESSION['token']), // for login
             'translations' => $this->tableAdmin->TRANSLATIONS, // languages for which translations are available
             'username' => (isset($_SESSION['user']) && $_SESSION['user']) ? $_SESSION['user'] : null,
         ]);
         // Inherites switches
-        if(!array_key_exists('switches', $params)){
-            $params['switches']=[];
+        if (!array_key_exists('switches', $params)) {
+            $params['switches'] = [];
         }
         // test for presence of a string in_array is simpler than testing for existance and value of a boolean array
         foreach (['change-password', 'create-user', 'delete-user', 'logout', 'media', 'user'] as $switch) {
