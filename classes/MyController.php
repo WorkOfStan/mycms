@@ -15,30 +15,6 @@ use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
  */
 class MyController extends MyCommon
 {
-    /** @var array<string|int|array> */
-    protected $result;
-
-    /**
-     * accepted attributes:
-     */
-
-    /**
-     * HTTP request parameters
-     *
-     * @var array<mixed>
-     * TBD: or is GET really always?? array<string|array<RECURSIVE>|int>
-     */
-    protected $get;
-
-    /** @var string */
-    protected $language = DEFAULT_LANGUAGE;
-
-    /** @var string */
-    protected $requestUri = ''; //default is homepage
-
-    /** @var array<array|string> */
-    protected $session;
-
     /**
      * Friendly URL instance MAY be passsed from project Controller.
      * It is eventually instantiated in Controller in order to use project specific methods.
@@ -46,13 +22,27 @@ class MyController extends MyCommon
      * @var MyFriendlyUrl
      */
     protected $friendlyUrl;
-
     /**
      * Whether Friendly URL is set and instanceof MyFriendlyUrl
      *
      * @var bool
      */
     protected $friendlyUrlInstantiated;
+    /**
+     * HTTP request parameters
+     *
+     * @var array<mixed>
+     * TBD: or is GET really always?? array<string|array<RECURSIVE>|int>
+     */
+    protected $get;
+    /** @var string */
+    protected $language = DEFAULT_LANGUAGE;
+    /** @var string */
+    protected $requestUri = ''; //default is homepage
+    /** @var array<string|int|array> */
+    protected $result;
+    /** @var array<array|string> */
+    protected $session;
 
     /**
      *
@@ -98,6 +88,8 @@ class MyController extends MyCommon
      * $this->prepareTemplate($options);
      * $this->prepareAllTemplates($options);
      *
+     * @deprecated 0.4.0
+     * @see MyController::run()
      * @return array<string|int|array>
      */
     public function controller()

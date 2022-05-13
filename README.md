@@ -279,3 +279,4 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 
 ### TODO SECURITY
 * 190723: pokud jsou v té samé doméně dvě různé instance MyCMS, tak přihlášením do jednoho admin.php jsem přihlášen do všech, i když ten uživatel tam ani neexistuje
+* 220513, Latte::2.11.3 Notice: Engine::addFilter(null, ...) is deprecated, use addFilterLoader() since ^2.10.8 which requires php: >=7.1 <8.2

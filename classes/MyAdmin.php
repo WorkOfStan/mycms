@@ -65,6 +65,9 @@ class MyAdmin extends MyCommon
         'author' => '',
     ];
 
+    /** @var array<mixed> parameters for rendering set outside */
+    protected $renderParams = [];
+
     /**
      * @var array<array<string>> tables and columns to search in admin
      * table => [id, field1 to be searched in, field2 to be searched in...]
@@ -108,8 +111,8 @@ class MyAdmin extends MyCommon
 
     /**
      * Ends Admin rendering with TracyPanels
-     * LEGACY
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
      * @return void
      */
     public function endAdmin()
@@ -123,8 +126,8 @@ class MyAdmin extends MyCommon
     /**
      * As vendor folder has usually denied access from browser,
      * the content of the standard admin.css MUST be available through this method
-     * LEGACY
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
      * @return string
      */
     public function getAdminCss()
@@ -134,8 +137,9 @@ class MyAdmin extends MyCommon
 
     /**
      * Output (in HTML) the <head> section of admin
-     * LEGACY
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
+     * @see template/admin-head.latte
      * @param string $title used in <title>
      * @return string
      */
@@ -168,6 +172,8 @@ class MyAdmin extends MyCommon
     /**
      * Output (in HTML) the navigation section of admin
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
+     * @see template/admin-navigation.latte
      * @return string
      */
     protected function outputNavigation()
@@ -225,6 +231,8 @@ class MyAdmin extends MyCommon
     /**
      * Output (in HTML) the project-specific links in the navigation section of admin
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
+     * @see template/admin-special-menu-links.latte
      * @return string
      */
     protected function outputSpecialMenuLinks()
@@ -235,6 +243,8 @@ class MyAdmin extends MyCommon
     /**
      * Output (in HTML) the project-specific links in the settings section of admin
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
+     * @see template/admin-special-settings-links.latte
      * @return string
      */
     protected function outputSpecialSettingsLinks()
@@ -494,8 +504,9 @@ class MyAdmin extends MyCommon
      * Output (in HTML) the end part of administration page.
      * It's a list of scripts and an inline script
      * This method also modifies $this->script.  (Todo ??? Really)
-     * LEGACY
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
+     * @see template/@admin.latte
      * @return string
      */
     protected function outputBodyEnd()
@@ -523,8 +534,9 @@ class MyAdmin extends MyCommon
 
     /**
      * Output (in HTML) the Bootstrap dialog for ImageSelector
-     * LEGACY
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
+     * @see template/admin-output-image-selector.latte
      * @return string
      */
     protected function outputImageSelector()
@@ -605,8 +617,9 @@ class MyAdmin extends MyCommon
 
     /**
      * Output (in HTML) the admin's layout footer
-     * LEGACY
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
+     * @see template/@admin.latte
      * @return string
      */
     protected function outputFooter()
@@ -901,18 +914,34 @@ class MyAdmin extends MyCommon
             ]
         );
         $htmlbody = $this->outputAdminBody(); // MUST precede outputBodyEndInlineScript method so that $this->tableAdmin->script is already populated
-        $params = [
+        $params = array_merge($this->renderParams, [
             'authUser' => (int) (isset($_SESSION['user']) && $_SESSION['user']), // 0 vs 1
             'clientSideResources' => $this->clientSideResources,
             'inlineJavaScript' => $this->outputBodyEndInlineScript(),
+            'featureFlags' => $this->featureFlags,
             'htmlbody' => $htmlbody,
             //'htmlhead' => $this->outputHead($this->getPageTitle()),
             'HTMLHeaders' => $this->HTMLHeaders,
             'language' => Tools::h($_SESSION['language']),
             'pageTitle' => $this->getPageTitle(),
+            'searchString' => (isset($_GET['search']) && $_GET['search']) ? $_GET['search'] : '',
             'token' => end($_SESSION['token']), // for login
-        ];
+            'translations' => $this->tableAdmin->TRANSLATIONS, // languages for which translations are available
+            'username' => (isset($_SESSION['user']) && $_SESSION['user']) ? $_SESSION['user'] : null,
+        ]);
+        // Inherites switches
+        if (!array_key_exists('switches', $params)) {
+            $params['switches'] = [];
+        }
+        // test for presence of a string in_array is simpler than testing for existance and value of a boolean array
+        foreach (['change-password', 'create-user', 'delete-user', 'logout', 'media', 'user'] as $switch) {
+            // todo $_GET be replaced by an object property
+            if (isset($_GET[$switch])) {
+                $params['switches'][] = $switch;
+            }
+        }
         $customFilters = new MyCustomFilters($this->MyCMS, [$this->tableAdmin, 'translate']);
+        // TODO use [$customFilters, 'loader'] with $Latte->addFilterLoader($this->customFilters)
         $render = new Render($this->template, DIR_TEMPLATE_CACHE, [$customFilters, 'common']);
         $render->renderLatte($params);
         $this->MyCMS->dbms->showSqlBarPanel();
@@ -925,9 +954,13 @@ class MyAdmin extends MyCommon
      */
     private function outputAdminBody()
     {
-        $output = '<header>'
-            . $this->outputNavigation()
-            . '</header>' . PHP_EOL . '<div class="container-fluid row">' . PHP_EOL;
+        $output = '';
+        if (!Tools::nonzero($this->featureFlags['admin_latte_render'])) {
+            $output .= '<header>'
+                . $this->outputNavigation()
+                . '</header>' . PHP_EOL;
+        }
+        $output .= '<div class="container-fluid row">' . PHP_EOL;
         if (isset($_SESSION['user']) && $_SESSION['user']) {
             $output .= '<a href="#" id="v-divider"></a>';
             $output .= '<nav class="col-md-3 bg-light sidebar order-last" id="admin-sidebar">'
@@ -946,7 +979,7 @@ class MyAdmin extends MyCommon
         (isset($_SESSION['user']) && Tools::set($_GET['search'])) {
             $output .= $this->outputSearchResults($_GET['search']);
         }
-        // table listing/editing - TODO even for unlogged???
+        // table listing/editing - for unlogged reset in prepareAdmin()
         if ($_GET['table']) {
             $output .= $this->outputTable();
         } elseif (isset($_GET['media'])) { // media upload etc.
@@ -974,7 +1007,6 @@ class MyAdmin extends MyCommon
 
     /**
      * Return the HTML output of the complete administration page.
-     * Legacy - being redone as renderAdmin using Latte
      *
      * Expected global variables:
      * * $_GET
@@ -986,6 +1018,8 @@ class MyAdmin extends MyCommon
      * * TAB_PREFIX
      * * EXPAND_INFIX
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
+     * @see MyAdmin::renderAdmin()
      * @return string
      */
     public function outputAdmin()

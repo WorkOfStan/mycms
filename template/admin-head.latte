@@ -1,4 +1,4 @@
-{* required: $pageTitle, $HTMLHeaders, $clientSideResources['css'] *}
+{* required: $clientSideResources['css'], $featureFlags, $HTMLHeaders, $pageTitle *}
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,5 +9,8 @@
         <title>{$pageTitle ? $pageTitle . " · " : ""}CMS Admin</title>
         {foreach $clientSideResources['css'] as $cssUri}
         <link rel="stylesheet" href="{$cssUri}" />
-        {/foreach}  
+        {/foreach}
+        <script>
+            var FEATURE_FLAGS = {$featureFlags};
+        </script>
     </head>
