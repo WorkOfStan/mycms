@@ -57,6 +57,18 @@ class Admin extends MyAdmin
     }
 
     /**
+     *
+     * @param array<mixed> $get
+     * @return void
+     */
+    protected function controller($get = [])
+    {
+        parent::controller($get);
+        //todo projectSpecificSectionsCondition()
+        //todo protected function projectSpecificSections()
+    }
+
+    /**
      * Output (in HTML) the project-specific links in the navigation section of admin
      * TODO: navázat na další features
      * TODO: move to template/admin-special-menu-links.latte

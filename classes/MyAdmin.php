@@ -106,6 +106,20 @@ class MyAdmin extends MyCommon
         if (Tools::nonzero($this->featureFlags['admin_latte_render'])) {
             array_unshift($this->clientSideResources['css'], 'styles/admin.css.php?v=' . PAGE_RESOURCE_VERSION); //MyCMS
         }
+        $this->prepareAdmin();
+        foreach (glob(DIR_ASSETS . '*', GLOB_ONLYDIR) as $value) {
+            $this->ASSETS_SUBFOLDERS [] = substr($value, strlen(DIR_ASSETS));
+        }
+        $this->controller($_GET);
+    }
+
+    /**
+     *
+     * @param array<mixed> $get
+     * @return void
+     */
+    protected function controller($get = [])
+    {
         $this->template = 'admin-ui';
     }
 
@@ -903,7 +917,7 @@ class MyAdmin extends MyCommon
      */
     public function renderAdmin()
     {
-        $this->prepareAdmin();
+        //$this->prepareAdmin();
         $this->clientSideResources['js'] = array_merge(
             $this->clientSideResources['js'],
             [
@@ -966,16 +980,15 @@ class MyAdmin extends MyCommon
             $output .= '<nav class="col-md-3 bg-light sidebar order-last" id="admin-sidebar">'
                 . $this->outputAgendas() . '</nav>' . PHP_EOL;
         }
-        $output .= '<main class="ml-3 ml-sm-auto col-md-9 pt-3" role="main" id="admin-main">'
-            . Tools::showMessages(false);
-        foreach (glob(DIR_ASSETS . '*', GLOB_ONLYDIR) as $value) {
-            $this->ASSETS_SUBFOLDERS [] = substr($value, strlen(DIR_ASSETS));
-        }
+        $output .= '<main class="ml-3 ml-sm-auto col-md-9 pt-3" role="main" id="admin-main">';
+        $output .= Tools::showMessages(false);
+//        foreach (glob(DIR_ASSETS . '*', GLOB_ONLYDIR) as $value) {
+//            $this->ASSETS_SUBFOLDERS [] = substr($value, strlen(DIR_ASSETS));
+//        }
         // user not logged in - show a login form
         if (!isset($_SESSION['user'])) {
             $output .= $this->outputLogin();
-        } elseif // search results
-        //TODO: can search results really be combined with table listing etc. below?
+        } elseif // search results may be combined with table listing etc. below
         (isset($_SESSION['user']) && Tools::set($_GET['search'])) {
             $output .= $this->outputSearchResults($_GET['search']);
         }
@@ -1024,7 +1037,7 @@ class MyAdmin extends MyCommon
      */
     public function outputAdmin()
     {
-        $this->prepareAdmin();
+        //$this->prepareAdmin();
         $output = '<!DOCTYPE html><html lang="' . Tools::h($_SESSION['language']) . '">';
         $output .= $this->outputHead($this->getPageTitle());
         $output .= '<body>' . PHP_EOL;
