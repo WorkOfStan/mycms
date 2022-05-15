@@ -243,7 +243,7 @@ class MyTableLister
             $result['limit'] = $this->DEFAULTS['PAGESIZE'];
         }
         if (isset($vars['offset'])) {
-            Assert::string($vars['offset']); // number passed as string
+            Assert::scalar($vars['offset']); // number passed as string or int TODO make sure it's just one of those
             $result['offset'] = max((int) $vars['offset'], 0);
         } else {
             $result['offset'] = 0;
