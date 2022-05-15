@@ -26,10 +26,8 @@ class MyAdmin extends MyCommon
 
     /** @var array<array<mixed>> */
     protected $agendas = [];
-
     /** @var array<string> */
     protected $ASSETS_SUBFOLDERS = [];
-
     /** @var array<array<string>> expected client-side resources - css, js, fonts etc. */
     protected $clientSideResources = [
         'js' => [
@@ -47,14 +45,12 @@ class MyAdmin extends MyCommon
             'styles/admin.css?v=' . PAGE_RESOURCE_VERSION, // App
         ],
     ];
-
-    /**
-     * Feature flags that bubble down to latte and controller
-     * TODO: remove from Admin as redundant
-     * @var array<bool>
-     */
+    /** @var array<bool> Feature flags that bubble down to latte and controller */
     protected $featureFlags;
-
+    /** @var array<array<mixed>|string> TODO is $_GET really just recursive array with string values??? */
+    protected $get;
+    /** @ var ArrayStrict of $_GET  */
+//    protected $getStrict;
     /** @var array<string> */
     public $HTMLHeaders = [
         'viewport' => 'width=device-width, initial-scale=1',
@@ -64,26 +60,18 @@ class MyAdmin extends MyCommon
         'description' => '',
         'author' => '',
     ];
-
     /** @var array<mixed> parameters for rendering set outside */
     protected $renderParams = [];
-
     /**
      * @var array<array<string>> tables and columns to search in admin
      * table => [id, field1 to be searched in, field2 to be searched in...]
      */
     protected $searchColumns = [];
-
     /** @var MyTableAdmin */
     protected $TableAdmin; // todo remove as obsolete as of 2020/10/25
-
     /** @var MyTableAdmin */
     protected $tableAdmin;
-
-    /**
-     * which Latte template to load
-     * @var string
-     */
+    /** @var string which Latte template to load */
     public $template;
 
     /**
@@ -96,6 +84,8 @@ class MyAdmin extends MyCommon
     public function __construct(MyCMS $MyCMS, array $options = [])
     {
         parent::__construct($MyCMS, $options);
+        $this->get = $_GET; // TODO inject GET in _construct arguments
+//        $this->getStrict = new ArrayStrict($this->get);
         // Todo to be obsoleted in next version (after 2020-10-25)
         if (!empty($this->TableAdmin)) {
             Debugger::log('Deprecated: TableAdmin. Replace by tableAdmin', ILogger::WARNING);
@@ -110,15 +100,15 @@ class MyAdmin extends MyCommon
         foreach (glob(DIR_ASSETS . '*', GLOB_ONLYDIR) as $value) {
             $this->ASSETS_SUBFOLDERS [] = substr($value, strlen(DIR_ASSETS));
         }
-        $this->controller($_GET);
+        $this->controller();
     }
 
     /**
+     * Controller of Admin UI
      *
-     * @param array<mixed> $get
      * @return void
      */
-    protected function controller($get = [])
+    protected function controller()
     {
         $this->template = 'admin-ui';
         // user not logged in - show a login form
@@ -127,23 +117,24 @@ class MyAdmin extends MyCommon
             //$this->template = 'admin-login'; //ready
             $this->renderParams['htmlOutput'] = $this->outputLogin();
         } elseif // search results may be combined with table listing etc. below
-        (isset($_SESSION['user']) && Tools::set($_GET['search'])) {
+        (isset($_SESSION['user']) && array_key_exists('search', $this->get) && !empty($this->get['search'])) {
 //            $output .= $this->outputSearchResults($_GET['search']);
-            $this->renderParams['htmlOutput'] = $this->outputSearchResults($_GET['search']);
+            Assert::string($this->get['search']);
+            $this->renderParams['htmlOutput'] = $this->outputSearchResults($this->get['search']);
         }
         // table listing/editing - for unlogged reset in prepareAdmin() TODO harden
-        if ($_GET['table']) {
+        if (array_key_exists('table', $this->get) && !empty($this->get['table']) && (bool) $this->tableAdmin->getTable()) {
 //            $output .= $this->outputTable();
             $this->template = 'admin-ui-table';
             $this->renderTable();
 //            $this->renderParams['htmlOutput'] = $this->outputTable();
             return; // so that not taken over in the Admin
-        } elseif (isset($_GET['media'])) { // media upload etc.
+        } elseif (isset($this->get['media'])) { // media upload etc.
 //            $output .= $this->outputMedia();
             //$this->template = 'admin-ui-media';//ready
             $this->renderParams['htmlOutput'] = $this->outputMedia();
             return; // so that not taken over in the Admin
-        } elseif (isset($_GET['user'])) { // user operations (logout, change password, create user, delete user)
+        } elseif (isset($this->get['user'])) { // user operations (logout, change password, create user, delete user)
 //            $output .= $this->outputUser();
             //$this->template = 'admin-ui-user';//ready
             $this->renderParams['htmlOutput'] = $this->outputUser();
@@ -234,16 +225,16 @@ class MyAdmin extends MyCommon
                     <ul class="navbar-nav mr-auto">';
         if (Tools::nonempty($_SESSION['user'])) {
             $result .= $this->outputSpecialMenuLinks()
-                . '<li class="nav-item' . (isset($_GET['media']) ? ' active' : '') . '"><a href="?media" class="nav-link"><i class="fa fa-video"></i> ' . $this->tableAdmin->translate('Media') . '</a></li>
-                <li class="nav-item dropdown' . (isset($_GET['user']) ? ' active' : '') . '">
+                . '<li class="nav-item' . (isset($this->get['media']) ? ' active' : '') . '"><a href="?media" class="nav-link"><i class="fa fa-video"></i> ' . $this->tableAdmin->translate('Media') . '</a></li>
+                <li class="nav-item dropdown' . (isset($this->get['user']) ? ' active' : '') . '">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="' . $this->tableAdmin->translate('User') . '"><i class="fa fa-user"></i> ' . $this->tableAdmin->translate('User') . '</a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown" id="user-dropdown-menu">
                   <a href="" class="dropdown-item disabled"><i class="fa fa-user"></i> ' . Tools::h($_SESSION['user']) . '</a>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item' . (isset($_GET['logout']) ? ' active' : '') . '" href="?user&amp;logout"><i class="fa fa-sign-out-alt mr-1"></i> ' . $this->tableAdmin->translate('Logout') . '</a>
-                  <a class="dropdown-item' . (isset($_GET['change-password']) ? ' active' : '') . '" href="?user&amp;change-password"><i class="fa fa-id-card mr-1"></i> ' . $this->tableAdmin->translate('Change password') . '</a>
-                  <a class="dropdown-item' . (isset($_GET['create-user']) ? ' active' : '') . '" href="?user&amp;create-user"><i class="fa fa-user-plus mr-1"></i> ' . $this->tableAdmin->translate('Create user') . '</a>
-                  <a class="dropdown-item' . (isset($_GET['delete-user']) ? ' active' : '') . '" href="?user&amp;delete-user"><i class="fa fa-user-times mr-1"></i> ' . $this->tableAdmin->translate('Delete user') . '</a>
+                  <a class="dropdown-item' . (isset($this->get['logout']) ? ' active' : '') . '" href="?user&amp;logout"><i class="fa fa-sign-out-alt mr-1"></i> ' . $this->tableAdmin->translate('Logout') . '</a>
+                  <a class="dropdown-item' . (isset($this->get['change-password']) ? ' active' : '') . '" href="?user&amp;change-password"><i class="fa fa-id-card mr-1"></i> ' . $this->tableAdmin->translate('Change password') . '</a>
+                  <a class="dropdown-item' . (isset($this->get['create-user']) ? ' active' : '') . '" href="?user&amp;create-user"><i class="fa fa-user-plus mr-1"></i> ' . $this->tableAdmin->translate('Create user') . '</a>
+                  <a class="dropdown-item' . (isset($this->get['delete-user']) ? ' active' : '') . '" href="?user&amp;delete-user"><i class="fa fa-user-times mr-1"></i> ' . $this->tableAdmin->translate('Delete user') . '</a>
                 </div>
               </li>';
         }
@@ -265,7 +256,7 @@ class MyAdmin extends MyCommon
                 . Tools::htmlInput(
                     'search',
                     '',
-                    Tools::set($_GET['search'], ''),
+                    Tools::set($this->get['search'], ''),
                     ['class' => 'form-control', 'placeholder' => $this->tableAdmin->translate('Search'), 'required' => true, 'id' => 'nav-search-input']
                 )
                 . '</form>';
@@ -362,7 +353,7 @@ class MyAdmin extends MyCommon
     {
         $result = '<h1>' . $this->tableAdmin->translate('User') . '</h1>';
         // logout
-        if (isset($_GET['logout'])) {
+        if (isset($this->get['logout'])) {
             $result .= '<h2><small>' . $this->tableAdmin->translate('Logout') . '</small></h2>
                 <form action="" method="post" id="logout-form" class="panel d-inline-block"><fieldset class="card p-2">
                 <button type="submit" name="logout" class="form-control btn-primary text-left"><i class="fa fa-sign-out-alt"></i> ' . $this->tableAdmin->translate('Logout') . '</button>'
@@ -370,7 +361,7 @@ class MyAdmin extends MyCommon
                 </fieldset></form>';
         }
         // change password
-        if (isset($_GET['change-password'])) {
+        if (isset($this->get['change-password'])) {
             $result .= '<h2><small>' . $this->tableAdmin->translate('Change password') . '</small></h2>
                 <form action="" method="post" id="change-password-form" onsubmit="return changePasswordSubmit()"><fieldset class="card p-3">';
             $options = [
@@ -390,7 +381,7 @@ class MyAdmin extends MyCommon
                 </fieldset></form>';
         }
         // create user
-        if (isset($_GET['create-user'])) {
+        if (isset($this->get['create-user'])) {
             $result .= '<h2><small>' . $this->tableAdmin->translate('Create user') . '</small></h2>
                 <form action="" method="post" class="panel create-user-form" onsubmit="return createUserSubmit()"><fieldset class="card p-3">'
                 . Tools::htmlInput('user', $this->tableAdmin->translate('User', false) . ':', '', ['class' => 'form-control', 'id' => 'create-user'])
@@ -402,7 +393,7 @@ class MyAdmin extends MyCommon
                 </fieldset></form>';
         }
         // delete user
-        if (isset($_GET['delete-user'])) {
+        if (isset($this->get['delete-user'])) {
             $result .= '<h2><small>' . $this->tableAdmin->translate('Delete user') . '</small></h2>
                 <div class="alert alert-warning mt-3" style="display:none;"><i class="fas fa-exclamation-triangle"></i> <span id="activate-user-message"></span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
             if ($users = $this->MyCMS->fetchAll('SELECT id,admin,active FROM `' . TAB_PREFIX . 'admin`')) {
@@ -467,10 +458,10 @@ class MyAdmin extends MyCommon
                 continue;
             }
             $result .= '<a href="?table=' . urlencode($table) . '&amp;where[id]="><i class="fa fa-plus-square" title="' . $this->tableAdmin->translate('New record') . '"></i></a> '
-                . '<a href="?table=' . urlencode($table) . '" class="d-inline' . ($_GET['table'] == $table ? ' active' : '') . '">'
+                . '<a href="?table=' . urlencode($table) . '" class="d-inline' . ($this->get['table'] == $table ? ' active' : '') . '">'
                 . '<i class="fa fa-table"></i> '
                 . Tools::h(substr($table, strlen(TAB_PREFIX)))
-                . ($table == $_GET['table'] ? ' <span class="sr-only">(' . $this->tableAdmin->translate('current') . ')</span>' : '')
+                . ($table == $this->get['table'] ? ' <span class="sr-only">(' . $this->tableAdmin->translate('current') . ')</span>' : '')
                 . '</a> &nbsp; ' . PHP_EOL;
         }
         $result .= '</div>';
@@ -620,17 +611,16 @@ class MyAdmin extends MyCommon
     protected function renderTable()
     {
         $this->renderParams['table'] = [];
-        $tablePrefixless = mb_substr($_GET['table'], mb_strlen(TAB_PREFIX));
         $this->renderParams['table'] = [
-            'tableName' => Tools::h($_GET['table']),
-            'tablePrefixless' => $tablePrefixless,
+            'tableName' => Tools::h($this->tableAdmin->getTable()),
+            'tablePrefixless' => mb_substr($this->tableAdmin->getTable(), mb_strlen(TAB_PREFIX)),
         ];
 //        $result = '<h1 class="page-header">'
-//            . '<a href="?table=' . Tools::h($_GET['table']) . '" title="'
+//            . '<a href="?table=' . Tools::h($this->get['table']) . '" title="'
 //            . $this->tableAdmin->translate('Back to listing') . '"><i class="fa fa-list-alt"></i></a> '
 //            . '<tt>' . Tools::h($tablePrefixless) . '</tt></h1>' . PHP_EOL;
-        if (isset($_GET['where']) && is_array($_GET['where'])) {
-            $this->renderParams['table']['where']=$_GET['where'];
+        if (isset($this->get['where']) && is_array($this->get['where'])) {
+            $this->renderParams['table']['where'] = $this->get['where'];
 //            // table edit
 //            $result .= '<h2 class="sub-header">' . $this->tableAdmin->translate('Edit')
 //                . ' <span class="AdminRecordName"></span></h2>';
@@ -645,18 +635,18 @@ class MyAdmin extends MyCommon
             }
             $tempOutputFormOptions = [
                     'layout-row' => true,
-                    'prefill' => isset($_GET['prefill']) && is_array($_GET['prefill']) ? $_GET['prefill'] : [],
+                    'prefill' => isset($this->get['prefill']) && is_array($this->get['prefill']) ? $this->get['prefill'] : [],
                     'original' => true,
                     'tabs' => $tabs
                 ];
-//            $result .= $this->outputTableBeforeEdit() . $this->tableAdmin->outputForm($_GET['where'], $tempOutputFormOptions)
+//            $result .= $this->outputTableBeforeEdit() . $this->tableAdmin->outputForm($this->get['where'], $tempOutputFormOptions)
 //                . $this->outputTableAfterEdit();  // used in dist/Admin
             /**
              * @phpstan-ignore-next-line
              * Parameter #2 $options of method WorkOfStan\MyCMS\MyTableAdmin::outputForm() expects array<array<array<string>|string>|bool>, array<string, array|true> given.
              * caused by PHPStan thinking $tabs may be a string. But why??
              */
-            $this->renderParams['table']['htmlOutputForm'] = $this->tableAdmin->outputForm($_GET['where'], $tempOutputFormOptions);
+            $this->renderParams['table']['htmlOutputForm'] = $this->tableAdmin->outputForm($this->get['where'], $tempOutputFormOptions);
         } elseif (isset($_POST['edit-selected'])) {
             $this->renderParams['table']['edit-selected'] = true;
             Assert::isArray($this->renderParams['table']);
@@ -684,12 +674,12 @@ class MyAdmin extends MyCommon
      */
     protected function outputTable()
     {
-        $tablePrefixless = mb_substr($_GET['table'], mb_strlen(TAB_PREFIX));
+        $tablePrefixless = mb_substr($this->tableAdmin->getTable(), mb_strlen(TAB_PREFIX));
         $result = '<h1 class="page-header">'
-            . '<a href="?table=' . Tools::h($_GET['table']) . '" title="'
+            . '<a href="?table=' . Tools::h($this->tableAdmin->getTable()) . '" title="'
             . $this->tableAdmin->translate('Back to listing') . '"><i class="fa fa-list-alt"></i></a> '
             . '<tt>' . Tools::h($tablePrefixless) . '</tt></h1>' . PHP_EOL;
-        if (isset($_GET['where']) && is_array($_GET['where'])) {
+        if (isset($this->get['where']) && is_array($this->get['where'])) {
             // table edit
             $result .= '<h2 class="sub-header">' . $this->tableAdmin->translate('Edit')
                 . ' <span class="AdminRecordName"></span></h2>';
@@ -704,7 +694,7 @@ class MyAdmin extends MyCommon
             }
             $tempOutputFormOptions = [
                     'layout-row' => true,
-                    'prefill' => isset($_GET['prefill']) && is_array($_GET['prefill']) ? $_GET['prefill'] : [],
+                    'prefill' => isset($this->get['prefill']) && is_array($this->get['prefill']) ? $this->get['prefill'] : [],
                     'original' => true,
                     'tabs' => $tabs
                 ];
@@ -713,7 +703,7 @@ class MyAdmin extends MyCommon
              * Parameter #2 $options of method WorkOfStan\MyCMS\MyTableAdmin::outputForm() expects array<array<array<string>|string>|bool>, array<string, array|true> given.
              * caused by PHPStan thinking $tabs may be a string. But why??
              */
-            $result .= $this->outputTableBeforeEdit() . $this->tableAdmin->outputForm($_GET['where'], $tempOutputFormOptions) . $this->outputTableAfterEdit();
+            $result .= $this->outputTableBeforeEdit() . $this->tableAdmin->outputForm($this->get['where'], $tempOutputFormOptions) . $this->outputTableAfterEdit();
         } elseif (isset($_POST['edit-selected'])) {
             $result .= $this->outputTableEditSelected();
         } elseif (isset($_POST['clone-selected'])) {
@@ -743,6 +733,7 @@ class MyAdmin extends MyCommon
     /**
      * Returns if a project-specific sections should be displayed in admin.
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead. Handled in Admin::controller()
      * @return bool
      */
     protected function projectSpecificSectionsCondition()
@@ -754,6 +745,7 @@ class MyAdmin extends MyCommon
      * Output (in HTML) the project-specific admin sections
      * Usually only selects project specific section method that generates HTML
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead. Handled in Admin::controller()
      * @return string
      */
     protected function projectSpecificSections()
@@ -989,10 +981,11 @@ class MyAdmin extends MyCommon
         Debugger::barDump($this->agendas, 'Agendas');
         Debugger::barDump($_SESSION, 'Session');
 
-        if (!in_array(Tools::set($_GET['table']), array_keys($this->tableAdmin->tables))) {
-            $_GET['table'] = '';
+        if (!in_array(Tools::set($this->get['table']), array_keys($this->tableAdmin->tables))) {
+            $this->get['table'] = '';
         }
-        $this->tableAdmin->setTable($_GET['table']);
+        Assert::string($this->get['table']);
+        $this->tableAdmin->setTable($this->get['table']);
         if (!isset($_SESSION['user'])) {
             if (isset($_COOKIE['mycms_login'])) {
                 $_POST['user'] = explode("\0", $_COOKIE['mycms_login'], 2);
@@ -1005,7 +998,7 @@ class MyAdmin extends MyCommon
                 $MyAdminProcess = new MyAdminProcess($this->MyCMS, ['tableAdmin' => $this->tableAdmin]);
                 $MyAdminProcess->processLogin($_POST);
             }
-            $_GET['table'] = $_GET['media'] = $_GET['user'] = null;
+            unset($this->get['table'], $this->get['media'], $this->get['user']);
         }
     }
 
@@ -1037,7 +1030,7 @@ class MyAdmin extends MyCommon
             'HTMLHeaders' => $this->HTMLHeaders,
             'language' => Tools::h($_SESSION['language']),
             'pageTitle' => $this->getPageTitle(),
-            'searchString' => (isset($_GET['search']) && $_GET['search']) ? $_GET['search'] : '',
+            'searchString' => (isset($this->get['search']) && !empty($this->get['search']) && is_scalar($this->get['search'])) ? (string) $this->get['search'] : '',
             'token' => end($_SESSION['token']), // for login
             'translations' => $this->tableAdmin->TRANSLATIONS, // languages for which translations are available
             'username' => (isset($_SESSION['user']) && $_SESSION['user']) ? $_SESSION['user'] : null,
@@ -1051,8 +1044,7 @@ class MyAdmin extends MyCommon
         }
         // test for presence of a string in_array is simpler than testing for existance and value of a boolean array
         foreach (['change-password', 'create-user', 'delete-user', 'logout', 'media', 'user'] as $switch) {
-            // todo $_GET be replaced by an object property
-            if (isset($_GET[$switch])) {
+            if (isset($this->get[$switch])) {
                 $params['switches'][] = $switch;
             }
         }
@@ -1087,32 +1079,30 @@ class MyAdmin extends MyCommon
 //        foreach (glob(DIR_ASSETS . '*', GLOB_ONLYDIR) as $value) {
 //            $this->ASSETS_SUBFOLDERS [] = substr($value, strlen(DIR_ASSETS));
 //        }
-      if (!Tools::nonzero($this->featureFlags['admin_latte_render'])) {
-        // user not logged in - show a login form
-        if (!isset($_SESSION['user'])) {
-            $output .= $this->outputLogin();
-        } elseif // search results may be combined with table listing etc. below
-        (isset($_SESSION['user']) && Tools::set($_GET['search'])) {
-            $output .= $this->outputSearchResults($_GET['search']);
-        }
-        // table listing/editing - for unlogged reset in prepareAdmin()
-        if ($_GET['table']) {
-            $output .= $this->outputTable();
-        } elseif (isset($_GET['media'])) { // media upload etc.
-            $output .= $this->outputMedia();
-        } elseif (isset($_GET['user'])) { // user operations (logout, change password, create user, delete user)
-            $output .= $this->outputUser();
-        } elseif ($this->projectSpecificSectionsCondition()) { // project-specific admin sections
-            $output .= $this->projectSpecificSections();
-            //} else {
-            // no agenda selected, showing "dashboard"
-        }
-        if (isset($_SESSION['user'])) {
-            $output .= $this->outputDashboard();
-        }
-        $output .= '</main></div>' . PHP_EOL;
-//      }
-//        if (!Tools::nonzero($this->featureFlags['admin_latte_render'])) {
+        if (!Tools::nonzero($this->featureFlags['admin_latte_render'])) {
+            // user not logged in - show a login form
+            if (!isset($_SESSION['user'])) {
+                $output .= $this->outputLogin();
+            } elseif // search results may be combined with table listing etc. below
+            (isset($_SESSION['user']) && Tools::set($this->get['search']) && is_scalar($this->get['search'])) {
+                $output .= $this->outputSearchResults((string) $this->get['search']);
+            }
+            // table listing/editing - for unlogged reset in prepareAdmin()
+            if (isset($this->get['table']) && !empty($this->get['table'])) {
+                $output .= $this->outputTable();
+            } elseif (isset($this->get['media'])) { // media upload etc.
+                $output .= $this->outputMedia();
+            } elseif (isset($this->get['user'])) { // user operations (logout, change password, create user, delete user)
+                $output .= $this->outputUser();
+            } elseif ($this->projectSpecificSectionsCondition()) { // project-specific admin sections
+                $output .= $this->projectSpecificSections();
+                //} else {
+                // no agenda selected, showing "dashboard"
+            }
+            if (isset($_SESSION['user'])) {
+                $output .= $this->outputDashboard();
+            }
+            $output .= '</main></div>' . PHP_EOL;
             $output .= $this->outputFooter();
             if (isset($_SESSION['user'])) {
                 $output .= $this->outputImageSelector();
@@ -1126,7 +1116,7 @@ class MyAdmin extends MyCommon
      * Return the HTML output of the complete administration page.
      *
      * Expected global variables:
-     * * $_GET
+     * * xx$_GET
      * * $_SESSION
      * * $_SERVER['SCRIPT_NAME']
      *
@@ -1157,14 +1147,14 @@ class MyAdmin extends MyCommon
     public function getPageTitle()
     {
         if (!isset($_SESSION['user'])) {
-            $_GET['table'] = $_GET['media'] = $_GET['user'] = null;
+            unset($this->get['table'], $this->get['media'], $this->get['user']);
         }
-        return mb_substr((isset($_GET['table']) && $_GET['table'] ? $_GET['table'] : false), mb_strlen(TAB_PREFIX)) ?:
+        return mb_substr(((isset($this->get['table']) && $this->get['table'] && is_string($this->get['table'])) ? $this->get['table'] : ''), mb_strlen(TAB_PREFIX)) ?:
             (
-                isset($_GET['user']) ? $this->tableAdmin->translate('User') :
+                isset($this->get['user']) ? $this->tableAdmin->translate('User') :
             (
-                isset($_GET['media']) ? $this->tableAdmin->translate('Media') :
-            (isset($_GET['search']) ? $this->tableAdmin->translate('Search') : '')
+                isset($this->get['media']) ? $this->tableAdmin->translate('Media') :
+            (isset($this->get['search']) ? $this->tableAdmin->translate('Search') : '')
             )
             );
     }

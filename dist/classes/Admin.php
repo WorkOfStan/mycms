@@ -23,9 +23,9 @@ class Admin extends MyAdmin
     /**
      * Feature flags that bubble down to latte and controller
      * TODO: remove from here as redundant (it is already in MyAdmin)
-     * @var array<bool>
+     * @ var array<bool>
      */
-    protected $featureFlags;
+    // protected $featureFlags;
 
     /**
      * Folder and name prefix of localisation yml for the web UI (not admin UI)
@@ -57,19 +57,30 @@ class Admin extends MyAdmin
     }
 
     /**
+     * Project-specific change of the default Admin UI Controller
      *
-     * @param array<mixed> $get
      * @return void
      */
-    protected function controller($get = [])
+    protected function controller()
     {
-        parent::controller($get);
+        // TODO refactor this into pure Latte
+        if (array_key_exists('table', $this->get) && !empty($this->get['table']) && (bool) $this->tableAdmin->getTable()) {
+            if(!is_array($this->renderParams['table'])) {
+                $this->renderParams['table'] = [];
+            }
+            if (isset($this->get['where']) && is_array($this->get['where'])) {
+                $this->renderParams['table']['outputTableAfterEdit'] = $this->outputTableAfterEdit();
+            } elseif (!isset($_POST['edit-selected']) && !isset($_POST['clone-selected'])) {
+                $this->renderParams['table']['outputTableBeforeListing'] = $this->outputTableBeforeListing();
+            }
+        }
+
+        // changes of inherited Lattes MUST be done before invoking the parent::controller();
+        parent::controller();
         if ($this->projectSpecificSectionsCondition()) { // project-specific admin sections
 //            $output .= $this->projectSpecificSections();
             $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
         }
-        //todo projectSpecificSectionsCondition()
-        //todo protected function projectSpecificSections()
     }
 
     /**
@@ -86,38 +97,38 @@ class Admin extends MyAdmin
         return
             // A Produkty k řazení
             (Tools::nonzero($this->featureFlags['order_hierarchy']) ? (
-                '<li class="nav-item' . (isset($_GET['products']) ? ' active' : '')
+                '<li class="nav-item' . (isset($this->get['products']) ? ' active' : '')
             . '"><a href="?products" class="nav-link"><i class="fas fa-gift"></i> '
             . $this->tableAdmin->translate('Products') . '</a></li>'
             ) : '')
             // A Stránky k řazení
             . (Tools::nonzero($this->featureFlags['order_hierarchy']) ? (
-                '<li class="nav-item' . (isset($_GET['pages']) ? ' active' : '')
+                '<li class="nav-item' . (isset($this->get['pages']) ? ' active' : '')
             . '"><a href="?pages" class="nav-link"><i class="far fa-file-alt"></i> '
             . $this->tableAdmin->translate('Pages') . '</a></li>'
             ) : '')
             // URLs - (Friendly URL set-up and) check duplicities
-            . '<li class="nav-item' . (isset($_GET['urls']) ? ' active' : '')
+            . '<li class="nav-item' . (isset($this->get['urls']) ? ' active' : '')
             . '"><a href="?urls" class="nav-link"><i class="fas fa-unlink"></i> URL</a></li>'
             // F Divize a produkty k řazení (jako A Produkty k řazení)
             . (Tools::nonzero($this->featureFlags['order_hierarchy']) ? (
                 '<li class="nav-item"><a href="?divisions-products" class="nav-link'
-            . (isset($_GET['divisions-products']) ? ' active' : '') .
+            . (isset($this->get['divisions-products']) ? ' active' : '') .
             '"><i class="fa fa-gift mr-1" aria-hidden="true"></i> ' .
             $this->tableAdmin->translate('Divisions and products') . '</a></li>'
             ) : '')
             // F drop-down menu
             . '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle'
-            . (isset($_GET['urls']) || isset($_GET['translations']) ? ' active' : '')
+            . (isset($this->get['urls']) || isset($this->get['translations']) ? ' active' : '')
             . '" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"'
             . ' aria-haspopup="true" aria-expanded="true"><i class="fas fa-lightbulb"></i></a>'
             . '<div class="dropdown-menu" aria-labelledby="navbarDropdown">'
             // URLs - Friendly URL set-up (and check duplicities)
-            . '<a href="?urls" class="dropdown-item' . (isset($_GET['urls']) ? ' active' : '')
+            . '<a href="?urls" class="dropdown-item' . (isset($this->get['urls']) ? ' active' : '')
             . '"><i class="fa fa-link mr-1" aria-hidden="true"></i> '
             . $this->tableAdmin->translate('Friendly URL') . '</a>'
             // F Překlady
-            . '<a href="?translations" class="dropdown-item' . (isset($_GET['translations']) ? ' active' : '')
+            . '<a href="?translations" class="dropdown-item' . (isset($this->get['translations']) ? ' active' : '')
             . '"><i class="fa fa-globe mr-1" aria-hidden="true"></i> '
             . $this->tableAdmin->translate('Translations') . '</a>
             </div></li>';
@@ -132,7 +143,7 @@ class Admin extends MyAdmin
      */
     protected function outputTableBeforeListing()
     {
-        return (in_array(mb_substr($_GET['table'], mb_strlen(TAB_PREFIX)), ['content'])) ?
+        return (in_array(mb_substr($this->tableAdmin->getTable(), mb_strlen(TAB_PREFIX)), ['content'])) ?
             $this->tableAdmin->contentByType(['table' => 'content', 'type' => 'type']) : '';
     }
 
@@ -144,8 +155,8 @@ class Admin extends MyAdmin
     protected function outputTableAfterEdit()
     {
         $output = '';
-        if (isset($_GET['where']['id']) && $_GET['where']['id']) { //existing record
-            switch ($_GET['table']) {
+        if (isset($this->get['where']['id']) && $this->get['where']['id']) { //existing record
+            switch ($this->get['table']) {
                 case TAB_PREFIX . 'category':
                     // Display related products and content elements labeled by either name
                     // or content fragment (up to 100 characters)
@@ -156,11 +167,12 @@ class Admin extends MyAdmin
                             'product'
                         ] as $i
                     ) {
+                        Assert::scalar($this->get['where']['id']);
                         if (
                             $tmp = $this->MyCMS->fetchAndReindex(
                                 'SELECT id,IF(name_' . $_SESSION['language'] . ' NOT LIKE "",name_'
                                 . $_SESSION['language'] . ', content_' . $_SESSION['language'] . ')'
-                                . ' FROM `' . TAB_PREFIX . $i . '` WHERE category_id=' . (int) $_GET['where']['id']
+                                . ' FROM `' . TAB_PREFIX . $i . '` WHERE category_id=' . (int) $this->get['where']['id']
                             )
                         ) {
                             $output .= '<hr /><details><summary>' .
@@ -190,7 +202,7 @@ class Admin extends MyAdmin
 //                        ' <span class="badge badge-secondary">';
 //                    if ($tmp = $this->MyCMS->fetchAndReindex('SELECT id,name_' . $_SESSION['language'] .
 //                        ' AS name,content_' . $_SESSION['language'] . ' AS content'
-//                        . ' FROM `' . TAB_PREFIX . 'content` WHERE product_id=' . (int) $_GET['where']['id'])) {
+//                        . ' FROM `' . TAB_PREFIX . 'content` WHERE product_id=' . (int) $this->get['where']['id'])) {
 //                        $output .= count($tmp) . '</span></summary>';
 //                        foreach ($tmp as $key => $row) {
 //                            $output .= '<a href="?table=' . TAB_PREFIX . 'content&amp;where[id]=' . $key
@@ -207,7 +219,7 @@ class Admin extends MyAdmin
 //                    $output .= '<footer>';
 //                    foreach (['testimonial', 'claim', 'perex'] as $i) {
 //                        $output .= '<a href="?table=' . TAB_PREFIX . 'content&amp;where[]=&amp;prefill[type]=' . $i
-//                            . '&amp;prefill[product_id]=' . Tools::ifnull($_GET['where']['id'], '') . '" '
+//                            . '&amp;prefill[product_id]=' . Tools::ifnull($this->get['where']['id'], '') . '" '
 //                            . 'title="' . $this->tableAdmin->translate('New row')
 //                            . ' (' . $this->tableAdmin->translate('Link will open in a new window') . ')" '
 //                            . 'target="_blank"><i class="far fa-plus-square"></i>'
@@ -228,13 +240,13 @@ class Admin extends MyAdmin
     protected function projectSpecificSectionsCondition()
     {
         return
-            isset($_GET['urls']) ||
+            isset($this->get['urls']) ||
             //F
-            isset($_GET['divisions-products']) ||
-            isset($_GET['translations']) ||
+            isset($this->get['divisions-products']) ||
+            isset($this->get['translations']) ||
             //A
-            isset($_GET['products']) ||
-            isset($_GET['pages']);
+            isset($this->get['products']) ||
+            isset($this->get['pages']);
     }
 
     /**
@@ -247,11 +259,11 @@ class Admin extends MyAdmin
     {
         //F
         $output = '';
-        if (isset($_GET['divisions-products'])) {
+        if (isset($this->get['divisions-products'])) {
             $output .= $this->sectionDivisionsProducts();
-        } elseif (isset($_GET['translations'])) {
+        } elseif (isset($this->get['translations'])) {
             $output .= $this->sectionTranslations();
-        } elseif (isset($_GET['urls'])) {
+        } elseif (isset($this->get['urls'])) {
             $output .= $this->sectionUrls();
         }
 
@@ -260,7 +272,7 @@ class Admin extends MyAdmin
             return $output;
         }
         // products // TODO make work in Dist
-        if (isset($_GET['products'])) {
+        if (isset($this->get['products'])) {
             $output .= '<h1>' . $this->tableAdmin->translate('Products') . '</h1><div id="agenda-products">';
             $categories = $this->MyCMS->fetchAll('SELECT id,name_' . $_SESSION['language'] . ' AS category,active
                 FROM `' . TAB_PREFIX . 'category`');
@@ -376,7 +388,7 @@ class Admin extends MyAdmin
                     <button type="button" class="btn btn-sm btn-secondary" id="products-images" title="'
                 . $this->tableAdmin->translate('Toggle image thumbnails') . '"><i class="far fa-image"></i></button>
                 </footer></div>';
-        } elseif (isset($_GET['pages'])) { // pages // TODO make it work in Dist
+        } elseif (isset($this->get['pages'])) { // pages // TODO make it work in Dist
             $output .= '<h1>' . $this->tableAdmin->translate('Pages') . '</h1><div id="agenda-pages">';
             $categories = $this->MyCMS->fetchAndReindexStrictArray('SELECT id,'
                 //. 'path,' // TODO path was used in A project. Reconsider here.
@@ -874,11 +886,11 @@ class Admin extends MyAdmin
     {
         return parent::getPageTitle() ?:
             (
-                isset($_GET['pages']) ? $this->tableAdmin->translate('Pages') :
+                isset($this->get['pages']) ? $this->tableAdmin->translate('Pages') :
             (
-                isset($_GET['products']) ? $this->tableAdmin->translate('Products') :
+                isset($this->get['products']) ? $this->tableAdmin->translate('Products') :
             (
-                isset($_GET['urls']) ? $this->tableAdmin->translate('URL') :
+                isset($this->get['urls']) ? $this->tableAdmin->translate('URL') :
             ''
             )
             )

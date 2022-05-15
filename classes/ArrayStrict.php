@@ -102,6 +102,17 @@ class ArrayStrict
     }
 
     /**
+     * Returns whether the field is set or not
+     *
+     * @param string $field
+     * @return bool
+     */
+    public function keyExists($field)
+    {
+        return array_key_exists($field, $this->arr);
+    }
+
+    /**
      * Returns string value of the field with string value or throws an Exception
      *
      * @param string $field

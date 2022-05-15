@@ -861,11 +861,16 @@ class MyTableLister
     }
 
     /**
+     * Table name property getter
      *
      * @return string
+     * @throws Exception
      */
     public function getTable()
     {
+        if (empty($this->table)) {
+            throw new \Exception('table is not set');
+        }
         return $this->table;
     }
 
