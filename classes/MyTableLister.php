@@ -234,7 +234,7 @@ class MyTableLister
             'sql' => ''
         ];
         if (isset($vars['limit'])) {
-            Assert::string($vars['limit']); // number passed as string
+            Assert::scalar($vars['limit']); // number passed as string or int TODO make sure it's just one of those
             $result['limit'] = $vars['limit'] ? (int) $vars['limit'] : $this->DEFAULTS['PAGESIZE'];
         } else {
             $result['limit'] = $this->DEFAULTS['PAGESIZE'];

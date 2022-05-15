@@ -5,17 +5,17 @@
         <h1 class="page-header">
             <a href="?table={$table["tableName"]}" title="{="Back to listing"|translate}"><i class="fa fa-list-alt"></i></a>
             <tt>{$table["tablePrefixless"]}</tt></h1>
-          {if $table["where"]}
+          {if array_key_exists('where', $table)}
             {* table edit *}
             <h2 class="sub-header">{="Edit"|translate}<span class="AdminRecordName"></span></h2>
             {include 'inherite.latte', latte => 'admin-ui-table-before-edit.latte'}
             {$table["htmlOutputForm"]|noescape}
             {* $this->tableAdmin->outputForm($_GET['where'], $tempOutputFormOptions) *}
             {include 'inherite.latte', latte => 'admin-ui-table-after-edit.latte'}
-          {elseif $table["edit-selected"]}
+          {elseif array_key_exists('edit-selected', $table)}
             {$table["htmlOutputForm"]|noescape}
             {* $result .= $this->outputTableEditSelected(); *}
-          {elseif $table["clone-selected"]}
+          {elseif array_key_exists('clone-selected', $table)}
             {$table["htmlOutputForm"]|noescape}
             {* $result .= $this->outputTableEditSelected(true); *}
           {else}

@@ -64,6 +64,10 @@ class Admin extends MyAdmin
     protected function controller($get = [])
     {
         parent::controller($get);
+        if ($this->projectSpecificSectionsCondition()) { // project-specific admin sections
+//            $output .= $this->projectSpecificSections();
+            $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+        }
         //todo projectSpecificSectionsCondition()
         //todo protected function projectSpecificSections()
     }
