@@ -11,7 +11,11 @@
         </div>
         *}
         {block htmlbody}{/block}
-        
+        {if $authUser}
+            {$htmlDashboard|noescape} {* TODO refactor away from HTML *}
+        {/if}
+        </main></div> {* TODO move the start of these tags from htmlbody *}
+
         <!-- footer -->
         <footer class="sticky-footer">&copy; WorkOfStan &amp; CRS2 {="All rights reserved."|translate}</footer>
         {if $authUser}{include 'inherite.latte', latte => 'admin-output-image-selector.latte'}{/if}

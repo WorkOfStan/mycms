@@ -16,7 +16,7 @@ composer install -a --prefer-dist --no-progress
 #composer require --dev rector/rector --prefer-dist --no-progress
 
 section_title "* require --dev phpstan"
-composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
+composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress --with-all-dependencies
 
 section_title "* phpunit"
 vendor/bin/phpunit

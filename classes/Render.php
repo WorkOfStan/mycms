@@ -64,6 +64,10 @@ class Render
         $displayParams = $params;
         // TODO hide HTML handed over in a variable till the Admin UI isn't done properly
         unset($displayParams['htmlbody']);
+        unset($displayParams['htmlOutput']);
+        if (array_key_exists('table', $displayParams) && is_array($displayParams['table'])) {
+            unset($displayParams['table']['htmlOutputForm']);
+        }
         Debugger::getBar()->addPanel(new BarPanelTemplate('Template: ' . $this->template, $displayParams));
         if (isset($_SESSION['user'])) {
             Debugger::getBar()->addPanel(

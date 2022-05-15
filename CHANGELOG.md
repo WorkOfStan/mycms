@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - dist/composer.json: Keeps packages sorted by name when adding new one
 - GitHub Actions: only use cache with an exact key hit
 - MyAdmin::renderAdmin() $switches as parameter of Latté instead of working with $_GET in the template
+- MyAdmin table view is rendered by Latte
 
 ### `Deprecated` for soon-to-be removed features
 - dist/rector.php (TODO consider using just string replace instead of the rector engine)
