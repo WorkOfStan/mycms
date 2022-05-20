@@ -4,7 +4,6 @@ namespace WorkOfStan\mycmsprojectnamespace;
 
 use GodsDev\Tools\Tools;
 use Webmozart\Assert\Assert;
-//use WorkOfStan\MyCMS\ArrayStrict;
 use WorkOfStan\MyCMS\L10n;
 use WorkOfStan\MyCMS\MyAdmin;
 use WorkOfStan\mycmsprojectnamespace\MyCMSProject;
@@ -65,7 +64,7 @@ class Admin extends MyAdmin
     {
         // TODO refactor this into pure Latte
         if (array_key_exists('table', $this->get) && !empty($this->get['table']) && (bool) $this->tableAdmin->getTable()) {
-            if(!is_array($this->renderParams['table'])) {
+            if (!array_key_exists('table', $this->renderParams) || !is_array($this->renderParams['table'])) {
                 $this->renderParams['table'] = [];
             }
             if (isset($this->get['where']) && is_array($this->get['where'])) {
@@ -81,6 +80,7 @@ class Admin extends MyAdmin
 //            $output .= $this->projectSpecificSections();
             $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
         }
+        //Debugger::barDump($this->renderParams, 'Render Params 3');
     }
 
     /**
@@ -392,17 +392,17 @@ class Admin extends MyAdmin
             $output .= '<h1>' . $this->tableAdmin->translate('Pages') . '</h1><div id="agenda-pages">';
             $categories = $this->MyCMS->fetchAndReindexStrictArray('SELECT id,'
                 //. 'path,' // TODO path was used in A project. Reconsider here.
-                . 'active,name_' .
-                $_SESSION['language'] . ' AS category FROM `' . TAB_PREFIX . 'category`');
+                . 'active,name_'
+                . $_SESSION['language'] . ' AS category FROM `' . TAB_PREFIX . 'category`');
                 // TODO path was used in A project. Reconsider here.
                 // . ' WHERE LEFT(path, ' . PATH_MODULE . ')="'
                 // . $this->MyCMS->escapeSQL($this->MyCMS->SETTINGS['PATH_HOME']) . '" ORDER BY path');
             //\Tracy\Debugger::barDump($categories, 'CATEGORIES'); // temp
             $articles = $this->MyCMS->fetchAndReindexStrictArray('SELECT '
                 //. 'category_id,' // TODO category_id was used in A project to link content rows. Reconsider here.
-                . 'id,active,IF(content_' .
-                $_SESSION['language'] . ' = "", LEFT(CONCAT(code, " ", content_' .
-                $_SESSION['language'] . '), 100),content_' . $_SESSION['language'] . ') AS content
+                . 'id,active,IF(content_'
+                . $_SESSION['language'] . ' = "", LEFT(CONCAT(code, " ", content_'
+                . $_SESSION['language'] . '), 100),content_' . $_SESSION['language'] . ') AS content
                 FROM `' . TAB_PREFIX . 'content`');
                 //. ' WHERE category_id > 0'); // TODO category_id was used in A project to link content rows.
                 //Reconsider here.
@@ -510,8 +510,8 @@ class Admin extends MyAdmin
 //            'division` ORDER BY ' . $tmp);
         $parents = $this->MyCMS->fetchAll('SELECT '
 //                . 'division_id,'
-            . 'id,name_' . $_SESSION['language'] .
-            ' AS product,' . ($tmp = 'sort+IF(id=' . Tools::set($_SESSION['product-switch'], 0) . ','
+            . 'id,name_' . $_SESSION['language']
+            . ' AS product,' . ($tmp = 'sort+IF(id=' . Tools::set($_SESSION['product-switch'], 0) . ','
             . Tools::set($_SESSION['product-delta'], 0) . ',0)') . ' AS sort,active FROM `' . TAB_PREFIX
             . 'product`'
             //. ' WHERE parent_product_id = 0'
@@ -533,9 +533,10 @@ class Admin extends MyAdmin
         if (!empty($divisions)) {
             foreach ($divisions as $divisionId => $division) {
                 Assert::isArray($division);
-                $output .= '<details open><summary class="d-inline-block"><big' .
-                    ($division['active'] == 1 ? '' : ' class="inactive"') . '><a href="?table=' . TAB_PREFIX .
-                    'division&amp;where[id]=' . $divisionId . '" title="' . $this->tableAdmin->translate('Edit') . '">'
+                $output .= '<details open><summary class="d-inline-block"><big'
+                    . ($division['active'] == 1 ? '' : ' class="inactive"') . '><a href="?table=' . TAB_PREFIX
+                    . 'division&amp;where[id]=' . $divisionId . '" title="' . $this->tableAdmin->translate('Edit')
+                    . '">'
                     . '<i class="fa fa-edit" aria-hidden="true"></i></a> '
                     . '<button type="button" class="btn btn-sm d-inline" name="division-up" value="' . $divisionId
                     . '" title="' . $this->tableAdmin->translate('Move up') . '">'
@@ -609,8 +610,8 @@ class Admin extends MyAdmin
                 }
                 $output .= '<a href="?table=' . TAB_PREFIX . 'product&amp;where[]=&amp;prefill[division_id]='
                     . $divisionId . '&amp;prefill[sort]=' . $sort[0] . '" class="ml-4">'
-                    . '<i class="fa fa-plus-square-o" aria-hidden="true"></i></a> ' .
-                    $this->tableAdmin->translate('New record') . '</summary></details>';
+                    . '<i class="fa fa-plus-square-o" aria-hidden="true"></i></a> '
+                    . $this->tableAdmin->translate('New record') . '</summary></details>';
             }
         }
         $output .= '</div><form action="" method="post">'
@@ -740,8 +741,8 @@ class Admin extends MyAdmin
         $langs = array_keys($this->MyCMS->TRANSLATIONS);
         // Todo queryStrictArray
         $query = $this->MyCMS->dbms->queryStrictNonEmptyArray(
-            'SELECT id,"content" AS _table,type,' . Tools::arrayListed($langs, 0, ',', 'url_') . ',' .
-            Tools::arrayListed($langs, 0, ',', 'name_') . ' FROM `' . TAB_PREFIX . 'content` WHERE type IN ('
+            'SELECT id,"content" AS _table,type,' . Tools::arrayListed($langs, 0, ',', 'url_') . ','
+            . Tools::arrayListed($langs, 0, ',', 'name_') . ' FROM `' . TAB_PREFIX . 'content` WHERE type IN ('
             . '"article", "page", "news"' // list of types to be listed for Friendly URL settings
             . ') ORDER BY type'
         );

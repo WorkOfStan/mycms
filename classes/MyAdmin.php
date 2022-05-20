@@ -100,7 +100,9 @@ class MyAdmin extends MyCommon
         foreach (glob(DIR_ASSETS . '*', GLOB_ONLYDIR) as $value) {
             $this->ASSETS_SUBFOLDERS [] = substr($value, strlen(DIR_ASSETS));
         }
-        $this->controller();
+        if (Tools::nonzero($this->featureFlags['admin_latte_render'])) {
+            $this->controller();
+        }
     }
 
     /**
@@ -113,38 +115,29 @@ class MyAdmin extends MyCommon
         $this->template = 'admin-ui';
         // user not logged in - show a login form
         if (!isset($_SESSION['user'])) {
-//            $output .= $this->outputLogin();
             //$this->template = 'admin-login'; //ready
             $this->renderParams['htmlOutput'] = $this->outputLogin();
         } elseif // search results may be combined with table listing etc. below
         (isset($_SESSION['user']) && array_key_exists('search', $this->get) && !empty($this->get['search'])) {
-//            $output .= $this->outputSearchResults($_GET['search']);
             Assert::string($this->get['search']);
             $this->renderParams['htmlOutput'] = $this->outputSearchResults($this->get['search']);
         }
         // table listing/editing - for unlogged reset in prepareAdmin() TODO harden
         if (array_key_exists('table', $this->get) && !empty($this->get['table']) && (bool) $this->tableAdmin->getTable()) {
-//            $output .= $this->outputTable();
             $this->template = 'admin-ui-table';
             $this->renderTable();
-//            $this->renderParams['htmlOutput'] = $this->outputTable();
             return; // so that not taken over in the Admin
         } elseif (isset($this->get['media'])) { // media upload etc.
-//            $output .= $this->outputMedia();
             //$this->template = 'admin-ui-media';//ready
             $this->renderParams['htmlOutput'] = $this->outputMedia();
             return; // so that not taken over in the Admin
         } elseif (isset($this->get['user'])) { // user operations (logout, change password, create user, delete user)
-//            $output .= $this->outputUser();
             //$this->template = 'admin-ui-user';//ready
             $this->renderParams['htmlOutput'] = $this->outputUser();
             return; // so that not taken over in the Admin
-//        } elseif ($this->projectSpecificSectionsCondition()) { // project-specific admin sections
-//            $output .= $this->projectSpecificSections();
-//            $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
-            //} else {
-            // no agenda selected, showing "dashboard"
         }
+        // no agenda selected, showing "dashboard"
+        // project specific template assignement done in the child controller()
     }
 
     /**
@@ -610,20 +603,14 @@ class MyAdmin extends MyCommon
      */
     protected function renderTable()
     {
-        $this->renderParams['table'] = [];
-        $this->renderParams['table'] = [
-            'tableName' => Tools::h($this->tableAdmin->getTable()),
-            'tablePrefixless' => mb_substr($this->tableAdmin->getTable(), mb_strlen(TAB_PREFIX)),
-        ];
-//        $result = '<h1 class="page-header">'
-//            . '<a href="?table=' . Tools::h($this->get['table']) . '" title="'
-//            . $this->tableAdmin->translate('Back to listing') . '"><i class="fa fa-list-alt"></i></a> '
-//            . '<tt>' . Tools::h($tablePrefixless) . '</tt></h1>' . PHP_EOL;
+        if (!array_key_exists('table', $this->renderParams) || !is_array($this->renderParams['table'])) {
+            $this->renderParams['table'] = [];
+        }
+        $this->renderParams['table']['tableName'] = Tools::h($this->tableAdmin->getTable());
+        $this->renderParams['table']['tablePrefixless'] = mb_substr($this->tableAdmin->getTable(), mb_strlen(TAB_PREFIX));
         if (isset($this->get['where']) && is_array($this->get['where'])) {
             $this->renderParams['table']['where'] = $this->get['where'];
-//            // table edit
-//            $result .= '<h2 class="sub-header">' . $this->tableAdmin->translate('Edit')
-//                . ' <span class="AdminRecordName"></span></h2>';
+            // table edit
             $tabs = [null];
             $tempIterable = Tools::set(
                 $this->tableAdmin->tableContext['language-versions'],
@@ -639,8 +626,6 @@ class MyAdmin extends MyCommon
                     'original' => true,
                     'tabs' => $tabs
                 ];
-//            $result .= $this->outputTableBeforeEdit() . $this->tableAdmin->outputForm($this->get['where'], $tempOutputFormOptions)
-//                . $this->outputTableAfterEdit();  // used in dist/Admin
             /**
              * @phpstan-ignore-next-line
              * Parameter #2 $options of method WorkOfStan\MyCMS\MyTableAdmin::outputForm() expects array<array<array<string>|string>|bool>, array<string, array|true> given.
@@ -657,12 +642,8 @@ class MyAdmin extends MyCommon
             $this->renderParams['table']['htmlOutputForm'] =  $this->outputTableEditSelected(true);
         } else {
             // table listing
-//            $result .= '<h2 class="sub-header">' . $this->tableAdmin->translate('Listing') . '</h2>'
-//                . $this->outputTableBeforeListing() // used in dist/Admin
-                $this->renderParams['table']['htmlOutputForm'] =  $this->tableAdmin->view();
-//                . $this->outputTableAfterListing();
+            $this->renderParams['table']['htmlOutputForm'] = $this->tableAdmin->view();
         }
-//        return $result;
     }
 
     /**

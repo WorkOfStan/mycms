@@ -584,6 +584,7 @@ class MyTableLister
                 Assert::isArray($this->get['op']);
                 if ($value) {
                     Assert::string($value);
+                    // adding search rows in the table view done by invoked JavaScript function in dist/scripts/admin.js
                     $this->script .= 'addSearchRow($(\'#search-div' . $this->rand . '\'), "'
                         . Tools::escapeJs($value) . '",' . Tools::setifnull($this->get['op'][$key], 0) . ', "'
                         . addslashes(

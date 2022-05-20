@@ -1,7 +1,7 @@
 {layout '@admin.latte'}
 {block htmlbody}
 {$htmlbody|noescape}
-{if $htmlOutput}
+{if isset($htmlOutput)}
 {$htmlOutput|noescape}
 {/if}
 {/block}
