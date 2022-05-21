@@ -1,3 +1,4 @@
+<?php
 //$AGENDAS is used in AdminProcess.php. If $_SESSION['language'] is used in it, set it after prepare.php,
 //where $_SESSION['language'] is fixed. For reference see README.md.
 $AGENDAS = [
@@ -47,6 +48,9 @@ $AGENDAS = [
     ],
 ];
 
+// a present get parameter toggles active tab - expected in admin.php
+$getSwitch = ['divisions-products', 'pages', 'products', 'translations', 'urls'];
+
 if (file_exists(__DIR__ . '/config-admin.local.php')) {
-    include_once __DIR__ . '/config-admin.local.php'; // use config.local.dist.php as specimen
+    include_once __DIR__ . '/config-admin.local.php'; // use config-admin.local.dist.php as specimen
 }
