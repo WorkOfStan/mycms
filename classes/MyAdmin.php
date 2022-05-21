@@ -116,23 +116,35 @@ class MyAdmin extends MyCommon
         // user not logged in - show a login form
         if (!isset($_SESSION['user'])) {
             //$this->template = 'admin-login'; //ready
+            unset($this->get['table'], $this->get['media'], $this->get['user']); // security by design
             $this->renderParams['htmlOutput'] = $this->outputLogin();
+            //return; //TODO explore security setting that no other conditions will be allowed if !user
         } elseif // search results may be combined with table listing etc. below
         (isset($_SESSION['user']) && array_key_exists('search', $this->get) && !empty($this->get['search'])) {
             Assert::string($this->get['search']);
             $this->renderParams['htmlOutput'] = $this->outputSearchResults($this->get['search']);
+            $this->renderParams['pageTitle'] = $this->tableAdmin->translate('Search');
         }
         // table listing/editing - for unlogged reset in prepareAdmin() TODO harden
-        if (array_key_exists('table', $this->get) && !empty($this->get['table']) && (bool) $this->tableAdmin->getTable()) {
+        if (
+            array_key_exists('table', $this->get) && !empty($this->get['table'])
+            && (bool) $this->tableAdmin->getTable()
+        ) {
             $this->template = 'admin-ui-table';
             $this->renderTable();
+            // $this->renderParams['table']['tablePrefixless'] is set by renderTable()
+            Assert::isArray($this->renderParams['table']);
+            $this->renderParams['pageTitle'] = $this->tableAdmin->translate('Table')
+                . ' ' . $this->renderParams['table']['tablePrefixless'] ;
             return; // so that not taken over in the Admin
         } elseif (isset($this->get['media'])) { // media upload etc.
             //$this->template = 'admin-ui-media';//ready
+            $this->renderParams['pageTitle'] = $this->tableAdmin->translate('Media');
             $this->renderParams['htmlOutput'] = $this->outputMedia();
             return; // so that not taken over in the Admin
         } elseif (isset($this->get['user'])) { // user operations (logout, change password, create user, delete user)
             //$this->template = 'admin-ui-user';//ready
+            $this->renderParams['pageTitle'] = $this->tableAdmin->translate('User');
             $this->renderParams['htmlOutput'] = $this->outputUser();
             return; // so that not taken over in the Admin
         }
@@ -1010,7 +1022,7 @@ class MyAdmin extends MyCommon
             //'htmlhead' => $this->outputHead($this->getPageTitle()),
             'HTMLHeaders' => $this->HTMLHeaders,
             'language' => Tools::h($_SESSION['language']),
-            'pageTitle' => $this->getPageTitle(),
+            //'pageTitle' => $this->getPageTitle(),
             'searchString' => (isset($this->get['search']) && !empty($this->get['search']) && is_scalar($this->get['search'])) ? (string) $this->get['search'] : '',
             'token' => end($_SESSION['token']), // for login
             'translations' => $this->tableAdmin->TRANSLATIONS, // languages for which translations are available
@@ -1123,6 +1135,7 @@ class MyAdmin extends MyCommon
 
     /**
      * Get page title (used in the <title> element)
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
      * @return string
      */
     public function getPageTitle()

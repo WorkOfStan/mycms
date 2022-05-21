@@ -76,9 +76,29 @@ class Admin extends MyAdmin
 
         // changes of inherited Lattes MUST be done before invoking the parent::controller();
         parent::controller();
-        if ($this->projectSpecificSectionsCondition()) { // project-specific admin sections
+        if (
+            isset($this->get['urls']) ||
+            //F
+            isset($this->get['divisions-products']) ||
+            isset($this->get['translations']) ||
+            //A
+            isset($this->get['products']) ||
+            isset($this->get['pages'])
+        ) { // project-specific admin sections
 //            $output .= $this->projectSpecificSections();
             $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+        }
+        if (!array_key_exists('pageTitle', $this->renderParams) || empty($this->renderParams['pageTitle'])) {
+            $this->renderParams['pageTitle'] = (
+                isset($this->get['pages']) ? $this->tableAdmin->translate('Pages') :
+                (
+                isset($this->get['products']) ? $this->tableAdmin->translate('Products') :
+                (
+                isset($this->get['urls']) ? $this->tableAdmin->translate('URL') :
+                ''
+                )
+                )
+                );
         }
         //Debugger::barDump($this->renderParams, 'Render Params 3');
     }
@@ -235,6 +255,7 @@ class Admin extends MyAdmin
     /**
      * Returns if a project-specific sections should be displayed in admin.
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
      * @return bool
      */
     protected function projectSpecificSectionsCondition()
@@ -881,6 +902,7 @@ class Admin extends MyAdmin
      * Add project specific titles
      * TODO: test the A inspiration
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
      * @return string
      */
     public function getPageTitle()
