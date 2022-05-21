@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * Admin UI config
+ * (Last MyCMS/dist revision: 2022-05-21, v0.4.6+)
+ */
+
 //$AGENDAS is used in AdminProcess.php. If $_SESSION['language'] is used in it, set it after prepare.php,
 //where $_SESSION['language'] is fixed. For reference see README.md.
 $AGENDAS = [
