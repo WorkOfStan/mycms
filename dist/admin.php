@@ -2,7 +2,7 @@
 
 /**
  * Admin
- * (Last MyCMS/dist revision: 2022-05-13, v0.4.6+)
+ * (Last MyCMS/dist revision: 2022-05-21, v0.4.6+)
  */
 
 use Tracy\Debugger;
@@ -20,6 +20,8 @@ if (isset($_POST) && !empty($_POST)) {
 
 //$AGENDAS is used in AdminProcess.php. If $_SESSION['language'] is used in it, set it after prepare.php,
 //where $_SESSION['language'] is fixed. For reference see README.md.
+require_once './conf/config-admin.php';
+/* Delete
 $AGENDAS = [
     'category' => [
         'column' => "name_{$_SESSION['language']}",
@@ -66,6 +68,7 @@ $AGENDAS = [
         ],
     ],
 ];
+*/
 
 $tableAdmin = new TableAdmin(
     $MyCMS->dbms,
@@ -92,10 +95,7 @@ $params = [
     'agendas' => $AGENDAS,
     'featureFlags' => $featureFlags,
     'prefixUiL10n' => $myCmsConf['prefixL10n'],
-    // Todo conf-admin.php once the MyAdmin is fully in Latte - default values based on config.php settings?
-    'renderParams' => [
-//        'switches' => []
-        ],
+    'renderParams' => [],
     'tableAdmin' => $tableAdmin,
     // to replace default CSS and/or JS in admin.php, uncomment the array below
 //    'clientSideResources' => [
@@ -105,7 +105,7 @@ $params = [
 //        ]
 //    ]
 ];
-foreach (['divisions-products', 'pages', 'products', 'translations', 'urls'] as $switch) {
+foreach ($getSwitch as $switch) {
     if (isset($_GET[$switch])) {
         $params['renderParams']['switches'][] = $switch;
     }
