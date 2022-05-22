@@ -128,11 +128,13 @@ class MyAdmin extends MyCommon
         }
         $this->renderParams['pageTitle'] = ''; // the default empty value
         // Select a project specific tab to be highlighted
-        foreach ($this->tabs as $switch => $name) {
-            if (isset($this->get[$switch])) {
-                $this->renderParams['switches'][] = $switch;
-                $this->renderParams['pageTitle'] = $this->tableAdmin->translate($name);
-                break 1; // exit foreach loop as only one switch make sense
+        if (isset($this->tabs) && is_array($this->tabs)) {
+            foreach ($this->tabs as $switch => $name) {
+                if (isset($this->get[$switch])) {
+                    $this->renderParams['switches'][] = $switch;
+                    $this->renderParams['pageTitle'] = $this->tableAdmin->translate($name);
+                    break 1; // exit foreach loop as only one switch make sense
+                }
             }
         }
 
