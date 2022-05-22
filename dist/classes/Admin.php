@@ -43,8 +43,8 @@ class Admin extends MyAdmin
 //        'content' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
 //        'product' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
 //    ];
-    /* @var string[] getVariable => nameToBeTranslated */
-    protected $tabs;
+    /* @ var string[] getVariable => nameToBeTranslated */
+//    protected $tabs;
 
     /**
      *
@@ -79,15 +79,15 @@ class Admin extends MyAdmin
             }
         }
 
-        foreach ($this->tabs as $switch => $name) {
-            if (isset($this->get[$switch])) {
-                $this->renderParams['switches'][] = $switch;
-            }
-        }
+//        foreach ($this->tabs as $switch => $name) {
+ //           if (isset($this->get[$switch])) {
+  //              $this->renderParams['switches'][] = $switch;
+   //         }
+    //    }
 
         // changes of inherited Lattes MUST be done before invoking the parent::controller();
         parent::controller();
-        //Todo tabs key
+        //Todo tabs key but control instead ofprojectSpecificSections
         if (
             isset($this->get['urls']) ||
             //F
@@ -100,26 +100,25 @@ class Admin extends MyAdmin
 //            $output .= $this->projectSpecificSections();
             $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
         }
-        //Todo tabs key
-        if (!array_key_exists('pageTitle', $this->renderParams) || empty($this->renderParams['pageTitle'])) {
-            $this->renderParams['pageTitle'] = (
-                isset($this->get['pages']) ? $this->tableAdmin->translate('Pages') :
-                (
-                isset($this->get['products']) ? $this->tableAdmin->translate('Products') :
-                (
-                isset($this->get['urls']) ? $this->tableAdmin->translate('URL') :
-                ''
-                )
-                )
-                );
-        }
+//X        //Todo tabs key
+ //       if (!array_key_exists('pageTitle', $this->renderParams) || empty($this->renderParams['pageTitle'])) {
+    //        $this->renderParams['pageTitle'] = (
+    //            isset($this->get['pages']) ? $this->tableAdmin->translate('Pages') :
+   //             (
+    //            isset($this->get['products']) ? $this->tableAdmin->translate('Products') :
+     //           (
+     //           isset($this->get['urls']) ? $this->tableAdmin->translate('URL') :
+      //          ''
+     //           )
+   //           )
+   //             );
+  //      }
         //Debugger::barDump($this->renderParams, 'Render Params 3');
     }
 
     /**
      * Output (in HTML) the project-specific links in the navigation section of admin
      * TODO: navázat na další features
-     * TODO: move to template/admin-special-menu-links.latte
      *
      * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
      * @see template/admin-special-menu-links.latte
