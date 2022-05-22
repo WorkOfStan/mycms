@@ -94,6 +94,7 @@ if (isset($_POST) && is_array($_POST) && !empty($_POST)) {
 $params = [
     'agendas' => $AGENDAS,
     'featureFlags' => $featureFlags,
+    'get' => $_GET,
     'prefixUiL10n' => $myCmsConf['prefixL10n'],
     'renderParams' => [],
     'searchColumns' => $myCmsConfAdmin['searchColumns'],
