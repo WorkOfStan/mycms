@@ -2,7 +2,7 @@
 
 /**
  * Admin
- * (Last MyCMS/dist revision: 2022-05-21, v0.4.6+)
+ * (Last MyCMS/dist revision: 2022-05-22, v0.4.6+)
  */
 
 use Tracy\Debugger;
@@ -106,7 +106,7 @@ $params = [
 //        ]
 //    ]
 ];
-foreach ($myCmsConfAdmin['getSwitch'] as $switch) {
+foreach ($myCmsConfAdmin['tabs'] as $switch => $name) {
     if (isset($_GET[$switch])) {
         $params['renderParams']['switches'][] = $switch;
     }
