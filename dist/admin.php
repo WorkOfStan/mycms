@@ -99,6 +99,7 @@ $params = [
     'renderParams' => [],
     'searchColumns' => $myCmsConfAdmin['searchColumns'],
     'tableAdmin' => $tableAdmin,
+    'tabs' => $myCmsConfAdmin['tabs'],
     // to replace default CSS and/or JS in admin.php, uncomment the array below
 //    'clientSideResources' => [
 //        'css' => [
@@ -107,11 +108,11 @@ $params = [
 //        ]
 //    ]
 ];
-foreach ($myCmsConfAdmin['tabs'] as $switch => $name) {
-    if (isset($_GET[$switch])) {
-        $params['renderParams']['switches'][] = $switch;
-    }
-}
+//foreach ($myCmsConfAdmin['tabs'] as $switch => $name) {
+//    if (isset($_GET[$switch])) {
+//        $params['renderParams']['switches'][] = $switch;
+//    }
+//}
 $admin = new Admin($MyCMS, $params);
 if (isset($featureFlags['admin_latte_render']) && $featureFlags['admin_latte_render']) {
     // new version since 0.4.7 or higer
