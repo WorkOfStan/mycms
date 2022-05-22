@@ -71,6 +71,8 @@ class MyAdmin extends MyCommon
     protected $TableAdmin; // todo remove as obsolete as of 2020/10/25
     /** @var MyTableAdmin */
     protected $tableAdmin;
+    /* @var string[] getVariable => nameToBeTranslated */
+    protected $tabs;
     /** @var string which Latte template to load */
     public $template;
 
@@ -84,9 +86,13 @@ class MyAdmin extends MyCommon
     public function __construct(MyCMS $MyCMS, array $options = [])
     {
         parent::__construct($MyCMS, $options);
-        $this->get = $_GET; // TODO inject GET in _construct arguments
+        // @deprecated 0.4.7 to be backward compatible when get were not among variables
+        if (!isset($this->get) || !is_array($this->get)) {
+            // Todo//Debugger::log(warning: get not injected);
+            $this->get = $_GET; // TODO inject GET in _construct arguments
 //        $this->getStrict = new ArrayStrict($this->get);
-        // Todo to be obsoleted in next version (after 2020-10-25)
+        }
+        // Todo to be obsoleted in next version (after 2020-10-25) @deprecated 0.4.0
         if (!empty($this->TableAdmin)) {
             Debugger::log('Deprecated: TableAdmin. Replace by tableAdmin', ILogger::WARNING);
             if (empty($this->tableAdmin)) {
@@ -114,12 +120,23 @@ class MyAdmin extends MyCommon
     {
         $this->template = 'admin-ui';
         // user not logged in - show a login form
-        if (!isset($_SESSION['user'])) {
+        if (!isset($_SESSION['user'])) { // todo explore if it is sufficient for auth - consider (bool) $this->authUser
             //$this->template = 'admin-login'; //ready
             unset($this->get['table'], $this->get['media'], $this->get['user']); // security by design
             $this->renderParams['htmlOutput'] = $this->outputLogin();
-            //return; //TODO explore security setting that no other conditions will be allowed if !user
-        } elseif // search results may be combined with table listing etc. below
+            return; //harden auth security TODO explore security setting that no other conditions will be allowed if !user
+        }
+        $this->renderParams['pageTitle'] = ''; // the default empty value
+        // Select a project specific tab to be highlighted
+        foreach ($this->tabs as $switch => $name) {
+            if (isset($this->get[$switch])) {
+                $this->renderParams['switches'][] = $switch;
+                $this->renderParams['pageTitle'] = $this->tableAdmin->translate($name);
+                break 1; // exit foreach loop as only one switch make sense
+            }
+        }
+
+        if // search results may be combined with table listing etc. below
         (isset($_SESSION['user']) && array_key_exists('search', $this->get) && !empty($this->get['search'])) {
             Assert::string($this->get['search']);
             $this->renderParams['htmlOutput'] = $this->outputSearchResults($this->get['search']);
