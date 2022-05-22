@@ -54,8 +54,17 @@ $AGENDAS = [
     ],
 ];
 
-// a present get parameter toggles active tab - expected in admin.php
-$getSwitch = ['divisions-products', 'pages', 'products', 'translations', 'urls'];
+$myCmsConfAdmin = [
+    // a present get parameter toggles active tab - expected in admin.php
+    'getSwitch' => ['divisions-products', 'pages', 'products', 'translations', 'urls'],
+    // array<array<string>> tables and columns to search in admin
+    // table => [id, field1 to be searched in, field2 to be searched in...]
+    'searchColumns' => [
+        'category' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
+        'content' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
+        'product' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
+    ],
+];
 
 if (file_exists(__DIR__ . '/config-admin.local.php')) {
     include_once __DIR__ . '/config-admin.local.php'; // use config-admin.local.dist.php as specimen

@@ -96,6 +96,7 @@ $params = [
     'featureFlags' => $featureFlags,
     'prefixUiL10n' => $myCmsConf['prefixL10n'],
     'renderParams' => [],
+    'searchColumns' => $myCmsConfAdmin['searchColumns'],
     'tableAdmin' => $tableAdmin,
     // to replace default CSS and/or JS in admin.php, uncomment the array below
 //    'clientSideResources' => [
@@ -105,7 +106,7 @@ $params = [
 //        ]
 //    ]
 ];
-foreach ($getSwitch as $switch) {
+foreach ($myCmsConfAdmin['getSwitch'] as $switch) {
     if (isset($_GET[$switch])) {
         $params['renderParams']['switches'][] = $switch;
     }

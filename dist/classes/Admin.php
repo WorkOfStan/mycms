@@ -34,15 +34,15 @@ class Admin extends MyAdmin
     protected $prefixUiL10n;
 
     /**
-     * @var array<array<string>> tables and columns to search in admin
+     * @ var array<array<string>> tables and columns to search in admin
      * table => [id, field1 to be searched in, field2 to be searched in...]
      * TODO move to config.php
      */
-    protected $searchColumns = [
-        'category' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
-        'content' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
-        'product' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
-    ];
+//    protected $searchColumns = [
+//        'category' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
+//        'content' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
+//        'product' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
+//    ];
 
     /**
      *
@@ -53,6 +53,7 @@ class Admin extends MyAdmin
     {
         $this->clientSideResources['js'][] = 'scripts/Cookies.js';
         parent::__construct($MyCMS, $options);
+//        \Tracy\Debugger::barDump($this->searchColumns, 'SC'); // debug 220522
     }
 
     /**
@@ -63,7 +64,9 @@ class Admin extends MyAdmin
     protected function controller()
     {
         // TODO refactor this into pure Latte
-        if (array_key_exists('table', $this->get) && !empty($this->get['table']) && (bool) $this->tableAdmin->getTable()) {
+        if (
+            array_key_exists('table', $this->get) && !empty($this->get['table']) && (bool) $this->tableAdmin->getTable()
+        ) {
             if (!array_key_exists('table', $this->renderParams) || !is_array($this->renderParams['table'])) {
                 $this->renderParams['table'] = [];
             }

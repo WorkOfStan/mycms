@@ -74,6 +74,9 @@ parameters:
         message: '#Undefined variable: \$myCmsConf#'
         path: ../db/migrations/*.php
       -
+        message: '#Variable \$AGENDAS might not be defined.#'
+        path: ../admin.php
+      -
         message: '#Variable \$debugIpArray might not be defined.#'
         path: ../index.php
       -
@@ -92,6 +95,9 @@ parameters:
         paths:
           - ../admin.php
           - ../index.php
+      -
+        message: '#Variable \$myCmsConfAdmin might not be defined.#'
+        path: ../admin.php
       -
         message: '#Variable \$WEBSITE might not be defined.#'
         path: ../index.php
