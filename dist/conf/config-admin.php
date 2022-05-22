@@ -58,11 +58,11 @@ $myCmsConfAdmin = [
     // a present get parameter toggles active tab - expected in admin.php
     // => Name to translate
     'tabs' => [
-        'divisions-products' => 'd0p',
-        'pages' => 'pg', 
-        'products' => 'pd',
-        'translations' => 'ts',
-        'urls' => 'urls',
+        'divisions-products' => 'Divisions and products',
+        'pages' => 'Pages', 
+        'products' => 'Products',
+        'translations' => 'Translations',
+        'urls' => 'URL',
     ],
     // array<array<string>> tables and columns to search in admin
     // table => [id, field1 to be searched in, field2 to be searched in...]
