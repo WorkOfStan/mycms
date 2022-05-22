@@ -13,7 +13,7 @@ use function WorkOfStan\MyCMS\ThrowableFunctions\preg_match_all;
 
 /**
  * Admin UI
- * (Last MyCMS/dist revision: 2022-04-29, v0.4.6+)
+ * (Last MyCMS/dist revision: 2022-05-22, v0.4.6+)
  */
 class Admin extends MyAdmin
 {
@@ -43,6 +43,8 @@ class Admin extends MyAdmin
 //        'content' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
 //        'product' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
 //    ];
+    /* @var string[] getVariable => nameToBeTranslated */
+    protected $tabs;
 
     /**
      *
@@ -77,8 +79,15 @@ class Admin extends MyAdmin
             }
         }
 
+        foreach ($this->tabs as $switch => $name) {
+            if (isset($this->get[$switch])) {
+                $this->renderParams['switches'][] = $switch;
+            }
+        }
+
         // changes of inherited Lattes MUST be done before invoking the parent::controller();
         parent::controller();
+        //Todo tabs key
         if (
             isset($this->get['urls']) ||
             //F
@@ -91,6 +100,7 @@ class Admin extends MyAdmin
 //            $output .= $this->projectSpecificSections();
             $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
         }
+        //Todo tabs key
         if (!array_key_exists('pageTitle', $this->renderParams) || empty($this->renderParams['pageTitle'])) {
             $this->renderParams['pageTitle'] = (
                 isset($this->get['pages']) ? $this->tableAdmin->translate('Pages') :
