@@ -1,0 +1,8 @@
+{layout '../vendor/workofstan/mycms/template/@admin.latte'}
+{block htmlbody}
+<h1>temp: using inherited layout</h1>
+{$htmlbody|noescape}
+{if isset($htmlOutput)}
+{$htmlOutput|noescape}
+{/if}
+{/block}
