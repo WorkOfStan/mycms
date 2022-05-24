@@ -101,23 +101,23 @@ class Admin extends MyAdmin
 //            $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
 //        }
         switch ($this->template) {
-            case 'admin-divisions-products':
+            case 'Admin/divisions-products':
                 $this->renderParams['pageTitle'] = $this->tableAdmin->translate('Divisions and products');
                 $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
                 break;
-            case 'admin-pages':
+            case 'Admin/pages':
                 $this->renderParams['pageTitle'] = $this->tableAdmin->translate('Pages');
                 $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
                 break;
-            case 'admin-products':
+            case 'Admin/products':
                 $this->renderParams['pageTitle'] = $this->tableAdmin->translate('Products');
                 $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
                 break;
-            case 'admin-translations':
+            case 'Admin/translations':
                 $this->renderParams['pageTitle'] = $this->tableAdmin->translate('Translations');
                 $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
                 break;
-            case 'admin-urls':
+            case 'Admin/urls':
                 $this->renderParams['pageTitle'] = $this->tableAdmin->translate('URL');
                 $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
                 break;
@@ -135,7 +135,7 @@ class Admin extends MyAdmin
    //           )
    //             );
   //      }
-        //Debugger::barDump($this->renderParams, 'Render Params 3');
+//        \Tracy\Debugger::barDump($this->renderParams, 'Render Params 3');
     }
 
     /**

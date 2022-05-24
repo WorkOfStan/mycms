@@ -9,9 +9,9 @@
     <h2 class="heading-main">{$content['title']}</h2>
     {$content['description']|noescape}<br>
     {ifset $content[category_id]}
-        {include 'list.latte', paramName => 'product' , idGlue => '&id='}
+        {include 'inc-list.latte', paramName => 'product' , idGlue => '&id='}
     {else}
-        {include 'list.latte', paramName => 'category' , idGlue => '='}
+        {include 'inc-list.latte', paramName => 'category' , idGlue => '='}
     {/ifset}
 </div>
 {/block}
