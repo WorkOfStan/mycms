@@ -8,10 +8,10 @@
           {if array_key_exists('where', $table)}
             {* table edit *}
             <h2 class="sub-header">{="Edit"|translate}<span class="AdminRecordName"></span></h2>
-            {include 'inherite.latte', latte => 'admin-ui-table-before-edit.latte'}
+            {include '../inherite.latte', latte => 'inc-table-before-edit.latte'}
             {$table["htmlOutputForm"]|noescape}
             {* $this->tableAdmin->outputForm($_GET['where'], $tempOutputFormOptions) *}
-            {include 'inherite.latte', latte => 'admin-ui-table-after-edit.latte'}
+            {include '../inherite.latte', latte => 'inc-table-after-edit.latte'}
           {elseif array_key_exists('edit-selected', $table)}
             {$table["htmlOutputForm"]|noescape}
             {* $result .= $this->outputTableEditSelected(); *}
@@ -21,9 +21,9 @@
           {else}
             {* table listing *}
             <h2 class="sub-header">{="Listing"|translate}</h2>
-            {include 'inherite.latte', latte => 'admin-ui-table-before-listing.latte'}
+            {include '../inherite.latte', latte => 'inc-table-before-listing.latte'}
             {$table["htmlOutputForm"]|noescape}
             {* $this->tableAdmin->view() *}
-            {include 'inherite.latte', latte => 'admin-ui-table-after-listing.latte'}
+            {include '../inherite.latte', latte => 'inc-table-after-listing.latte'}
           {/if}
 {/block}

@@ -58,11 +58,11 @@ $myCmsConfAdmin = [
     // a present get parameter toggles active tab - expected in admin.php
     // => template assignement (only first fits is taken into account)
     'get2template' => [
-        'divisions-products' => 'admin-divisions-products',
-        'pages' => 'admin-pages',
-        'products' => 'admin-products',
-        'translations' => 'admin-translations',
-        'urls' => 'admin-urls',
+        'divisions-products' => 'Admin/divisions-products',
+        'pages' => 'Admin/pages',
+        'products' => 'Admin/products',
+        'translations' => 'Admin/translations',
+        'urls' => 'Admin/urls',
     ],
     // a present get parameter toggles active tab - expected in admin.php
     // => Name to translate

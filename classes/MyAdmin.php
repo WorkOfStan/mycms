@@ -121,7 +121,7 @@ class MyAdmin extends MyCommon
     protected function controller()
     {
         $this->renderParams['pageTitle'] = ''; // the default empty value
-        $this->template = 'admin-ui';
+        $this->template = 'Admin/admin-ui';
         // user not logged in - show a login form
         if (!isset($_SESSION['user'])) { // todo explore if it is sufficient for auth - consider (bool) $this->authUser
             //$this->template = 'admin-login'; //ready
@@ -152,7 +152,7 @@ class MyAdmin extends MyCommon
             array_key_exists('table', $this->get) && !empty($this->get['table'])
             && (bool) $this->tableAdmin->getTable()
         ) {
-            $this->template = 'admin-ui-table';
+            $this->template = 'Admin/table';
             $this->renderTable();
             // $this->renderParams['table']['tablePrefixless'] is set by renderTable()
             Assert::isArray($this->renderParams['table']);
@@ -160,12 +160,12 @@ class MyAdmin extends MyCommon
                 . ' ' . $this->renderParams['table']['tablePrefixless'] ;
             return; // so that not taken over in the Admin
         } elseif (isset($this->get['media'])) { // media upload etc.
-            //$this->template = 'admin-ui-media';//ready
+            //$this->template = 'Admin/media';//proposal of the template name
             $this->renderParams['pageTitle'] = $this->tableAdmin->translate('Media');
             $this->renderParams['htmlOutput'] = $this->outputMedia();
             return; // so that not taken over in the Admin
         } elseif (isset($this->get['user'])) { // user operations (logout, change password, create user, delete user)
-            //$this->template = 'admin-ui-user';//ready
+            //$this->template = 'Admin/user';//proposal of the template name
             $this->renderParams['pageTitle'] = $this->tableAdmin->translate('User');
             $this->renderParams['htmlOutput'] = $this->outputUser();
             return; // so that not taken over in the Admin
