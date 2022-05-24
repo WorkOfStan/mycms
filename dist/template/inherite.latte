@@ -1,13 +1,12 @@
 {* inherite.latte requires $latte which equals to the filename of latte including the extension including the path even if the requesting latte is in this path *}
 {* instead of simply {include $latte} call {include 'inherite.latte', latte => $latte} so that the preferred existing version of latte is used *}
 {* outer try is for library, inner try is for app - TODO consider splitting it *}
-{*try}
+{try}
     {include '../../../../template/' . $latte} {* library version should prefer the app version *}
-{*else*}
+{else}
     {try}
         {include $latte} {* app prefers app, mycms uses its own *}
     {else}
         {include '../vendor/workofstan/mycms/template/' . $latte} {* fallback to the library version *}
     {/try}
-{*/try*}
-{* Latte try nesting {try}A{else}{try}B{else}C{/try}{/try} tries to do C even if B doesn't throw an Exception, so inherite.latte for Library and App differs *}
+{/try}
