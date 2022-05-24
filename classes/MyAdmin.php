@@ -51,6 +51,8 @@ class MyAdmin extends MyCommon
     protected $get;
     /** @ var ArrayStrict of $_GET  */
 //    protected $getStrict;
+    /* @var string[] getVariable => template */
+    protected $get2template;
     /** @var array<string> */
     public $HTMLHeaders = [
         'viewport' => 'width=device-width, initial-scale=1',
@@ -71,8 +73,8 @@ class MyAdmin extends MyCommon
     protected $TableAdmin; // todo remove as obsolete as of 2020/10/25
     /** @var MyTableAdmin */
     protected $tableAdmin;
-    /* @var string[] getVariable => nameToBeTranslated */
-    protected $tabs;
+    /* @ var string[] getVariable => nameToBeTranslated */
+//    protected $tabs;
     /** @var string which Latte template to load */
     public $template;
 
@@ -118,6 +120,7 @@ class MyAdmin extends MyCommon
      */
     protected function controller()
     {
+        $this->renderParams['pageTitle'] = ''; // the default empty value
         $this->template = 'admin-ui';
         // user not logged in - show a login form
         if (!isset($_SESSION['user'])) { // todo explore if it is sufficient for auth - consider (bool) $this->authUser
@@ -126,14 +129,14 @@ class MyAdmin extends MyCommon
             $this->renderParams['htmlOutput'] = $this->outputLogin();
             return; //harden auth security TODO explore security setting that no other conditions will be allowed if !user
         }
-        $this->renderParams['pageTitle'] = ''; // the default empty value
         // Select a project specific tab to be highlighted
-        if (isset($this->tabs) && is_array($this->tabs)) {
-            foreach ($this->tabs as $switch => $name) {
+        if (isset($this->get2template) && is_array($this->get2template)) {
+            foreach ($this->get2template as $switch => $template) {
                 if (isset($this->get[$switch])) {
                     $this->renderParams['switches'][] = $switch;
-                    $this->renderParams['pageTitle'] = $this->tableAdmin->translate($name);
-                    break 1; // exit foreach loop as only one switch make sense
+                    //$this->renderParams['pageTitle'] = $this->tableAdmin->translate($name);
+                    $this->template = $template;
+                    break 1; // exit foreach loop as only one template can be chosen
                 }
             }
         }

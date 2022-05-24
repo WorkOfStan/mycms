@@ -5,7 +5,8 @@
 [![PHP Composer + PHPUnit + PHPStan](https://github.com/WorkOfStan/mycms/actions/workflows/php-composer-phpunit.yml/badge.svg)](https://github.com/WorkOfStan/mycms/actions/workflows/php-composer-phpunit.yml)
 
 Brief MVC framework for interactive sites including general administration.
-Works as a devstack which you install and then write your classes specific for your project.
+This framework allows you to create an app just by simple configuration and keeping the framework up-to-date by composer while letting you use the vanilla PHP as much as possible.
+It works as a devstack which you install and then write your classes specific for your project.
 The boilerplate project is prepared in `dist` folder to be adapted as needed and it uses this `WorkOfStan\MyCMS` library out-of-the-box.
 
 MyCMS is designed to be used with following technologies:

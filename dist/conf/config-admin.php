@@ -56,14 +56,23 @@ $AGENDAS = [
 
 $myCmsConfAdmin = [
     // a present get parameter toggles active tab - expected in admin.php
-    // => Name to translate
-    'tabs' => [
-        'divisions-products' => 'Divisions and products',
-        'pages' => 'Pages', 
-        'products' => 'Products',
-        'translations' => 'Translations',
-        'urls' => 'URL',
+    // => template assignement (only first fits is taken into account)
+    'get2template' => [
+        'divisions-products' => 'admin-divisions-products',
+        'pages' => 'admin-pages',
+        'products' => 'admin-products',
+        'translations' => 'admin-translations',
+        'urls' => 'admin-urls',
     ],
+    // a present get parameter toggles active tab - expected in admin.php
+    // => Name to translate
+//    'tabs' => [
+//        'divisions-products' => 'Divisions and products',
+//        'pages' => 'Pages',
+//        'products' => 'Products',
+//        'translations' => 'Translations',
+//        'urls' => 'URL',
+//    ],
     // array<array<string>> tables and columns to search in admin
     // table => [id, field1 to be searched in, field2 to be searched in...]
     'searchColumns' => [

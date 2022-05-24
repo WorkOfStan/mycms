@@ -1,3 +1,8 @@
 # keep here only the templates relevant for this app in order to keep maintenance simple and hence security high
 Order Allow,Deny
 Deny from all
+
+# @*layout.latte is a layout
+# inc-*.latte is a block to be included
+# *.latte is a page using layout 
+# inherite.latte is a function to secure inheritance

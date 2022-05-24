@@ -87,18 +87,40 @@ class Admin extends MyAdmin
 
         // changes of inherited Lattes MUST be done before invoking the parent::controller();
         parent::controller();
-        //Todo tabs key but control instead ofprojectSpecificSections
-        if (
-            isset($this->get['urls']) ||
-            //F
-            isset($this->get['divisions-products']) ||
-            isset($this->get['translations']) ||
-            //A
-            isset($this->get['products']) ||
-            isset($this->get['pages'])
-        ) { // project-specific admin sections
-//            $output .= $this->projectSpecificSections();
-            $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+//        //Todo tabs key but control instead ofprojectSpecificSections
+//        if (
+//            isset($this->get['urls']) ||
+//            //F
+//            isset($this->get['divisions-products']) ||
+//            isset($this->get['translations']) ||
+//            //A
+//            isset($this->get['products']) ||
+//            isset($this->get['pages'])
+//        ) { // project-specific admin sections
+////            $output .= $this->projectSpecificSections();
+//            $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+//        }
+        switch ($this->template) {
+            case 'admin-divisions-products':
+                $this->renderParams['pageTitle'] = $this->tableAdmin->translate('Divisions and products');
+                $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+                break;
+            case 'admin-pages':
+                $this->renderParams['pageTitle'] = $this->tableAdmin->translate('Pages');
+                $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+                break;
+            case 'admin-products':
+                $this->renderParams['pageTitle'] = $this->tableAdmin->translate('Products');
+                $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+                break;
+            case 'admin-translations':
+                $this->renderParams['pageTitle'] = $this->tableAdmin->translate('Translations');
+                $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+                break;
+            case 'admin-urls':
+                $this->renderParams['pageTitle'] = $this->tableAdmin->translate('URL');
+                $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+                break;
         }
 //X        //Todo tabs key
  //       if (!array_key_exists('pageTitle', $this->renderParams) || empty($this->renderParams['pageTitle'])) {

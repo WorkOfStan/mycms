@@ -95,11 +95,12 @@ $params = [
     'agendas' => $AGENDAS,
     'featureFlags' => $featureFlags,
     'get' => $_GET,
+    'get2template' => $myCmsConfAdmin['get2template'],
     'prefixUiL10n' => $myCmsConf['prefixL10n'],
     'renderParams' => [],
     'searchColumns' => $myCmsConfAdmin['searchColumns'],
     'tableAdmin' => $tableAdmin,
-    'tabs' => $myCmsConfAdmin['tabs'],
+//    'tabs' => $myCmsConfAdmin['tabs'],//delete
     // to replace default CSS and/or JS in admin.php, uncomment the array below
 //    'clientSideResources' => [
 //        'css' => [
