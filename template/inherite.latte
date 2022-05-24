@@ -6,7 +6,8 @@
 {else}
     {try}
         {include $latte} {* app prefers app, mycms uses its own *}
-    {else}
+    {*else}
         {include '../vendor/workofstan/mycms/template/' . $latte} {* fallback to the library version *}
-    {/try}
+    {*/try*}
 {/try}
+{* Latte try nesting {try}A{else}{try}B{else}C{/try}{/try} tries to do C even if B doesn't throw an Exception, so inherite.latte for Library and App differs *}
