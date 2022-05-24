@@ -201,6 +201,7 @@ class Controller extends MyController
                     count($this->MyCMS->context['list']);
                 return true;
             case 'inheritance-app-only-template':
+            case 'inheritance-app-uses-library-template':
             case 'inheritance-library-only-template':
             case 'inheritance-prefer-app-template':
                 $this->MyCMS->context['htmlbody'] = 'HTML body of ' . $this->MyCMS->template;
