@@ -4,7 +4,7 @@
 {try}
     {include '../../../../template/' . $latte} {* library version should prefer the app version *}
 {else}
-    {try}
+    {*try*}
         {include $latte} {* app prefers app, mycms uses its own *}
     {*else}
         {include '../vendor/workofstan/mycms/template/' . $latte} {* fallback to the library version *}
