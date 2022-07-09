@@ -58,6 +58,7 @@ $featureFlags = [
     'admin_latte_render' => false, // admin legacy output in methods or the new latte rendering; experimental:
     // because main part of body is still prerendered as HTML
     //'console_log_list_values' => true,
+    //'legacy_admin_methods_instead_of_admin_models' => true,
     //'offline_dev' => true,
     //'order_hierarchy' => true, // as used in A and F projects - just for testing before ready for Dist
     'newsletter_input_box' => true,

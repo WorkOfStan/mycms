@@ -51,7 +51,7 @@ class MyAdmin extends MyCommon
     protected $get;
     /** @ var ArrayStrict of $_GET  */
 //    protected $getStrict;
-    /* @var string[] getVariable => template */
+    /** @var string[] getVariable => template */
     protected $get2template;
     /** @var array<string> */
     public $HTMLHeaders = [

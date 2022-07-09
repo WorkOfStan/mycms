@@ -26,11 +26,7 @@ class Admin extends MyAdmin
      */
     // protected $featureFlags;
 
-    /**
-     * Folder and name prefix of localisation yml for the web UI (not admin UI)
-     *
-     * @var string
-     */
+    /** @var string Folder and name prefix of localisation yml for the web UI (not admin UI) */
     protected $prefixUiL10n;
 
     /**
@@ -100,26 +96,91 @@ class Admin extends MyAdmin
 ////            $output .= $this->projectSpecificSections();
 //            $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
 //        }
+        // TODO check whether unavailable for anonymous users!
         switch ($this->template) {
             case 'Admin/divisions-products':
                 $this->renderParams['pageTitle'] = $this->tableAdmin->translate('Divisions and products');
-                $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+                if (
+                    isset($this->featureFlags['legacy_admin_methods_instead_of_admin_models']) &&
+                    $this->featureFlags['legacy_admin_methods_instead_of_admin_models']
+                ) {
+                    // legacy since 220620
+                    $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+                } else {
+                    $adminModel = new AdminModels\DivisionsProductsAdminModel(
+                        $this->MyCMS->dbms,
+                        $this->tableAdmin
+                    );
+                    $this->renderParams['htmlOutput'] = $adminModel->htmlOutput();
+                }
                 break;
             case 'Admin/pages':
                 $this->renderParams['pageTitle'] = $this->tableAdmin->translate('Pages');
-                $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+                if (
+                    isset($this->featureFlags['legacy_admin_methods_instead_of_admin_models']) &&
+                    $this->featureFlags['legacy_admin_methods_instead_of_admin_models']
+                ) {
+                    // legacy since 220620
+                    $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+                } else {
+                    $adminModel = new AdminModels\PagesAdminModel(
+                        $this->MyCMS->dbms,
+                        $this->tableAdmin
+                    );
+                    $this->renderParams['htmlOutput'] = $adminModel->htmlOutput();
+                }
                 break;
             case 'Admin/products':
                 $this->renderParams['pageTitle'] = $this->tableAdmin->translate('Products');
-                $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+                if (
+                    isset($this->featureFlags['legacy_admin_methods_instead_of_admin_models']) &&
+                    $this->featureFlags['legacy_admin_methods_instead_of_admin_models']
+                ) {
+                    // legacy since 220620
+                    $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+                } else {
+                    $adminModel = new AdminModels\ProductsAdminModel(
+                        $this->MyCMS->dbms,
+                        $this->tableAdmin,
+                        $this->MyCMS->logger
+                    );
+                    $this->renderParams['htmlOutput'] = $adminModel->htmlOutput();
+                }
                 break;
             case 'Admin/translations':
                 $this->renderParams['pageTitle'] = $this->tableAdmin->translate('Translations');
-                $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+                if (
+                    isset($this->featureFlags['legacy_admin_methods_instead_of_admin_models']) &&
+                    $this->featureFlags['legacy_admin_methods_instead_of_admin_models']
+                ) {
+//                    \Tracy\Debugger::barDump('legacy');
+                    // legacy since 220620
+                    $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+                } else {
+//                    \Tracy\Debugger::barDump('NEW');
+                    $adminModel = new AdminModels\TranslationsAdminModel(
+                        $this->MyCMS->dbms,
+                        $this->tableAdmin,
+                        $this->prefixUiL10n
+                    );
+                    $this->renderParams['htmlOutput'] = $adminModel->htmlOutput();
+                }
                 break;
             case 'Admin/urls':
                 $this->renderParams['pageTitle'] = $this->tableAdmin->translate('URL');
-                $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+                if (
+                    isset($this->featureFlags['legacy_admin_methods_instead_of_admin_models']) &&
+                    $this->featureFlags['legacy_admin_methods_instead_of_admin_models']
+                ) {
+                    // legacy since 220620
+                    $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+                } else {
+                    $adminModel = new AdminModels\UrlsAdminModel(
+                        $this->MyCMS->dbms,
+                        $this->tableAdmin
+                    );
+                    $this->renderParams['htmlOutput'] = $adminModel->htmlOutput();
+                }
                 break;
         }
 //X        //Todo tabs key
@@ -308,6 +369,9 @@ class Admin extends MyAdmin
      * Output (in HTML) the project-specific admin sections
      * Usually only selects project specific section method that generates HTML
      *
+     * @deprecated 0.4.7 Set `$featureFlags['legacy_admin_methods_instead_of_admin_models'] = true;` to use it.
+     * @see AdminModels/PagesAdminModel.php
+     * @see AdminModels/ProductsAdminModel.php
      * @return string
      */
     protected function projectSpecificSections()
@@ -550,6 +614,8 @@ class Admin extends MyAdmin
      * Called from projectSpecificSections
      * F code - TODO make work in Dist
      *
+     * @deprecated 0.4.7 Set `$featureFlags['legacy_admin_methods_instead_of_admin_models'] = true;` to use it.
+     * @see AdminModels/DivisionsProductsAdminModel.php
      * @return string
      */
     protected function sectionDivisionsProducts()
@@ -690,6 +756,8 @@ class Admin extends MyAdmin
      * Displays table with all translations to be added and resaved
      * Called from projectSpecificSections
      *
+     * @deprecated 0.4.7 Set `$featureFlags['legacy_admin_methods_instead_of_admin_models'] = true;` to use it.
+     * @see AdminModels/TranslationsProductsAdminModel.php
      * @return string
      */
     protected function sectionTranslations()
@@ -780,6 +848,8 @@ class Admin extends MyAdmin
      * Friendly URL: one place to set them all, identify duplicities
      * Called from projectSpecificSections
      *
+     * @deprecated 0.4.7 Set `$featureFlags['legacy_admin_methods_instead_of_admin_models'] = true;` to use it.
+     * @see AdminModels/UrlsProductsAdminModel.php
      * @return string
      */
     protected function sectionUrls()
