@@ -969,12 +969,10 @@ class MyAdmin extends MyCommon
             $result .= "\n</tr>\n";
         }
         $result .= '</table><div>';
-        if ($clone) {
-            $result .= '<button name="clone" class="btn btn-primary mr-1" value="1"><i class="fa fa-save mr-1"></i> ' . $this->tableAdmin->translate('Clone') . '</button>';
-        } else {
-            $result .= '<button name="save-selected" class="btn btn-primary mr-1" value="1"><i class="fa fa-save mr-1"></i> ' . $this->tableAdmin->translate('Save') . '</button>
-            <button name="delete-selected" class="btn btn-secondary" value="1"><i class="fa fa-trash mr-1"></i> ' . $this->tableAdmin->translate('Delete') . '</button>';
-        }
+        $result .= ($clone)
+            ? ('<button name="clone" class="btn btn-primary mr-1" value="1"><i class="fa fa-save mr-1"></i> ' . $this->tableAdmin->translate('Clone') . '</button>')
+            : ('<button name="save-selected" class="btn btn-primary mr-1" value="1"><i class="fa fa-save mr-1"></i> ' . $this->tableAdmin->translate('Save') . '</button>' . PHP_EOL
+            . '<button name="delete-selected" class="btn btn-secondary" value="1"><i class="fa fa-trash mr-1"></i> ' . $this->tableAdmin->translate('Delete') . '</button>');
         if (isset($_POST['check-all'])) {
             $result .= Tools::htmlInput('check-all', '', 1, 'hidden') . PHP_EOL;
         } elseif (Tools::setarray($_POST['check'])) {

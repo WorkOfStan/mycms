@@ -18,7 +18,6 @@ class PagesAdminModel
 
     /** @var LogMysqli */
     protected $dbms = null;
-
     /** @var MyTableAdmin */
     protected $tableAdmin;
 

@@ -51,10 +51,10 @@ script/autotrack.V.V.V.js and script/autotrack.V.V.V.js.map are manually taken f
 
 ## Deployment
 
-Create database with `Collation=utf8_general_ci`
+Create database with `Collation=utf8_general_ci` (create also separate testing database so that phinxlog migration_name doesn't overlap)
 
 Run `build.sh` to
-- create `phinx.yml` based on `phinx.dist.yml` including the name of the database created above
+- create `phinx.yml` based on `phinx.dist.yml` including the name of the database (and testing database) created above
 - create `conf/config.local.php` based on `config.local.dist.php` including the phinx environment to be used and change any settings you like.
 
 Edit these two files; then run `build.sh` again (see below)

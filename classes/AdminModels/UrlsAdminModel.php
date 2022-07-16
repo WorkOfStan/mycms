@@ -1,6 +1,6 @@
 <?php
 
-namespace WorkOfStan\mycmsprojectnamespace\AdminModels;
+namespace WorkOfStan\MyCMS\AdminModels;
 
 use GodsDev\Tools\Tools;
 use Webmozart\Assert\Assert;
@@ -8,8 +8,11 @@ use WorkOfStan\MyCMS\LogMysqli;
 use WorkOfStan\MyCMS\MyTableAdmin;
 
 /**
- * URL management
+ * Friendly URL management
  * Used by Admin::controller()
+ *
+ * TODO
+ * - configure access to various places, where Friendly URL can be set (e.g. Products)
  *
  * @author rejthar@stanislavrejthar.com
  */
@@ -28,7 +31,7 @@ class UrlsAdminModel
      * Constructor, expects a Database connection
      * @param LogMysqli $dbms The Database object
      * @param MyTableAdmin $tableAdmin for the translate method and TRANSLATIONS property
-     * @param string[] $translations
+     * x@ param string[] $translations
      */
     public function __construct(LogMysqli $dbms, MyTableAdmin $tableAdmin//, array $translations
         )

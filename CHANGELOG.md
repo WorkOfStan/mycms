@@ -36,6 +36,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MyAdmin table view is rendered by Latte
 - MyAdmin $_GET changed to $this->get
 - MyCMSMonoLingual::fetchAndReindexStrictArray (softly) moved to LogMysqli::fetchAndReindexStrictArray
+- dist TranslationsAdminModel moved to the core so that further improvements of Translation module are automatically available to the Apps using updated version of MyCMS
+- dist UrlsAdminModel moved to the core so that further improvements of Friendly URL module are automatically available to the Apps using updated version of MyCMS
 
 ### `Deprecated` for soon-to-be removed features
 - dist/rector.php (TODO consider using just string replace instead of the rector engine)

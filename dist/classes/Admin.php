@@ -4,6 +4,8 @@ namespace WorkOfStan\mycmsprojectnamespace;
 
 use GodsDev\Tools\Tools;
 use Webmozart\Assert\Assert;
+use WorkOfStan\MyCMS\AdminModels\TranslationsAdminModel;
+use WorkOfStan\MyCMS\AdminModels\UrlsAdminModel;
 use WorkOfStan\MyCMS\L10n;
 use WorkOfStan\MyCMS\MyAdmin;
 use WorkOfStan\mycmsprojectnamespace\MyCMSProject;
@@ -158,7 +160,7 @@ class Admin extends MyAdmin
                     $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
                 } else {
 //                    \Tracy\Debugger::barDump('NEW');
-                    $adminModel = new AdminModels\TranslationsAdminModel(
+                    $adminModel = new TranslationsAdminModel(
                         $this->MyCMS->dbms,
                         $this->tableAdmin,
                         $this->prefixUiL10n
@@ -175,7 +177,7 @@ class Admin extends MyAdmin
                     // legacy since 220620
                     $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
                 } else {
-                    $adminModel = new AdminModels\UrlsAdminModel(
+                    $adminModel = new UrlsAdminModel(
                         $this->MyCMS->dbms,
                         $this->tableAdmin
                     );
@@ -204,7 +206,7 @@ class Admin extends MyAdmin
      * TODO: navázat na další features
      *
      * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
-     * @see template/admin-special-menu-links.latte
+     * @see template/Admin/inc-special-menu-links.latte
      * @return string
      */
     protected function outputSpecialMenuLinks()

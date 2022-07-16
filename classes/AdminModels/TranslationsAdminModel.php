@@ -1,6 +1,6 @@
 <?php
 
-namespace WorkOfStan\mycmsprojectnamespace\AdminModels;
+namespace WorkOfStan\MyCMS\AdminModels;
 
 use GodsDev\Tools\Tools;
 use Webmozart\Assert\Assert;
@@ -11,6 +11,10 @@ use WorkOfStan\MyCMS\MyTableAdmin;
 /**
  * Translation management
  * Used by Admin::controller()
+ *
+ * TODO
+ * - prepare only the data for Latte
+ * - should it process also Admin UI?
  *
  * @author rejthar@stanislavrejthar.com
  */
@@ -93,7 +97,7 @@ class TranslationsAdminModel
             'new[0]',
             '',
             '',
-            array('class' => 'form-control form-control-sm', 'title' => $this->tableAdmin->translate('New record'))
+            ['class' => 'form-control form-control-sm', 'title' => $this->tableAdmin->translate('New record')]
         ) . '</td>';
         foreach ($this->tableAdmin->TRANSLATIONS as $key => $value) {
             $output .= '<td>' . Tools::htmlInput(
@@ -114,11 +118,12 @@ class TranslationsAdminModel
               <button class="btn btn-secondary" type="submit"><i class="fa fa-dot-circle"></i> '
             . '<i class="fa fa-i-cursor"></i> ' . $this->tableAdmin->translate('Rename') . '</button>
             </div>'
-            . Tools::htmlInput('new_name', '', '', array('class' => 'form-control', 'id' => 'new_name'))
+            . Tools::htmlInput('new_name', '', '', ['class' => 'form-control', 'id' => 'new_name'])
             . '</div></fieldset>
             </form></div>' . PHP_EOL;
-        $output .= count($found) ? '<h2 class="mt-4">' .
-            $this->tableAdmin->translate('Missing translations in templates') . '</h2><ul>' : '';
+        $output .= count($found)
+            ? ('<h2 class="mt-4">' . $this->tableAdmin->translate('Missing translations in templates') . '</h2><ul>')
+            : '';
         foreach ($found as $value) {
             $output .= '<li><code>' . Tools::h($value) . '</code></li>' . PHP_EOL;
         }

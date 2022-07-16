@@ -278,6 +278,9 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 * 200819: consider REQUEST_URI query vs \_GET - shouldn't just one source of truth be used?
 * 200921: for PHP/7.1.0+ version use protected for const in MyCommon, MyFriendlyUrl, MyAdminProcess.php
 
+### TODO UI
+* 220716 Admin Translations and Urls module should have Tabs displayed by the Core (not the App)
+
 ### TODO SECURITY
 * 190723: pokud jsou v té samé doméně dvě různé instance MyCMS, tak přihlášením do jednoho admin.php jsem přihlášen do všech, i když ten uživatel tam ani neexistuje
 * 220513, Latte::2.11.3 Notice: Engine::addFilter(null, ...) is deprecated, use addFilterLoader() since ^2.10.8 which requires php: >=7.1 <8.2 (stop limiting "latte/latte": ">=2.4.6 <2.11.3")

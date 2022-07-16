@@ -19,7 +19,6 @@ class DivisionsProductsAdminModel
 
     /** @var LogMysqli */
     protected $dbms = null;
-
     /** @var MyTableAdmin */
     protected $tableAdmin;
 
