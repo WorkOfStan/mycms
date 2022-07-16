@@ -102,10 +102,11 @@ class PagesAdminModel
               . '</details>' . PHP_EOL;
              */
         }
-        $articles = $this->dbms->fetchAndReindex('SELECT 0, id, IF(content_' . $_SESSION['language']
+        $articles = $this->dbms->fetchAndReindex(
+            'SELECT 0, id, IF(content_' . $_SESSION['language']
             . ' = "", LEFT(CONCAT(code, " ", content_' . $_SESSION['language'] . '), 100),'
-            . ' content_' . $_SESSION['language'] . ') AS content
-                FROM `' . TAB_PREFIX . 'content`');
+            . ' content_' . $_SESSION['language'] . ') AS content FROM `' . TAB_PREFIX . 'content`'
+        );
         //. ' WHERE category_id IS NULL AND product_id IS NULL'); // used in project A - TODO reconsider
         if ($articles) {
             $output .= '<details><summary><tt>NULL</tt></summary>';
@@ -113,7 +114,7 @@ class PagesAdminModel
                 $tmp = $this->dbms->fetchAndReindex(
                     'SELECT id,name_' . $_SESSION['language'] . ' AS name FROM `' . TAB_PREFIX . 'category`'
                 )
-            //. ' WHERE path IS NULL') // TODO reconsider this from project A
+                //. ' WHERE path IS NULL') // TODO reconsider this from project A
             ) {
                 foreach ($tmp as $key => $category) {
                     Assert::string($category);

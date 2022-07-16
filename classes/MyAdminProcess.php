@@ -172,10 +172,8 @@ class MyAdminProcess extends MyCommon
         if (isset($post['clone'], $post['database-table'])) {
             Assert::isArray($post['check']);
             if (
-                (
-                    //isset($post['check']) && // redundant as `Assert::isArray($post['check']);` above
-                    count($post['check'])) || Tools::set($post['total-rows']
-                )
+                (//isset($post['check']) && // redundant as `Assert::isArray($post['check']);` above
+                count($post['check'])) || Tools::set($post['total-rows'])
             ) {
                 if (Tools::set($post['total-rows'])) {
                     $sql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $_GET);
@@ -216,14 +214,14 @@ class MyAdminProcess extends MyCommon
                 || Tools::set($post['total-rows'])
             ) {
                 if (Tools::set($post['total-rows'])) { //export whole resultset (regard possible $get limitations)
-                    $sql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $get);
-                    $sql = $sql['select'];
+                    $tempSql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $get);
+                    $sql = $tempSql['select'];
                 //Debugger::barDump($sql, 'SQL array');
                 } else { //export only checked rows
                     Assert::string($post['database-table']);
                     Assert::isArray($post['check']);
-                    $sql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $get);
-                    $sql = $sql['select'] . ' WHERE `' . $post['database-table'] . '`.`id` IN (' .
+                    $tempSql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $get);
+                    $sql = $tempSql['select'] . ' WHERE `' . $post['database-table'] . '`.`id` IN (' .
                         implode(
                             ',',
                             array_map(
@@ -234,7 +232,7 @@ class MyAdminProcess extends MyCommon
                                 $post['check'] // array of strings like that: 'where[id]=1'
                             )
                         ) . ')';
-                    Debugger::barDump($sql, 'SQL array');
+                    Debugger::barDump($sql, 'SQL array'); // TODO isn't it obsoleted by the standard SQL bar panel?
                 }
                 Assert::string($sql);
                 if ($sql) {
