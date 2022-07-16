@@ -21,11 +21,7 @@ class Controller extends MyController
 {
     use \Nette\SmartObject;
 
-    /**
-     * Feature flags that bubble down to latte and controller
-     *
-     * @var array<bool>
-     */
+    /** @var array<bool> Feature flags that bubble down to latte and controller */
     protected $featureFlags;
     /** @var string */
     protected $httpMethod;
@@ -37,11 +33,7 @@ class Controller extends MyController
     private $projectSpecific;
     /** @var string */
     protected $requestUri; // = ''; // default is homepage
-    /**
-     * Bleeds information within determineTemplate method
-     *
-     * @var bool
-     */
+    /** @var bool Bleeds information within determineTemplate method */
     protected $verbose = false;
 
     /**
