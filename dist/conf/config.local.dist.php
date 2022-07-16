@@ -56,7 +56,7 @@ define('RECAPTCHA_SECRET', '...');
 //feature flags (use keys without spaces to avoid problems in javascript)
 $featureFlags = [
     'admin_latte_render' => false, // admin legacy output in methods or the new latte rendering; experimental:
-    // because main part of body is still prerendered as HTML
+    // because the main part of body is still prerendered as HTML
     //'console_log_list_values' => true,
     //'legacy_admin_methods_instead_of_admin_models' => true,
     //'offline_dev' => true,

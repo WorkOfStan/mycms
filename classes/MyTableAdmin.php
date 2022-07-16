@@ -525,8 +525,12 @@ class MyTableAdmin extends MyTableLister
      */
     public function outputForeignId($field, $values, $default = null, $options = [])
     {
-        Assert::string($options['class']);
-        Assert::string($options['id']);
+        if (isset($options['class'])) {
+            Assert::string($options['class']);
+        }
+        if (isset($options['id'])) {
+            Assert::string($options['id']);
+        }
         $result = '<select name="' . Tools::h($field)
             . '" class="' . Tools::h(isset($options['class']) ? $options['class'] : '')
             . '" id="' . Tools::h(isset($options['id']) ? $options['id'] : '') . '">'

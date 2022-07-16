@@ -33,6 +33,7 @@ class TranslationsAdminModel
      * Constructor, expects a Database connection
      * @param LogMysqli $dbms The Database object
      * @param MyTableAdmin $tableAdmin for the translate method
+     * @param string $prefixUiL10n
      */
     public function __construct(LogMysqli $dbms, MyTableAdmin $tableAdmin, $prefixUiL10n)
     {
@@ -48,8 +49,12 @@ class TranslationsAdminModel
      */
     public function htmlOutput()
     {
+        $arrayOfLattes = glob('template/*.latte');
+        if($arrayOfLattes === false) {
+            return 'No templates found.';
+        }
         $found = []; // translations found in latte templates
-        foreach (glob('template/*.latte') as $file) {
+        foreach ($arrayOfLattes as $file) {
             $tempFileContents = file_get_contents($file);
             Assert::string($tempFileContents);
             preg_match_all('~\{=("([^"]+)"|\'([^\']+)\')\|translate\}~i', $tempFileContents, $matches);

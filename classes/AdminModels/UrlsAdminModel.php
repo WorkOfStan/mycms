@@ -24,21 +24,16 @@ class UrlsAdminModel
     protected $dbms = null;
     /** @var MyTableAdmin */
     protected $tableAdmin;
-    // ** @var string[] Available languages */
-//    public $TRANSLATIONS;
 
     /**
      * Constructor, expects a Database connection
      * @param LogMysqli $dbms The Database object
      * @param MyTableAdmin $tableAdmin for the translate method and TRANSLATIONS property
-     * x@ param string[] $translations
      */
-    public function __construct(LogMysqli $dbms, MyTableAdmin $tableAdmin//, array $translations
-        )
+    public function __construct(LogMysqli $dbms, MyTableAdmin $tableAdmin)
     {
         $this->dbms = $dbms;
         $this->tableAdmin = $tableAdmin;
-//        $this->TRANSLATIONS = $translations;
     }
 
     /**

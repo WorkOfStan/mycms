@@ -478,7 +478,7 @@ class LogMysqli extends BackyardMysqli
             } elseif (is_array($v)) {
                 $resultTwoLevelArray[$k] = $this->assertArrayStringNull($v);
             } else {
-                throw new \Exception('Unexpected structure of SQL statement result. Array contains type ' . gettype($v));
+                throw new \Exception('SQL statement result unexpected structure: Array contains type ' . gettype($v));
             }
         }
         return $resultTwoLevelArray;

@@ -49,8 +49,6 @@ class MyAdmin extends MyCommon
     protected $featureFlags;
     /** @var array<array<mixed>|string> TODO is $_GET really just recursive array with string values??? */
     protected $get;
-    /** @ var ArrayStrict of $_GET  */
-//    protected $getStrict;
     /** @var string[] getVariable => template */
     protected $get2template;
     /** @var array<string> */
@@ -88,7 +86,10 @@ class MyAdmin extends MyCommon
     public function __construct(MyCMS $MyCMS, array $options = [])
     {
         parent::__construct($MyCMS, $options);
-        // @deprecated 0.4.7 to be backward compatible when get were not among variables
+        // @deprecated 0.4.7 to be backward compatible (i.e. populated by $_GET) when get were not among variables
+        /**
+         * @phpstan-ignore-next-line Property $get (array<array|string>) in isset() is not nullable.
+         */
         if (!isset($this->get) || !is_array($this->get)) {
             // Todo//Debugger::log(warning: get not injected);
             $this->get = $_GET; // TODO inject GET in _construct arguments
@@ -130,9 +131,12 @@ class MyAdmin extends MyCommon
             return; //harden auth security TODO explore security setting that no other conditions will be allowed if !user
         }
         // Select a project specific tab to be highlighted
-        if (isset($this->get2template) && is_array($this->get2template)) {
+        // PHPSTan: `Property WorkOfStan\MyCMS\MyAdmin::$get2template (array<string>) in
+        // isset() is not nullable.` therefore I comment out `isset($this->get2template) && `
+        if (is_array($this->get2template)) {
             foreach ($this->get2template as $switch => $template) {
                 if (isset($this->get[$switch])) {
+                    Assert::isArray($this->renderParams['switches']);
                     $this->renderParams['switches'][] = $switch;
                     //$this->renderParams['pageTitle'] = $this->tableAdmin->translate($name);
                     $this->template = $template;

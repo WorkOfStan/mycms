@@ -21,28 +21,8 @@ class Admin extends MyAdmin
 {
     use \Nette\SmartObject;
 
-    /**
-     * Feature flags that bubble down to latte and controller
-     * TODO: remove from here as redundant (it is already in MyAdmin)
-     * @ var array<bool>
-     */
-    // protected $featureFlags;
-
     /** @var string Folder and name prefix of localisation yml for the web UI (not admin UI) */
     protected $prefixUiL10n;
-
-    /**
-     * @ var array<array<string>> tables and columns to search in admin
-     * table => [id, field1 to be searched in, field2 to be searched in...]
-     * TODO move to config.php
-     */
-//    protected $searchColumns = [
-//        'category' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
-//        'content' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
-//        'product' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
-//    ];
-    /* @ var string[] getVariable => nameToBeTranslated */
-//    protected $tabs;
 
     /**
      *
@@ -53,7 +33,7 @@ class Admin extends MyAdmin
     {
         $this->clientSideResources['js'][] = 'scripts/Cookies.js';
         parent::__construct($MyCMS, $options);
-//        \Tracy\Debugger::barDump($this->searchColumns, 'SC'); // debug 220522
+        //        \Tracy\Debugger::barDump($this->searchColumns, 'SC'); // debug 220522
     }
 
     /**
@@ -77,27 +57,9 @@ class Admin extends MyAdmin
             }
         }
 
-//        foreach ($this->tabs as $switch => $name) {
- //           if (isset($this->get[$switch])) {
-  //              $this->renderParams['switches'][] = $switch;
-   //         }
-    //    }
-
         // changes of inherited Lattes MUST be done before invoking the parent::controller();
         parent::controller();
-//        //Todo tabs key but control instead ofprojectSpecificSections
-//        if (
-//            isset($this->get['urls']) ||
-//            //F
-//            isset($this->get['divisions-products']) ||
-//            isset($this->get['translations']) ||
-//            //A
-//            isset($this->get['products']) ||
-//            isset($this->get['pages'])
-//        ) { // project-specific admin sections
-////            $output .= $this->projectSpecificSections();
-//            $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
-//        }
+
         // TODO check whether unavailable for anonymous users!
         switch ($this->template) {
             case 'Admin/divisions-products':
@@ -185,20 +147,6 @@ class Admin extends MyAdmin
                 }
                 break;
         }
-//X        //Todo tabs key
- //       if (!array_key_exists('pageTitle', $this->renderParams) || empty($this->renderParams['pageTitle'])) {
-    //        $this->renderParams['pageTitle'] = (
-    //            isset($this->get['pages']) ? $this->tableAdmin->translate('Pages') :
-   //             (
-    //            isset($this->get['products']) ? $this->tableAdmin->translate('Products') :
-     //           (
-     //           isset($this->get['urls']) ? $this->tableAdmin->translate('URL') :
-      //          ''
-     //           )
-   //           )
-   //             );
-  //      }
-//        \Tracy\Debugger::barDump($this->renderParams, 'Render Params 3');
     }
 
     /**
@@ -759,7 +707,7 @@ class Admin extends MyAdmin
      * Called from projectSpecificSections
      *
      * @deprecated 0.4.7 Set `$featureFlags['legacy_admin_methods_instead_of_admin_models'] = true;` to use it.
-     * @see AdminModels/TranslationsProductsAdminModel.php
+     * @see MyCMS/AdminModels/TranslationsProductsAdminModel.php
      * @return string
      */
     protected function sectionTranslations()
@@ -851,7 +799,7 @@ class Admin extends MyAdmin
      * Called from projectSpecificSections
      *
      * @deprecated 0.4.7 Set `$featureFlags['legacy_admin_methods_instead_of_admin_models'] = true;` to use it.
-     * @see AdminModels/UrlsProductsAdminModel.php
+     * @see MyCMS/AdminModels/UrlsProductsAdminModel.php
      * @return string
      */
     protected function sectionUrls()

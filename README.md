@@ -279,7 +279,7 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 * 200921: for PHP/7.1.0+ version use protected for const in MyCommon, MyFriendlyUrl, MyAdminProcess.php
 
 ### TODO UI
-* 220716 Admin Translations and Urls module should have Tabs displayed by the Core (not the App)
+* 220716 Admin Translations and `Urls` module should have Tabs displayed by the Core (not the App)
 
 ### TODO SECURITY
 * 190723: pokud jsou v té samé doméně dvě různé instance MyCMS, tak přihlášením do jednoho admin.php jsem přihlášen do všech, i když ten uživatel tam ani neexistuje
