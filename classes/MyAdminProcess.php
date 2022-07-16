@@ -171,9 +171,12 @@ class MyAdminProcess extends MyCommon
     {
         if (isset($post['clone'], $post['database-table'])) {
             Assert::isArray($post['check']);
-            if ((
-                //isset($post['check']) && // redundant as `Assert::isArray($post['check']);` above
-                count($post['check'])) || Tools::set($post['total-rows'])) {
+            if (
+                (
+                    //isset($post['check']) && // redundant as `Assert::isArray($post['check']);` above
+                    count($post['check'])) || Tools::set($post['total-rows']
+                )
+            ) {
                 if (Tools::set($post['total-rows'])) {
                     $sql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $_GET);
                     Tools::dump($sql, $post);
@@ -506,8 +509,9 @@ class MyAdminProcess extends MyCommon
             Assert::scalar($post['token']);
             if (
                 // !isset($post['token']) || // Offset 'token' on array<array|string> in isset() always exists and is
-         // not nullable. because of the above `Assert::scalar($post['token']);`
-                !$this->MyCMS->csrfCheck((int) $post['token'])) {
+                // not nullable. because of the above `Assert::scalar($post['token']);`
+                !$this->MyCMS->csrfCheck((int) $post['token'])
+            ) {
                 // let it fall to 'Error occured logging You in.'
             } elseif ($row = $this->MyCMS->fetchSingle('SELECT * FROM `' . TAB_PREFIX . 'admin` WHERE admin="' . $this->MyCMS->escapeSQL($post['user']) . '"')) {
                 Assert::string($post['password']);

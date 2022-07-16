@@ -111,7 +111,7 @@ class PagesAdminModel
             $output .= '<details><summary><tt>NULL</tt></summary>';
             if (
                 $tmp = $this->dbms->fetchAndReindex(
-                'SELECT id,name_' . $_SESSION['language'] . ' AS name FROM `' . TAB_PREFIX . 'category`'
+                    'SELECT id,name_' . $_SESSION['language'] . ' AS name FROM `' . TAB_PREFIX . 'category`'
                 )
             //. ' WHERE path IS NULL') // TODO reconsider this from project A
             ) {

@@ -50,7 +50,7 @@ class TranslationsAdminModel
     public function htmlOutput()
     {
         $arrayOfLattes = glob('template/*.latte');
-        if($arrayOfLattes === false) {
+        if ($arrayOfLattes === false) {
             return 'No templates found.';
         }
         $found = []; // translations found in latte templates

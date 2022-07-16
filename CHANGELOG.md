@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - fix filtering and sorting of tables in Admin UI
 - Admin UI can be rendered by Latte (instead directly from MyAdmin methods) if $featureFlags['admin_latte_render'] set to true (still experimental because main part of body is prerendered as HTML)
-- DivisionProducts, Pages, Products, Translations, `Urls` admin pages are prepared in AdminModel classes invoked within Admin::controller (instead as spaghetti code within Admin::projectSpecificSections)
+- DivisionProducts, Pages, Products, Translations, `Urls` admin pages are generated in AdminModel classes invoked within Admin::controller (instead as spaghetti code within Admin::projectSpecificSections)
+- where Translations and `Urls` admin page generation is moved to the the core so that further improvements  are automatically available to the Apps using updated version of MyCMS
 
 ### `Added` for new features
 - admin-de.yml language file for German variant of Admin UI
@@ -18,10 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - instead of simply {include $latte} call {include 'inherite.latte', latte => $latte} so that the preferred existing version of latte is used
 - new parameter to MyCustomFilters allows for another translate method (in order to use $tableAdmin->translate instead of $MyCMS->translate for Admin UI)
 - featureFlags to admin-*.latte
-- DivisionProducts, Pages, Products, Translations, `Urls` admin pages are prepared in AdminModel classes invoked within Admin::controller (instead as spaghetti code within Admin::projectSpecificSections)
+- DivisionProducts, Pages, Products, Translations, `Urls` admin pages are generated in AdminModel classes invoked within Admin::controller (instead as spaghetti code within Admin::projectSpecificSections)
 
 ### `Changed` for changes in existing functionality
-- MyCommon::verboseBarDump Dumper::LOCATION => false hides where the dump originated as this is not the original place anyway, show it in the title instead
+- MyCommon::verboseBarDump Dumper::LOCATION => false hides where the dump originated as this is not the original place anyway, shows it in the title instead
 - nicer formatting Admin UI table SQL statement
 - Logging of untranslated strings when DEBUG_VERBOSE into monthly rotating `'log/translation_missing_' . date("Y-m") . '.log'` (instead of one big swelling translation_missing.log)
 - Admin UI can be rendered by Latte (instead directly from MyAdmin methods) if $featureFlags['admin_latte_render'] set to true (still experimental because main part of body is prerendered as HTML)
@@ -36,8 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MyAdmin table view is rendered by Latte
 - MyAdmin $_GET changed to $this->get
 - MyCMSMonoLingual::fetchAndReindexStrictArray (softly) moved to LogMysqli::fetchAndReindexStrictArray
-- dist TranslationsAdminModel moved to the core so that further improvements of Translation module are automatically available to the Apps using updated version of MyCMS
-- dist UrlsAdminModel moved to the core so that further improvements of Friendly URL module are automatically available to the Apps using updated version of MyCMS
+- Translations and `Urls` admin page generation is moved to the the core so that further improvements  are automatically available to the Apps using updated version of MyCMS
 
 ### `Deprecated` for soon-to-be removed features
 - dist/rector.php (TODO consider using just string replace instead of the rector engine)

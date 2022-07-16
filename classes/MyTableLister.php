@@ -616,7 +616,8 @@ class MyTableLister
         if (
             //!isset($this->get['sort']) || // Offset 'sort' on array<array|string> in isset() always exists and is
             // not nullable. as `Assert::isArray($this->get['sort']);` above
-            !$this->get['sort']) {
+            !$this->get['sort']
+        ) {
             $this->script .= '$(\'#sort-div' . $this->rand . '\').hide();' . PHP_EOL;
         }
         if (!isset($this->get['col']) || !$this->get['col']) {
