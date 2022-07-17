@@ -374,6 +374,12 @@ As file_exists function doesn't work in Latte, template and layout MUST however 
 Also when variables are passed to included fragments, it MUST happen in the same folder (either library or app).
 The idea is to have the default templates in the MyCMS library in order to quickly deploy. If you start working with the templates however, you should maintain them in the app folder.
 
+### Template naming convention
+- @*layout.latte is a layout
+- inc-*.latte is a block to be included
+- *.latte is a page using layout
+- inherite.latte is a function to secure inheritance
+
 ## Visual style
 
 Pages have view-TEMPLATE class in <body/> to allow for exceptions.
