@@ -10,7 +10,7 @@ use WorkOfStan\mycmsprojectnamespace\ProjectSpecific;
 
 /**
  * Friendly URL set-up
- * (Last MyCMS/dist revision: 2022-03-12, v0.4.6+)
+ * (Last MyCMS/dist revision: 2022-07-17, v0.4.7)
  */
 class FriendlyUrl extends MyFriendlyUrl
 {

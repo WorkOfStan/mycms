@@ -2,7 +2,7 @@
 
 /**
  * Admin
- * (Last MyCMS/dist revision: 2022-05-22, v0.4.6+)
+ * (Last MyCMS/dist revision: 2022-07-17, v0.4.7)
  */
 
 use Tracy\Debugger;
