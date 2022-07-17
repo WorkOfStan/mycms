@@ -6,7 +6,7 @@ use WorkOfStan\MyCMS\Latte\MyCustomFilters;
 
 /**
  * Custom project-specific filters for Latte.
- * (Last MyCMS/dist revision: 2022-04-04, v0.4.6+)
+ * (Last MyCMS/dist revision: 2022-04-04, v0.4.7)
  */
 class CustomFilters extends MyCustomFilters
 {

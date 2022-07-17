@@ -22,28 +22,13 @@ class MyCMSMonoLingual
 {
     use \Nette\SmartObject;
 
-    /**
-     * database management system
-     * @var LogMysqli
-     */
+    /** @var LogMysqli database management system */
     public $dbms = null;
-
-    /**
-     * which Latte template to load
-     * @var string
-     */
+    /** @var string which Latte template to load */
     public $template;
-
-    /**
-     * variables for template rendering
-     * @var array<array<mixed>|false|int|null|string>
-     */
+    /** @var array<array<mixed>|false|int|null|string> variables for template rendering */
     public $context = [];
-
-    /**
-     * Logger SHOULD by available to the application using MyCMS
-     * @var LoggerInterface
-     */
+    /** @var LoggerInterface Logger SHOULD by available to the application using MyCMS */
     public $logger;
 
     /**
@@ -151,6 +136,7 @@ class MyCMSMonoLingual
      * @param array<mixed> $arr
      * @return array<string|null>
      */
+    /*
     private function assertArrayStringNull(array $arr)
     {
         $result = [];
@@ -162,16 +148,20 @@ class MyCMSMonoLingual
         }
         return $result;
     }
+     *
+     */
 
     /**
      *
      * @param string $sql SQL statement to be executed
      * @return array<array<string|null>|string> Either associative array or empty array on empty SELECT
      *
-     *   Exception on error
+     * @throws \Exception on error
      */
     public function fetchAndReindexStrictArray($sql)
     {
+        return $this->dbms->fetchAndReindexStrictArray($sql);
+        /*
         $result = $this->dbms->fetchAndReindex($sql); // array<array<string|null|array<string|null>>|string>|false
         if (!is_array($result)) {
             $this->dbms->showSqlBarPanel();
@@ -190,10 +180,11 @@ class MyCMSMonoLingual
             } elseif (is_array($v)) {
                 $resultTwoLevelArray[$k] = $this->assertArrayStringNull($v);
             } else {
-                throw new Exception('Unexpected structure of SQL statement result. Array contains type ' . gettype($v));
+               throw new \Exception('Unexpected structure of SQL statement result. Array contains type ' . gettype($v));
             }
         }
         return $resultTwoLevelArray;
+         */
     }
 
     /**

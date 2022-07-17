@@ -15,17 +15,13 @@ use WorkOfStan\mycmsprojectnamespace\ProjectSpecific;
 
 /**
  * Controller (of MVC)
- * (Last MyCMS/dist revision: 2022-03-06, v0.4.6+)
+ * (Last MyCMS/dist revision: 2022-07-17, v0.4.7)
  */
 class Controller extends MyController
 {
     use \Nette\SmartObject;
 
-    /**
-     * Feature flags that bubble down to latte and controller
-     *
-     * @var array<bool>
-     */
+    /** @var array<bool> Feature flags that bubble down to latte and controller */
     protected $featureFlags;
     /** @var string */
     protected $httpMethod;
@@ -37,11 +33,7 @@ class Controller extends MyController
     private $projectSpecific;
     /** @var string */
     protected $requestUri; // = ''; // default is homepage
-    /**
-     * Bleeds information within determineTemplate method
-     *
-     * @var bool
-     */
+    /** @var bool Bleeds information within determineTemplate method */
     protected $verbose = false;
 
     /**
@@ -201,6 +193,7 @@ class Controller extends MyController
                     count($this->MyCMS->context['list']);
                 return true;
             case 'inheritance-app-only-template':
+            case 'inheritance-app-uses-library-template':
             case 'inheritance-library-only-template':
             case 'inheritance-prefer-app-template':
                 $this->MyCMS->context['htmlbody'] = 'HTML body of ' . $this->MyCMS->template;

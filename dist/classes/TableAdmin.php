@@ -9,7 +9,7 @@ use WorkOfStan\MyCMS\MyTableAdmin;
 
 /**
  * Project specific adaptations of database tables in Admin UI
- * (Last MyCMS/dist revision: 2022-03-06, v0.4.6+)
+ * (Last MyCMS/dist revision: 2022-07-17, v0.4.7)
  */
 class TableAdmin extends MyTableAdmin
 {

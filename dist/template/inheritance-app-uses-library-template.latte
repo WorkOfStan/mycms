@@ -1,8 +1,7 @@
-{* template latte where app version should be used instead of library version *}
-{layout '@inheritance-prefer-app-layout.latte'}
+{* inheritance-app-uses-library-template *}
+{layout '../vendor/workofstan/mycms/template/@inheritance-library-only-layout.latte'}
 {block htmlbody}
-    Library template - WRONG -
-    template latte where app version should be used instead of library version
+    inheritance-app-uses-library-template latte -
     <h1>{$htmlbody}</h1>
     <h2>Prefer app:</h2>{include 'inherite.latte', latte => 'inc-inheritance-prefer-app.latte'}
     <h2>App only:</h2>{include 'inherite.latte', latte => 'inc-inheritance-app-only.latte'}

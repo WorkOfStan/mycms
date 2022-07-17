@@ -234,7 +234,7 @@ class MyTableLister
             'sql' => ''
         ];
         if (isset($vars['limit'])) {
-            Assert::string($vars['limit']); // number passed as string
+            Assert::scalar($vars['limit']); // number passed as string or int TODO make sure it's just one of those
             $result['limit'] = $vars['limit'] ? (int) $vars['limit'] : $this->DEFAULTS['PAGESIZE'];
         } else {
             $result['limit'] = $this->DEFAULTS['PAGESIZE'];
@@ -243,7 +243,7 @@ class MyTableLister
             $result['limit'] = $this->DEFAULTS['PAGESIZE'];
         }
         if (isset($vars['offset'])) {
-            Assert::string($vars['offset']); // number passed as string
+            Assert::scalar($vars['offset']); // number passed as string or int TODO make sure it's just one of those
             $result['offset'] = max((int) $vars['offset'], 0);
         } else {
             $result['offset'] = 0;
@@ -584,6 +584,7 @@ class MyTableLister
                 Assert::isArray($this->get['op']);
                 if ($value) {
                     Assert::string($value);
+                    // adding search rows in the table view done by invoked JavaScript function in dist/scripts/admin.js
                     $this->script .= 'addSearchRow($(\'#search-div' . $this->rand . '\'), "'
                         . Tools::escapeJs($value) . '",' . Tools::setifnull($this->get['op'][$key], 0) . ', "'
                         . addslashes(
@@ -612,7 +613,11 @@ class MyTableLister
                 }
             }
         }
-        if (!isset($this->get['sort']) || !$this->get['sort']) {
+        if (
+            //!isset($this->get['sort']) || // Offset 'sort' on array<array|string> in isset() always exists and is
+            // not nullable. as `Assert::isArray($this->get['sort']);` above
+            !$this->get['sort']
+        ) {
             $this->script .= '$(\'#sort-div' . $this->rand . '\').hide();' . PHP_EOL;
         }
         if (!isset($this->get['col']) || !$this->get['col']) {
@@ -861,11 +866,16 @@ class MyTableLister
     }
 
     /**
+     * Table name property getter
      *
      * @return string
+     * @throws Exception
      */
     public function getTable()
     {
+        if (empty($this->table)) {
+            throw new \Exception('table is not set');
+        }
         return $this->table;
     }
 

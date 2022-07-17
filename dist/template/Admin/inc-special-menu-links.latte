@@ -2,25 +2,24 @@
 {* TODO: navázat na další features *}
 
             {* A Produkty k řazení *}
-            <li n:if="$featureFlags['order_hierarchy']" class="nav-item{if in_array('products', $switches)} active{/if}"><a href="?products" class="nav-link"><i class="fas fa-gift"></i>
-            {="Products"|translate}</a></li>
+            <li n:if="$featureFlags['order_hierarchy']" class="nav-item{if in_array('products', $switches)} active{/if}"><a href="?products" class="nav-link"><i class="fas fa-gift"></i> {="Products"|translate}</a></li>
 
             {* A Stránky k řazení *}
-            <li n:if="$featureFlags['order_hierarchy']" class="nav-item{if in_array('pages', $switches)} active{/if}"><a href="?pages" class="nav-link"><i class="far fa-file-alt"></i>{="Pages"|translate}</a></li>
+            <li n:if="$featureFlags['order_hierarchy']" class="nav-item{if in_array('pages', $switches)} active{/if}"><a href="?pages" class="nav-link"><i class="far fa-file-alt"></i> {="Pages"|translate}</a></li>
             
             {* URLs - (Friendly URL set-up and) check duplicities *}
             <li class="nav-item{if in_array('urls', $switches)} active{/if}"><a href="?urls" class="nav-link"><i class="fas fa-unlink"></i> URL</a></li>
             
             {* F Divize a produkty k řazení (jako A Produkty k řazení) *}
-            <li n:if="$featureFlags['order_hierarchy']" class="nav-item"><a href="?divisions-products" class="nav-link{if in_array('divisions-products', $switches)} active{/if}"><i class="fa fa-gift mr-1" aria-hidden="true"></i>{="Divisions and products"|translate}</a></li>
+            <li n:if="$featureFlags['order_hierarchy']" class="nav-item"><a href="?divisions-products" class="nav-link{if in_array('divisions-products', $switches)} active{/if}"><i class="fa fa-gift mr-1" aria-hidden="true"></i> {="Divisions and products"|translate}</a></li>
             {* F drop-down menu *}
             <li class="nav-item dropdown"><a class="nav-link dropdown-toggle{if in_array('translations', $switches) || in_array('urls', $switches)} active{/if}"
                 href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="true"><i class="fas fa-lightbulb"></i></a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     {* URLs - Friendly URL set-up (and check duplicities) *}
-                    <a href="?urls" class="dropdown-item{if in_array('urls', $switches)} active{/if}"><i class="fa fa-link mr-1" aria-hidden="true"></i>{="Friendly URL"|translate}</a>
+                    <a href="?urls" class="dropdown-item{if in_array('urls', $switches)} active{/if}"><i class="fa fa-link mr-1" aria-hidden="true"></i> {="Friendly URL"|translate}</a>
                     {* F Překlady *}
-                    <a href="?translations" class="dropdown-item{if in_array('translations', $switches)} active{/if}"><i class="fa fa-globe mr-1" aria-hidden="true"></i>{="Translations"|translate}</a>
+                    <a href="?translations" class="dropdown-item{if in_array('translations', $switches)} active{/if}"><i class="fa fa-globe mr-1" aria-hidden="true"></i> {="Translations"|translate}</a>
                 </div>
             </li>

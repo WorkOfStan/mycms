@@ -18,45 +18,21 @@ class MyCMS extends MyCMSMonoLingual
 {
     use \Nette\SmartObject;
 
-    /**
-     * Folder and name prefix of localisation yml
-     *
-     * @var L10n
-     */
+    /** @var L10n Folder and name prefix of localisation yml */
     protected $localisation;
-
-    /**
-     * Folder and name prefix of localisation yml
-     *
-     * @var string
-     */
+    /** @var string Folder and name prefix of localisation yml */
     protected $prefixL10n;
-
-    /**
-     * PARAMETRIC URL into TEMPLATE conditions (for FriendlyURL functionality)
-     *
-     * @var array<array<string|bool>>
-     */
+    /** @var array<array<string|bool>> PARAMETRIC URL into TEMPLATE conditions (for FriendlyURL functionality) */
     public $templateAssignementParametricRules;
-
-    /**
-     * Type into database table mapping (for MyFriendlyUrl::findFriendlyUrlToken)
-     *
-     * @var array<string>
-     */
+    /** @var string[] Type into database table mapping (for MyFriendlyUrl::findFriendlyUrlToken) */
     public $typeToTableMapping;
-
-    /**
-     * Available languages
-     *
-     * @var array<string>
-     */
+    /** @var string[] Available languages */
     public $TRANSLATIONS;
 
     /**
      * Constructor
      *
-     * @param array<mixed> $myCmsConf
+     * @param mixed[] $myCmsConf
      */
     public function __construct(array $myCmsConf = [])
     {
@@ -66,8 +42,8 @@ class MyCMS extends MyCMSMonoLingual
 
     /**
      *
-     * @param array<mixed> $getArray $_GET or its equivalent
-     * @param array<mixed> $sessionArray $_SESSION or its equivalent
+     * @param mixed[] $getArray $_GET or its equivalent
+     * @param mixed[] $sessionArray $_SESSION or its equivalent
      * @param bool $makeInclude for testing may be set to false as mycms itself doesn't contain the language-XX.inc.php
      * @return string to be used as $_SESSION['language']
      *

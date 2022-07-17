@@ -1,8 +1,8 @@
-/* global $, AOS, API_BASE FEATURE_FLAGS, ga, TOKEN */
+/* global $, AOS, API_BASE, FEATURE_FLAGS, ga, TOKEN */
 
 /**
  * JavaScript client-side of MyCMS webpages
- * (Last MyCMS/dist revision: 2022-03-12, v0.4.6+)
+ * (Last MyCMS/dist revision: 2022-07-17, v0.4.7)
  */
 
 // scroll effects

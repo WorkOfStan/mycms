@@ -1,0 +1,29 @@
+{* Output (in HTML) the listing or editing section of a table (selected in $_GET['table']) *}
+{layout '@admin.latte'}
+{block htmlbody}
+{$htmlbody|noescape}
+        <h1 class="page-header">
+            <a href="?table={$table["tableName"]}" title="{="Back to listing"|translate}"><i class="fa fa-list-alt"></i></a>
+            <tt>{$table["tablePrefixless"]}</tt></h1>
+          {if array_key_exists('where', $table)}
+            {* table edit *}
+            <h2 class="sub-header">{="Edit"|translate}<span class="AdminRecordName"></span></h2>
+            {include '../inherite.latte', latte => 'Admin/inc-table-before-edit.latte'}
+            {$table["htmlOutputForm"]|noescape}
+            {* $this->tableAdmin->outputForm($_GET['where'], $tempOutputFormOptions) *}
+            {include '../inherite.latte', latte => 'Admin/inc-table-after-edit.latte'}
+          {elseif array_key_exists('edit-selected', $table)}
+            {$table["htmlOutputForm"]|noescape}
+            {* $result .= $this->outputTableEditSelected(); *}
+          {elseif array_key_exists('clone-selected', $table)}
+            {$table["htmlOutputForm"]|noescape}
+            {* $result .= $this->outputTableEditSelected(true); *}
+          {else}
+            {* table listing *}
+            <h2 class="sub-header">{="Listing"|translate}</h2>
+            {include '../inherite.latte', latte => 'Admin/inc-table-before-listing.latte'}
+            {$table["htmlOutputForm"]|noescape}
+            {* $this->tableAdmin->view() *}
+            {include '../inherite.latte', latte => 'Admin/inc-table-after-listing.latte'}
+          {/if}
+{/block}

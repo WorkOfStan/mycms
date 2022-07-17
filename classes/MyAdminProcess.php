@@ -171,7 +171,10 @@ class MyAdminProcess extends MyCommon
     {
         if (isset($post['clone'], $post['database-table'])) {
             Assert::isArray($post['check']);
-            if ((isset($post['check']) && count($post['check'])) || Tools::set($post['total-rows'])) {
+            if (
+                (//isset($post['check']) && // redundant as `Assert::isArray($post['check']);` above
+                count($post['check'])) || Tools::set($post['total-rows'])
+            ) {
                 if (Tools::set($post['total-rows'])) {
                     $sql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $_GET);
                     Tools::dump($sql, $post);
@@ -211,14 +214,14 @@ class MyAdminProcess extends MyCommon
                 || Tools::set($post['total-rows'])
             ) {
                 if (Tools::set($post['total-rows'])) { //export whole resultset (regard possible $get limitations)
-                    $sql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $get);
-                    $sql = $sql['select'];
+                    $tempSql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $get);
+                    $sql = $tempSql['select'];
                 //Debugger::barDump($sql, 'SQL array');
                 } else { //export only checked rows
                     Assert::string($post['database-table']);
                     Assert::isArray($post['check']);
-                    $sql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $get);
-                    $sql = $sql['select'] . ' WHERE `' . $post['database-table'] . '`.`id` IN (' .
+                    $tempSql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $get);
+                    $sql = $tempSql['select'] . ' WHERE `' . $post['database-table'] . '`.`id` IN (' .
                         implode(
                             ',',
                             array_map(
@@ -229,7 +232,7 @@ class MyAdminProcess extends MyCommon
                                 $post['check'] // array of strings like that: 'where[id]=1'
                             )
                         ) . ')';
-                    Debugger::barDump($sql, 'SQL array');
+                    Debugger::barDump($sql, 'SQL array'); // TODO isn't it obsoleted by the standard SQL bar panel?
                 }
                 Assert::string($sql);
                 if ($sql) {
@@ -502,7 +505,11 @@ class MyAdminProcess extends MyCommon
         if (isset($post['user'], $post['password'], $post['login'])) {
             Assert::string($post['user']);
             Assert::scalar($post['token']);
-            if (!isset($post['token']) || !$this->MyCMS->csrfCheck((int) $post['token'])) {
+            if (
+                // !isset($post['token']) || // Offset 'token' on array<array|string> in isset() always exists and is
+                // not nullable. because of the above `Assert::scalar($post['token']);`
+                !$this->MyCMS->csrfCheck((int) $post['token'])
+            ) {
                 // let it fall to 'Error occured logging You in.'
             } elseif ($row = $this->MyCMS->fetchSingle('SELECT * FROM `' . TAB_PREFIX . 'admin` WHERE admin="' . $this->MyCMS->escapeSQL($post['user']) . '"')) {
                 Assert::string($post['password']);

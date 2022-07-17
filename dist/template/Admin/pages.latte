@@ -1,0 +1,7 @@
+{layout '../../vendor/workofstan/mycms/template/Admin/@admin.latte'}
+{block htmlbody}
+{$htmlbody|noescape}
+{if isset($htmlOutput)}
+{$htmlOutput|noescape}
+{/if}
+{/block}

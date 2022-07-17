@@ -15,7 +15,7 @@ use WorkOfStan\mycmsprojectnamespace\Utils;
 
 /**
  * App class handles the request dispatching in index.php
- * (Last MyCMS/dist revision: 2022-03-06, v0.4.6+)
+ * (Last MyCMS/dist revision: 2022-07-17, v0.4.7)
  */
 class App extends MyCommon
 {

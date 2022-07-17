@@ -49,14 +49,14 @@ function addSortRow(target, field, descending)
     return true;
 }
 
-// search control element in table view
+// search control element in table view (invoked by MyTableLister)
 function addSearchRow(target, field, op, value)
 {
     field = parseInt(field);
     if (field < 0 || field > LISTED_FIELDS.length) {
         return false;
     }
-    html = '<div><select name="col[' + searchIndex + ']" class="select-search"  title="' + TRANSLATE['Select'] + '" onchange="if(!$(this).parent().next().length){addSearchRow($(this).parent().parent(), null, 0, \'\');}">\n<option />\n';
+    let html = '<div><select name="col[' + searchIndex + ']" class="select-search"  title="' + TRANSLATE['Select'] + '" onchange="if(!$(this).parent().next().length){addSearchRow($(this).parent().parent(), null, 0, \'\');}">\n<option />\n';
     for (i in LISTED_FIELDS) {
         html += '<option value="' + (i - 0 + 1) + '"' + (field == (i - 0 + 1) ? ' selected="selected"' : '') + '>' + LISTED_FIELDS[i] + '</option>\n';
     }

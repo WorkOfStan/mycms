@@ -4,6 +4,7 @@ namespace WorkOfStan\MyCMS;
 
 use GodsDev\Tools\Tools;
 use Webmozart\Assert\Assert;
+use WorkOfStan\MyCMS\MyTools;
 
 /**
  * This class facilitates administration of a database table
@@ -525,11 +526,15 @@ class MyTableAdmin extends MyTableLister
      */
     public function outputForeignId($field, $values, $default = null, $options = [])
     {
-        Assert::string($options['class']);
-        Assert::string($options['id']);
+        if (isset($options['class'])) {
+            Assert::string($options['class']);
+        }
+        if (isset($options['id'])) {
+            Assert::string($options['id']);
+        }
         $result = '<select name="' . Tools::h($field)
-            . '" class="' . Tools::h(isset($options['class']) ? $options['class'] : '')
-            . '" id="' . Tools::h(isset($options['id']) ? $options['id'] : '') . '">'
+            . '" class="' . MyTools::h(isset($options['class']) ? $options['class'] : '')
+            . '" id="' . MyTools::h(isset($options['id']) ? $options['id'] : '') . '">'
             . '<option value=""></option>';
         $options['exclude'] = isset($options['exclude']) ? (is_array($options['exclude']) ?
             $options['exclude'] : [$options['exclude']]) : [];

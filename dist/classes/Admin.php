@@ -4,7 +4,8 @@ namespace WorkOfStan\mycmsprojectnamespace;
 
 use GodsDev\Tools\Tools;
 use Webmozart\Assert\Assert;
-//use WorkOfStan\MyCMS\ArrayStrict;
+use WorkOfStan\MyCMS\AdminModels\TranslationsAdminModel;
+use WorkOfStan\MyCMS\AdminModels\UrlsAdminModel;
 use WorkOfStan\MyCMS\L10n;
 use WorkOfStan\MyCMS\MyAdmin;
 use WorkOfStan\mycmsprojectnamespace\MyCMSProject;
@@ -14,36 +15,17 @@ use function WorkOfStan\MyCMS\ThrowableFunctions\preg_match_all;
 
 /**
  * Admin UI
- * (Last MyCMS/dist revision: 2022-04-29, v0.4.6+)
+ * (Last MyCMS/dist revision: 2022-07-17, v0.4.7)
+ *
+ * Feature flag 'legacy_admin_methods_instead_of_admin_models' => true can turn off the new AdminModels
+ * in favour of the legacy spagetti code within this class
  */
 class Admin extends MyAdmin
 {
     use \Nette\SmartObject;
 
-    /**
-     * Feature flags that bubble down to latte and controller
-     * TODO: remove from here as redundant (it is already in MyAdmin)
-     * @var array<bool>
-     */
-    protected $featureFlags;
-
-    /**
-     * Folder and name prefix of localisation yml for the web UI (not admin UI)
-     *
-     * @var string
-     */
+    /** @var string Folder and name prefix of localisation yml for the web UI (not admin UI) */
     protected $prefixUiL10n;
-
-    /**
-     * @var array<array<string>> tables and columns to search in admin
-     * table => [id, field1 to be searched in, field2 to be searched in...]
-     * TODO move to config.php
-     */
-    protected $searchColumns = [
-        'category' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
-        'content' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
-        'product' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
-    ];
 
     /**
      *
@@ -54,15 +36,128 @@ class Admin extends MyAdmin
     {
         $this->clientSideResources['js'][] = 'scripts/Cookies.js';
         parent::__construct($MyCMS, $options);
+        //        \Tracy\Debugger::barDump($this->searchColumns, 'SC'); // debug 220522
+    }
+
+    /**
+     * Project-specific change of the default Admin UI Controller
+     *
+     * @return void
+     */
+    protected function controller()
+    {
+        // TODO refactor this into pure Latte
+        if (
+            array_key_exists('table', $this->get) && !empty($this->get['table']) && (bool) $this->tableAdmin->getTable()
+        ) {
+            if (!array_key_exists('table', $this->renderParams) || !is_array($this->renderParams['table'])) {
+                $this->renderParams['table'] = [];
+            }
+            if (isset($this->get['where']) && is_array($this->get['where'])) {
+                $this->renderParams['table']['outputTableAfterEdit'] = $this->outputTableAfterEdit();
+            } elseif (!isset($_POST['edit-selected']) && !isset($_POST['clone-selected'])) {
+                $this->renderParams['table']['outputTableBeforeListing'] = $this->outputTableBeforeListing();
+            }
+        }
+
+        // changes of inherited Lattes MUST be done before invoking the parent::controller();
+        parent::controller();
+
+        // TODO check whether unavailable for anonymous users!
+        switch ($this->template) {
+            case 'Admin/divisions-products':
+                $this->renderParams['pageTitle'] = $this->tableAdmin->translate('Divisions and products');
+                if (
+                    isset($this->featureFlags['legacy_admin_methods_instead_of_admin_models']) &&
+                    $this->featureFlags['legacy_admin_methods_instead_of_admin_models']
+                ) {
+                    // legacy since 220620
+                    $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+                } else {
+                    $adminModel = new AdminModels\DivisionsProductsAdminModel(
+                        $this->MyCMS->dbms,
+                        $this->tableAdmin
+                    );
+                    $this->renderParams['htmlOutput'] = $adminModel->htmlOutput();
+                }
+                break;
+            case 'Admin/pages':
+                $this->renderParams['pageTitle'] = $this->tableAdmin->translate('Pages');
+                if (
+                    isset($this->featureFlags['legacy_admin_methods_instead_of_admin_models']) &&
+                    $this->featureFlags['legacy_admin_methods_instead_of_admin_models']
+                ) {
+                    // legacy since 220620
+                    $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+                } else {
+                    $adminModel = new AdminModels\PagesAdminModel(
+                        $this->MyCMS->dbms,
+                        $this->tableAdmin
+                    );
+                    $this->renderParams['htmlOutput'] = $adminModel->htmlOutput();
+                }
+                break;
+            case 'Admin/products':
+                $this->renderParams['pageTitle'] = $this->tableAdmin->translate('Products');
+                if (
+                    isset($this->featureFlags['legacy_admin_methods_instead_of_admin_models']) &&
+                    $this->featureFlags['legacy_admin_methods_instead_of_admin_models']
+                ) {
+                    // legacy since 220620
+                    $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+                } else {
+                    $adminModel = new AdminModels\ProductsAdminModel(
+                        $this->MyCMS->dbms,
+                        $this->tableAdmin,
+                        $this->MyCMS->logger
+                    );
+                    $this->renderParams['htmlOutput'] = $adminModel->htmlOutput();
+                }
+                break;
+            case 'Admin/translations':
+                $this->renderParams['pageTitle'] = $this->tableAdmin->translate('Translations');
+                if (
+                    isset($this->featureFlags['legacy_admin_methods_instead_of_admin_models']) &&
+                    $this->featureFlags['legacy_admin_methods_instead_of_admin_models']
+                ) {
+//                    \Tracy\Debugger::barDump('legacy');
+                    // legacy since 220620
+                    $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+                } else {
+//                    \Tracy\Debugger::barDump('NEW');
+                    $adminModel = new TranslationsAdminModel(
+                        $this->MyCMS->dbms,
+                        $this->tableAdmin,
+                        $this->prefixUiL10n
+                    );
+                    $this->renderParams['htmlOutput'] = $adminModel->htmlOutput();
+                }
+                break;
+            case 'Admin/urls':
+                $this->renderParams['pageTitle'] = $this->tableAdmin->translate('URL');
+                if (
+                    isset($this->featureFlags['legacy_admin_methods_instead_of_admin_models']) &&
+                    $this->featureFlags['legacy_admin_methods_instead_of_admin_models']
+                ) {
+                    // legacy since 220620
+                    $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
+                } else {
+                    $adminModel = new UrlsAdminModel(
+                        $this->MyCMS->dbms,
+                        $this->tableAdmin
+                    );
+                    $this->renderParams['htmlOutput'] = $adminModel->htmlOutput();
+                }
+                break;
+        }
     }
 
     /**
      * Output (in HTML) the project-specific links in the navigation section of admin
      * TODO: navázat na další features
-     * TODO: move to template/admin-special-menu-links.latte
      *
      * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
-     * @see template/admin-special-menu-links.latte
+     * @see template/Admin/inc-special-menu-links.latte
      * @return string
      */
     protected function outputSpecialMenuLinks()
@@ -70,38 +165,38 @@ class Admin extends MyAdmin
         return
             // A Produkty k řazení
             (Tools::nonzero($this->featureFlags['order_hierarchy']) ? (
-                '<li class="nav-item' . (isset($_GET['products']) ? ' active' : '')
+                '<li class="nav-item' . (isset($this->get['products']) ? ' active' : '')
             . '"><a href="?products" class="nav-link"><i class="fas fa-gift"></i> '
             . $this->tableAdmin->translate('Products') . '</a></li>'
             ) : '')
             // A Stránky k řazení
             . (Tools::nonzero($this->featureFlags['order_hierarchy']) ? (
-                '<li class="nav-item' . (isset($_GET['pages']) ? ' active' : '')
+                '<li class="nav-item' . (isset($this->get['pages']) ? ' active' : '')
             . '"><a href="?pages" class="nav-link"><i class="far fa-file-alt"></i> '
             . $this->tableAdmin->translate('Pages') . '</a></li>'
             ) : '')
             // URLs - (Friendly URL set-up and) check duplicities
-            . '<li class="nav-item' . (isset($_GET['urls']) ? ' active' : '')
+            . '<li class="nav-item' . (isset($this->get['urls']) ? ' active' : '')
             . '"><a href="?urls" class="nav-link"><i class="fas fa-unlink"></i> URL</a></li>'
             // F Divize a produkty k řazení (jako A Produkty k řazení)
             . (Tools::nonzero($this->featureFlags['order_hierarchy']) ? (
                 '<li class="nav-item"><a href="?divisions-products" class="nav-link'
-            . (isset($_GET['divisions-products']) ? ' active' : '') .
+            . (isset($this->get['divisions-products']) ? ' active' : '') .
             '"><i class="fa fa-gift mr-1" aria-hidden="true"></i> ' .
             $this->tableAdmin->translate('Divisions and products') . '</a></li>'
             ) : '')
             // F drop-down menu
             . '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle'
-            . (isset($_GET['urls']) || isset($_GET['translations']) ? ' active' : '')
+            . (isset($this->get['urls']) || isset($this->get['translations']) ? ' active' : '')
             . '" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"'
             . ' aria-haspopup="true" aria-expanded="true"><i class="fas fa-lightbulb"></i></a>'
             . '<div class="dropdown-menu" aria-labelledby="navbarDropdown">'
             // URLs - Friendly URL set-up (and check duplicities)
-            . '<a href="?urls" class="dropdown-item' . (isset($_GET['urls']) ? ' active' : '')
+            . '<a href="?urls" class="dropdown-item' . (isset($this->get['urls']) ? ' active' : '')
             . '"><i class="fa fa-link mr-1" aria-hidden="true"></i> '
             . $this->tableAdmin->translate('Friendly URL') . '</a>'
             // F Překlady
-            . '<a href="?translations" class="dropdown-item' . (isset($_GET['translations']) ? ' active' : '')
+            . '<a href="?translations" class="dropdown-item' . (isset($this->get['translations']) ? ' active' : '')
             . '"><i class="fa fa-globe mr-1" aria-hidden="true"></i> '
             . $this->tableAdmin->translate('Translations') . '</a>
             </div></li>';
@@ -116,7 +211,7 @@ class Admin extends MyAdmin
      */
     protected function outputTableBeforeListing()
     {
-        return (in_array(mb_substr($_GET['table'], mb_strlen(TAB_PREFIX)), ['content'])) ?
+        return (in_array(mb_substr($this->tableAdmin->getTable(), mb_strlen(TAB_PREFIX)), ['content'])) ?
             $this->tableAdmin->contentByType(['table' => 'content', 'type' => 'type']) : '';
     }
 
@@ -128,8 +223,8 @@ class Admin extends MyAdmin
     protected function outputTableAfterEdit()
     {
         $output = '';
-        if (isset($_GET['where']['id']) && $_GET['where']['id']) { //existing record
-            switch ($_GET['table']) {
+        if (isset($this->get['where']['id']) && $this->get['where']['id']) { //existing record
+            switch ($this->get['table']) {
                 case TAB_PREFIX . 'category':
                     // Display related products and content elements labeled by either name
                     // or content fragment (up to 100 characters)
@@ -140,11 +235,12 @@ class Admin extends MyAdmin
                             'product'
                         ] as $i
                     ) {
+                        Assert::scalar($this->get['where']['id']);
                         if (
                             $tmp = $this->MyCMS->fetchAndReindex(
                                 'SELECT id,IF(name_' . $_SESSION['language'] . ' NOT LIKE "",name_'
                                 . $_SESSION['language'] . ', content_' . $_SESSION['language'] . ')'
-                                . ' FROM `' . TAB_PREFIX . $i . '` WHERE category_id=' . (int) $_GET['where']['id']
+                                . ' FROM `' . TAB_PREFIX . $i . '` WHERE category_id=' . (int) $this->get['where']['id']
                             )
                         ) {
                             $output .= '<hr /><details><summary>' .
@@ -174,7 +270,7 @@ class Admin extends MyAdmin
 //                        ' <span class="badge badge-secondary">';
 //                    if ($tmp = $this->MyCMS->fetchAndReindex('SELECT id,name_' . $_SESSION['language'] .
 //                        ' AS name,content_' . $_SESSION['language'] . ' AS content'
-//                        . ' FROM `' . TAB_PREFIX . 'content` WHERE product_id=' . (int) $_GET['where']['id'])) {
+//                        . ' FROM `' . TAB_PREFIX . 'content` WHERE product_id=' . (int) $this->get['where']['id'])) {
 //                        $output .= count($tmp) . '</span></summary>';
 //                        foreach ($tmp as $key => $row) {
 //                            $output .= '<a href="?table=' . TAB_PREFIX . 'content&amp;where[id]=' . $key
@@ -191,7 +287,7 @@ class Admin extends MyAdmin
 //                    $output .= '<footer>';
 //                    foreach (['testimonial', 'claim', 'perex'] as $i) {
 //                        $output .= '<a href="?table=' . TAB_PREFIX . 'content&amp;where[]=&amp;prefill[type]=' . $i
-//                            . '&amp;prefill[product_id]=' . Tools::ifnull($_GET['where']['id'], '') . '" '
+//                            . '&amp;prefill[product_id]=' . Tools::ifnull($this->get['where']['id'], '') . '" '
 //                            . 'title="' . $this->tableAdmin->translate('New row')
 //                            . ' (' . $this->tableAdmin->translate('Link will open in a new window') . ')" '
 //                            . 'target="_blank"><i class="far fa-plus-square"></i>'
@@ -207,35 +303,39 @@ class Admin extends MyAdmin
     /**
      * Returns if a project-specific sections should be displayed in admin.
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
      * @return bool
      */
     protected function projectSpecificSectionsCondition()
     {
         return
-            isset($_GET['urls']) ||
+            isset($this->get['urls']) ||
             //F
-            isset($_GET['divisions-products']) ||
-            isset($_GET['translations']) ||
+            isset($this->get['divisions-products']) ||
+            isset($this->get['translations']) ||
             //A
-            isset($_GET['products']) ||
-            isset($_GET['pages']);
+            isset($this->get['products']) ||
+            isset($this->get['pages']);
     }
 
     /**
      * Output (in HTML) the project-specific admin sections
      * Usually only selects project specific section method that generates HTML
      *
+     * @deprecated 0.4.7 Set `$featureFlags['legacy_admin_methods_instead_of_admin_models'] = true;` to use it.
+     * @see AdminModels/PagesAdminModel.php
+     * @see AdminModels/ProductsAdminModel.php
      * @return string
      */
     protected function projectSpecificSections()
     {
         //F
         $output = '';
-        if (isset($_GET['divisions-products'])) {
+        if (isset($this->get['divisions-products'])) {
             $output .= $this->sectionDivisionsProducts();
-        } elseif (isset($_GET['translations'])) {
+        } elseif (isset($this->get['translations'])) {
             $output .= $this->sectionTranslations();
-        } elseif (isset($_GET['urls'])) {
+        } elseif (isset($this->get['urls'])) {
             $output .= $this->sectionUrls();
         }
 
@@ -244,7 +344,7 @@ class Admin extends MyAdmin
             return $output;
         }
         // products // TODO make work in Dist
-        if (isset($_GET['products'])) {
+        if (isset($this->get['products'])) {
             $output .= '<h1>' . $this->tableAdmin->translate('Products') . '</h1><div id="agenda-products">';
             $categories = $this->MyCMS->fetchAll('SELECT id,name_' . $_SESSION['language'] . ' AS category,active
                 FROM `' . TAB_PREFIX . 'category`');
@@ -360,21 +460,21 @@ class Admin extends MyAdmin
                     <button type="button" class="btn btn-sm btn-secondary" id="products-images" title="'
                 . $this->tableAdmin->translate('Toggle image thumbnails') . '"><i class="far fa-image"></i></button>
                 </footer></div>';
-        } elseif (isset($_GET['pages'])) { // pages // TODO make it work in Dist
+        } elseif (isset($this->get['pages'])) { // pages // TODO make it work in Dist
             $output .= '<h1>' . $this->tableAdmin->translate('Pages') . '</h1><div id="agenda-pages">';
             $categories = $this->MyCMS->fetchAndReindexStrictArray('SELECT id,'
                 //. 'path,' // TODO path was used in A project. Reconsider here.
-                . 'active,name_' .
-                $_SESSION['language'] . ' AS category FROM `' . TAB_PREFIX . 'category`');
+                . 'active,name_'
+                . $_SESSION['language'] . ' AS category FROM `' . TAB_PREFIX . 'category`');
                 // TODO path was used in A project. Reconsider here.
                 // . ' WHERE LEFT(path, ' . PATH_MODULE . ')="'
                 // . $this->MyCMS->escapeSQL($this->MyCMS->SETTINGS['PATH_HOME']) . '" ORDER BY path');
             //\Tracy\Debugger::barDump($categories, 'CATEGORIES'); // temp
             $articles = $this->MyCMS->fetchAndReindexStrictArray('SELECT '
                 //. 'category_id,' // TODO category_id was used in A project to link content rows. Reconsider here.
-                . 'id,active,IF(content_' .
-                $_SESSION['language'] . ' = "", LEFT(CONCAT(code, " ", content_' .
-                $_SESSION['language'] . '), 100),content_' . $_SESSION['language'] . ') AS content
+                . 'id,active,IF(content_'
+                . $_SESSION['language'] . ' = "", LEFT(CONCAT(code, " ", content_'
+                . $_SESSION['language'] . '), 100),content_' . $_SESSION['language'] . ') AS content
                 FROM `' . TAB_PREFIX . 'content`');
                 //. ' WHERE category_id > 0'); // TODO category_id was used in A project to link content rows.
                 //Reconsider here.
@@ -467,6 +567,8 @@ class Admin extends MyAdmin
      * Called from projectSpecificSections
      * F code - TODO make work in Dist
      *
+     * @deprecated 0.4.7 Set `$featureFlags['legacy_admin_methods_instead_of_admin_models'] = true;` to use it.
+     * @see AdminModels/DivisionsProductsAdminModel.php
      * @return string
      */
     protected function sectionDivisionsProducts()
@@ -482,8 +584,8 @@ class Admin extends MyAdmin
 //            'division` ORDER BY ' . $tmp);
         $parents = $this->MyCMS->fetchAll('SELECT '
 //                . 'division_id,'
-            . 'id,name_' . $_SESSION['language'] .
-            ' AS product,' . ($tmp = 'sort+IF(id=' . Tools::set($_SESSION['product-switch'], 0) . ','
+            . 'id,name_' . $_SESSION['language']
+            . ' AS product,' . ($tmp = 'sort+IF(id=' . Tools::set($_SESSION['product-switch'], 0) . ','
             . Tools::set($_SESSION['product-delta'], 0) . ',0)') . ' AS sort,active FROM `' . TAB_PREFIX
             . 'product`'
             //. ' WHERE parent_product_id = 0'
@@ -505,9 +607,10 @@ class Admin extends MyAdmin
         if (!empty($divisions)) {
             foreach ($divisions as $divisionId => $division) {
                 Assert::isArray($division);
-                $output .= '<details open><summary class="d-inline-block"><big' .
-                    ($division['active'] == 1 ? '' : ' class="inactive"') . '><a href="?table=' . TAB_PREFIX .
-                    'division&amp;where[id]=' . $divisionId . '" title="' . $this->tableAdmin->translate('Edit') . '">'
+                $output .= '<details open><summary class="d-inline-block"><big'
+                    . ($division['active'] == 1 ? '' : ' class="inactive"') . '><a href="?table=' . TAB_PREFIX
+                    . 'division&amp;where[id]=' . $divisionId . '" title="' . $this->tableAdmin->translate('Edit')
+                    . '">'
                     . '<i class="fa fa-edit" aria-hidden="true"></i></a> '
                     . '<button type="button" class="btn btn-sm d-inline" name="division-up" value="' . $divisionId
                     . '" title="' . $this->tableAdmin->translate('Move up') . '">'
@@ -581,8 +684,8 @@ class Admin extends MyAdmin
                 }
                 $output .= '<a href="?table=' . TAB_PREFIX . 'product&amp;where[]=&amp;prefill[division_id]='
                     . $divisionId . '&amp;prefill[sort]=' . $sort[0] . '" class="ml-4">'
-                    . '<i class="fa fa-plus-square-o" aria-hidden="true"></i></a> ' .
-                    $this->tableAdmin->translate('New record') . '</summary></details>';
+                    . '<i class="fa fa-plus-square-o" aria-hidden="true"></i></a> '
+                    . $this->tableAdmin->translate('New record') . '</summary></details>';
             }
         }
         $output .= '</div><form action="" method="post">'
@@ -606,6 +709,8 @@ class Admin extends MyAdmin
      * Displays table with all translations to be added and resaved
      * Called from projectSpecificSections
      *
+     * @deprecated 0.4.7 Set `$featureFlags['legacy_admin_methods_instead_of_admin_models'] = true;` to use it.
+     * @see MyCMS/AdminModels/TranslationsProductsAdminModel.php
      * @return string
      */
     protected function sectionTranslations()
@@ -696,6 +801,8 @@ class Admin extends MyAdmin
      * Friendly URL: one place to set them all, identify duplicities
      * Called from projectSpecificSections
      *
+     * @deprecated 0.4.7 Set `$featureFlags['legacy_admin_methods_instead_of_admin_models'] = true;` to use it.
+     * @see MyCMS/AdminModels/UrlsProductsAdminModel.php
      * @return string
      */
     protected function sectionUrls()
@@ -712,8 +819,8 @@ class Admin extends MyAdmin
         $langs = array_keys($this->MyCMS->TRANSLATIONS);
         // Todo queryStrictArray
         $query = $this->MyCMS->dbms->queryStrictNonEmptyArray(
-            'SELECT id,"content" AS _table,type,' . Tools::arrayListed($langs, 0, ',', 'url_') . ',' .
-            Tools::arrayListed($langs, 0, ',', 'name_') . ' FROM `' . TAB_PREFIX . 'content` WHERE type IN ('
+            'SELECT id,"content" AS _table,type,' . Tools::arrayListed($langs, 0, ',', 'url_') . ','
+            . Tools::arrayListed($langs, 0, ',', 'name_') . ' FROM `' . TAB_PREFIX . 'content` WHERE type IN ('
             . '"article", "page", "news"' // list of types to be listed for Friendly URL settings
             . ') ORDER BY type'
         );
@@ -852,17 +959,18 @@ class Admin extends MyAdmin
      * Add project specific titles
      * TODO: test the A inspiration
      *
+     * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
      * @return string
      */
     public function getPageTitle()
     {
         return parent::getPageTitle() ?:
             (
-                isset($_GET['pages']) ? $this->tableAdmin->translate('Pages') :
+                isset($this->get['pages']) ? $this->tableAdmin->translate('Pages') :
             (
-                isset($_GET['products']) ? $this->tableAdmin->translate('Products') :
+                isset($this->get['products']) ? $this->tableAdmin->translate('Products') :
             (
-                isset($_GET['urls']) ? $this->tableAdmin->translate('URL') :
+                isset($this->get['urls']) ? $this->tableAdmin->translate('URL') :
             ''
             )
             )

@@ -7,7 +7,7 @@
                 <div class="collapse navbar-collapse" id="navbar-content">
                     <ul class="navbar-nav mr-auto">
                     {if $authUser}
-                        {include 'inherite.latte', latte => 'admin-special-menu-links.latte'}
+                        {include '../inherite.latte', latte => 'Admin/inc-special-menu-links.latte'}
                         <li class="nav-item{if in_array('media', $switches)} active{/if}"><a href="?media" class="nav-link"><i class="fa fa-video"></i> {="Media"|translate}</a></li>
                         <li class="nav-item dropdown{if in_array('user', $switches)} active{/if}">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{="User"|translate}"><i class="fa fa-user"></i> {="User"|translate}</a>
@@ -31,7 +31,7 @@
                                 {*         //TODO fix following code, that hides sidebar but leaves the vertical line and narrows the content view
                                         //<div class="dropdown-divider"></div><a class="dropdown-item" href="" id="toggle-nav" title="{="Toggle sidebar"|translate}"><i class="fa fa-columns mr-1"></i> {="Sidebar"|translate}</a>
                                 *}
-                                {include 'inherite.latte', latte => 'admin-special-settings-links.latte'}
+                                {include '../inherite.latte', latte => 'Admin/inc-special-settings-links.latte'}
                             {/if}
                             </div>
                         </li>

@@ -13,7 +13,7 @@
         <link rel="stylesheet" href="{$applicationDir}scripts/lib/owlcarousel/assets/owl.theme.green.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="{$applicationDir}styles/index.css?v={$pageResourceVersion}">
-        {include 'favicon.latte'}
+        {include 'inc-favicon.latte'}
         <script>
             var GA_UID = {$gauid};
             var TOKEN = {$token};
@@ -41,7 +41,7 @@
         <script src='https://www.google.com/recaptcha/api.js?hl={$language == 'cn' ? 'ZH-CN' : $language}'></script>
     </head>
     <body class="view-{$ref}">
-        {include 'header.latte'}
+        {include 'inc-header.latte'}
         {if isset($messages) && is_array($messages) && $messages}
         <div class="container mt-2">
             {foreach $messages as $message}
@@ -54,7 +54,7 @@
         </div>
         {/if}
         {block content}{/block}
-        {include 'footer.latte'}
+        {include 'inc-footer.latte'}
 
         {if $featureFlags['offline_dev']}
         <script src="{$applicationDir}scripts/jquery.js" crossorigin="anonymous"></script>

@@ -51,10 +51,10 @@ script/autotrack.V.V.V.js and script/autotrack.V.V.V.js.map are manually taken f
 
 ## Deployment
 
-Create database with `Collation=utf8_general_ci`
+Create database with `Collation=utf8_general_ci` (create also separate testing database so that phinxlog migration_name doesn't overlap)
 
 Run `build.sh` to
-- create `phinx.yml` based on `phinx.dist.yml` including the name of the database created above
+- create `phinx.yml` based on `phinx.dist.yml` including the name of the database (and testing database) created above
 - create `conf/config.local.php` based on `config.local.dist.php` including the phinx environment to be used and change any settings you like.
 
 Edit these two files; then run `build.sh` again (see below)
@@ -373,6 +373,12 @@ In order to take advantage of inheriting latte from MyCMS call `{include 'inheri
 As file_exists function doesn't work in Latte, template and layout MUST however be both present together either in the library folder or in the app folder.
 Also when variables are passed to included fragments, it MUST happen in the same folder (either library or app).
 The idea is to have the default templates in the MyCMS library in order to quickly deploy. If you start working with the templates however, you should maintain them in the app folder.
+
+### Template naming convention
+- @*layout.latte is a layout
+- inc-*.latte is a block to be included
+- *.latte is a page using layout
+- inherite.latte is a function to secure inheritance
 
 ## Visual style
 

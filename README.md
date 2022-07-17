@@ -5,7 +5,8 @@
 [![PHP Composer + PHPUnit + PHPStan](https://github.com/WorkOfStan/mycms/actions/workflows/php-composer-phpunit.yml/badge.svg)](https://github.com/WorkOfStan/mycms/actions/workflows/php-composer-phpunit.yml)
 
 Brief MVC framework for interactive sites including general administration.
-Works as a devstack which you install and then write your classes specific for your project.
+This framework allows you to create an app just by simple configuration and keeping the framework up-to-date by composer while letting you use the vanilla PHP as much as possible.
+It works as a devstack which you install and then write your classes specific for your project.
 The boilerplate project is prepared in `dist` folder to be adapted as needed and it uses this `WorkOfStan\MyCMS` library out-of-the-box.
 
 MyCMS is designed to be used with following technologies:
@@ -22,7 +23,7 @@ Apache modules `mod_alias` (for hiding non-public files) and `mod_rewrite` (for 
 
 Once [composer](https://getcomposer.org/) is installed, execute the following command in your project root to install this library:
 ```sh
-composer require workofstan/mycms:^0.4.6
+composer require workofstan/mycms:^0.4.7
 ```
 Most of library's classes use prefix `My`.
 To develop your project, create your own classes as children inheriting MyCMS' classes in the `./classes/` directory and name them without the initial `My` in its name.  
@@ -177,7 +178,7 @@ The reused workflow may be referenced by a branch, tag or commit and doesn't sup
 ```sh
     # Working examples
     uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@main # ok, but all encompassing
-    uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@v0.4.6 # it works
+    uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@v0.4.7 # it works
 
     # Failing examples
     uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@v0.4
@@ -277,6 +278,9 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 * 200819: consider REQUEST_URI query vs \_GET - shouldn't just one source of truth be used?
 * 200921: for PHP/7.1.0+ version use protected for const in MyCommon, MyFriendlyUrl, MyAdminProcess.php
 
+### TODO UI
+* 220716 Admin Translations and `Urls` module should have Tabs displayed by the Core (not the App)
+
 ### TODO SECURITY
 * 190723: pokud jsou v té samé doméně dvě různé instance MyCMS, tak přihlášením do jednoho admin.php jsem přihlášen do všech, i když ten uživatel tam ani neexistuje
-* 220513, Latte::2.11.3 Notice: Engine::addFilter(null, ...) is deprecated, use addFilterLoader() since ^2.10.8 which requires php: >=7.1 <8.2
+* 220513, Latte::2.11.3 Notice: Engine::addFilter(null, ...) is deprecated, use addFilterLoader() since ^2.10.8 which requires php: >=7.1 <8.2 (stop limiting "latte/latte": ">=2.4.6 <2.11.3")

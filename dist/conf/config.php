@@ -92,6 +92,7 @@ $myCmsConf = [
         'inh-app-only' => ['template' => 'inheritance-app-only-template'], // test page for latte inheritance
         'inh-library-only' => ['template' => 'inheritance-library-only-template'], // test page for latte inheritance
         'inh-prefer-app' => ['template' => 'inheritance-prefer-app-template'], // test page for latte inheritance
+        'inh-app-uses-library' => ['template' => 'inheritance-app-uses-library-template'], // test page for latte inh.
         'item-1' => ['template' => 'item-1'], // custom template
         'item-B' => ['template' => 'item-B'], // custom template
         'item-gama' => ['template' => 'item-gama'], // custom template

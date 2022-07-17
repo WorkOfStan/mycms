@@ -56,10 +56,11 @@ define('RECAPTCHA_SECRET', '...');
 //feature flags (use keys without spaces to avoid problems in javascript)
 $featureFlags = [
     'admin_latte_render' => false, // admin legacy output in methods or the new latte rendering; experimental:
-    // because library vs app references MUST be solved
-    //  'console_log_list_values' => true,
-    //  'offline_dev' => true,
-    //  'order_hierarchy' => true, // as used in A and F projects - just for testing before ready for Dist
+    // because the main part of body is still prerendered as HTML
+    //'console_log_list_values' => true,
+    //'legacy_admin_methods_instead_of_admin_models' => true,
+    //'offline_dev' => true,
+    //'order_hierarchy' => true, // as used in A and F projects - just for testing before ready for Dist
     'newsletter_input_box' => true,
 ];
 //$debugIpArray[] = '192.168.1.145'; // add other IP addresses to see full errors
