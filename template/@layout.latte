@@ -15,13 +15,14 @@
         <link rel="stylesheet" href="{$applicationDir}styles/index.css?v={$pageResourceVersion}">
         {include 'inc-favicon.latte'}
         <script>
-            var GA_UID = {$gauid};
+            {if $gauid}var GA_UID = {$gauid};{/if}{if $ga4}var GA4_STREAM = {$ga4};{/if}
             var TOKEN = {$token};
             var FEATURE_FLAGS = {$featureFlags};
             var API_BASE = {$applicationDir};{* comment out if API not used *}
             var APPLICATION_DIR_LANGUAGE = {$applicationDirLanguage};{* comment out if API not used *}
         </script>
         {* Google Analytics Autotrack *}
+        {if $gauid}
         <script n:syntax="off">
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -38,6 +39,17 @@
             ga('send', 'pageview');
         </script>
         <script async src="{$applicationDir}scripts/autotrack.2.4.1.js"></script>
+        {/if}
+        {* Google Analytics 4: Google tag (gtag.js) *}
+        {if $ga4}
+        <script async src="https://www.googletagmanager.com/gtag/js?id={$ga4}"></script>
+        <script n:syntax="off">
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', GA4_STREAM);
+        </script>
+        {/if}
         <script src='https://www.google.com/recaptcha/api.js?hl={$language == 'cn' ? 'ZH-CN' : $language}'></script>
     </head>
     <body class="view-{$ref}">

@@ -2,7 +2,7 @@
 
 /**
  * Config for the project
- * (Last MyCMS/dist revision: 2022-03-05, v0.4.6)
+ * (Last MyCMS/dist revision: 2022-08-21, v0.4.7+)
  *
  * EDIT ONLY AS PART OF GIT REPOSITORY
  * FOR LOCAL CHANGES USE config.local.php
@@ -184,7 +184,10 @@ $arrayOfConstants = [
     'EMAIL_ADMIN' => 'rejthar@gods.cz', // email used by Tracy\Debugger
     'FORCE_301' => true, // enforce 301 redirect to the most friendly URL available
     'FRIENDLY_URL' => false, // default = do not generate friendly URL
-    'GA_UID' => 'UA-39642385-1',
+    // Note for GA_UID: Universal Analytics will work only till 2023-06-30. Use GA4 instead.
+    // UA-237444308-1 is a mycms-dist default Universal Analytics account, pls change - may be empty
+    'GA_UID' => 'UA-237444308-1',
+    'GA4_STREAM' => 'G-01TJWFJ0ET', // G-01TJWFJ0ET is a mycms-dist default GA4 account, pls change - may be empty
     'HOME_TOKEN' => '', // If the web runs in the root of the domain, then the default token `PATHINFO_FILENAME`
     //is an empty string; if the web does not run in the root directory,
     //set its parent folder name (not the whole path) here.

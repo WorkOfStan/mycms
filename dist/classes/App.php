@@ -15,7 +15,7 @@ use WorkOfStan\mycmsprojectnamespace\Utils;
 
 /**
  * App class handles the request dispatching in index.php
- * (Last MyCMS/dist revision: 2022-07-17, v0.4.7)
+ * (Last MyCMS/dist revision: 2022-08-13, v0.4.7+)
  */
 class App extends MyCommon
 {
@@ -25,11 +25,7 @@ class App extends MyCommon
     protected $backyard;
     /** @var bool */
     protected $developmentEnvironment;
-    /**
-     * Feature flags that bubble down to latte and controller
-     *
-     * @var array<bool>
-     */
+    /** @var array<bool> Feature flags that bubble down to latte and controller */
     protected $featureFlags;
     /** @var mixed[] */
     protected $get;
@@ -173,7 +169,8 @@ class App extends MyCommon
                     'WEBSITE' => $this->MyCMS->WEBSITE,
                     'SETTINGS' => $this->MyCMS->SETTINGS,
                     'ref' => $this->MyCMS->template,
-                    'gauid' => GA_UID,
+                    'gauid' => GA_UID, // till 2023-06-30, then obsoleted by Google
+                    'ga4' => GA4_STREAM,
                     'token' => end($_SESSION['token']), // as $_SESSION['token'] updated in csrfStart()
                     'search' => Tools::setifnull($this->get['search'], ''),
                     'messages' => Tools::setifnull($this->session['messages'], []),
