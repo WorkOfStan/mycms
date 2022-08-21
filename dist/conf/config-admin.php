@@ -57,6 +57,7 @@ $AGENDAS = [
 $myCmsConfAdmin = [
     // a present get parameter toggles active tab - expected in admin.php
     // => template assignement (only first fits is taken into account)
+    // Note: admin tabs are visualised in Admin/inc-special-menu-links.latte
     'get2template' => [
         'divisions-products' => 'Admin/divisions-products',
         'pages' => 'Admin/pages',
@@ -64,15 +65,6 @@ $myCmsConfAdmin = [
         'translations' => 'Admin/translations',
         'urls' => 'Admin/urls',
     ],
-    // a present get parameter toggles active tab - expected in admin.php
-    // => Name to translate
-//    'tabs' => [
-//        'divisions-products' => 'Divisions and products',
-//        'pages' => 'Pages',
-//        'products' => 'Products',
-//        'translations' => 'Translations',
-//        'urls' => 'URL',
-//    ],
     // array<array<string>> tables and columns to search in admin
     // table => [id, field1 to be searched in, field2 to be searched in...]
     'searchColumns' => [

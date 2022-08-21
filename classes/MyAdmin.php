@@ -136,6 +136,9 @@ class MyAdmin extends MyCommon
         if (is_array($this->get2template)) {
             foreach ($this->get2template as $switch => $template) {
                 if (isset($this->get[$switch])) {
+                    if (!isset($this->renderParams['switches'])) {
+                        $this->renderParams['switches'] = [];
+                    }
                     Assert::isArray($this->renderParams['switches']);
                     $this->renderParams['switches'][] = $switch;
                     //$this->renderParams['pageTitle'] = $this->tableAdmin->translate($name);

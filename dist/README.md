@@ -53,11 +53,11 @@ script/autotrack.V.V.V.js and script/autotrack.V.V.V.js.map are manually taken f
 
 Create database with `Collation=utf8_general_ci` (create also separate testing database so that phinxlog migration_name doesn't overlap)
 
-Run `build.sh` to
+Run [build.sh](build.sh) to
 - create `phinx.yml` based on `phinx.dist.yml` including the name of the database (and testing database) created above
 - create `conf/config.local.php` based on `config.local.dist.php` including the phinx environment to be used and change any settings you like.
 
-Edit these two files; then run `build.sh` again (see below)
+Edit these two files; then run `build.sh` again (see [below](#buildsh-runs-the-following-commands))
 
 ### Deployment minutia
 `Under construction` mode may be turned on (for non admin IP adresses i.e. not in `$debugIpArray`) by adding
@@ -87,7 +87,7 @@ So that trusted IPs for debugging may be used.
 For this deployment scenarion only (because otherwise it would be a vulnerability) uncomment `isset($_SERVER['HTTP_CLIENT_IP']) ? in_array($_SERVER['HTTP_CLIENT_IP'], $debugIpArray) :` line in `index.php` and `api\*\index.php`.
 
 
-### `build.sh` runs the following commands
+### [build.sh](build.sh) runs the following commands
 1. `composer update -a --prefer-dist --no-progress` # to download just the necessary code
 2. Note: All changes in database (structure) SHOULD be made by phinx migrations. Create your local `phinx.yml` as a copy of `phinx.dist.yml` to make it work, where you set your database connection into *development* section.
 ```bash
@@ -336,7 +336,7 @@ That's how it works and how to set an API:
 - It is possible to combine api/noun constructs (conf/config) and api/noun/ folders (e.g. api/dummy - for this, there are exceptions in phpstan.neon.dist)
 - scripts/index.js: `let API_BASE_DIR = API_BASE + 'api/';` to which folder API calls are targeted
 - .htaccess contains API in `RewriteRule ^(de|en|zh)/(api|assets|favicon.ico|fonts|images|scripts|styles)(.*)$ $2$3 [L,QSA]` in order to use api/ even in e.g. de/ context (and not de/api/)
-- SET TEMPLATE FOR EACH API: conf/config.php $myCmsConf['templateAssignementParametricRules'][] = ['api/amount' => ['template' => 'apiAmount']; etc. sets in which template the API call should be terminated
+- SET TEMPLATE FOR EACH API: conf/config.php `$myCmsConf['templateAssignementParametricRules'][] = ['api/amount' => ['template' => 'apiAmount'];` etc. sets in which template the API call should be terminated
 - index.php $controller = new Controller($MyCMS, ['requestUri'] => preg_replace necessary for FriendlyURL feature: /api/item?id=14 => ?api-item&id=14
 - EACH API TEMPLATE MUST CREATE JSON FIELD: Controller::prepareTemplate creates ['context']['json'] as array to be returned as json by an API
 - index.php: if (array_key_exists('json', $MyCMS->context)) $MyCMS->renderJson
