@@ -5,14 +5,12 @@
 #disable temporary and log files and dirs
 log/*
 !/log/.htaccess
-/cache/
-.sass-cache/
+/.sass-cache/
 /.php_cs.cache
 /.php-cs-fixer.cache
 
 #disable private local files
 *.local.php
-env_config_private*.php
 
 #disable composer-managed libraries
 /vendor/
@@ -22,7 +20,7 @@ env_config_private*.php
 #disable IDE files
 /nbproject/private/
 /nbproject/
-/.idea
+/.idea/
 
 #disable db tools
 adminer*.php

@@ -36,7 +36,6 @@ class Admin extends MyAdmin
     {
         $this->clientSideResources['js'][] = 'scripts/Cookies.js';
         parent::__construct($MyCMS, $options);
-        //        \Tracy\Debugger::barDump($this->searchColumns, 'SC'); // debug 220522
     }
 
     /**
@@ -120,11 +119,9 @@ class Admin extends MyAdmin
                     isset($this->featureFlags['legacy_admin_methods_instead_of_admin_models']) &&
                     $this->featureFlags['legacy_admin_methods_instead_of_admin_models']
                 ) {
-//                    \Tracy\Debugger::barDump('legacy');
                     // legacy since 220620
                     $this->renderParams['htmlOutput'] = $this->projectSpecificSections(); // in the Admin
                 } else {
-//                    \Tracy\Debugger::barDump('NEW');
                     $adminModel = new TranslationsAdminModel(
                         $this->MyCMS->dbms,
                         $this->tableAdmin,

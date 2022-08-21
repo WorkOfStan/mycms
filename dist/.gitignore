@@ -7,7 +7,7 @@ log/*
 cache/*
 !/log/.htaccess
 !/cache/.htaccess
-.sass-cache/
+/.sass-cache/
 /.php_cs.cache
 /.php-cs-fixer.cache
 
@@ -26,7 +26,7 @@ cache/*
 #disable IDE files
 /nbproject/private/
 /nbproject/
-.idea
+/.idea/
 
 #disable db tools
 adminer*.php
