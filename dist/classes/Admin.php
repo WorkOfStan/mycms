@@ -228,7 +228,8 @@ class Admin extends MyAdmin
     protected function outputTableAfterEdit()
     {
         $output = '';
-        if (isset($this->get['where']['id']) && $this->get['where']['id']) { //existing record
+        if (is_array($this->get['where']) && isset($this->get['where']['id']) && $this->get['where']['id']) {
+            //existing record
             switch ($this->get['table']) {
                 case TAB_PREFIX . 'category':
                     // Display related products and content elements labeled by either name

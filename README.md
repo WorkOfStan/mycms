@@ -277,6 +277,7 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 * 200819: refactor FORCE_301, FRIENDLY_URL and REDIRECTOR_ENABLED to a variable, so that all scenarios can be PHPUnit tested
 * 200819: consider REQUEST_URI query vs \_GET - shouldn't just one source of truth be used?
 * 200921: for PHP/7.1.0+ version use protected for const in MyCommon, MyFriendlyUrl, MyAdminProcess.php
+* 230220: since phpstan/phpstan:1.7.0, PHPStan returns a lot of false positives, therefore the PHPStan version is limited to 1.6.9. Let's investigate and remove that restriction. (phpstan.sh, php-composer-phpunit.yml)
 
 ### TODO UI
 * 220716 Admin Translations and `Urls` module should have Tabs displayed by the Core (not the App)
