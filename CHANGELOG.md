@@ -61,7 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Deprecated
 - dist/rector.php (TODO consider using just string replace instead of the rector engine)
-- Admin UI in Latte mode doesn't use Admin::endAdmin(), Admin::getAdminCss(), Admin::outputAdmin(), Admin::outputBodyEnd(), Admin::outputFooter(), Admin::outputHead(), Admin::outputImageSelector(), Admin::outputNavigation(), Admin::outputSpecialMenuLinks(), Admin::outputSpecialSettingsLinks(), so before turning on the Admin Latte, move the custom code to the corresponding lattes
+- Admin UI in Latte mode doesn't use Admin::endAdmin(), `Admin::getAdminCss()`, Admin::outputAdmin(), Admin::outputBodyEnd(), Admin::outputFooter(), Admin::outputHead(), Admin::outputImageSelector(), Admin::outputNavigation(), Admin::outputSpecialMenuLinks(), Admin::outputSpecialSettingsLinks(), so before turning on the Admin Latte, move the custom code to the corresponding lattes
 
 ### Removed
 - attributes type and charset (as in `<script type="text/javascript" src="scripts/admin.js?v=1" charset="utf-8">`) are obsolete

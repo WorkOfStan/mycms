@@ -67,7 +67,7 @@ class Admin extends MyAdmin
 //            unset($this->get['table'], $this->get['media'], $this->get['user']); // security by design
             $this->get[] = []; // security by design
             $this->renderParams['htmlOutput'] = $this->outputLogin();
-            return; //harden auth security TODO explore security setting that no other conditions will be allowed if !user
+            return; //harden auth security TODO explore security that no other conditions will be allowed if !user
         }
 
         // TODO check whether unavailable for anonymous users!

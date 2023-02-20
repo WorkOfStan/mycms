@@ -1101,20 +1101,24 @@ class MyAdmin extends MyCommon
 //        }
         if (!Tools::nonzero($this->featureFlags['admin_latte_render'])) {
             // user not logged in - show a login form
-            if (!isset($_SESSION['user'])
+            if (
+                !isset($_SESSION['user'])
                 //|| is_null($_SESSION['user'])
-                ) {
+            ) {
                 $output .= $this->outputLogin();
-            } elseif // search results may be combined with table listing etc. below
-            ((isset($_SESSION['user'])
+            } elseif ( // search results may be combined with table listing etc. below
+                (isset($_SESSION['user'])
                 //&& !is_null($_SESSION['user'])
-                ) && Tools::set($this->get['search']) && is_scalar($this->get['search'])) {
+                ) && Tools::set($this->get['search']) && is_scalar($this->get['search'])
+            ) {
                 $output .= $this->outputSearchResults((string) $this->get['search']);
             }
-            if (isset($_SESSION['user'])
+            if (
+                isset($_SESSION['user'])
                 //&& !is_null($_SESSION['user'])
-                ) {
-                // table listing/editing - for unlogged reset in prepareAdmin() (not needed anymore as output only for logged-in users
+            ) {
+                // table listing/editing - for unlogged reset in prepareAdmin()
+                // (not needed anymore as output only for logged-in users)
                 if (isset($this->get['table']) && !empty($this->get['table'])) {
                     $output .= $this->outputTable();
                 } elseif (isset($this->get['media'])) { // media upload etc.
