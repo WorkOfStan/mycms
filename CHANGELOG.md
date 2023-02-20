@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Fixed` for any bugfixes
 - Exception rendering Admin Modules Division and products, Pages, Products, Translations, URL when 'admin_latte_render' => true
+- dist/Controller.php: added Assertion to fix Error: Property WorkOfStan\MyCMS\MyCMSMonoLingual::$context (array<array|int|string|false|null>) does not accept non-empty-array<mixed>. && Error: Parameter #2 $search of function array_key_exists expects array, mixed given.
 
 ### `Security` in case of vulnerabilities
 - Legacy (non admin_latte_render) admin UI block all administration pages if not logged-in

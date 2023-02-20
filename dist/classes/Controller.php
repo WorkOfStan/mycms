@@ -137,6 +137,7 @@ class Controller extends MyController
                     true
                 ); //decodes json so that article context may be used within template
                 $this->MyCMS->context['pageTitle'] = $this->MyCMS->context['content']['title'];
+                Assert::isArray($this->MyCMS->context['content']['context']);
                 $this->MyCMS->context['content']['image'] = array_key_exists(
                     'image',
                     $this->MyCMS->context['content']['context']
