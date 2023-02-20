@@ -44,7 +44,22 @@ jobs:
           # fixes Error: Could not authenticate against github.com
           COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Database tests should fire up only if phinx.dist.yml is present
+      - name: Check database config file existence
+        id: check_files_database
+        uses: andstor/file-existence-action@v2
+        with:
+          files: "phinx.dist.yml"
+
+      # PHPUnit tests should fire up only if conf/phpunit-github.xml is present
+      - name: Check PHPUnit config file existence
+        id: check_files_phpunit
+        uses: andstor/file-existence-action@v2
+        with:
+          files: "./conf/phpunit-github.xml"
+
       - name: "MySQL db ${{ env.DB_DATABASE }}"
+        if: steps.check_files_database.outputs.files_exists == 'true'
         run: |
           sudo /etc/init.d/mysql start
           mysql -V
@@ -75,15 +90,16 @@ jobs:
         if: ${{ steps.vendor-cache.outputs.cache-hit != 'true' }}
         run: composer update --no-dev --prefer-dist --no-progress
 
+      # to fix `Constant DB_USERNAME not found.` etc not only for phpstan but also for phpunit tests
       - name: Copy local config files
-        run: |
-          # to fix `Constant DB_USERNAME not found.` etc not only for phpstan but also for phpunit tests
-          cp -p conf/config.local.dist.php conf/config.local.php
-          # local testing database settings
-          cp -p phinx.dist.yml phinx.yml
+        run: cp -p conf/config.local.dist.php conf/config.local.php
+
+      - name: Copy local testing database settings
+        if: steps.check_files_database.outputs.files_exists == 'true'
+        run: cp -p phinx.dist.yml phinx.yml
 
       - name: Phinx migration - migrate
-        if: ${{ matrix.php-version >= '7.1' }} #PHP/5.6 has auth problem with MySQL/8
+        if: ${{ matrix.php-version >= '7.1' && steps.check_files_database.outputs.files_exists == 'true' }} #PHP/5.6 has auth problem with MySQL/8
         run: "./vendor/bin/phinx migrate -e testing"
 
       - name: Install dependencies
@@ -92,9 +108,9 @@ jobs:
 
       # PHPunit is installed anyway, so it doesn't make sense to use tools: phpunit
       # Note `sudo /etc/init.d/apache2 start` uses `/etc/apache2/sites-enabled/000-default.conf` where DocumentRoot = `/var/www/html` but without PHP
-      # Note: if there are tests without need of MySQL, prepare another PHPUnit config file
+      # Note: if there are tests without need of MySQL, adapt PHPUnit config file conf/phpunit-github.xml accordingly (perhaps without PHP ^7.1 condition)
       - name: "PHPUnit tests with MySQL"
-        if: ${{ matrix.php-version >= '7.1' }}
+        if: ${{ matrix.php-version >= '7.1' && steps.check_files_phpunit.outputs.files_exists == 'true' }}
         run: ./vendor/bin/phpunit -c ./conf/phpunit-github.xml
 
       # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
@@ -103,7 +119,7 @@ jobs:
       # - name: Run test suite
       #   run: composer run-script test
 
-      # PHPStan works for PHP/7.1+ so it can't even be in composer.json
+      # PHPStan works for PHP/7.1+ so it can't even be in composer.json (as ^5.6|^7.0 is supported)
       - name: "Composer phpstan-webmozart-assert"
         if: ${{ matrix.php-version >= '7.1' && steps.vendor-cache.outputs.cache-hit != 'true' }}
         run: |

@@ -16,7 +16,11 @@ composer install -a --prefer-dist --no-progress
 #composer require --dev rector/rector --prefer-dist --no-progress
 
 section_title "* require --dev phpstan"
-composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress --with-all-dependencies
+# the next line can't be used because since phpstan/phpstan:1.7.0, PHPStan returns a lot of false positives
+#composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress --with-all-dependencies
+# until the issue is solved, let's limit PHPStan version
+composer require --dev phpstan/phpstan:1.6.9 --prefer-dist --no-progress --with-all-dependencies
+composer require --dev phpstan/phpstan-webmozart-assert:1.1.2 --prefer-dist --no-progress --with-all-dependencies
 
 section_title "* phpunit"
 vendor/bin/phpunit

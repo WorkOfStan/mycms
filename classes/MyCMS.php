@@ -9,8 +9,8 @@ use WorkOfStan\MyCMS\L10n;
  * It holds all variables needed for the used project.
  * Among others, it translates multilingual texts.
  *
- * For a new project it is expected to make a extended class and place
- * additional attributes needed for running, then use that class.
+ * For a new project it is expected to make an extended class and place
+ * there the additional attributes needed for running, then use that class.
  *
  * required constants: DEFAULT_LANGUAGE
  */

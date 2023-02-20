@@ -81,7 +81,7 @@ Element overview:
 - default: Media+User+Settings MyAdmin::outputNavigation
 
 ### Search
-- Admin class variable `$searchColumns` defines an array in format database_table => [id, list of fields to be searched in], e.g.
+- Admin class variable `$searchColumns` defines an array in format database_table => [`id`, list of fields to be searched in], e.g.
 ```php
     protected $searchColumns = [
         'product' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
@@ -113,7 +113,7 @@ Element overview:
 Columns of tables displayed in admin can use various features set in the comment:
 | comment | feature                               |
 |---------|---------------------------------------|
-| {"display":"html"} | HTML editor Summernote |
+| `{"display":"html"}` | HTML editor Summernote |
 | {"display":"layout-row"} | ?? |
 | {"display":"option"} | Existing values are offered in select box |
 | {"display":"option","display-own":1} | ... and an input box for adding previously unused values |
@@ -153,7 +153,7 @@ In `class/Admin.php` you can redefine the `clientSideResources` variable with re
 ```
 
 `admin.css` may be inherited to a child project, however as vendor folder SHOULD have denied access from browser,
-the content of that standard `admin.css` MUST be available through method MyAdmin::getAdminCss.
+the content of that standard `admin.css` MUST be available through method `MyAdmin::getAdminCss`.
 
 ## Testing
 
@@ -277,6 +277,7 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 * 200819: refactor FORCE_301, FRIENDLY_URL and REDIRECTOR_ENABLED to a variable, so that all scenarios can be PHPUnit tested
 * 200819: consider REQUEST_URI query vs \_GET - shouldn't just one source of truth be used?
 * 200921: for PHP/7.1.0+ version use protected for const in MyCommon, MyFriendlyUrl, MyAdminProcess.php
+* 230220: since phpstan/phpstan:1.7.0, PHPStan returns a lot of false positives, therefore the PHPStan version is limited to 1.6.9. Let's investigate and remove that restriction. (phpstan.sh, php-composer-phpunit.yml)
 
 ### TODO UI
 * 220716 Admin Translations and `Urls` module should have Tabs displayed by the Core (not the App)
