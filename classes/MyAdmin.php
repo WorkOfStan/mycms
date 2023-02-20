@@ -1107,8 +1107,9 @@ class MyAdmin extends MyCommon
             ) {
                 $output .= $this->outputLogin();
             } elseif ( // search results may be combined with table listing etc. below
-                (isset($_SESSION['user'])
-                //&& !is_null($_SESSION['user'])
+                (
+                    isset($_SESSION['user'])
+                    //&& !is_null($_SESSION['user'])
                 ) && Tools::set($this->get['search']) && is_scalar($this->get['search'])
             ) {
                 $output .= $this->outputSearchResults((string) $this->get['search']);
