@@ -60,7 +60,15 @@ class Admin extends MyAdmin
         }
 
         // changes of inherited Lattes MUST be done before invoking the parent::controller();
-        parent::controller();
+        parent::controller(); // selects $this->template according to $myCmsConfAdmin['get2template']
+        if (!isset($_SESSION['user'])) { // todo explore if it is sufficient for auth - consider (bool) $this->authUser
+            //$this->template = 'admin-login'; //ready
+            //todo MOVE THIS to parent
+//            unset($this->get['table'], $this->get['media'], $this->get['user']); // security by design
+            $this->get[] = []; // security by design
+            $this->renderParams['htmlOutput'] = $this->outputLogin();
+            return; //harden auth security TODO explore security setting that no other conditions will be allowed if !user
+        }
 
         // TODO check whether unavailable for anonymous users!
         switch ($this->template) {

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GA4 Analytics as a new alternative for soon to be obsoleted (2023-07-01) Google Universal Analytics. Empty GA_UID or GA4_STREAM will result in not using the respective JavaScript code.
 
 ### `Changed` for changes in existing functionality
+- Database tests should fire up only if phinx.dist.yml is present
+- PHPUnit tests should fire up only if conf/phpunit-github.xml is present
 
 ### `Deprecated` for soon-to-be removed features
 
@@ -18,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Exception rendering Admin Modules Division and products, Pages, Products, Translations, URL when 'admin_latte_render' => true
 
 ### `Security` in case of vulnerabilities
+- Legacy (non admin_latte_render) admin UI block all administration pages if not logged-in
 
 ## [0.4.7] - 2022-07-17
 - fix filtering and sorting of tables in Admin UI

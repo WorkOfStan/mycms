@@ -81,7 +81,7 @@ Element overview:
 - default: Media+User+Settings MyAdmin::outputNavigation
 
 ### Search
-- Admin class variable `$searchColumns` defines an array in format database_table => [id, list of fields to be searched in], e.g.
+- Admin class variable `$searchColumns` defines an array in format database_table => [`id`, list of fields to be searched in], e.g.
 ```php
     protected $searchColumns = [
         'product' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
@@ -113,7 +113,7 @@ Element overview:
 Columns of tables displayed in admin can use various features set in the comment:
 | comment | feature                               |
 |---------|---------------------------------------|
-| {"display":"html"} | HTML editor Summernote |
+| `{"display":"html"}` | HTML editor Summernote |
 | {"display":"layout-row"} | ?? |
 | {"display":"option"} | Existing values are offered in select box |
 | {"display":"option","display-own":1} | ... and an input box for adding previously unused values |
@@ -153,7 +153,7 @@ In `class/Admin.php` you can redefine the `clientSideResources` variable with re
 ```
 
 `admin.css` may be inherited to a child project, however as vendor folder SHOULD have denied access from browser,
-the content of that standard `admin.css` MUST be available through method MyAdmin::getAdminCss.
+the content of that standard `admin.css` MUST be available through method `MyAdmin::getAdminCss`.
 
 ## Testing
 

@@ -427,7 +427,7 @@ $('form[name="form-lorem"] [type=button]').on('click', function () {
 - add this data collection as agenda to admin.php
 
 3) Controller
-- config.php $myCmsConf['templateAssignementParametricRules']['api/lorem'] => ['template' => 'apiLorem'],
+- config.php `$myCmsConf['templateAssignementParametricRules']['api/lorem'] => ['template' => 'apiLorem'],`
 - FriendlyUrl.php::switchParametric `case 'api-lorem': return null;` // TODO (bodylog): is case 'api-lorem' really necessary? or not? explore and explain.
 - Controller.php
 ```php
