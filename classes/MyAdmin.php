@@ -124,11 +124,11 @@ class MyAdmin extends MyCommon
         $this->renderParams['pageTitle'] = ''; // the default empty value
         $this->template = 'Admin/admin-ui';
         // user not logged in - show a login form
-        if (!isset($_SESSION['user'])) { // todo explore if it is sufficient for auth - consider (bool) $this->authUser
+        if (!isset($_SESSION['user'])) { // is sufficient for domain wide login, consider more robust solution
             //$this->template = 'admin-login'; //ready
             unset($this->get['table'], $this->get['media'], $this->get['user']); // security by design
             $this->renderParams['htmlOutput'] = $this->outputLogin();
-            return; //harden auth security TODO explore security setting that no other conditions will be allowed if !user
+            return; //harden auth security - only Admin/admin-ui template allowed TODO: Admin/admin-login template
         }
         // Select a project specific tab to be highlighted
         // PHPSTan: `Property WorkOfStan\MyCMS\MyAdmin::$get2template (array<string>) in
@@ -1101,30 +1101,38 @@ class MyAdmin extends MyCommon
 //        }
         if (!Tools::nonzero($this->featureFlags['admin_latte_render'])) {
             // user not logged in - show a login form
-            if (!isset($_SESSION['user'])) {
+            if (
+                !isset($_SESSION['user'])
+                //|| is_null($_SESSION['user'])
+            ) {
                 $output .= $this->outputLogin();
-            } elseif // search results may be combined with table listing etc. below
-            (isset($_SESSION['user']) && Tools::set($this->get['search']) && is_scalar($this->get['search'])) {
+            // search results may be combined with table listing etc. below
+            } elseif (isset($_SESSION['user']) && Tools::set($this->get['search']) && is_scalar($this->get['search'])) {
                 $output .= $this->outputSearchResults((string) $this->get['search']);
             }
-            // table listing/editing - for unlogged reset in prepareAdmin()
-            if (isset($this->get['table']) && !empty($this->get['table'])) {
-                $output .= $this->outputTable();
-            } elseif (isset($this->get['media'])) { // media upload etc.
-                $output .= $this->outputMedia();
-            } elseif (isset($this->get['user'])) { // user operations (logout, change password, create user, delete user)
-                $output .= $this->outputUser();
-            } elseif ($this->projectSpecificSectionsCondition()) { // project-specific admin sections
-                $output .= $this->projectSpecificSections();
-                //} else {
-                // no agenda selected, showing "dashboard"
-            }
-            if (isset($_SESSION['user'])) {
+            if (
+                isset($_SESSION['user'])
+                //&& !is_null($_SESSION['user'])
+            ) {
+                // table listing/editing - for unlogged reset in prepareAdmin()
+                // (not needed anymore as output only for logged-in users)
+                if (isset($this->get['table']) && !empty($this->get['table'])) {
+                    $output .= $this->outputTable();
+                } elseif (isset($this->get['media'])) { // media upload etc.
+                    $output .= $this->outputMedia();
+                } elseif (isset($this->get['user'])) {
+                    // user operations (logout, change password, create user, delete user)
+                    $output .= $this->outputUser();
+                } elseif ($this->projectSpecificSectionsCondition()) { // project-specific admin sections
+                    $output .= $this->projectSpecificSections();
+                    //} else {
+                    // no agenda selected, showing "dashboard"
+                }
                 $output .= $this->outputDashboard();
             }
             $output .= '</main></div>' . PHP_EOL;
             $output .= $this->outputFooter();
-            if (isset($_SESSION['user'])) {
+            if (isset($_SESSION['user']) && !is_null($_SESSION['user'])) {
                 $output .= $this->outputImageSelector();
             }
             $output .= $this->outputBodyEnd();

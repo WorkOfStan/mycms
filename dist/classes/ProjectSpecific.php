@@ -28,6 +28,7 @@ class ProjectSpecific extends ProjectCommon
      *     (or its first column if only one column is selected),
      *     null on empty SELECT, or false on error
      * @return array<array<string>> search result
+     * @throws Exception
      */
     public function searchResults($text, $offset = 0, $limit = 10, &$totalRows = null)
     {

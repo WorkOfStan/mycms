@@ -32,7 +32,7 @@ class Utils
         Assert::numeric($boldWhenHigherThan);
         Assert::isArray($ary);
         Assert::string($delimiter);
-        $result = "<ol>" . PHP_EOL;
+        $result = '<ol>' . PHP_EOL;
         foreach ($ary as $k => $v) {
             if (is_object($v)) {
                 $k = $k . ' <i>(object ' . get_class($v) . ')</i>';
@@ -46,11 +46,11 @@ class Utils
                 $showKey
             ) : (is_scalar($v) ? (
                 ((int) $v > $boldWhenHigherThan) ? "<b>{$v}</b>" : $v
-                ) : ("cannot display type: " . gettype($v))
+                ) : ('cannot display type: ' . gettype($v))
             );
-            $result .= "<br/>" . PHP_EOL;
+            $result .= '<br/>' . PHP_EOL;
         }
-        return $result . "</ol>" . PHP_EOL;
+        return $result . '</ol>' . PHP_EOL;
     }
 
     /**

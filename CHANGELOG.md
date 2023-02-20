@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GA4 Analytics as a new alternative for soon to be obsoleted (2023-07-01) Google Universal Analytics. Empty GA_UID or GA4_STREAM will result in not using the respective JavaScript code.
 
 ### `Changed` for changes in existing functionality
+- Database tests should fire up only if phinx.dist.yml is present
+- PHPUnit tests should fire up only if conf/phpunit-github.xml is present
 
 ### `Deprecated` for soon-to-be removed features
 
@@ -16,8 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Fixed` for any bugfixes
 - Exception rendering Admin Modules Division and products, Pages, Products, Translations, URL when 'admin_latte_render' => true
+- dist/Controller.php: added Assertion to fix Error: Property WorkOfStan\MyCMS\MyCMSMonoLingual::$context (array<array|int|string|false|null>) does not accept non-empty-array<mixed>. && Error: Parameter #2 $search of function array_key_exists expects array, mixed given.
 
 ### `Security` in case of vulnerabilities
+- Legacy (non admin_latte_render) admin UI block all administration pages if not logged-in
 
 ## [0.4.7] - 2022-07-17
 - fix filtering and sorting of tables in Admin UI
@@ -57,7 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Deprecated
 - dist/rector.php (TODO consider using just string replace instead of the rector engine)
-- Admin UI in Latte mode doesn't use Admin::endAdmin(), Admin::getAdminCss(), Admin::outputAdmin(), Admin::outputBodyEnd(), Admin::outputFooter(), Admin::outputHead(), Admin::outputImageSelector(), Admin::outputNavigation(), Admin::outputSpecialMenuLinks(), Admin::outputSpecialSettingsLinks(), so before turning on the Admin Latte, move the custom code to the corresponding lattes
+- Admin UI in Latte mode doesn't use Admin::endAdmin(), `Admin::getAdminCss()`, Admin::outputAdmin(), Admin::outputBodyEnd(), Admin::outputFooter(), Admin::outputHead(), Admin::outputImageSelector(), Admin::outputNavigation(), Admin::outputSpecialMenuLinks(), Admin::outputSpecialSettingsLinks(), so before turning on the Admin Latte, move the custom code to the corresponding lattes
 
 ### Removed
 - attributes type and charset (as in `<script type="text/javascript" src="scripts/admin.js?v=1" charset="utf-8">`) are obsolete
