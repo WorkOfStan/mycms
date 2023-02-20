@@ -99,7 +99,7 @@ jobs:
         run: cp -p phinx.dist.yml phinx.yml
 
       - name: Phinx migration - migrate
-        if: ${{ matrix.php-version >= '7.1' && if: steps.check_files_database.outputs.files_exists == 'true' }} #PHP/5.6 has auth problem with MySQL/8
+        if: ${{ matrix.php-version >= '7.1' && steps.check_files_database.outputs.files_exists == 'true' }} #PHP/5.6 has auth problem with MySQL/8
         run: "./vendor/bin/phinx migrate -e testing"
 
       - name: Install dependencies
