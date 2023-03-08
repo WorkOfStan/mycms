@@ -383,6 +383,25 @@ class LogMysqli extends BackyardMysqli
     }
 
     /**
+     *
+     * @param array<mixed> $arr
+     * @return array<array<array<string|null>|string|null>|string>
+     */
+    private function AssertArrayOfStringArrayNull (array $arr)
+    {
+        $output = [];
+        foreach ($arr as $k => $v) {
+            if(is_array($v)) {
+                $this->AssertArrayOfStringArrayNull($v);
+                $output[$k] = $v;
+            }
+            Assert::nullOrString($v);
+            $output[$k] = $v;
+        }
+        return $output;
+    }
+
+    /**
      * Execute an SQL, fetch resultset into an array reindexed by first field.
      * If the query selects only two fields, the first one is a key and the second one a value of the result array
      * Example: 'SELECT id,name FROM employees' --> [3=>"John", 4=>"Mary", 5=>"Joe"]
@@ -410,12 +429,14 @@ class LogMysqli extends BackyardMysqli
             $value = count($row) == 2 ? next($row) : $row;
             if (count($row) > 2) {
                 if (!is_array($value)) {
+                    // show SQL bar panel in case of error
                     $this->showSqlBarPanel();
                 }
                 Assert::isArray($value);
                 array_shift($value);
             }
             if (isset($result[$key])) {
+                Assert::isArray($result[$key]);
                 if (is_array($value)) {
                     if (!is_array(reset($result[$key]))) {
                         $result[$key] = [$result[$key]];
@@ -423,12 +444,13 @@ class LogMysqli extends BackyardMysqli
                     $result[$key] [] = $value;
                 } else {
                     $result[$key] = array_merge((array) $result[$key], (array) $value);
-                }
+                    }
             } else {
                 $result[$key] = $value;
             }
         }
-        return $result;
+        return $this->AssertArrayOfStringArrayNull($result);
+//        return $result;
     }
 
     /**

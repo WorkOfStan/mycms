@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Changed` for changes in existing functionality
 - Database tests should fire up only if phinx.dist.yml is present
 - PHPUnit tests should fire up only if conf/phpunit-github.xml is present
+- solve stricter analysis by assertion and type definition
 
 ### `Deprecated` for soon-to-be removed features
 

@@ -110,7 +110,7 @@ function mb_eregi_replace($pattern, $replacement, $string, $options = null)
  * @param string $pattern
  * @param string $subject
  * @param string[] $matches
- * @param int $flags
+ * @param 0|256|512|768 $flags
  * @param int $offset
  * @return int
  */
