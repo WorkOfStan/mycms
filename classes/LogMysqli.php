@@ -432,7 +432,7 @@ class LogMysqli extends BackyardMysqli
                     $result[$key] [] = $value;
                 } else {
                     $result[$key] = array_merge((array) $result[$key], (array) $value);
-                    }
+                }
             } else {
                 $result[$key] = $value;
             }
