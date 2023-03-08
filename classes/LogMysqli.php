@@ -383,25 +383,6 @@ class LogMysqli extends BackyardMysqli
     }
 
     /**
-     *
-     * @param array<mixed> $arr
-     * @return array<array<array<string|null>|string|null>|string>
-     */
-    private function AssertArrayOfStringArrayNull (array $arr)
-    {
-        $output = [];
-        foreach ($arr as $k => $v) {
-            if(is_array($v)) {
-                $this->AssertArrayOfStringArrayNull($v);
-                $output[$k] = $v;
-            }
-            Assert::nullOrString($v);
-            $output[$k] = $v;
-        }
-        return $output;
-    }
-
-    /**
      * Execute an SQL, fetch resultset into an array reindexed by first field.
      * If the query selects only two fields, the first one is a key and the second one a value of the result array
      * Example: 'SELECT id,name FROM employees' --> [3=>"John", 4=>"Mary", 5=>"Joe"]
@@ -413,9 +394,16 @@ class LogMysqli extends BackyardMysqli
      *     [1=>[[name=>'John',surname=>'Doe'], [name=>'Mary',surname=>'Saint']], 2=>[...]]
      *
      * @param string $sql SQL statement to be executed
-     * @return array<array<string|null|array<string|null>>|string>|false
+     * @return array<mixed>|false
      *   Result is either associative array, empty array on empty SELECT, or false on error
      *   Error for this function is also an SQL statement that returns true.
+     *
+     * Note: as fetch_assoc claims to an associative array of strings representing the fetched row in the result set
+     * but PHPStan doesn't reflect this, the @return statement is vastly simplified to fix this error:
+     * Method WorkOfStan\MyCMS\LogMysqli::fetchAndReindex()
+     * should return array<array<array<string|null>|string|null>|string>|false
+     * but returns array<string, array<int|string, array<int|string, array<int|string,
+     *   array<string, string>|string|false>|string|false>|string|false>|string|false>.
      */
     public function fetchAndReindex($sql)
     {
@@ -449,8 +437,7 @@ class LogMysqli extends BackyardMysqli
                 $result[$key] = $value;
             }
         }
-        return $this->AssertArrayOfStringArrayNull($result);
-//        return $result;
+        return $result;
     }
 
     /**
