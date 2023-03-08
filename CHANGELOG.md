@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Deprecated` for soon-to-be removed features
 
 ### `Removed` for now removed features
+- dist/rector.php (use just string replace instead of the rector engine)
 
 ### `Fixed` for any bugfixes
 - Exception rendering Admin Modules Division and products, Pages, Products, Translations, URL when 'admin_latte_render' => true

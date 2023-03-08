@@ -42,7 +42,8 @@ jobs:
         with:
           php-version: "${{ matrix.php-version }}"
           # phpstan:1.6.9 used since phpstan/phpstan:1.7.0, PHPStan returns a lot of false positives. TODO fix.
-          tools: composer:v2, phpstan:1.6.9
+          tools: composer:v2, phpstan
+          #:1.6.9
           # Note: phpstan call fails for PHP<7.1
         env:
           # fixes Error: Could not authenticate against github.com
