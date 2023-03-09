@@ -262,7 +262,7 @@ class Admin extends MyAdmin
                                  * @ IGNORE phpstan-ignore-next-line until nullOrString is accepted to allow also null
                                  * Call to function is_null() with string will always evaluate to false.
                                  */
-                                if (is_null($value)) {
+                                if (empty($value)) { // covers both null and ''
                                     // if the product or content piece doesn't have a label in admin language
                                     $value = $this->tableAdmin->translate('Name not set');
                                 }
