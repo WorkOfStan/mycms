@@ -26,8 +26,3 @@ parameters:
         message: "#^Right side of || is always false.$#"
         count: 3
         path: ../classes/MyTableLister.php
-#      -
-#        message: "#^Ternary operator condition is always false.$#"
-#        count: 2
-#        path: ../classes/MyTableLister.php
-

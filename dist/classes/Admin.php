@@ -258,10 +258,6 @@ class Admin extends MyAdmin
                                 . ' <span class="badge badge-secondary">' . count($tmp) . '</span></summary>';
                             foreach ($tmp as $key => $value) {
                                 Assert::nullOrString($value);
-                                /**
-                                 * @ IGNORE phpstan-ignore-next-line until nullOrString is accepted to allow also null
-                                 * Call to function is_null() with string will always evaluate to false.
-                                 */
                                 if (empty($value)) { // covers both null and ''
                                     // if the product or content piece doesn't have a label in admin language
                                     $value = $this->tableAdmin->translate('Name not set');
