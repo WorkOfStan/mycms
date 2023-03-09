@@ -259,7 +259,7 @@ class Admin extends MyAdmin
                             foreach ($tmp as $key => $value) {
                                 Assert::nullOrString($value);
                                 /**
-                                 * @phpstan-ignore-next-line until nullOrString is accepted to allow also null
+                                 * @ IGNORE phpstan-ignore-next-line until nullOrString is accepted to allow also null
                                  * Call to function is_null() with string will always evaluate to false.
                                  */
                                 if (is_null($value)) {
