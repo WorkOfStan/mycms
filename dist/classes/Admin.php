@@ -258,6 +258,10 @@ class Admin extends MyAdmin
                                 . ' <span class="badge badge-secondary">' . count($tmp) . '</span></summary>';
                             foreach ($tmp as $key => $value) {
                                 Assert::nullOrString($value);
+                                if (is_null($value)) {
+                                    // if the product or content piece doesn't have a label in admin language
+                                    $value = $this->tableAdmin->translate('Name not set');
+                                }
                                 $output .= '<a href="?table=' . TAB_PREFIX . $i . '&amp;where[id]=' . $key
                                     . '" target="_blank" title="'
                                     . $this->tableAdmin->translate('Link will open in a new window') . '">'
