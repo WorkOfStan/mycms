@@ -1,4 +1,4 @@
-# (Last MyCMS/dist revision: 2023-03-08, v0.4.8)
+# (Last MyCMS/dist revision: 2023-03-09, v0.4.8)
 
 parameters:
     level: 9
@@ -45,29 +45,12 @@ parameters:
     scanDirectories:
       - ../classes
     ignoreErrors:
-      # TODO ALPHABETICALLY ORDER
-      # Compensate for PHPUnit where $_POST may not be defined
       -
         message: '#Result of && is always true.#'
         path: ../admin.php
       -
-        message: '#Variable \$_POST in isset\(\) always exists and is not nullable#'
-        path: ../admin.php
-      -
-        message: '#Undefined variable: \$myCmsConf#'
-        path: ../db/migrations/*.php
-      -
         message: '#Variable \$AGENDAS might not be defined.#'
         path: ../admin.php
-      -
-        message: '#Variable \$debugIpArray might not be defined.#'
-        path: ../index.php
-      -
-        message: '#Variable \$developmentEnvironment might not be defined.#'
-        path: ../index.php
-      -
-        message: '#Variable \$featureFlags might not be defined.#'
-        path: ../index.php
       -
         message: '#Variable \$MyCMS might not be defined.#'
         paths:
@@ -81,6 +64,21 @@ parameters:
       -
         message: '#Variable \$myCmsConfAdmin might not be defined.#'
         path: ../admin.php
+      -
+        message: '#Variable \$_POST in isset\(\) always exists and is not nullable#'
+        path: ../admin.php
+      -
+        message: '#Undefined variable: \$myCmsConf#'
+        path: ../db/migrations/*.php
+      -
+        message: '#Variable \$debugIpArray might not be defined.#'
+        path: ../index.php
+      -
+        message: '#Variable \$developmentEnvironment might not be defined.#'
+        path: ../index.php
+      -
+        message: '#Variable \$featureFlags might not be defined.#'
+        path: ../index.php
       -
         message: '#Variable \$WEBSITE might not be defined.#'
         path: ../index.php
