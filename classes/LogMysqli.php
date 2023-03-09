@@ -394,9 +394,16 @@ class LogMysqli extends BackyardMysqli
      *     [1=>[[name=>'John',surname=>'Doe'], [name=>'Mary',surname=>'Saint']], 2=>[...]]
      *
      * @param string $sql SQL statement to be executed
-     * @return array<array<string|null|array<string|null>>|string>|false
+     * @return array<mixed>|false
      *   Result is either associative array, empty array on empty SELECT, or false on error
      *   Error for this function is also an SQL statement that returns true.
+     *
+     * Note: as fetch_assoc claims to an associative array of strings representing the fetched row in the result set
+     * but PHPStan doesn't reflect this, the @return statement is vastly simplified to fix this error:
+     * Method WorkOfStan\MyCMS\LogMysqli::fetchAndReindex()
+     * should return array<array<array<string|null>|string|null>|string>|false
+     * but returns array<string, array<int|string, array<int|string, array<int|string,
+     *   array<string, string>|string|false>|string|false>|string|false>|string|false>.
      */
     public function fetchAndReindex($sql)
     {
@@ -410,12 +417,14 @@ class LogMysqli extends BackyardMysqli
             $value = count($row) == 2 ? next($row) : $row;
             if (count($row) > 2) {
                 if (!is_array($value)) {
+                    // show SQL bar panel in case of error
                     $this->showSqlBarPanel();
                 }
                 Assert::isArray($value);
                 array_shift($value);
             }
             if (isset($result[$key])) {
+                Assert::isArray($result[$key]);
                 if (is_array($value)) {
                     if (!is_array(reset($result[$key]))) {
                         $result[$key] = [$result[$key]];

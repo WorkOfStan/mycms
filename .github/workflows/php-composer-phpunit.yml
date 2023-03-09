@@ -22,7 +22,7 @@ jobs:
         operating-system:
           - "ubuntu-latest"
         php-version: ['5.6', '7.0', '7.2', '7.3', '7.4']
-        # 7.1 is not checked, as due to https://bugs.php.net/bug.php?id=73803        
+        # 7.1 is not checked, as due to https://bugs.php.net/bug.php?id=73803
         # ZipArchive class has public properties, that are not visible via reflection.
         # Therefore using tools like PHPStan generates error: Access to an undefined property ZipArchive::$numFiles. in class\MyAdminProcess
 
@@ -41,8 +41,7 @@ jobs:
         uses: "shivammathur/setup-php@v2"
         with:
           php-version: "${{ matrix.php-version }}"
-          # phpstan:1.6.9 used since phpstan/phpstan:1.7.0, PHPStan returns a lot of false positives. TODO fix.
-          tools: composer:v2, phpstan:1.6.9
+          tools: composer:v2, phpstan
           # Note: phpstan call fails for PHP<7.1
         env:
           # fixes Error: Could not authenticate against github.com

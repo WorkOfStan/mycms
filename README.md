@@ -23,7 +23,7 @@ Apache modules `mod_alias` (for hiding non-public files) and `mod_rewrite` (for 
 
 Once [composer](https://getcomposer.org/) is installed, execute the following command in your project root to install this library:
 ```sh
-composer require workofstan/mycms:^0.4.7
+composer require workofstan/mycms:^0.4.8
 ```
 Most of library's classes use prefix `My`.
 To develop your project, create your own classes as children inheriting MyCMS' classes in the `./classes/` directory and name them without the initial `My` in its name.  
@@ -178,7 +178,7 @@ The reused workflow may be referenced by a branch, tag or commit and doesn't sup
 ```sh
     # Working examples
     uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@main # ok, but all encompassing
-    uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@v0.4.7 # it works
+    uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@v0.4.8 # it works
 
     # Failing examples
     uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@v0.4
@@ -277,7 +277,6 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 * 200819: refactor FORCE_301, FRIENDLY_URL and REDIRECTOR_ENABLED to a variable, so that all scenarios can be PHPUnit tested
 * 200819: consider REQUEST_URI query vs \_GET - shouldn't just one source of truth be used?
 * 200921: for PHP/7.1.0+ version use protected for const in MyCommon, MyFriendlyUrl, MyAdminProcess.php
-* 230220: since phpstan/phpstan:1.7.0, PHPStan returns a lot of false positives, therefore the PHPStan version is limited to 1.6.9. Let's investigate and remove that restriction. (phpstan.sh, php-composer-phpunit.yml)
 
 ### TODO UI
 * 220716 Admin Translations and `Urls` module should have Tabs displayed by the Core (not the App)

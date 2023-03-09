@@ -77,6 +77,7 @@ Media: Média
 'Missing translations in templates': 'Překlady chybějící v latte šablonách'
 modified: změněno
 name: jméno
+'Name not set': 'Jméno nenastaveno'
 'New password': 'Nové heslo'
 'New record': 'Nový záznam'
 'New row': 'Nová řádka'

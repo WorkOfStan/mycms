@@ -735,6 +735,9 @@ class MyAdminProcess extends MyCommon
         Assert::string($post['old-password']);
         Assert::isArray($row);
         Assert::string($row['salt']);
+        /**
+         * @phpstan-ignore-next-line Left side of && is always true. TODO make the condition more transparent
+         */
         if ($row && $row['active'] === '1' && $row['password_hashed'] == sha1($post['old-password'] . $row['salt'])) {
             Assert::string($post['new-password']);
             $result = $this->MyCMS->dbms->query(

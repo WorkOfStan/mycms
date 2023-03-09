@@ -1,7 +1,4 @@
-# (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
-includes:
-      # Ignore errors in rector.php when rector/rector is not installed
-      - phpstan.rector.neon
+# (Last MyCMS/dist revision: 2023-03-09, v0.4.8)
 
 parameters:
     level: 9
@@ -48,43 +45,12 @@ parameters:
     scanDirectories:
       - ../classes
     ignoreErrors:
-      # TODO ALPHABETICALLY ORDER
-      # The exceptions concerning always false/true compensate for environment dependent variables.
-      #-
-      #  message: '#Right side of && is always false.#'
-      #  path: ../Test/FriendlyUrlTest.php
-      #-
-      #  message: '#Right side of && is always true.#'
-      #  path: ../Test/FriendlyUrlTest.php
-      # Compensate for PHPUnit where $_POST may not be defined
       -
         message: '#Result of && is always true.#'
         path: ../admin.php
       -
-        message: '#Variable \$_POST in isset\(\) always exists and is not nullable#'
-        path: ../admin.php
-      #-
-      #  message: '#Result of && is always true.#'
-      #  path: ../index.php
-      #-
-      #  message: '#Variable \$_POST in isset\(\) always exists and is not nullable#'
-      #  path: ../index.php
-      # These variables are responsibility of the including/included script
-      -
-        message: '#Undefined variable: \$myCmsConf#'
-        path: ../db/migrations/*.php
-      -
         message: '#Variable \$AGENDAS might not be defined.#'
         path: ../admin.php
-      -
-        message: '#Variable \$debugIpArray might not be defined.#'
-        path: ../index.php
-      -
-        message: '#Variable \$developmentEnvironment might not be defined.#'
-        path: ../index.php
-      -
-        message: '#Variable \$featureFlags might not be defined.#'
-        path: ../index.php
       -
         message: '#Variable \$MyCMS might not be defined.#'
         paths:
@@ -98,6 +64,21 @@ parameters:
       -
         message: '#Variable \$myCmsConfAdmin might not be defined.#'
         path: ../admin.php
+      -
+        message: '#Variable \$_POST in isset\(\) always exists and is not nullable#'
+        path: ../admin.php
+      -
+        message: '#Undefined variable: \$myCmsConf#'
+        path: ../db/migrations/*.php
+      -
+        message: '#Variable \$debugIpArray might not be defined.#'
+        path: ../index.php
+      -
+        message: '#Variable \$developmentEnvironment might not be defined.#'
+        path: ../index.php
+      -
+        message: '#Variable \$featureFlags might not be defined.#'
+        path: ../index.php
       -
         message: '#Variable \$WEBSITE might not be defined.#'
         path: ../index.php
@@ -119,26 +100,6 @@ parameters:
       -
         message: '#Variable \$featureFlags might not be defined.#'
         path: ../admin.php
-      #-
-      #  message: '#Variable \$MyCMS might not be defined.#'
-      #  paths:
-      #    - ../process.php
-      #    #- ../api/dummy/index.php
-      #-
-      #  message: '#Undefined variable: \$translation#'
-      #  path: ../classes/Admin.php
-      # The exceptions concerning always false/true compensate for environment dependent variables.
       -
         message: '#Right side of && is always false.#'
         path: config.php
-      # Compensate for PHPUnit where $_POST may not be defined
-      #-
-      #  message: '#Result of \|\| is always false.#'
-      #  path: ../process.php
-      #-
-      #  message: '#Variable \$_POST in isset\(\) always exists and is not nullable#'
-      #  path: ../process.php
-      # This as property is defined in MyCMSProject extends MyCMS
-      #-
-      #  message: '#Access to an undefined property WorkOfStan\\MyCMS\\MyCMS::\$SETTINGS.#'
-      #  path: ../classes/Admin.php

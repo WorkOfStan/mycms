@@ -6,21 +6,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### `Added` for new features
-- GA4 Analytics as a new alternative for soon to be obsoleted (2023-07-01) Google Universal Analytics. Empty GA_UID or GA4_STREAM will result in not using the respective JavaScript code.
 
 ### `Changed` for changes in existing functionality
-- Database tests should fire up only if phinx.dist.yml is present
-- PHPUnit tests should fire up only if conf/phpunit-github.xml is present
 
 ### `Deprecated` for soon-to-be removed features
 
 ### `Removed` for now removed features
 
 ### `Fixed` for any bugfixes
-- Exception rendering Admin Modules Division and products, Pages, Products, Translations, URL when 'admin_latte_render' => true
-- dist/Controller.php: added Assertion to fix Error: Property WorkOfStan\MyCMS\MyCMSMonoLingual::$context (array<array|int|string|false|null>) does not accept non-empty-array<mixed>. && Error: Parameter #2 $search of function array_key_exists expects array, mixed given.
 
 ### `Security` in case of vulnerabilities
+
+## [0.4.8] - 2023-03-09
+### Added
+- GA4 Analytics as a new alternative for soon to be obsoleted (2023-07-01) Google Universal Analytics. Empty GA_UID or GA4_STREAM will result in not using the respective JavaScript code.
+- added declaration of @throws in PHPDoc in ThrowablePHPFunctions.php
+
+### Changed
+- Database tests should fire up only if phinx.dist.yml is present
+- PHPUnit tests should fire up only if conf/phpunit-github.xml is present
+- solve stricter analysis by assertion, typecasting and type definition
+
+### Removed
+- dist/rector.php (use just string replace instead of the rector engine)
+
+### Fixed
+- Exception rendering Admin Modules Division and products, Pages, Products, Translations, URL when 'admin_latte_render' => true
+- dist/Controller.php: added Assertion to fix Error: Property WorkOfStan\MyCMS\MyCMSMonoLingual::$context (array<array|int|string|false|null>) does not accept non-empty-array<mixed>. && Error: Parameter #2 $search of function array_key_exists expects array, mixed given.
+- dist/Admin.php: if the product or content piece doesn't have a label in admin language show an explanation instead of null
+
+### Security
 - Legacy (non admin_latte_render) admin UI block all administration pages if not logged-in
 
 ## [0.4.7] - 2022-07-17
@@ -453,7 +468,8 @@ to
 
 
 
-[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.4.7...HEAD
+[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.4.8...HEAD
+[0.4.8]: https://github.com/WorkOfStan/mycms/compare/v0.4.7...v0.4.8
 [0.4.7]: https://github.com/WorkOfStan/mycms/compare/v0.4.6...v0.4.7
 [0.4.6]: https://github.com/WorkOfStan/mycms/compare/v0.4.5...v0.4.6
 [0.4.5]: https://github.com/WorkOfStan/mycms/compare/v0.4.4...v0.4.5

@@ -11,3 +11,18 @@ parameters:
     bootstrapFiles:
       - config.php
       #- ../.github/linters/conf/constants.php # (un)comment as needed
+    ignoreErrors:
+      # Depends on environment
+      -
+        message: "#^Negated boolean expression is always true.$#"
+        count: 1
+        path: ../classes/MyAdmin.php
+      # TODO: make the conditions more transparent
+      -
+        message: "#^Right side of && is always true.$#"
+        count: 2
+        path: ../classes/MyTableLister.php
+      -
+        message: "#^Right side of || is always false.$#"
+        count: 3
+        path: ../classes/MyTableLister.php

@@ -15,7 +15,7 @@ use function WorkOfStan\MyCMS\ThrowableFunctions\preg_match_all;
 
 /**
  * Admin UI
- * (Last MyCMS/dist revision: 2022-07-17, v0.4.7)
+ * (Last MyCMS/dist revision: 2023-03-09, v0.4.8)
  *
  * Feature flag 'legacy_admin_methods_instead_of_admin_models' => true can turn off the new AdminModels
  * in favour of the legacy spagetti code within this class
@@ -258,6 +258,10 @@ class Admin extends MyAdmin
                                 . ' <span class="badge badge-secondary">' . count($tmp) . '</span></summary>';
                             foreach ($tmp as $key => $value) {
                                 Assert::nullOrString($value);
+                                if (empty($value)) { // covers both null and ''
+                                    // if the product or content piece doesn't have a label in admin language
+                                    $value = $this->tableAdmin->translate('Name not set');
+                                }
                                 $output .= '<a href="?table=' . TAB_PREFIX . $i . '&amp;where[id]=' . $key
                                     . '" target="_blank" title="'
                                     . $this->tableAdmin->translate('Link will open in a new window') . '">'
