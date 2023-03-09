@@ -15,7 +15,7 @@ use function WorkOfStan\MyCMS\ThrowableFunctions\preg_match_all;
 
 /**
  * Admin UI
- * (Last MyCMS/dist revision: 2022-07-17, v0.4.7)
+ * (Last MyCMS/dist revision: 2023-03-09, v0.4.8)
  *
  * Feature flag 'legacy_admin_methods_instead_of_admin_models' => true can turn off the new AdminModels
  * in favour of the legacy spagetti code within this class
