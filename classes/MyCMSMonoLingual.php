@@ -120,8 +120,7 @@ class MyCMSMonoLingual
     /**
      *
      * @param string $sql SQL statement to be executed
-     * @return array<array<array<null|string>|null|string>|string>|false
-     * was return array<array<string|null>|string>|false (todo remove)
+     * @return array<mixed>|false
      *   Result is either associative array, empty array on empty SELECT, or false on error
      *   Error for this function is also an SQL statement that returns true.
      */

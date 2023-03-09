@@ -512,8 +512,8 @@ class MyFriendlyUrl extends MyCommon
             (isset($output['code']) ? $output['code'] : '')
             )
             : $output2[$outputKey];
-        Assert::string($outputValue);
-        $result = $this->switchParametric($outputKey, $outputValue);
+        Assert::scalar($outputValue);
+        $result = $this->switchParametric($outputKey, (string) $outputValue);
         $this->MyCMS->logger->info(
             $this->verboseBarDumpString(
                 "{$params} friendlyfyUrl " . (is_null($result) ? 'unchanged' : 'to ' . print_r($result, true)),

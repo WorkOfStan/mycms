@@ -15,6 +15,7 @@ namespace WorkOfStan\MyCMS\ThrowableFunctions;
 
 use Exception;
 use Webmozart\Assert\Assert;
+use Webmozart\Assert\InvalidArgumentException;
 
 /**
  * Return the argument unless it is `false`.
@@ -50,6 +51,7 @@ function throwOnNull($result)
  *
  * @param string $filename
  * @return int
+ * @throws InvalidArgumentException
  */
 function filemtime($filename)
 {
@@ -63,6 +65,7 @@ function filemtime($filename)
  * @param string $pattern
  * @param int $flags
  * @return string[]
+ * @throws Exception
  */
 function glob($pattern, $flags = 0)
 {
@@ -79,6 +82,8 @@ function glob($pattern, $flags = 0)
  * @param int $flags
  * @param int<1, max> $depth
  * @return string
+ * @throws Exception
+ * @throws InvalidArgumentException
  */
 function json_encode($value, $flags = 0, $depth = 512)
 {
@@ -94,6 +99,8 @@ function json_encode($value, $flags = 0, $depth = 512)
  * @param string $string
  * @param string $options OPTIONAL
  * @return string
+ * @throws Exception
+ * @throws InvalidArgumentException
  */
 function mb_eregi_replace($pattern, $replacement, $string, $options = null)
 {
@@ -113,6 +120,8 @@ function mb_eregi_replace($pattern, $replacement, $string, $options = null)
  * @param 0|256|512|768 $flags
  * @param int $offset
  * @return int
+ * @throws Exception
+ * @throws InvalidArgumentException
  */
 function preg_match($pattern, $subject, array &$matches = null, $flags = 0, $offset = 0)
 {
@@ -129,6 +138,8 @@ function preg_match($pattern, $subject, array &$matches = null, $flags = 0, $off
  * @param int $flags
  * @param int $offset
  * @return int
+ * @throws Exception
+ * @throws InvalidArgumentException
  */
 function preg_match_all($pattern, $subject, array &$matches = null, $flags = 0, $offset = 0)
 {
@@ -145,6 +156,7 @@ function preg_match_all($pattern, $subject, array &$matches = null, $flags = 0, 
  * @param int $limit
  * @param int $count
  * @return string|string[]
+ * @throws Exception
  */
 function preg_replace($pattern, $replacement, $subject, $limit = -1, &$count = null)
 {
@@ -164,6 +176,8 @@ function preg_replace($pattern, $replacement, $subject, $limit = -1, &$count = n
  * @param int $limit
  * @param int $count
  * @return string
+ * @throws Exception
+ * @throws InvalidArgumentException
  */
 function preg_replaceString($pattern, $replacement, $subject, $limit = -1, &$count = null)
 {
@@ -177,6 +191,8 @@ function preg_replaceString($pattern, $replacement, $subject, $limit = -1, &$cou
  * @param string $datetime if it is not string, an Exception is thrown
  * @param int|null $baseTimestamp
  * @return int
+ * @throws Exception
+ * @throws InvalidArgumentException
  */
 function strtotime($datetime, $baseTimestamp = null)
 {

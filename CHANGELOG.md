@@ -7,11 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### `Added` for new features
 - GA4 Analytics as a new alternative for soon to be obsoleted (2023-07-01) Google Universal Analytics. Empty GA_UID or GA4_STREAM will result in not using the respective JavaScript code.
+- added declaration of @throws in PHPDoc in ThrowablePHPFunctions.php
 
 ### `Changed` for changes in existing functionality
 - Database tests should fire up only if phinx.dist.yml is present
 - PHPUnit tests should fire up only if conf/phpunit-github.xml is present
-- solve stricter analysis by assertion and type definition
+- solve stricter analysis by assertion, typecasting and type definition
 
 ### `Deprecated` for soon-to-be removed features
 
