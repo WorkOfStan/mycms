@@ -51,6 +51,7 @@ function throwOnNull($result)
  *
  * @param string $filename
  * @return int
+ * @throws Exception
  * @throws InvalidArgumentException
  */
 function filemtime($filename)
