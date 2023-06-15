@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Changed` for changes in existing functionality
 - php-composer-dependencies-reusable.yml: Copy config.local.dist.php only if present
+- htmlOption(scalar $value,...)
 
 ### `Deprecated` for soon-to-be removed features
 
