@@ -160,6 +160,7 @@ class Controller extends MyController
                     if (!is_integer($this->get['category']) && !is_string($this->get['category'])) {
                         throw new \Exception('category param MUST be int or string');
                     }
+                    $tempGetCategory = string($this->get['category']);
                     $this->MyCMS->context['content'] = $this->projectSpecific->getCategory(
                         Tools::ifset($this->get['category']),
                         null,
