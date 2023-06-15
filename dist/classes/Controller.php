@@ -157,6 +157,9 @@ class Controller extends MyController
                     // TODO localize perex for all categories // TODO content element
                     $this->MyCMS->context['content']['description'] = 'About all categories';
                 } else {
+                    if (!is_integer($this->get['category']) && !is_string($this->get['category'])) {
+                        throw new \Exception('category param MUST be int or string');
+                    }
                     $this->MyCMS->context['content'] = $this->projectSpecific->getCategory(
                         Tools::ifset($this->get['category']),
                         null,
