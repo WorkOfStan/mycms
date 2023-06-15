@@ -157,12 +157,27 @@ class Controller extends MyController
                     // TODO localize perex for all categories // TODO content element
                     $this->MyCMS->context['content']['description'] = 'About all categories';
                 } else {
-                    if (!is_integer($this->get['category']) && !is_string($this->get['category'])) {
+                    //if (!is_integer($this->get['category']) && !is_string($this->get['category'])) {
+                    //    throw new \Exception('category param MUST be int or string');
+                    //}
+
+                    //return isset($a) ? $a : $b;
+
+                    //$tempGetCategory = string($this->get['category']);
+                    
+                    // weird condition for PHPStan 1.10.19 on GitHub
+                    if(!isset($this->get['category'])) {
+                        $tempGetCategory = null;
+                    } elseif (is_integer($this->get['category'])) {
+                        $tempGetCategory = $this->get['category'];
+                    } elseif (is_string($this->get['category'])) {
+                        $tempGetCategory = $this->get['category'];
+                    } else {
                         throw new \Exception('category param MUST be int or string');
                     }
-                    $tempGetCategory = string($this->get['category']);
+
                     $this->MyCMS->context['content'] = $this->projectSpecific->getCategory(
-                        Tools::ifset($this->get['category']),
+                        $tempGetCategory,
                         null,
                         ['language' => $this->language]
                     );
