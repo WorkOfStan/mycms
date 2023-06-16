@@ -158,7 +158,7 @@ class Controller extends MyController
                     $this->MyCMS->context['content']['description'] = 'About all categories';
                 } else {
                     // weird condition for PHPStan 1.10.19 on GitHub
-                    if(!isset($this->get['category'])) {
+                    if (!isset($this->get['category'])) {
                         $tempGetCategory = null;
                     } elseif (is_integer($this->get['category'])) {
                         $tempGetCategory = $this->get['category'];
