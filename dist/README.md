@@ -55,7 +55,7 @@ Create database with `Collation=utf8_general_ci` (create also separate testing d
 
 Run [build.sh](build.sh) to
 - create `phinx.yml` based on `phinx.dist.yml` including the name of the database (and testing database) created above
-- create `conf/config.local.php` based on `config.local.dist.php` including the phinx environment to be used and change any settings you like.
+- create `conf/config.local.php` based on `config.local.dist.php` including the phinx environment to be used and change any settings you like. (OPTIONAL)
 
 Edit these two files; then run `build.sh` again (see [below](#buildsh-runs-the-following-commands))
 

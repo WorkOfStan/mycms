@@ -15,7 +15,7 @@ use WorkOfStan\mycmsprojectnamespace\ProjectSpecific;
 
 /**
  * Controller (of MVC)
- * (Last MyCMS/dist revision: 2022-07-17, v0.4.7)
+ * (Last MyCMS/dist revision: 2023-06-16, v0.4.9)
  */
 class Controller extends MyController
 {
@@ -157,8 +157,18 @@ class Controller extends MyController
                     // TODO localize perex for all categories // TODO content element
                     $this->MyCMS->context['content']['description'] = 'About all categories';
                 } else {
+                    // weird condition for PHPStan 1.10.19 on GitHub
+                    if (!isset($this->get['category'])) {
+                        $tempGetCategory = null;
+                    } elseif (is_integer($this->get['category'])) {
+                        $tempGetCategory = $this->get['category'];
+                    } elseif (is_string($this->get['category'])) {
+                        $tempGetCategory = $this->get['category'];
+                    } else {
+                        throw new \Exception('category param MUST be int or string');
+                    }
                     $this->MyCMS->context['content'] = $this->projectSpecific->getCategory(
-                        Tools::ifset($this->get['category']),
+                        $tempGetCategory,
                         null,
                         ['language' => $this->language]
                     );

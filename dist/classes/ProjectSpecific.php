@@ -11,7 +11,7 @@ use WorkOfStan\MyCMS\ProjectCommon;
 
 /**
  * Functions specific to the project (that are not in its own model)
- * (Last MyCMS/dist revision: 2022-07-17, v0.4.7)
+ * (Last MyCMS/dist revision: 2023-06-16, v0.4.9)
  */
 class ProjectSpecific extends ProjectCommon
 {
@@ -117,7 +117,7 @@ class ProjectSpecific extends ProjectCommon
      * Fetch from database details of content of given id/code
      * TODO: make this method useful for dist project as a demonstration (inspired by A project)
      *
-     * @param mixed $id of the content OPTIONAL
+     * @param scalar $id of the content OPTIONAL
      * @param string $code OPTIONAL
      * @param array<string> $options OPTIONAL
      * @return array<array<int|string>|string> resultset
@@ -178,7 +178,7 @@ class ProjectSpecific extends ProjectCommon
      * Fetch from database details of category of given id/code
      * TODO: make this method useful for dist project as a demonstration (inspired by A project)
      *
-     * @param mixed $id of the content OPTIONAL
+     * @param scalar $id of the content OPTIONAL
      * @param string $code OPTIONAL
      * @param array<string> $options OPTIONAL
      * @return array<string>|null resultset

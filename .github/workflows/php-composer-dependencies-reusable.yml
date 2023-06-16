@@ -40,6 +40,8 @@ jobs:
           php-version: "${{ matrix.php-version }}"
           tools: composer:v2, phpstan
           # Note: phpstan call fails for PHP<7.1
+          # coverage none turns off Xdebug as in PHP 5.6,7.0 it would change (format) var_dump output
+          coverage: none
         env:
           # fixes Error: Could not authenticate against github.com
           COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -57,6 +59,13 @@ jobs:
         uses: andstor/file-existence-action@v2
         with:
           files: "./conf/phpunit-github.xml"
+
+      # Copy config.local.dist.php only if present
+      - name: Check existence of specimen for config.local.php
+        id: check_files_configlocaldist
+        uses: andstor/file-existence-action@v2
+        with:
+          files: "./conf/config.local.dist.php"
 
       - name: "MySQL db ${{ env.DB_DATABASE }}"
         if: steps.check_files_database.outputs.files_exists == 'true'
@@ -92,6 +101,7 @@ jobs:
 
       # to fix `Constant DB_USERNAME not found.` etc not only for phpstan but also for phpunit tests
       - name: Copy local config files
+        if: steps.check_files_configlocaldist.outputs.files_exists == 'true'
         run: cp -p conf/config.local.dist.php conf/config.local.php
 
       - name: Copy local testing database settings
