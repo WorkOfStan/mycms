@@ -74,3 +74,5 @@ jobs:
           # PHPStan run in matrix strategy in php-composer-phpunit.yml
           VALIDATE_PHP_PHPSTAN: false
           VALIDATE_PHP_PSALM: false
+          # 240519 .shfmt is not taken into account, so far
+          VALIDATE_SHELL_SHFMT: false

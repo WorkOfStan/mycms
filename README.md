@@ -168,7 +168,7 @@ so for development, the environment has to be set up for `dist` as well.
 Note: running `vendor/bin/phpunit` from root will result in using MyCMS classes from the root Classes even from `mycms/dist/Test`.
 While running `vendor/bin/phpunit` from `dist` will result in using MyCMS classes from the `dist/vendor/workofstan/mycms/classes`.
 
-GitHub actions' version of PHPUnit uses config file [phpunit-github-actions.xml](phpunit-github-actions.xml) that ignores `Distribution Test Suite`
+GitHub Actions' version of PHPUnit uses config file [phpunit-github-actions.xml](phpunit-github-actions.xml) that ignores `Distribution Test Suite`
 because MySQLi environment isn't prepared (yet) and HTTP requests to self can't work in CLI only environment.
 
 ### Reusing workflows
@@ -264,12 +264,12 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 
 ## TODO
 
-### TODO Administration
+### Todo Administration
 * 200314: administrace FriendlyURL je v F/classes/Admin::outputSpecialMenuLinks() a ::sectionUrls() .. zobecnit do MyCMS a zapnout pokud FRIENDLY_URL == true
 * 200314 v Admin.php mít příslušnou editační sekci FriendlyURL (dle F project) .. pokud lze opravdu zobecnit
 * 200526: CMS: If Texy is used (see only in MyTableAdmin `($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : '')` then describe it. Otherwise remove it from composer.json, Latte\CustomFilters\, ProjectCommon, dist\index.php.
 
-### TODO Governance
+### Todo Governance
 * 190705: v classes\LogMysqli.php probíhá logování `'log/sql' . date("Y-m-d") . '.log.sql');` do aktuálního adresáře volajícího skriptu - což u API není výhodné. Jak vycházet z APP_ROOT?
 * 200526: describe jQuery dependencies; and also other js libraries (maybe only in dist??)
 * 200529: Minimum of PHP 7.2 required now: PHPUnit latest + Phinx latest <https://github.com/cakephp/phinx/releases> .. planned for release 0.5.0
@@ -278,10 +278,10 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 * 200819: consider REQUEST_URI query vs \_GET - shouldn't just one source of truth be used?
 * 200921: for PHP/7.1.0+ version use protected for const in MyCommon, MyFriendlyUrl, MyAdminProcess.php
 
-### TODO UI
+### Todo UI
 * 220716 Admin Translations and `Urls` module should have Tabs displayed by the Core (not the App)
 * 230309 'Pravidla pro užívání portálu': 'Terms & conditions', 'Pravidla pro užívání portálu': 'Terms & Bedingungen' shouldn't show as &amp; - either noescape filter in inc-footer.latte or change `L10n::translate return Tools::h($text);`
 
-### TODO SECURITY
+### Todo SECURITY
 * 190723: pokud jsou v té samé doméně dvě různé instance MyCMS, tak přihlášením do jednoho admin.php jsem přihlášen do všech, i když ten uživatel tam ani neexistuje
 * 220513, Latte::2.11.3 Notice: Engine::addFilter(null, ...) is deprecated, use addFilterLoader() since ^2.10.8 which requires php: >=7.1 <8.2 (stop limiting "latte/latte": ">=2.4.6 <2.11.3")
