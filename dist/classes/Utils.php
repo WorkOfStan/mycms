@@ -26,6 +26,7 @@ class Utils
      * @param string $delimiter OPTIONAL default ': '
      * @param float $boldWhenHigherThan
      * @return string
+     * @throws \InvalidArgumentException
      */
     public static function niceDumpArray(array $ary, $showKey, $delimiter = ': ', $boldWhenHigherThan = 6)
     {

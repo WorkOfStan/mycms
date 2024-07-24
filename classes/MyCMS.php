@@ -41,13 +41,12 @@ class MyCMS extends MyCMSMonoLingual
     }
 
     /**
+     * constant DEFAULT_LANGUAGE expected
      *
      * @param mixed[] $getArray $_GET or its equivalent
      * @param mixed[] $sessionArray $_SESSION or its equivalent
      * @param bool $makeInclude for testing may be set to false as mycms itself doesn't contain the language-XX.inc.php
      * @return string to be used as $_SESSION['language']
-     *
-     * constant DEFAULT_LANGUAGE expected
      */
     public function getSessionLanguage(array $getArray, array $sessionArray, $makeInclude = true)
     {

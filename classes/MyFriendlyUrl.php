@@ -257,10 +257,7 @@ class MyFriendlyUrl extends MyCommon
                 continue;
             }
             $this->MyCMS->logger->info(print_r(
-                $this->verboseBarDump(
-                    $assignement,
-                    'determineTemplate: assignement loop'
-                ),
+                $this->verboseBarDump($assignement, 'determineTemplate: assignement loop'),
                 true
             ));
             $this->MyCMS->logger->info($this->verboseBarDumpString(
@@ -443,7 +440,7 @@ class MyFriendlyUrl extends MyCommon
      * @param string $token
      * @return null|array<string|null>
      *     null on empty result | one-dimensional array [id, type] on success
-     *     Throws exception on database failure
+     * @throws \Webmozart\Assert\InvalidArgumentException on database failure
      */
     protected function findFriendlyUrlToken($token)
     {

@@ -25,6 +25,9 @@ on:
       - 'notest/**'
   workflow_call:
 
+permissions:
+  contents: read
+
 ###############
 # Set the Job #
 ###############
@@ -45,16 +48,18 @@ jobs:
       # Checkout the code base #
       ##########################
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags. Otherwise github.event.pull_request.base.ref SHA isn't found.
 
       ################################
       # Run Linter against code base #
       ################################
       - name: Lint Code Base
-        uses: github/super-linter@main
+        uses: super-linter/super-linter@main
         env:
           VALIDATE_ALL_CODEBASE: true
-          DEFAULT_BRANCH: main
+          DEFAULT_BRANCH: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.ref_name }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JAVASCRIPT_ES_CONFIG_FILE: .eslintrc.yml
           VALIDATE_JAVASCRIPT_STANDARD: false

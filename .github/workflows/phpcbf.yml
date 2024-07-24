@@ -11,6 +11,9 @@ on:
       - 'phpcbf*'
   workflow_call:
 
+permissions:
+  contents: write
+
 jobs:
   phpcbf:
     runs-on: ubuntu-latest
@@ -18,7 +21,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: PHP_CodeSniffer phpcbf GitHub Action
         uses: ge-tracker/phpcbf-action@v1

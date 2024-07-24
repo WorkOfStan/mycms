@@ -12,8 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Deprecated` for soon-to-be removed features
 
 ### `Removed` for now removed features
+- VERSION file as git-flow branching model is no longer used
 
 ### `Fixed` for any bugfixes
+- bump versions of GitHub workflow actions
 
 ### `Security` in case of vulnerabilities
 

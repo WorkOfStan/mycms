@@ -33,6 +33,7 @@ class TableAdmin extends MyTableAdmin
      * @param string $value field's value
      * @param array<string> $record
      * @return bool|string - true = method was applied so don't proceed with the default, false = method wasn't applied
+     * @throws \InvalidArgumentException
      */
     public function customInput($field, $value, array $record = [])
     {

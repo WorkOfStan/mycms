@@ -51,8 +51,7 @@ function throwOnNull($result)
  *
  * @param string $filename
  * @return int
- * @throws Exception
- * @throws InvalidArgumentException
+ * @throws \Webmozart\Assert\InvalidArgumentException
  */
 function filemtime($filename)
 {
