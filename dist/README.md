@@ -428,7 +428,7 @@ $('form[name="form-lorem"] [type=button]').on('click', function () {
 
 3) Controller
 - config.php `$myCmsConf['templateAssignementParametricRules']['api/lorem'] => ['template' => 'apiLorem'],`
-- FriendlyUrl.php::switchParametric `case 'api-lorem': return null;` // Todo (bodylog): is case 'api-lorem' really necessary? or not? explore and explain.
+- FriendlyUrl.php::switchParametric `case 'api-lorem': return null;` // todo (bodylog): is case 'api-lorem' really necessary? or not? explore and explain.
 - Controller.php
 ```php
 /** @var LoremModel */
