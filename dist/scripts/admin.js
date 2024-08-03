@@ -156,7 +156,7 @@ function agendaRow(data, index, options)
     result += '<span class="item-name">' + row['name'] + '</span>';
     if (row.join && data.subagenda) {
         result += '<div class="ml-3 my-1 border rounded p-1 alert-secondary subagenda collapse" id="agenda-' + data.agenda + '-' + row.id + '" data-id="' + row.id + '">\n';
-        if (typeof (row.join[0]) == "undefined") {
+        if (typeof (row.join[0]) == 'undefined') {
             row.join = [row.join];
         }
         for (j in row.join) {
