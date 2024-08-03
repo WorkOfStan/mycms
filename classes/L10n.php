@@ -20,13 +20,10 @@ class L10n
 
     /** @var array<string> Available languages for MyCMS */
     public $enabledLanguages; // ['en' => 'English']
-
     /** @var string */
     protected $prefix;
-
     /** @var string */
     protected $selectedLanguage = null;
-
     /** @var array<string> */
     protected $translation;
 
@@ -60,6 +57,7 @@ class L10n
      *   supports only MB_CASE_UPPER, MB_CASE_LOWER, MB_CASE_TITLE, others are ignored
      * @param string|null $encoding null (default) for mb_internal_encoding()
      * @return string
+     * @throws \InvalidArgumentException
      */
     public function translate($key, $mbCaseMode = null, $encoding = null)
     {
@@ -156,11 +154,9 @@ class L10n
             // deprecated (read the $prefix.$language.'.inc.php')
             DEBUG_VERBOSE && Debugger::log("including {$languageFile} with \$translation array", ILogger::INFO);
             include $languageFile; // MUST contain $translation = [...];
-            /** @phpstan-ignore-next-line */
             if (!(isset($translation) && is_array($translation))) {
                 throw new \Exception("Missing expected translation {$languageFile}");
             }
-            /** @phpstan-ignore-next-line */
             return $translation;
         }
         throw new \Exception(

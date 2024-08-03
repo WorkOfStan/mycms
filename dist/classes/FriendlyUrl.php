@@ -87,7 +87,7 @@ class FriendlyUrl extends MyFriendlyUrl
                     'SELECT id, name_' . $this->language . ' AS name,'
                     . $this->projectSpecific->getLinkSql("?article&id=", $this->language)
                     . ' FROM `' . TAB_PREFIX . 'content` WHERE active = 1 AND '
-                    . (is_numeric($outputValue) ? ' id = "' . $this->MyCMS->dbms->escapeSQL(
+                    . (is_numeric($outputValue) ? ' `id` = "' . $this->MyCMS->dbms->escapeSQL(
                         $outputValue
                     ) . '"' : ' code LIKE "' . $this->MyCMS->dbms->escapeSQL($outputValue) . '"')
                 );

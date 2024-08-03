@@ -21,13 +21,7 @@ class MyCommon
 
     /** @var MyCMS */
     protected $MyCMS;
-
-    /**
-     * Bleeds information
-     * false - nothing, true - Debugger::barDump()
-     *
-     * @var bool
-     */
+    /** @var bool Bleeds information. false - nothing, true - Debugger::barDump() */
     protected $verbose = false;
 
     /**

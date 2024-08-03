@@ -27,20 +27,12 @@ class MyFriendlyUrl extends MyCommon
 
     /** @var array<mixed> content of $_GET and $_POST */
     protected $get;
-
-    /**
-     * used in friendlyIdentifyRedirect
-     *
-     * @var array<mixed>
-     */
-    protected $session;
-
-    /** @var string */
-    protected $requestUri = ''; //default is homepage
-
     /** @var string */
     protected $language = DEFAULT_LANGUAGE; //default is Czech
-
+    /** @var array<mixed> used in friendlyIdentifyRedirect */
+    protected $session;
+    /** @var string */
+    protected $requestUri = ''; //default is homepage
     /** @var string */
     protected $userAgent = '';
 
@@ -257,10 +249,7 @@ class MyFriendlyUrl extends MyCommon
                 continue;
             }
             $this->MyCMS->logger->info(print_r(
-                $this->verboseBarDump(
-                    $assignement,
-                    'determineTemplate: assignement loop'
-                ),
+                $this->verboseBarDump($assignement, 'determineTemplate: assignement loop'),
                 true
             ));
             $this->MyCMS->logger->info($this->verboseBarDumpString(
@@ -443,7 +432,7 @@ class MyFriendlyUrl extends MyCommon
      * @param string $token
      * @return null|array<string|null>
      *     null on empty result | one-dimensional array [id, type] on success
-     *     Throws exception on database failure
+     * @throws \Webmozart\Assert\InvalidArgumentException on database failure
      */
     protected function findFriendlyUrlToken($token)
     {

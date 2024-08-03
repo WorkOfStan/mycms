@@ -224,6 +224,7 @@ class MyTableLister
      * @param array<string> $columns
      * @param array<mixed> $vars &$vars variables used to filter records
      * @return array<string|int> with these indexes: [join], [where], [sort], [sql], int[limit]
+     * @throws \InvalidArgumentException
      */
     public function selectSQL($columns, &$vars)
     {

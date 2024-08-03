@@ -10,6 +10,9 @@ on:
     branches:
       - 'phpcbf*'
 
+permissions:
+  contents: write
+
 jobs:
   call-workflow:
     uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@main

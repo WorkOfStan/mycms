@@ -10,6 +10,9 @@ on:
       # notest branches to ignore testing of partial online commits
       - 'notest/**'
 
+permissions:
+  contents: read
+
 jobs:
   call-workflow:
     uses: WorkOfStan/MyCMS/.github/workflows/overtrue-phplint.yml@main

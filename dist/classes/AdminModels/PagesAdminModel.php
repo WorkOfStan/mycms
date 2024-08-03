@@ -39,7 +39,7 @@ class PagesAdminModel
     public function htmlOutput()
     {
         $output = '';
-        // pages // TODO make it work in Dist
+        // pages // TODO make it do something useful in Dist
         $output .= '<h1>' . $this->tableAdmin->translate('Pages') . '</h1><div id="agenda-pages">';
         $categories = $this->dbms->fetchAndReindexStrictArray('SELECT id,'
             //. 'path,' // TODO path was used in A project. Reconsider here.

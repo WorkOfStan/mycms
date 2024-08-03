@@ -17,6 +17,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Security` in case of vulnerabilities
 
+## [0.4.10] - 2024-08-03
+### Added
+- ignore style imperfections in (third-party) JavaScripts
+
+### Changed
+- use Backyard::^3.4.0 where BackyardError wraps \Seablast\Logger\Logger implementation
+
+### Removed
+- VERSION file as git-flow branching model is no longer used
+- `"texy/texy": "^2.7.1"` is no longer used in MyCMS
+
+### Fixed
+- bump versions of GitHub workflow actions
+
 ## [0.4.9] - 2023-06-16
 ### Changed
 - php-composer-dependencies-reusable.yml: Copy config.local.dist.php only if present
@@ -81,7 +95,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Translations and `Urls` admin page generation is moved to the the core so that further improvements  are automatically available to the Apps using updated version of MyCMS
 
 ### Deprecated
-- dist/rector.php (TODO consider using just string replace instead of the rector engine)
+- dist/rector.php (todo consider using just string replace instead of the rector engine)
 - Admin UI in Latte mode doesn't use Admin::endAdmin(), `Admin::getAdminCss()`, Admin::outputAdmin(), Admin::outputBodyEnd(), Admin::outputFooter(), Admin::outputHead(), Admin::outputImageSelector(), Admin::outputNavigation(), Admin::outputSpecialMenuLinks(), Admin::outputSpecialSettingsLinks(), so before turning on the Admin Latte, move the custom code to the corresponding lattes
 
 ### Removed
@@ -129,7 +143,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - phpstan.sh and phpstan-remove.sh for local testing
-- phpstan-baseline.neon to hide type hint imperfections in PHPStan level=8 (TODO fix these)
+- phpstan-baseline.neon to hide type hint imperfections in PHPStan level=8 (todo fix these)
 - LogMysqli::fetchSingleString for strict string response
 - LogMysqli::fetchStringArray for string[] response
 - MyCommon::verboseBarDumpString for strict string response
@@ -203,7 +217,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - InitDatabase class to read database configuration from (dist/)phinx.yml
 - cache for composer downloaded libraries into vendor folder for GitHub automated testing
 - added MySQL/8 (part of Ubuntu/20 virtual environment) with native password access used by phinx::testing environment
-- Note: Apache/2 that is part of Ubuntu/20 virtual environment doesn't have PHP installed by default, so phpunit @group webserver is excluded from automatic GitHub actions testing
+- Note: Apache/2 that is part of Ubuntu/20 virtual environment doesn't have PHP installed by default, so phpunit @group webserver is excluded from automatic GitHub Actions testing
 
 ### Changed
 - to Check PHP syntax errors uses: overtrue/phplint@3.0.3 (instead of obsoleted michaelw90/PHP-Lint@master)
@@ -254,7 +268,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Breaking change**: GodsDev\Backyard switched to WorkOfStan\Backyard - so either the namespace should be changed or original GodsDev\Backyard required instead as temporary fix.
 
 ### Added
-- notest/* branches ignored by GitHub actions (not to test partial online commits)
+- notest/* branches ignored by GitHub Actions (not to test partial online commits)
 - Throwable/ThrowablePHPFunctions.php - replacement for PHP functions that returns false or null instead of the strict type. These functions throw an \Exception instead.
   - filemtime, glob, json_encode, mb_eregi_replace, preg_match, preg_replace
   - preg_replaceString accepts only string as $subject and returns only string (i.e. not string[])
@@ -267,7 +281,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - '5.6', '7.0', '7.2', '7.3', '7.4' added to PHPStan matrix
   - not 7.1 as due to <https://bugs.php.net/bug.php?id=73803> ZipArchive class has public properties, that are not visible via reflection.
   - Therefore using tools like PHPStan generates error: Access to an undefined property ZipArchive::$numFiles. in class\MyAdminProcess
-- GitHub action job running time limited to 10 minutes
+- GitHub Action job running time limited to 10 minutes
 - dist phpstan includes phpstan/phpstan-webmozart-assert, therefore other PHPStan configuration file added in order to include proper extension.neon
 - PHPStan online runs as a tool (not a composer required-dev library)
 - If DEBUG_VERBOSE is true and admin UI uses untranslated string, it is logged to `log/translate_admin_missing.log` to be translated
@@ -307,7 +321,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MyFriendlyURL::friendlyIdentifyRedirect throws Exception on seriously malformed URL
 - MyTableAdmin::outputField fixesParameter 2 $label of static method GodsDev\Tools\Tools::htmlInput() expects string, false given. MUST be empty string to trigger label omitting.
 - MyTableAdmin methods (recordDelete) refactoring for better readability
-- MyTableAdmin: removed zero value that is not accepted by ENUM. To set empty, use NULL option. TODO fix NULL option for ENUM to be saved in database
+- MyTableAdmin: removed zero value that is not accepted by ENUM. To set empty, use NULL option. Todo fix NULL option for ENUM to be saved in database
 - MyTableLister::resolveSQL refactoring for better readability
 - **potentially breaking change**: MyTableLister::contentByType ignores missing $options['return-output'] and always return string, never echo string
 - **potentially breaking change**: MyTableLister: filterKeys accepts strictly array<string>
@@ -346,7 +360,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MyTableLister::bulkUpdateSQL() should return string but return statement is missing.
 - MyTableLister::contentByType() always returns string (as if $options['return-output'] === true). Performing echo is responsibility of the calling method.
 - process.php: \_SESSION and \_POST attributes processing fixed
-- dist require "symfony/yaml": "^3.4.47|^4|^5|^6" so that it is loaded not only as part of require-dev phpunit/phpunit
+- dist require `"symfony/yaml": "^3.4.47|^4|^5|^6"` so that it is loaded not only as part of require-dev phpunit/phpunit
 - MyController::run MUST work even without MyFriendlyUrl instance
 
 ### Deprecated
@@ -473,8 +487,8 @@ to
 - Basic structure
 
 
-
-[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.4.9...HEAD
+[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.4.10...HEAD
+[0.4.10]: https://github.com/WorkOfStan/mycms/compare/v0.4.9...v0.4.10
 [0.4.9]: https://github.com/WorkOfStan/mycms/compare/v0.4.8...v0.4.9
 [0.4.8]: https://github.com/WorkOfStan/mycms/compare/v0.4.7...v0.4.8
 [0.4.7]: https://github.com/WorkOfStan/mycms/compare/v0.4.6...v0.4.7

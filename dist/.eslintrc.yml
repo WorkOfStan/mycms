@@ -22,3 +22,18 @@ rules:
   semi:
     - error
     - always
+
+ignorePatterns:
+    - 'scripts/Cookies.js'
+    - 'scripts/admin-specific.js'
+    - 'scripts/admin.js'
+    - 'scripts/autotrack.2.4.1.js'
+    - 'scripts/bootstrap.js'
+    - 'scripts/ie10-viewport-bug-workaround.js'
+    - 'scripts/jquery.js'
+    - 'scripts/jquery.sha1.js'
+    - 'scripts/lib/owlcarousel/owl.carousel.js'
+    - 'scripts/lib/owlcarousel/owl.carousel.min.js'
+    - 'scripts/popper.js'
+    - 'scripts/popper.min.js'
+    - 'scripts/summernote.js'

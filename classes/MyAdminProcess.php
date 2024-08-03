@@ -180,6 +180,7 @@ class MyAdminProcess extends MyCommon
                     Tools::dump($sql, $post);
                     exit; //@todo
                 } else {
+                    $errors = [];
                     $sql = $this->filterChecks($post['check'], $errors);
                     Tools::dump($post, $sql);
                     exit; //@todo

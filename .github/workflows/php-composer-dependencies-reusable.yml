@@ -8,6 +8,9 @@ on:
         required: true
         type: string
 
+permissions:
+  contents: read
+
 jobs:
   build:
 
@@ -32,7 +35,7 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: "Install PHP ${{ matrix.php-version }} Test on ${{ runner.os }}"
         uses: "shivammathur/setup-php@v2"
@@ -49,21 +52,21 @@ jobs:
       # Database tests should fire up only if phinx.dist.yml is present
       - name: Check database config file existence
         id: check_files_database
-        uses: andstor/file-existence-action@v2
+        uses: andstor/file-existence-action@v3
         with:
           files: "phinx.dist.yml"
 
       # PHPUnit tests should fire up only if conf/phpunit-github.xml is present
       - name: Check PHPUnit config file existence
         id: check_files_phpunit
-        uses: andstor/file-existence-action@v2
+        uses: andstor/file-existence-action@v3
         with:
           files: "./conf/phpunit-github.xml"
 
       # Copy config.local.dist.php only if present
       - name: Check existence of specimen for config.local.php
         id: check_files_configlocaldist
-        uses: andstor/file-existence-action@v2
+        uses: andstor/file-existence-action@v3
         with:
           files: "./conf/config.local.dist.php"
 
@@ -81,7 +84,7 @@ jobs:
       # A repository can have up to 10 GB of caches. Once the 10 GB limit is reached, older caches will be evicted based on when the cache was last accessed.
       # Caches that are not accessed within the last week will also be evicted.
       - name: Cache composer dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: vendor-cache
         with:
           # path to Checkout working directory is /home/runner/work/repo-name/repo-name , so just add /vendor/

@@ -10,14 +10,12 @@ use Tracy\IBarPanel;
  */
 class BarPanelTemplate implements IBarPanel
 {
-    /** @var string */
-    protected $tabTitle;
-
-    /** @var array<mixed> */
-    protected $panelDetails;
-
     /** @var bool false = info, true = error */
     protected $errorPanel = false;
+    /** @var array<mixed> */
+    protected $panelDetails;
+    /** @var string */
+    protected $tabTitle;
 
     /**
      *

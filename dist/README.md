@@ -8,9 +8,9 @@ XYZ web
 - PHP 5.6||7.x
 - MySQL
 - PHP libraries
-  - xml
-  - mbstring
-  - mysql
+  - `xml`
+  - `mbstring`
+  - `mysql`
 
 ```sh
 apt install libapache2-mod-php7.0 apache2 mysql-server git composer php-xml php-mbstring php7.0-mysql
@@ -428,7 +428,7 @@ $('form[name="form-lorem"] [type=button]').on('click', function () {
 
 3) Controller
 - config.php `$myCmsConf['templateAssignementParametricRules']['api/lorem'] => ['template' => 'apiLorem'],`
-- FriendlyUrl.php::switchParametric `case 'api-lorem': return null;` // TODO (bodylog): is case 'api-lorem' really necessary? or not? explore and explain.
+- FriendlyUrl.php::switchParametric `case 'api-lorem': return null;` // todo (bodylog): is case 'api-lorem' really necessary? or not? explore and explain.
 - Controller.php
 ```php
 /** @var LoremModel */
@@ -472,30 +472,30 @@ $this->loremModel = new LoremModel($MyCMS->dbms);
 
 ## TODO
 
-### TODO lokalizace
+### Todo lokalizace
 * 200526: jazykový přepínač rovnou vybere správné URL, pokud pro daný jazyk existuje
 * 200608: describe scenario when no language is `default` in terms that all pages run within /iso-639-1/ folder
 
-### TODO CMS
+### Todo CMS
 * 210427: Summernote richtext full screen proper background
 * 200610: bool field show as on/off 1/0 true/false or something else more reasonable than int input box
 
-### TODO SEO
+### Todo SEO
 
 
-### TODO vizualizace
+### Todo vizualizace
 
 
-### TODO security
+### Todo security
 
 
-### TODO other
+### Todo other
 * 190611: add article and search page types including controller tests
 * 190611: Make Sass to CSS conversion automatic (e.g. gulp or GitHub Action?)
 * 200712: migrate popper <https://popper.js.org/docs/v2/migration-guide/> incl. map --> admin.php expects section
 * 200712: update bootstrap <https://getbootstrap.com/> incl. map --> admin.php expects section
 * 200712: update jQuery <https://jquery.com/> incl. map --> admin.php expects section
-* 200712: update fontawesome --> admin.php expects section
+* 200712: update Font Awesome --> admin.php expects section
 * 200802: test with 2 categories
 * 200802: image for product and category in assets
 * 200921: (MyCMS) properly fix message: '#Parameter #2 $newvalue of function ini_set expects string, true given.#'    path: /github/workspace/set-environment.php

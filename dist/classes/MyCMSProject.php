@@ -39,7 +39,8 @@ class MyCMSProject extends MyCMS
     }
 
     /**
-     * Output json or plain text json or error string and end execution
+     * Output json or plain text json or error string.
+     * The caller should then end the execution.
      *
      * @param bool $directJsonCall
      * @param Backyard $backyard for its JSON component

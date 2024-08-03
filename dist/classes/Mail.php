@@ -122,8 +122,8 @@ class Mail extends MyCommon
             ->setFrom(array(NOTIFY_FROM_ADDRESS => NOTIFY_FROM_NAME))
             ->setTo(array($to))
             ->setBody(
-//                        file_get_contents($filenameTxt)
-//                "Test sender at {$timestamp} "
+                //file_get_contents($filenameTxt)
+                //"Test sender at {$timestamp} "
                 $messageTxt
             )
         // And optionally an alternative body

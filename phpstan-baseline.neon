@@ -11,11 +11,6 @@ parameters:
 			count: 1
 			path: classes/MyAdmin.php
 
-		#-
-		#	message: "#^Property WorkOfStan\\\\MyCMS\\\\MyAdmin\\:\\:\\$searchColumns type has no value type specified in iterable type array\\.$#"
-		#	count: 1
-		#	path: classes/MyAdmin.php
-
 		-
 			message: "#^Property WorkOfStan\\\\MyCMS\\\\MyAdmin\\:\\:\\$tableAdmin \\(WorkOfStan\\\\MyCMS\\\\MyTableAdmin\\) in empty\\(\\) is not falsy\\.$#"
 			count: 1
@@ -101,16 +96,6 @@ parameters:
 			count: 1
 			path: classes/MyAdminProcess.php
 
-		#-
-		#	message: "#^Method WorkOfStan\\\\MyCMS\\\\MyCMSMonoLingual\\:\\:__construct\\(\\) has parameter \\$myCmsConf with no value type specified in iterable type array\\.$#"
-		#	count: 1
-		#	path: classes/MyCMSMonoLingual.php
-
-		#-
-		#	message: "#^Method WorkOfStan\\\\MyCMS\\\\MyCMSMonoLingual\\:\\:fetchAndReindexStrictArray\\(\\) return type has no value type specified in iterable type array\\.$#"
-		#	count: 1
-		#	path: classes/MyCMSMonoLingual.php
-
 		-
 			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyController\\:\\:controller\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
@@ -120,16 +105,6 @@ parameters:
 			message: "#^Method WorkOfStan\\\\MyCMS\\\\MyController\\:\\:getVars\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: classes/MyController.php
-
-		#-
-		#	message: "#^Property WorkOfStan\\\\MyCMS\\\\MyController\\:\\:\\$friendlyUrl \\(WorkOfStan\\\\MyCMS\\\\MyFriendlyUrl\\) in isset\\(\\) is not nullable\\.$#"
-		#	count: 1
-		#	path: classes/MyController.php
-
-		#-
-		#	message: "#^Property WorkOfStan\\\\MyCMS\\\\MyController\\:\\:\\$get type has no value type specified in iterable type array\\.$#"
-		#	count: 1
-		#	path: classes/MyController.php
 
 		-
 			message: "#^Property WorkOfStan\\\\MyCMS\\\\MyController\\:\\:\\$result type has no value type specified in iterable type array\\.$#"
@@ -190,8 +165,3 @@ parameters:
 			message: "#^Property WorkOfStan\\\\MyCMS\\\\MyTableLister\\:\\:\\$tables type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: classes/MyTableLister.php
-
-		#-
-		#	message: "#^Right side of \\|\\| is always false\\.$#"
-		#	count: 1
-		#	path: classes/MyTableLister.php

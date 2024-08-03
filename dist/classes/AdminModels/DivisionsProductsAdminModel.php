@@ -34,7 +34,7 @@ class DivisionsProductsAdminModel
     }
 
     /**
-     * F code - TODO make work in Dist
+     * TODO make work in Dist (based on F code)
      *
      * @return string
      */

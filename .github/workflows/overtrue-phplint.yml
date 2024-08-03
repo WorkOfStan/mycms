@@ -11,6 +11,9 @@ on:
       - 'notest/**'
   workflow_call:
 
+permissions:
+  contents: read
+
 jobs:
 # This is how to reuse this workflow:
 #  call-workflow:
@@ -21,7 +24,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Check PHP syntax errors
-        uses: overtrue/phplint@5.3.0
+        uses: overtrue/phplint@9.3.1

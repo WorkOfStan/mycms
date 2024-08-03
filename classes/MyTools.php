@@ -19,6 +19,7 @@ class MyTools
      *
      * @param mixed $str
      * @return string
+     * @throws \InvalidArgumentException
      */
     public static function h($str)
     {

@@ -311,7 +311,7 @@ class Admin extends MyAdmin
     }
 
     /**
-     * Returns if a project-specific sections should be displayed in admin.
+     * Returns if a project-specific sections should be displayed in the administration.
      *
      * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
      * @return bool

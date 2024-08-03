@@ -12,6 +12,9 @@ on:
       # notest branches to ignore testing of partial online commits
       - 'notest/**'
 
+permissions:
+  contents: read
+
 jobs:
   # Note: https://docs.github.com/en/actions/using-workflows/reusing-workflows The strategy property is not supported in any job that calls a reusable workflow.
   call-workflow:
