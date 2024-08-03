@@ -20,13 +20,10 @@ class L10n
 
     /** @var array<string> Available languages for MyCMS */
     public $enabledLanguages; // ['en' => 'English']
-
     /** @var string */
     protected $prefix;
-
     /** @var string */
     protected $selectedLanguage = null;
-
     /** @var array<string> */
     protected $translation;
 

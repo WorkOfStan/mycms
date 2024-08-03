@@ -11,7 +11,7 @@
         "nette/utils": "^2.4.8 || ^3.2.2",
         "texy/texy": "^2.7.1",
         "tracy/tracy": "^2.4.10",
-        "workofstan/backyard": "dev-feature/seablast-logger"
+        "workofstan/backyard": "^3.4.2"
     },
     "require-dev": {
         "phpunit/phpunit": "^4 || ^5"

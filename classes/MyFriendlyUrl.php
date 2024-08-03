@@ -27,20 +27,12 @@ class MyFriendlyUrl extends MyCommon
 
     /** @var array<mixed> content of $_GET and $_POST */
     protected $get;
-
-    /**
-     * used in friendlyIdentifyRedirect
-     *
-     * @var array<mixed>
-     */
-    protected $session;
-
-    /** @var string */
-    protected $requestUri = ''; //default is homepage
-
     /** @var string */
     protected $language = DEFAULT_LANGUAGE; //default is Czech
-
+    /** @var array<mixed> used in friendlyIdentifyRedirect */
+    protected $session;
+    /** @var string */
+    protected $requestUri = ''; //default is homepage
     /** @var string */
     protected $userAgent = '';
 

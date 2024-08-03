@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Added` for new features
 
 ### `Changed` for changes in existing functionality
+- use Backyard::^3.4.0 where BackyardError wraps \Seablast\Logger\Logger implementation
 
 ### `Deprecated` for soon-to-be removed features
 
