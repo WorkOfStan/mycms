@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### `Added` for new features
-- ignore style imperfections in (3rd party) JavaScripts
+- ignore style imperfections in (third-party) JavaScripts
 
 ### `Changed` for changes in existing functionality
 - use Backyard::^3.4.0 where BackyardError wraps \Seablast\Logger\Logger implementation

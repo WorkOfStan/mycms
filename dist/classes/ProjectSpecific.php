@@ -240,7 +240,7 @@ class ProjectSpecific extends ProjectCommon
 
     /**
      * Generates array of url=>label for breadcrumbs on pages
-     * TODO: make this method useful for dist project as a demonstration (inspired by A project)
+     * TODO: make this method useful for dist project as a demo (inspired by A project)
      *
      * @param string $path
      * @return array<array<string>|string>|false

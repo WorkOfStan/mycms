@@ -45,7 +45,7 @@ class ProductsAdminModel
     public function htmlOutput()
     {
         $output = '';
-        // products // TODO make work in Dist
+        // products // TODO make some useful work in Dist
         $output .= '<h1>' . $this->tableAdmin->translate('Products') . '</h1><div id="agenda-products">';
         $categories = $this->dbms->fetchAll('SELECT id,name_' . $_SESSION['language'] . ' AS category,active
                 FROM `' . TAB_PREFIX . 'category`');
