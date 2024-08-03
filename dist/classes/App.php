@@ -153,11 +153,6 @@ class App extends MyCommon
         }
 
         // Render web pages
-
-        // texy initialization (@todo refactor) .. used in CustomFilters
-        //$Texy = null;
-        //ProjectSpecific::prepareTexy();
-
         $customFilters = new CustomFilters($this->MyCMS);
 
         $this->MyCMS->renderLatte(

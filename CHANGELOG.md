@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### `Added` for new features
-- ignore style imperfections in (3rd party) Java Scripts
+- ignore style imperfections in (3rd party) JavaScripts
 
 ### `Changed` for changes in existing functionality
 - use Backyard::^3.4.0 where BackyardError wraps \Seablast\Logger\Logger implementation
@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Removed` for now removed features
 - VERSION file as git-flow branching model is no longer used
+- `"texy/texy": "^2.7.1"` is no longer used in MyCMS
 
 ### `Fixed` for any bugfixes
 - bump versions of GitHub workflow actions

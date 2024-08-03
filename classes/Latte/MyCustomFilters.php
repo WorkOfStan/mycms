@@ -146,7 +146,6 @@ class MyCustomFilters
      */
     public function section($parameter)
     {
-//        global $Texy;
         switch ($parameter) {
             case 'showMessages':
                 return Tools::showMessages(false);
@@ -158,9 +157,6 @@ class MyCustomFilters
 //                return 1; //$MyCMS->pageFavorites();
 //            case 'compare':
 //                return ProjectSpecific::itemComparison();
-//            ALSO UNUSED:
-//            case 'footer':
-//                return Template::templateTranslate($Texy->process($this->MyCMS->WEBSITE['footer']));
             default:
                 $this->MyCMS->logger->warning("CustomFilter section called with undefined parameter: {$parameter}");
         }
