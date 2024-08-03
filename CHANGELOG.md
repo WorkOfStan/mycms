@@ -6,21 +6,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### `Added` for new features
-- ignore style imperfections in (third-party) JavaScripts
 
 ### `Changed` for changes in existing functionality
-- use Backyard::^3.4.0 where BackyardError wraps \Seablast\Logger\Logger implementation
 
 ### `Deprecated` for soon-to-be removed features
 
 ### `Removed` for now removed features
+
+### `Fixed` for any bugfixes
+
+### `Security` in case of vulnerabilities
+
+## [0.4.10] - 2024-08-03
+### Added
+- ignore style imperfections in (third-party) JavaScripts
+
+### Changed
+- use Backyard::^3.4.0 where BackyardError wraps \Seablast\Logger\Logger implementation
+
+### Removed
 - VERSION file as git-flow branching model is no longer used
 - `"texy/texy": "^2.7.1"` is no longer used in MyCMS
 
-### `Fixed` for any bugfixes
+### Fixed
 - bump versions of GitHub workflow actions
-
-### `Security` in case of vulnerabilities
 
 ## [0.4.9] - 2023-06-16
 ### Changed
@@ -478,8 +487,8 @@ to
 - Basic structure
 
 
-
-[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.4.9...HEAD
+[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.4.10...HEAD
+[0.4.10]: https://github.com/WorkOfStan/mycms/compare/v0.4.9...v0.4.10
 [0.4.9]: https://github.com/WorkOfStan/mycms/compare/v0.4.8...v0.4.9
 [0.4.8]: https://github.com/WorkOfStan/mycms/compare/v0.4.7...v0.4.8
 [0.4.7]: https://github.com/WorkOfStan/mycms/compare/v0.4.6...v0.4.7

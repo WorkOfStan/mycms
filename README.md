@@ -23,7 +23,7 @@ Apache modules `mod_alias` (for hiding non-public files) and `mod_rewrite` (for 
 
 Once [composer](https://getcomposer.org/) is installed, execute the following command in your project root to install this library:
 ```sh
-composer require workofstan/mycms:^0.4.9
+composer require workofstan/mycms:^0.4.10
 ```
 Most of library's classes use prefix `My`.
 To develop your project, create your own classes as children inheriting MyCMS' classes in the `./classes/` directory and name them without the initial `My` in its name.  
@@ -178,7 +178,7 @@ The reused workflow may be referenced by a branch, tag or commit and doesn't sup
 ```sh
     # Working examples
     uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@main # ok, but all encompassing
-    uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@v0.4.9 # it works
+    uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@v0.4.10 # it works
 
     # Failing examples
     uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@v0.4
