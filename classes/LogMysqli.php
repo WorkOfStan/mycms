@@ -11,8 +11,7 @@ use WorkOfStan\MyCMS\Tracy\BarPanelTemplate;
 use function WorkOfStan\MyCMS\ThrowableFunctions\mb_eregi_replace;
 
 /**
- * class with logging specific to this application
- * i.e. log changes of database
+ * Class ensuring logging specific to this applicatio, i.e. log changes to the database.
  */
 class LogMysqli extends BackyardMysqli
 {

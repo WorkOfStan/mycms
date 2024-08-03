@@ -14,7 +14,7 @@ use WorkOfStan\MyCMS\Render;
  * and a rendering to a Latte templates.
  * For multi-language version of this class, use MyCMS.
  *
- * For a new project it is expected to make a extended class and place
+ * For a new project it is expected to make an extended class and place
  * additional attributes needed for running, then use that class.
  *
  */

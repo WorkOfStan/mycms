@@ -17,7 +17,6 @@ class ProjectCommon extends MyCommon
 
     /** @var string */
     protected $language;
-
     /** @var string */
     protected $requestUri = ''; //default is homepage
 
@@ -81,24 +80,6 @@ class ProjectCommon extends MyCommon
             $this->language = $language;
         }
         return $this->language;
-    }
-
-    /**
-     * @todo refactor as getTexy() which returns Texy object that is initialized in this dynamic class
-     *
-     * @global \Texy $Texy
-     * @return void
-     */
-    public static function prepareTexy()
-    {
-        global $Texy;
-        if (!is_object($Texy)) {
-            $Texy = new \Texy();
-            $Texy->headingModule->balancing = TEXY_HEADING_FIXED;
-            $Texy->headingModule->generateID = true;
-            $Texy->allowedTags = true;
-            $Texy->dtd['a'][0]['data-lightbox'] = 1;
-        }
     }
 
     /**
