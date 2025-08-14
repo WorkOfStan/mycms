@@ -45,6 +45,8 @@ Files `process.php` and `admin-process.php` MUST exist as they process forms.
 
 Note: `$MyCMS` name is expected by `ProjectSpecific extends ProjectCommon` class (@todo replace global $MyCMS by parameter handling)
 
+Note/todo: MyCMS requires godsdev/tools which is stack with PHP/7. Therefore MyCMS is limited by PHP/7 as well.
+
 ## Deployment
 
 ### `/dist`

@@ -3,7 +3,7 @@
     "description": "MyCMS - Brief MVC framework for interactive websites including general administration.",
     "type": "library",
     "require": {
-        "php": "^5.6 || ^7.0 || ^8.0",
+        "php": "^5.6 || ^7.0",
         "ext-session": "*",
         "ext-mbstring": "*",
         "godsdev/tools": "^0.3.8",
