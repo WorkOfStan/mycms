@@ -17,10 +17,7 @@ class ArrayStrict
 {
     use \Nette\SmartObject;
 
-    /**
-     *
-     * @var array<mixed>
-     */
+    /** @var array<mixed> */
     private $arr;
 
     /**
@@ -56,7 +53,7 @@ class ArrayStrict
      */
     public function bool($field)
     {
-        Assert::boolean($this->isset($field));
+        Assert::boolean($this->isFieldSet($field));
         Assert::boolean($this->arr[$field]); // for static analysis
         return $this->arr[$field];
     }
@@ -69,7 +66,7 @@ class ArrayStrict
      */
     public function float($field)
     {
-        Assert::float($this->isset($field));
+        Assert::float($this->isFieldSet($field));
         Assert::float($this->arr[$field]); // for static analysis
         return $this->arr[$field];
     }
@@ -82,7 +79,7 @@ class ArrayStrict
      */
     public function integer($field)
     {
-        Assert::integer($this->isset($field));
+        Assert::integer($this->isFieldSet($field));
         Assert::integer($this->arr[$field]); // for static analysis
         return $this->arr[$field];
     }
@@ -93,7 +90,7 @@ class ArrayStrict
      * @param string $field
      * @return mixed
      */
-    private function isset($field)
+    private function isFieldSet($field)
     {
         if (isset($this->arr[$field])) {
             return $this->arr[$field];
@@ -120,7 +117,7 @@ class ArrayStrict
      */
     public function string($field)
     {
-        Assert::string($this->isset($field));
+        Assert::string($this->isFieldSet($field));
         Assert::string($this->arr[$field]); // for static analysis
         return $this->arr[$field];
     }
