@@ -1,0 +1,70 @@
+---
+name: Polish the code
+
+on:
+  push:
+    branches-ignore:
+      # notest branches to ignore testing of partial online commits
+      - "notest/**"
+
+  pull_request:
+    branches-ignore:
+      # notest branches to ignore testing of partial online commits
+      - "notest/**"
+
+  schedule:
+    # Run the workflow at 6:30 AM UTC on the 15th of every month
+    - cron: "30 6 15 * *"
+    # Scheduled runs do not commit-changes automatically to the same branch
+
+permissions:
+  # only prettier-fix and phpcs-phpcbf need write permission, for others read is enough
+  contents: read
+
+jobs:
+  # Note: https://docs.github.com/en/actions/using-workflows/reusing-workflows The strategy property is not supported in any job that calls a reusable workflow.
+  php-composer-unit-stan:
+    uses: WorkOfStan/seablast-actions/.github/workflows/php-composer-dependencies-reusable.yml@v0.2.4
+    with:
+      # JSON
+      php-version: '["5.6", "7.0", "7.1", "7.2", "7.3", "7.4"]'
+      # OPTIONAL path with the default database configuration
+      #phinx-config: "./conf/phinx.dist.php"
+      # OPTIONAL path where the app code is looking for the database configuration
+      #phinxlocal-config: "./conf/phinx.local.php"
+      runs-on: "ubuntu-latest"
+
+  prettier-fix:
+    needs: php-composer-unit-stan
+    # Note: runs-on doesn't accept all expressions, so a string is used
+    runs-on: "ubuntu-latest"
+    permissions:
+      contents: write
+    # Limit the running time
+    timeout-minutes: 10
+    steps:
+      - name: Invoke the Prettier fix
+        uses: WorkOfStan/prettier-fix@v1.1.5
+        with:
+          commit-changes: ${{ github.event_name != 'schedule' }}
+
+  phpcs-phpcbf:
+    needs: prettier-fix
+    runs-on: "ubuntu-latest"
+    permissions:
+      contents: write
+    # Limit the running time
+    timeout-minutes: 10
+    steps:
+      - name: Invoke the PHPCS check and PHPCBF fix
+        uses: WorkOfStan/phpcs-fix@v1.0.2
+        with:
+          commit-changes: ${{ github.event_name != 'schedule' }}
+          php-version: "8.2"
+          stop-on-manual-fix: true
+
+  super-linter:
+    needs: phpcs-phpcbf
+    uses: WorkOfStan/seablast-actions/.github/workflows/linter.yml@v0.2.4
+    with:
+      runs-on: "ubuntu-latest"
