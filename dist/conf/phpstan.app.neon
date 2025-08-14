@@ -6,7 +6,8 @@ parameters:
         analyseAndScan:
             - ../cache/*
         analyse:
-          - ../vendor
+          # If the excluded path can sometimes exist, append (?) to its config entry to mark it as optional. 
+          - ../vendor (?)
         # temporary arrangement so that MyCMS can be debugged along MyCMS/dist
         #  - ../vendor/bin
         #  - ../vendor/cakephp
