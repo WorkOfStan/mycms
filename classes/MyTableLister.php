@@ -701,7 +701,8 @@ class MyTableLister
                             . 'title="'
                             . Tools::h(
                                 mb_substr($row[$key . $this->DEFAULTS['FOREIGNLINK']], 0, $this->DEFAULTS['TEXTSIZE'])
-                                . (mb_strlen($row[$key . $this->DEFAULTS['FOREIGNLINK']]) > $this->DEFAULTS['TEXTSIZE']
+                                . (mb_strlen((string) $row[$key . $this->DEFAULTS['FOREIGNLINK']])
+                                    > $this->DEFAULTS['TEXTSIZE']
                                     ? '&hellip;' : '')
                             ) . '">'
                             . Tools::h($row[$key]) . '</a>';
@@ -713,7 +714,7 @@ class MyTableLister
                             // no break
                             case 'text':
                             default:
-                                $tmp = Tools::h(mb_substr($value, 0, (int) $this->DEFAULTS['TEXTSIZE']));
+                                $tmp = Tools::h(mb_substr((string) $value, 0, (int) $this->DEFAULTS['TEXTSIZE']));
                                 break;
                         }
                     }

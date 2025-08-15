@@ -1,7 +1,7 @@
 # (Last MyCMS/dist revision: 2024-07-24, v0.4.10)
 
 parameters:
-    level: 8
+    level: 9
     excludePaths:
         analyseAndScan:
             - ../cache/*
