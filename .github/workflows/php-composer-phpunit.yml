@@ -167,11 +167,13 @@ jobs:
           #todo return when rector ready for phpstan:1.0#composer require --dev rector/rector --prefer-dist --no-progress
           cd ..
       - name: "PHPStan webmozart-assert (app)"
-        if: ${{ matrix.php-version >= '7.1' }}
+        if: ${{ matrix.php-version >= '7.2' }}
         run: |
           cd dist
-          # Note that phpstan/phpstan is required above but not used below (as shivammathur/setup-php tool is used)
-          phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
+          # show version
+          ./vendor/bin/phpstan.phar -V
+          # analyze
+          ./vendor/bin/phpstan.phar --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
           cd ..
 
       - name: "Composer phpstan-webmozart-assert (library + app)"
@@ -181,8 +183,10 @@ jobs:
           composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
 
       - name: "PHPStan webmozart-assert (library + app)"
-        # alternative syntax # if: ${{ matrix.php-version != '5.3' && matrix.php-version != '5.6' }}
-        if: ${{ matrix.php-version >= '7.1' }}
+        if: ${{ matrix.php-version >= '7.2' }}
         run: |
-          # Note that phpstan/phpstan is required above but not used below (as shivammathur/setup-php tool is used)
-          phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
+          # show version
+          ./vendor/bin/phpstan.phar -V
+          # analyze
+          ./vendor/bin/phpstan.phar --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
+        shell: bash   
