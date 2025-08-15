@@ -69,7 +69,7 @@ class ProjectSpecific extends ProjectCommon
             $row['description'] = str_replace(
                 '&amp;',
                 '&',
-                str_replace('&nbsp;', ' ', strip_tags($row['description']))
+                str_replace('&nbsp;', ' ', strip_tags((string) $row['description']))
             );
             $result [] = $row;
         }

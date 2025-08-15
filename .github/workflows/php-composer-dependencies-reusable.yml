@@ -79,6 +79,7 @@ jobs:
           mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';" -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
           mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
           mysql -e 'SHOW DATABASES;' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+        shell: bash
 
       # https://github.com/actions/cache
       # A repository can have up to 10 GB of caches. Once the 10 GB limit is reached, older caches will be evicted based on when the cache was last accessed.
@@ -97,27 +98,33 @@ jobs:
       - name: Validate composer.json and composer.lock
         if: ${{ steps.vendor-cache.outputs.cache-hit != 'true' }}
         run: composer validate
+        shell: bash
 
       - name: Install no-dev dependencies
         if: ${{ steps.vendor-cache.outputs.cache-hit != 'true' }}
         run: composer update --no-dev --prefer-dist --no-progress
+        shell: bash
 
       # to fix `Constant DB_USERNAME not found.` etc not only for phpstan but also for phpunit tests
       - name: Copy local config files
         if: steps.check_files_configlocaldist.outputs.files_exists == 'true'
         run: cp -p conf/config.local.dist.php conf/config.local.php
+        shell: bash
 
       - name: Copy local testing database settings
         if: steps.check_files_database.outputs.files_exists == 'true'
         run: cp -p phinx.dist.yml phinx.yml
+        shell: bash
 
       - name: Phinx migration - migrate
         if: ${{ matrix.php-version >= '7.1' && steps.check_files_database.outputs.files_exists == 'true' }} #PHP/5.6 has auth problem with MySQL/8
         run: "./vendor/bin/phinx migrate -e testing"
+        shell: bash
 
       - name: Install dependencies
         if: ${{ steps.vendor-cache.outputs.cache-hit != 'true' }}
         run: composer update --prefer-dist --no-progress
+        shell: bash
 
       # PHPunit is installed anyway, so it doesn't make sense to use tools: phpunit
       # Note `sudo /etc/init.d/apache2 start` uses `/etc/apache2/sites-enabled/000-default.conf` where DocumentRoot = `/var/www/html` but without PHP
@@ -125,6 +132,7 @@ jobs:
       - name: "PHPUnit tests with MySQL"
         if: ${{ matrix.php-version >= '7.1' && steps.check_files_phpunit.outputs.files_exists == 'true' }}
         run: ./vendor/bin/phpunit -c ./conf/phpunit-github.xml
+        shell: bash
 
       # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
       # Docs: https://getcomposer.org/doc/articles/scripts.md
@@ -132,12 +140,14 @@ jobs:
       # - name: Run test suite
       #   run: composer run-script test
 
-      # PHPStan works for PHP/7.1+ so it can't even be in composer.json (as ^5.6|^7.0 is supported)
+      # PHPStan works ok for PHP/7.2+ so PHPStan can't even be in composer.json (as ^5.6|^7.0 might be supported)
       - name: "Composer phpstan-webmozart-assert"
-        if: ${{ matrix.php-version >= '7.1' && steps.vendor-cache.outputs.cache-hit != 'true' }}
-        run: |
-          composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
-          #todo return when rector ready for phpstan:1.0#composer require --dev rector/rector --prefer-dist --no-progress
+        if: ${{ matrix.php-version >= '7.2' && steps.vendor-cache.outputs.cache-hit != 'true' }}
+        run: composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
+        # this will also add the supported version of phpstan/phpstan
+        shell: bash
+
       - name: "PHPStan webmozart-assert"
-        if: ${{ matrix.php-version >= '7.1' }}
+        if: ${{ matrix.php-version >= '7.2' }}
         run: phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
+        shell: bash        

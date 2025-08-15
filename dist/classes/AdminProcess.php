@@ -489,7 +489,7 @@ class AdminProcess extends MyAdminProcess
             . ' LIMIT ' . $this::PROCESS_LIMIT;
         $query = $this->MyCMS->dbms->queryStrictObject($sql);
         for ($i = 1; $row = $query->fetch_assoc(); $i++) {
-            $row['name'] = Tools::shortify(strip_tags($row['name']), 100);
+            $row['name'] = Tools::shortify(strip_tags((string) $row['name']), 100);
             $result [] = $row;
             if ($agenda === 'product' && isset($row['sort']) && $row['sort'] != $i) {
                 $correctOrder[$row['id']] = $i;

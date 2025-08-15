@@ -167,7 +167,7 @@ class MyTableLister
             ];
             if ($pos = strpos($row['Type'], '(')) {
                 $item['basictype'] = $item['type'] = substr($row['Type'], 0, $pos);
-                $item['size'] = rtrim(substr($row['Type'], $pos + 1), ')');
+                $item['size'] = rtrim(substr((string) $row['Type'], $pos + 1), ')');
             }
             switch ($item['basictype']) {
                 case 'int':
@@ -700,12 +700,14 @@ class MyTableLister
                             . Tools::urlChange(['table' => $field['foreign_table'], 'where[id]' => $value]) . '" '
                             . 'title="'
                             . Tools::h(
-                                mb_substr($row[$key . $this->DEFAULTS['FOREIGNLINK']], 0, $this->DEFAULTS['TEXTSIZE'])
+                                mb_substr(
+                                    (string)$row[$key . $this->DEFAULTS['FOREIGNLINK']], 0, $this->DEFAULTS['TEXTSIZE']
+                                )
                                 . (mb_strlen((string) $row[$key . $this->DEFAULTS['FOREIGNLINK']])
                                     > $this->DEFAULTS['TEXTSIZE']
                                     ? '&hellip;' : '')
                             ) . '">'
-                            . Tools::h($row[$key]) . '</a>';
+                            . Tools::h((string) $row[$key]) . '</a>';
                     } else {
                         switch ($field['basictype']) {
                             case 'integer':

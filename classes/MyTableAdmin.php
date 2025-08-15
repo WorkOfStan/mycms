@@ -440,7 +440,7 @@ class MyTableAdmin extends MyTableLister
         if ($module && $module !== true) {
             $tempArr = $module->fetch_assoc();
             Assert::isArray($tempArr);
-            $module = json_decode($tempArr['Comment'], true);
+            $module = json_decode((string) $tempArr['Comment'], true);
             Assert::isArray($module);
             return isset($module['module']) && $module['module'] ? $module['module'] : 10;
         }
@@ -477,7 +477,11 @@ class MyTableAdmin extends MyTableLister
         $options['path-value'] = isset($options['path-value']) ? $options['path-value'] : false;
         while ($row = $query->fetch_assoc()) {
             if ($row['id'] != $options['exclude']) {
-                $result .= Tools::htmlOption($row['id'], str_repeat('. ', strlen($row['path']) / $module - 1) . $row['category_'], $row['path'] === $options['path-value'] ? $row['id'] : $path_id);
+                $result .= Tools::htmlOption(
+                    $row['id'],
+                    str_repeat('. ', strlen((string) $row['path']) / $module - 1) . $row['category_'],
+                    $row['path'] === $options['path-value'] ? $row['id'] : $path_id
+                );
             }
         }
         return $result . '</select>';
