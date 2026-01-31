@@ -114,16 +114,15 @@ class FriendlyUrlTest extends TestCase
             //(' session:' . http_build_query($friendlyUrlOptions['session'])) : '')
             . ' templateDetermined: ' . print_r($templateDetermined, true);
         if (FORCE_301 && FRIENDLY_URL) {
-            $this->assertInternalType(
-                'array',
+            $this->assertIsArray(
                 $templateDetermined,
                 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
             );
             // just for static analysis
-            Assert::isArray(
-                $templateDetermined,
-                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
-            );
+//            Assert::isArray(
+//                $templateDetermined,
+//                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+//            );
             $this->assertArrayHasKey('httpCode', $templateDetermined, 'Determine template ' . $message);
             $this->assertEquals(
                 301,
@@ -151,16 +150,15 @@ class FriendlyUrlTest extends TestCase
             // ? (' session:' . http_build_query($friendlyUrlOptions['session'])) : '')
             . ' templateDetermined: ' . print_r($templateDetermined, true);
         if (FORCE_301 && FRIENDLY_URL) {
-            $this->assertInternalType(
-                'array',
+            $this->assertIsArray(
                 $templateDetermined,
                 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
             );
             // just for static analysis
-            Assert::isArray(
-                $templateDetermined,
-                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
-            );
+//            Assert::isArray(
+//                $templateDetermined,
+//                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+//            );
             $this->assertArrayHasKey('httpCode', $templateDetermined, 'Determine template ' . $message);
             $this->assertEquals(
                 301,
@@ -204,16 +202,15 @@ class FriendlyUrlTest extends TestCase
             //(' session:' . http_build_query($friendlyUrlOptions['session'])) : '')
             . ' templateDetermined: ' . print_r($templateDetermined, true);
         if (FORCE_301 && FRIENDLY_URL) {
-            $this->assertInternalType(
-                'array',
+            $this->assertIsArray(
                 $templateDetermined,
                 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
             );
             // just for static analysis
-            Assert::isArray(
-                $templateDetermined,
-                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
-            );
+//            Assert::isArray(
+//                $templateDetermined,
+//                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+//            );
             $this->assertArrayHasKey('httpCode', $templateDetermined, 'Determine template ' . $message);
             $this->assertEquals(
                 301,
@@ -242,16 +239,15 @@ class FriendlyUrlTest extends TestCase
             //(' session:' . http_build_query($friendlyUrlOptions['session'])) : '')
             . ' templateDetermined: ' . print_r($templateDetermined, true);
         if (FORCE_301 && FRIENDLY_URL) {
-            $this->assertInternalType(
-                'array',
+            $this->assertIsArray(
                 $templateDetermined,
                 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
             );
             // just for static analysis
-            Assert::isArray(
-                $templateDetermined,
-                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
-            );
+//            Assert::isArray(
+//                $templateDetermined,
+//                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+//            );
             $this->assertArrayHasKey('httpCode', $templateDetermined, 'Determine template ' . $message);
             $this->assertEquals(
                 301,
@@ -314,16 +310,15 @@ class FriendlyUrlTest extends TestCase
             //(' session:' . http_build_query($friendlyUrlOptions['session'])) : '')
             . ' templateDetermined: ' . print_r($templateDetermined, true);
         if (FORCE_301 && FRIENDLY_URL) {
-            $this->assertInternalType(
-                'array',
+            $this->assertIsArray(
                 $templateDetermined,
                 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
             );
             // just for static analysis
-            Assert::isArray(
-                $templateDetermined,
-                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
-            );
+//            Assert::isArray(
+//                $templateDetermined,
+//                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+//            );
             $this->assertArrayHasKey('httpCode', $templateDetermined, 'Determine template ' . $message);
             $this->assertEquals(
                 301,
@@ -391,16 +386,15 @@ class FriendlyUrlTest extends TestCase
             'REQUEST_URI' => $requestUri
         ]);
         $applicationDir = pathinfo($_SERVER["SCRIPT_NAME"], PATHINFO_DIRNAME);
-        $this->assertInternalType(
-            'array',
+        $this->assertIsArray(
             $templateDetermined,
             'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
         );
         // just for static analysis
-        Assert::isArray(
-            $templateDetermined,
-            'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
-        );
+//        Assert::isArray(
+//            $templateDetermined,
+//            'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+//        );
         $this->assertArrayHasKey('redir', $templateDetermined, 'Determine template ' . $message);
         $this->assertEquals(
             [
@@ -423,16 +417,15 @@ class FriendlyUrlTest extends TestCase
             'PATH_HOME' => '0000000001',
             'REQUEST_URI' => $requestUri
         ]);
-        $this->assertInternalType(
-            'array',
+        $this->assertIsArray(
             $templateDetermined,
             'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
         );
         // just for static analysis
-        Assert::isArray(
-            $templateDetermined,
-            'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
-        );
+//        Assert::isArray(
+//            $templateDetermined,
+//            'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+//        );
         $this->assertArrayHasKey('redir', $templateDetermined, 'Determine template ' . $message);
         $this->assertEquals(
             ['redir' => $applicationDir . '/404?url=' . $requestUri, 'httpCode' => 301],
@@ -452,16 +445,15 @@ class FriendlyUrlTest extends TestCase
             'PATH_HOME' => '0000000001',
             'REQUEST_URI' => $requestUri
         ]);
-        $this->assertInternalType(
-            'array',
+        $this->assertIsArray(
             $templateDetermined,
             'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
         );
         // just for static analysis
-        Assert::isArray(
-            $templateDetermined,
-            'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
-        );
+//        Assert::isArray(
+//            $templateDetermined,
+//            'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+//        );
         $this->assertArrayHasKey('redir', $templateDetermined, 'Determine template ' . $message);
         $this->assertEquals(
             ['redir' => $applicationDir . '/404?url=' . $requestUri, 'httpCode' => 301],
@@ -481,16 +473,15 @@ class FriendlyUrlTest extends TestCase
             'PATH_HOME' => '0000000001',
             'REQUEST_URI' => $requestUri
         ]);
-        $this->assertInternalType(
-            'array',
+        $this->assertIsArray(
             $templateDetermined,
             'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
         );
         // just for static analysis
-        Assert::isArray(
-            $templateDetermined,
-            'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
-        );
+//        Assert::isArray(
+//            $templateDetermined,
+//            'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+//        );
         $this->assertArrayHasKey('redir', $templateDetermined, 'Determine template ' . $message);
         $this->assertEquals(
             ['redir' => $applicationDir . '/404?url=' . $requestUri, 'httpCode' => 301],
@@ -529,16 +520,15 @@ class FriendlyUrlTest extends TestCase
             'REQUEST_URI' => $requestUri
         ]);
         if (REDIRECTOR_ENABLED) {
-            $this->assertInternalType(
-                'array',
+            $this->assertIsArray(
                 $templateDetermined,
                 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
             );
             // just for static analysis
-            Assert::isArray(
-                $templateDetermined,
-                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
-            );
+//            Assert::isArray(
+//                $templateDetermined,
+//                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+//            );
             $this->assertArrayHasKey('redir', $templateDetermined, $message);
             $this->assertEquals(
                 ['redir' => $applicationDir . '/kontakty', 'httpCode' => 301],
@@ -568,16 +558,15 @@ class FriendlyUrlTest extends TestCase
             'PATH_HOME' => '0000000001',
             'REQUEST_URI' => $requestUri
         ]);
-        $this->assertInternalType(
-            'array',
+        $this->assertIsArray(
             $templateDetermined,
             'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
         );
         // just for static analysis
-        Assert::isArray(
-            $templateDetermined,
-            'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
-        );
+//        Assert::isArray(
+//            $templateDetermined,
+//            'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+//        );
         if (REDIRECTOR_ENABLED) {
             $this->assertArrayHasKey('redir', $templateDetermined, $message);
             $this->assertEquals(
@@ -607,16 +596,15 @@ class FriendlyUrlTest extends TestCase
             'PATH_HOME' => '0000000001',
             'REQUEST_URI' => $requestUri
         ]);
-        $this->assertInternalType(
-            'array',
+        $this->assertIsArray(
             $templateDetermined,
             'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
         );
         // just for static analysis
-        Assert::isArray(
-            $templateDetermined,
-            'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
-        );
+//        Assert::isArray(
+//            $templateDetermined,
+//            'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+//        );
         if (REDIRECTOR_ENABLED) {
             $this->assertArrayHasKey('redir', $templateDetermined, $message);
             $this->assertEquals(
@@ -653,17 +641,16 @@ class FriendlyUrlTest extends TestCase
             FORCE_301
 //            && FRIENDLY_URL
         ) {
-            $this->assertInternalType(
-                'array',
+            $this->assertIsArray(
                 $templateDetermined,
                 'MUST return array: Determine template "' . print_r($templateDetermined, true)
                 . '" ' . $message . ' but template=' . print_r($this->myCms->template, true)
             );
             // just for static analysis
-            Assert::isArray(
-                $templateDetermined,
-                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
-            );
+//            Assert::isArray(
+//                $templateDetermined,
+//                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+//            );
             $this->assertArrayHasKey('redir', $templateDetermined, $message);
             $this->assertEquals(
                 [
@@ -702,16 +689,15 @@ class FriendlyUrlTest extends TestCase
             FORCE_301
 //            && FRIENDLY_URL
         ) {
-            $this->assertInternalType(
-                'array',
+            $this->assertIsArray(
                 $templateDetermined,
                 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
             );
             // just for static analysis
-            Assert::isArray(
-                $templateDetermined,
-                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
-            );
+//            Assert::isArray(
+//                $templateDetermined,
+//                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+//            );
             $this->assertArrayHasKey('redir', $templateDetermined, $message);
             $this->assertEquals(
                 ['redir' => $applicationDir . '/?product&id=4&language=en', 'httpCode' => 301],
@@ -745,16 +731,15 @@ class FriendlyUrlTest extends TestCase
             'REQUEST_URI' => $requestUri
         ]);
         if (FORCE_301 && FRIENDLY_URL) {
-            $this->assertInternalType(
-                'array',
+            $this->assertIsArray(
                 $templateDetermined,
                 'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
             );
             // just for static analysis
-            Assert::isArray(
-                $templateDetermined,
-                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
-            );
+//            Assert::isArray(
+//                $templateDetermined,
+//                'MUST return array: Determine template ' . $message . ' but template=' . $this->myCms->template
+//            );
             $this->assertArrayHasKey('redir', $templateDetermined, $message);
             $resultRedir = $applicationDir . '/en/?product&id=4';
             $this->assertEquals(
@@ -778,7 +763,8 @@ class FriendlyUrlTest extends TestCase
             $this->markTestIncomplete(
                 'This test may be performed only with FRIENDLY_URL === true.'
             );
-            return;
+            // throws an exception to stop the test
+            //return;
         }
         $this->object = new FriendlyUrl($this->myCms, []);
 
@@ -1017,7 +1003,7 @@ class FriendlyUrlTest extends TestCase
                 );
                 // var_dump('2nd RESULT', $result);
             }
-            $this->assertNotFalse(is_array($result), "cURL failed on {$url} with result=" . print_r($result, true));
+            //$this->assertNotFalse(is_array($result), "cURL failed on {$url} with result=" . print_r($result, true));
             $this->assertFalse(
                 ($result['HTTP_CODE'] === 0),
                 "URL {$url} is not available. (Is \$backyardConf['web_address'] properly configured?)"

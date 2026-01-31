@@ -43,7 +43,7 @@ class Admin extends MyAdmin
      *
      * @return void
      */
-    protected function controller()
+    protected function controller(): void
     {
         // TODO refactor this into pure Latte
         if (
@@ -165,7 +165,7 @@ class Admin extends MyAdmin
      * @see template/Admin/inc-special-menu-links.latte
      * @return string
      */
-    protected function outputSpecialMenuLinks()
+    protected function outputSpecialMenuLinks(): string
     {
         return
             // A Produkty k řazení
@@ -214,7 +214,7 @@ class Admin extends MyAdmin
      *
      * @return string
      */
-    protected function outputTableBeforeListing()
+    protected function outputTableBeforeListing(): string
     {
         return (in_array(mb_substr($this->tableAdmin->getTable(), mb_strlen(TAB_PREFIX)), ['content'])) ?
             $this->tableAdmin->contentByType(['table' => 'content', 'type' => 'type']) : '';
@@ -225,7 +225,7 @@ class Admin extends MyAdmin
      *
      * @return string
      */
-    protected function outputTableAfterEdit()
+    protected function outputTableAfterEdit(): string
     {
         $output = '';
         if (is_array($this->get['where']) && isset($this->get['where']['id']) && $this->get['where']['id']) {
@@ -316,7 +316,7 @@ class Admin extends MyAdmin
      * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
      * @return bool
      */
-    protected function projectSpecificSectionsCondition()
+    protected function projectSpecificSectionsCondition(): bool
     {
         return
             isset($this->get['urls']) ||
@@ -337,7 +337,7 @@ class Admin extends MyAdmin
      * @see AdminModels/ProductsAdminModel.php
      * @return string
      */
-    protected function projectSpecificSections()
+    protected function projectSpecificSections(): string
     {
         //F
         $output = '';
@@ -581,7 +581,7 @@ class Admin extends MyAdmin
      * @see AdminModels/DivisionsProductsAdminModel.php
      * @return string
      */
-    protected function sectionDivisionsProducts()
+    protected function sectionDivisionsProducts(): string
     {
         $output = '<h1>' . $this->tableAdmin->translate('Divisions and products') . '</h1><div id="agenda-products">';
         // TODO consider implementing from project F
@@ -723,7 +723,7 @@ class Admin extends MyAdmin
      * @see MyCMS/AdminModels/TranslationsProductsAdminModel.php
      * @return string
      */
-    protected function sectionTranslations()
+    protected function sectionTranslations(): string
     {
         $found = []; // translations found in latte templates
         foreach (glob('template/*.latte') as $file) {
@@ -815,7 +815,7 @@ class Admin extends MyAdmin
      * @see MyCMS/AdminModels/UrlsProductsAdminModel.php
      * @return string
      */
-    protected function sectionUrls()
+    protected function sectionUrls(): string
     {
         // One place to set Friendly URL for all pages
         // originally code F (delete this line later)
@@ -958,7 +958,7 @@ class Admin extends MyAdmin
      *
      * @return string
      */
-    public function getAdminCss()
+    public function getAdminCss(): string
     {
         //admin.css of the App is expected in the MyAdmin resources anyway, so no reason to duplicate it here
         //return parent::getAdminCss() . PHP_EOL . file_get_contents(__DIR__ . '/../styles/admin.css') . PHP_EOL;
@@ -972,7 +972,7 @@ class Admin extends MyAdmin
      * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
      * @return string
      */
-    public function getPageTitle()
+    public function getPageTitle(): string
     {
         return parent::getPageTitle() ?:
             (

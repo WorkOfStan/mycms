@@ -750,7 +750,7 @@ class MyAdmin extends MyCommon
      * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead. Handled in Admin::controller()
      * @return bool
      */
-    protected function projectSpecificSectionsCondition(): string
+    protected function projectSpecificSectionsCondition(): bool
     {
         return false;
     }

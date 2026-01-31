@@ -31,12 +31,6 @@ parameters:
 			path: ../classes/MyAdmin.php
 
 		-
-			message: '#^Method WorkOfStan\\MyCMS\\MyAdmin\:\:projectSpecificSectionsCondition\(\) should return string but returns false\.$#'
-			identifier: return.type
-			count: 1
-			path: ../classes/MyAdmin.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -51,12 +45,6 @@ parameters:
 		-
 			message: '#^Offset 0 on non\-empty\-list\<string\> in isset\(\) always exists and is not nullable\.$#'
 			identifier: isset.offset
-			count: 1
-			path: ../classes/MyAdmin.php
-
-		-
-			message: '#^PHPDoc tag @return with type bool is incompatible with native type string\.$#'
-			identifier: return.phpDocType
 			count: 1
 			path: ../classes/MyAdmin.php
 
@@ -210,17 +198,17 @@ parameters:
 			count: 1
 			path: ../classes/ThrowableFunctions/ThrowablePHPFunctions.php
 
-		-
-			message: '#^Call to function is_array\(\) with array\<string, mixed\> will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../dist/Test/FaviconTest.php
+#		-
+#			message: '#^Call to function is_array\(\) with array\<string, mixed\> will always evaluate to true\.$#'
+#			identifier: function.alreadyNarrowedType
+#			count: 1
+#			path: ../dist/Test/FaviconTest.php
 
-		-
-			message: '#^Call to function is_array\(\) with array\<string, mixed\> will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../dist/Test/FriendlyUrlTest.php
+#		-
+#			message: '#^Call to function is_array\(\) with array\<string, mixed\> will always evaluate to true\.$#'
+#			identifier: function.alreadyNarrowedType
+#			count: 1
+#			path: ../dist/Test/FriendlyUrlTest.php
 
 		-
 			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'

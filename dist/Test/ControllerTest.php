@@ -100,7 +100,9 @@ class ControllerTest extends TestCase
             'get' => $this->get,
             ]);
         $controller = $this->object->run();
-        $this->assertArraySubset(['template' => 'home', 'context' => []], $controller);
+        //$this->assertArraySubset(['template' => 'home', 'context' => []], $controller);
+        $this->assertSame('home', $controller['template']);
+        $this->assertSame([], $controller['context']);
     }
 
     /**
@@ -116,10 +118,13 @@ class ControllerTest extends TestCase
             'session' => $_SESSION,
             'get' => $this->get,
             ]);
-        $this->assertArraySubset(
-            ['template' => 'home', 'context' => $this->myCms->context],
-            $this->object->run()
-        );
+//        $this->assertArraySubset(
+//            ['template' => 'home', 'context' => $this->myCms->context],
+//            $this->object->run()
+//        );
+        $controller = $this->object->run();
+        $this->assertSame('home', $controller['template']);
+        $this->assertSame($this->myCms->context, $controller['context']);
     }
 
     /**
@@ -138,10 +143,10 @@ class ControllerTest extends TestCase
         ]);
         $controller = $this->object->run();
         $this->assertArrayHasKey('template', $controller);
-        $this->assertInternalType('string', $controller['template']);
+        $this->assertIsString($controller['template']);
         $this->assertEquals('home', $controller['template']);
         $this->assertArrayHasKey('context', $controller);
-        $this->assertInternalType('array', $controller['context']);
+        $this->assertIsArray($controller['context']);
     }
 
     /**

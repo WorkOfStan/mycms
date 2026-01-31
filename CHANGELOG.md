@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.0] - 2026-01-31
 
+fix: remove support below PHP/7.2, because of CVE-2026-24765
+
+### Changed
+
+- PHPUnit_Framework_TestCase to PHPUnit\Framework\TestCase
+
 ### Fixed
 
 - minor code tweeks to make a code stricter
