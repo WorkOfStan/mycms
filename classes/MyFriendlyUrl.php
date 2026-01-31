@@ -340,7 +340,7 @@ class MyFriendlyUrl extends MyCommon
         }
         //$token, $matches - will be expected below for FRIENDLY URL & Redirect calculation
         //(see friendlyIdentifyRedirect PHPDoc for explanation)
-        Assert::isArray($friendlyUrlRedirectVariables);
+        //Assert::isArray($friendlyUrlRedirectVariables);
         $token = $friendlyUrlRedirectVariables['token'];
         Assert::string($token);
         $matches = $friendlyUrlRedirectVariables['matches'];

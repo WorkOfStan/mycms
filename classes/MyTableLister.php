@@ -30,7 +30,7 @@ class MyTableLister
         'PAGES_AROUND' => 2, // used in pagination
         'FOREIGNLINK' => '-link' //suffix added to POST variables for links
     ];
-    /** @var array<array> all fields in the table */
+    /** @var array<array<mixed>> all fields in the table */
     public $fields;
     /** @var array<array<mixed>|string> TODO is $_GET really just recursive array with string values??? */
     protected $get;
@@ -50,9 +50,9 @@ class MyTableLister
     public $script;
     /** @var string table to list */
     protected $table;
-    /** @var array<array> possible table settings, stored in its comment */
+    /** @var array<array<mixed>> possible table settings, stored in its comment */
     public $tableContext = null;
-    /** @var array<array> all tables in the database */
+    /** @var array<array<mixed>> all tables in the database */
     public $tables;
     /**
      * @var array<string> Selected locale strings
@@ -90,7 +90,7 @@ class MyTableLister
      * @param string $table to view
      * @param array<string|array<string>> $options display options
      */
-    public function __construct(LogMysqli $dbms, $table, array $options = [])
+    public function __construct(LogMysqli $dbms, string $table, array $options = [])
     {
         $this->dbms = $dbms;
         $this->options = $options;
@@ -359,10 +359,10 @@ class MyTableLister
      * Operation `original` means "leave the column as is" (i.e. don't use it in this SQL statement)
      * And for any other (=unknown) operation is the column ignored, i.e. is not used in this SQL statement.
      *
-     * @param array<string,array> $vars variables used to filter records
+     * @param array<string,array<mixed>> $vars variables used to filter records
      * @return string
      */
-    public function bulkUpdateSQL($vars)
+    public function bulkUpdateSQL(array $vars): string
     {
         $result = '';
         foreach ($vars['fields'] as $field => $value) {
@@ -413,10 +413,10 @@ class MyTableLister
     /**
      * Create array of columns for preparing the SQL statement
      *
-     * @param array<array> $options
+     * @param array<array<mixed>> $options
      * @return array<string>
      */
-    public function getColumns($options)
+    public function getColumns(array $options): array
     {
         $columns = [];
         if (isset($options['include']) && is_array($options['include'])) {
@@ -859,13 +859,13 @@ class MyTableLister
     {
         $filterType = strtolower($filterType);
         $result = [];
-        if (is_array($this->fields)) {
+        //if (is_array($this->fields)) {
             foreach ($this->fields as $key => $value) {
                 if (isset($value['key']) && strtolower($value['key']) == $filterType) {
                     $result [] = $key;
                 }
             }
-        }
+        //}
         return $result;
     }
 
@@ -946,9 +946,11 @@ class MyTableLister
      *
      * @return bool true for success, false for failure of the query;
      */
-    public function resolveSQL($sql, $successMessage, $errorMessage, $noChangeMessage = false)
+    public function resolveSQL(
+        string $sql, string $successMessage, string $errorMessage, $noChangeMessage = false
+    ): bool
     {
-        Assert::string($sql);
+        //Assert::string($sql);
         if ($this->dbms->query($sql)) {
             Tools::addMessage(
                 'success',

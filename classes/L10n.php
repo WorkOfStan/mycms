@@ -108,10 +108,10 @@ class L10n
      * @param string $language
      * @return string
      */
-    private function assertLanguage($language)
+    private function assertLanguage(string $language): string
     {
         // Assert ISO 639-1 format
-        Assert::string($language);
+        //Assert::string($language);
         Assert::length($language, 2);
         Assert::inArray($language, $this->enabledLanguages);
         return $language;

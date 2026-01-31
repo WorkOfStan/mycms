@@ -42,7 +42,7 @@ class ProductsAdminModel
      *
      * @return string
      */
-    public function htmlOutput()
+    public function htmlOutput(): string
     {
         $output = '';
         // products // TODO make some useful work in Dist
@@ -162,7 +162,7 @@ class ProductsAdminModel
             . $this->tableAdmin->translate('Toggle image thumbnails') . '"><i class="far fa-image"></i></button>
                 </footer></div>';
 
-        Assert::string($output);
+        //Assert::string($output);
         return $output;
     }
 }

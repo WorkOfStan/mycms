@@ -93,14 +93,6 @@ class MyAdmin extends MyCommon
         if (!isset($this->get) || !is_array($this->get)) {
             // Todo//Debugger::log(warning: get not injected);
             $this->get = $_GET; // TODO inject GET in _construct arguments
-//        $this->getStrict = new ArrayStrict($this->get);
-        }
-        // Todo to be obsoleted in next version (after 2020-10-25) @deprecated 0.4.0
-        if (!empty($this->TableAdmin)) {
-            Debugger::log('Deprecated: TableAdmin. Replace by tableAdmin', ILogger::WARNING);
-            if (empty($this->tableAdmin)) {
-                $this->tableAdmin = $this->TableAdmin;
-            }
         }
         if (Tools::nonzero($this->featureFlags['admin_latte_render'])) {
             array_unshift($this->clientSideResources['css'], 'styles/admin.css.php?v=' . PAGE_RESOURCE_VERSION); //MyCMS
@@ -119,7 +111,7 @@ class MyAdmin extends MyCommon
      *
      * @return void
      */
-    protected function controller()
+    protected function controller(): void
     {
         $this->renderParams['pageTitle'] = ''; // the default empty value
         $this->template = 'Admin/admin-ui';
@@ -187,7 +179,7 @@ class MyAdmin extends MyCommon
      * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
      * @return void
      */
-    public function endAdmin()
+    public function endAdmin(): void
     {
         if (isset($_SESSION['user'])) {
             Debugger::getBar()->addPanel(new BarPanelTemplate('User: ' . $_SESSION['user'], $_SESSION));
@@ -202,7 +194,7 @@ class MyAdmin extends MyCommon
      * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
      * @return string
      */
-    public function getAdminCss()
+    public function getAdminCss(): string
     {
         return file_get_contents(__DIR__ . '/../styles/admin.css') . PHP_EOL;
     }
@@ -215,7 +207,7 @@ class MyAdmin extends MyCommon
      * @param string $title used in <title>
      * @return string
      */
-    protected function outputHead($title)
+    protected function outputHead($title): string
     {
         $result = '<head>
             <meta charset="utf-8">
@@ -248,7 +240,7 @@ class MyAdmin extends MyCommon
      * @see template/admin-navigation.latte
      * @return string
      */
-    protected function outputNavigation()
+    protected function outputNavigation(): string
     {
         $result = '<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
                 <a class="nav-item mr-2" href="' . Tools::h($_SERVER['SCRIPT_NAME']) . '" title="' . $this->tableAdmin->translate('Dashboard') . '"><i class="fa fa-tachometer-alt"></i></a>
@@ -307,7 +299,7 @@ class MyAdmin extends MyCommon
      * @see template/admin-special-menu-links.latte
      * @return string
      */
-    protected function outputSpecialMenuLinks()
+    protected function outputSpecialMenuLinks(): string
     {
         return '';
     }
@@ -319,7 +311,7 @@ class MyAdmin extends MyCommon
      * @see template/admin-special-settings-links.latte
      * @return string
      */
-    protected function outputSpecialSettingsLinks()
+    protected function outputSpecialSettingsLinks(): string
     {
         return '';
     }
@@ -329,7 +321,7 @@ class MyAdmin extends MyCommon
      *
      * @return string
      */
-    protected function outputMedia()
+    protected function outputMedia(): string
     {
         $result = '<h1 class="page-header">' . $this->tableAdmin->translate('Media') . '</h1>
             <form action="" method="post" enctype="multipart/form-data">
@@ -383,7 +375,7 @@ class MyAdmin extends MyCommon
      *
      * @return string
      */
-    protected function outputUser()
+    protected function outputUser(): string
     {
         $result = '<h1>' . $this->tableAdmin->translate('User') . '</h1>';
         // logout
@@ -457,7 +449,7 @@ class MyAdmin extends MyCommon
      *
      * @return string
      */
-    protected function outputLogin()
+    protected function outputLogin(): string
     {
         $options = [
             'before' => '<div class="col-sm-3 mt-3">',
@@ -482,7 +474,7 @@ class MyAdmin extends MyCommon
      *
      * @return string
      */
-    protected function outputDashboard()
+    protected function outputDashboard(): string
     {
         $result = '<br class="m-3"/><br class="m-3"/><hr />
             <div><small>' . $this->tableAdmin->translate('For more detailed browsing with filtering etc. you may select one of the following tables…') . '</small></div>
@@ -508,7 +500,7 @@ class MyAdmin extends MyCommon
      *
      * @return string
      */
-    protected function outputAgendas()
+    protected function outputAgendas(): string
     {
         // show agendas in the sidebar
         $result = '<details id="agendas"><summary class="page-header">' . $this->tableAdmin->translate('Agendas')
@@ -546,7 +538,7 @@ class MyAdmin extends MyCommon
      *
      * @return string
      */
-    protected function outputBodyEndInlineScript()
+    protected function outputBodyEndInlineScript(): string
     {
         $tmp = array_flip(explode('|', 'descending|Really delete?|New record|Passwords don\'t match!|Please, fill necessary data.|'
                 . 'Select at least one file and try again.|Select at least one record and try again.|No files|Edit|'
@@ -581,7 +573,7 @@ class MyAdmin extends MyCommon
      * @see template/@admin.latte
      * @return string
      */
-    protected function outputBodyEnd()
+    protected function outputBodyEnd(): string
     {
         $result = Tools::arrayListed(
 //            Tools::set($this->clientSideResources['js'], [])
@@ -611,7 +603,7 @@ class MyAdmin extends MyCommon
      * @see template/admin-output-image-selector.latte
      * @return string
      */
-    protected function outputImageSelector()
+    protected function outputImageSelector(): string
     {
         return '<div class="modal" id="image-selector" tabindex="-1" role="dialog" data-type="modal">
             <div class="modal-dialog" role="document">
@@ -642,7 +634,7 @@ class MyAdmin extends MyCommon
      * @see template/admin-ui-table.latte
      * @return void
      */
-    protected function renderTable()
+    protected function renderTable(): void
     {
         if (!array_key_exists('table', $this->renderParams) || !is_array($this->renderParams['table'])) {
             $this->renderParams['table'] = [];
@@ -668,7 +660,7 @@ class MyAdmin extends MyCommon
                     'tabs' => $tabs
                 ];
             /**
-             * @phpstan-ignore-next-line
+             * @xx phpstan-ignore-next-line
              * Parameter #2 $options of method WorkOfStan\MyCMS\MyTableAdmin::outputForm() expects array<array<array<string>|string>|bool>, array<string, array|true> given.
              * caused by PHPStan thinking $tabs may be a string. But why??
              */
@@ -694,7 +686,7 @@ class MyAdmin extends MyCommon
      * @see $this->renderTable()
      * @return string
      */
-    protected function outputTable()
+    protected function outputTable(): string
     {
         $tablePrefixless = mb_substr($this->tableAdmin->getTable(), mb_strlen(TAB_PREFIX));
         $result = '<h1 class="page-header">'
@@ -721,7 +713,7 @@ class MyAdmin extends MyCommon
                     'tabs' => $tabs
                 ];
             /**
-             * @phpstan-ignore-next-line
+             * @xx phpstan-ignore-next-line
              * Parameter #2 $options of method WorkOfStan\MyCMS\MyTableAdmin::outputForm() expects array<array<array<string>|string>|bool>, array<string, array|true> given.
              * caused by PHPStan thinking $tabs may be a string. But why??
              */
@@ -747,7 +739,7 @@ class MyAdmin extends MyCommon
      * @see template/@admin.latte
      * @return string
      */
-    protected function outputFooter()
+    protected function outputFooter(): string
     {
         return '<footer class="sticky-footer">&copy; WorkOfStan &amp; CRS2 ' . $this->tableAdmin->translate('All rights reserved.') . '</footer>';
     }
@@ -758,7 +750,7 @@ class MyAdmin extends MyCommon
      * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead. Handled in Admin::controller()
      * @return bool
      */
-    protected function projectSpecificSectionsCondition()
+    protected function projectSpecificSectionsCondition(): string
     {
         return false;
     }
@@ -770,7 +762,7 @@ class MyAdmin extends MyCommon
      * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead. Handled in Admin::controller()
      * @return string
      */
-    protected function projectSpecificSections()
+    protected function projectSpecificSections(): string
     {
         return '';
     }
@@ -780,7 +772,7 @@ class MyAdmin extends MyCommon
      *
      * @return string
      */
-    protected function outputTableBeforeListing()
+    protected function outputTableBeforeListing(): string
     {
         return '';
     }
@@ -790,7 +782,7 @@ class MyAdmin extends MyCommon
      *
      * @return string
      */
-    protected function outputTableAfterListing()
+    protected function outputTableAfterListing(): string
     {
         return '';
     }
@@ -800,7 +792,7 @@ class MyAdmin extends MyCommon
      *
      * @return string
      */
-    protected function outputTableBeforeEdit()
+    protected function outputTableBeforeEdit(): string
     {
         return '';
     }
@@ -810,7 +802,7 @@ class MyAdmin extends MyCommon
      *
      * @return string
      */
-    protected function outputTableAfterEdit()
+    protected function outputTableAfterEdit(): string
     {
         return '';
     }
@@ -823,7 +815,7 @@ class MyAdmin extends MyCommon
      * @param string $keyword
      * @return string
      */
-    protected function outputSearchResults($keyword)
+    protected function outputSearchResults(string $keyword): string
     {
         $keyword2 = $this->tableAdmin->escapeSQL($keyword);
         $result = '';
@@ -873,7 +865,7 @@ class MyAdmin extends MyCommon
      * @param bool $clone
      * @return string
      */
-    protected function outputTableEditSelected($clone = false)
+    protected function outputTableEditSelected(bool $clone = false): string
     {
         Tools::setifnull($_POST['check'], []);
         $result = '<form action="" method="post" enctype="multipart/form-data" class="selected-records-form">'
@@ -993,7 +985,7 @@ class MyAdmin extends MyCommon
     /**
      * @return void
      */
-    public function prepareAdmin()
+    public function prepareAdmin(): void
     {
         $this->MyCMS->csrfStart();
 
@@ -1027,7 +1019,7 @@ class MyAdmin extends MyCommon
      *
      * @return void
      */
-    public function renderAdmin()
+    public function renderAdmin(): void
     {
         //$this->prepareAdmin();
         $this->clientSideResources['js'] = array_merge(
@@ -1080,7 +1072,7 @@ class MyAdmin extends MyCommon
      *
      * @return string
      */
-    private function outputAdminBody()
+    private function outputAdminBody(): string
     {
         $output = '';
         if (!Tools::nonzero($this->featureFlags['admin_latte_render'])) {
@@ -1157,7 +1149,7 @@ class MyAdmin extends MyCommon
      * @see MyAdmin::renderAdmin()
      * @return string
      */
-    public function outputAdmin()
+    public function outputAdmin(): string
     {
         //$this->prepareAdmin();
         $output = '<!DOCTYPE html><html lang="' . Tools::h($_SESSION['language']) . '">';
@@ -1173,7 +1165,7 @@ class MyAdmin extends MyCommon
      * @deprecated 0.4.7 Set `$featureFlags['admin_latte_render'] = true;` instead.
      * @return string
      */
-    public function getPageTitle()
+    public function getPageTitle(): string
     {
         if (!isset($_SESSION['user'])) {
             unset($this->get['table'], $this->get['media'], $this->get['user']);

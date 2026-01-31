@@ -467,7 +467,7 @@ class AdminProcess extends MyAdminProcess
                     'CONCAT(' . implode(
                         ",'|',",
                         /**
-                         * @phpstan-ignore-next-line
+                         * @xx phpstan-ignore-next-line
                          * Parameter #1 $callback of function array_map expects (callable(mixed): mixed)|null,
                          * array{WorkOfStan\MyCMS\LogMysqli, 'escapeDbIdentifier'} given.
                          */

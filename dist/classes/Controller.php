@@ -178,7 +178,7 @@ class Controller extends MyController
                         return true;
                     }
                     $categoryId = $this->MyCMS->context['content']['category_id'];
-                    Assert::string($this->MyCMS->context['content']['title']);
+                    //Assert::string($this->MyCMS->context['content']['title']);
                     $this->MyCMS->context['pageTitle'] = $this->MyCMS->context['content']['title'];
                 }
                 // TODO add perex for categories and products from content

@@ -114,12 +114,12 @@ class MyCustomFilters
      * @param string $text
      * @return string
      */
-    public function translate($text)
+    public function translate(string $text): string
     {
         if (is_null($this->translateMethod)) {
             return $this->MyCMS->translate($text);
         }
-        Assert::isCallable($this->translateMethod);
+        //Assert::isCallable($this->translateMethod);
         $result = call_user_func($this->translateMethod, $text);
         Assert::string($result);
         return $result;

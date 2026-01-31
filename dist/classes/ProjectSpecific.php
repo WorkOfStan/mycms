@@ -166,9 +166,9 @@ class ProjectSpecific extends ProjectCommon
                 $result['description']
             );
         }
-        Assert::string($result['description']);
+        //Assert::string($result['description']);
         /**
-         * @phpstan-ignore-next-line should return array<array<int|string>|string> but returns array
+         * @xx phpstan-ignore-next-line should return array<array<int|string>|string> but returns array
          */
         return $result;
     }
@@ -201,7 +201,7 @@ class ProjectSpecific extends ProjectCommon
             $result['added'] = Tools::localeDate($result['added'], $options['language'], false);
         }
         /**
-         * @phpstan-ignore-next-line should return array<string>|null but returns array|null
+         * @xx phpstan-ignore-next-line should return array<string>|null but returns array|null
          */
         return $result;
     }
@@ -233,7 +233,7 @@ class ProjectSpecific extends ProjectCommon
             $result['context'] = json_decode($result['context'], true) ?: [];
         }
         /**
-         * @phpstan-ignore-next-line should return array<string|null>|null but returns array|null
+         * @xx phpstan-ignore-next-line should return array<string|null>|null but returns array|null
          */
         return $result;
     }
@@ -246,7 +246,7 @@ class ProjectSpecific extends ProjectCommon
      * @return array<array<string>|string>|false
      *       xxx  array<array<array<null|string>|null|string>|string>|false
      */
-    public function getBreadcrumbs($path)
+    public function getBreadcrumbs(string $path)
     {
         if (!$path) {
             return [];
@@ -263,7 +263,7 @@ class ProjectSpecific extends ProjectCommon
         if ($result === false) {
             return false;
         }
-        Assert::isArray($result);
+        //Assert::isArray($result);
         foreach ($result as $field => $row) {
             if (is_array($row)) {
                 $result2[$field] = [];
@@ -277,9 +277,9 @@ class ProjectSpecific extends ProjectCommon
             }
         }
         /**
-         * @phpstan-ignore-next-line should return array<array<string>|string>|false but returns non-empty-array
+         * @xx phpstan-ignore-next-line should return array<array<string>|string>|false but returns non-empty-array
          */
-        return $result2;
+        return isset($result2) ? $result2 : false;
     }
 
     /**
@@ -308,7 +308,7 @@ class ProjectSpecific extends ProjectCommon
             $category_id = [$category_id];
         }
         /**
-         * @phpstan-ignore-next-line should return array<array<int|string>|int|string>|false
+         * @xx phpstan-ignore-next-line should return array<array<int|string>|int|string>|false
          * but returns array<array<array<string|null>|string|null>|string>|false
          */
         return $this->MyCMS->fetchAndReindex('SELECT co.id, image,code, '
@@ -327,7 +327,7 @@ class ProjectSpecific extends ProjectCommon
      * @return string
      * @throws Exception if sitemap retrieval fails
      */
-    public function getSitemap(array $options = [])
+    public function getSitemap(array $options = []): string
     {
         $pages = $this->MyCMS->fetchAndReindex('SELECT path,id,category_' . $options['language']
             . ' AS category,path FROM `' . TAB_PREFIX . 'category` WHERE LEFT(path, ' . PATH_MODULE . ')="'

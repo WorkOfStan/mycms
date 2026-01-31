@@ -1,0 +1,31 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Parameter &\$post by\-ref type of method WorkOfStan\\MyCMS\\MyAdminProcess\:\:processClone\(\) expects array\<array\<mixed\>\|string\>, array given\.$#'
+			identifier: parameterByRef.type
+			count: 1
+			path: ../classes/MyAdminProcess.php
+
+		-
+			message: '#^Parameter &\$post by\-ref type of method WorkOfStan\\MyCMS\\MyAdminProcess\:\:processClone\(\) expects array\<array\<mixed\>\|string\>, array\<mixed\> given\.$#'
+			identifier: parameterByRef.type
+			count: 1
+			path: ../classes/MyAdminProcess.php
+
+		-
+			message: '#^Parameter &\$post by\-ref type of method WorkOfStan\\MyCMS\\MyAdminProcess\:\:processExport\(\) expects array\<array\<mixed\>\|string\>, array given\.$#'
+			identifier: parameterByRef.type
+			count: 2
+			path: ../classes/MyAdminProcess.php
+
+		-
+			message: '#^Parameter &\$post by\-ref type of method WorkOfStan\\MyCMS\\MyAdminProcess\:\:processExport\(\) expects array\<array\<mixed\>\|string\>, array\<mixed\> given\.$#'
+			identifier: parameterByRef.type
+			count: 1
+			path: ../classes/MyAdminProcess.php
+
+		-
+			message: '#^Parameter &\$post by\-ref type of method WorkOfStan\\MyCMS\\MyAdminProcess\:\:processSubfolder\(\) expects array\<array\<mixed\>\|string\>, array\<mixed\> given\.$#'
+			identifier: parameterByRef.type
+			count: 1
+			path: ../classes/MyAdminProcess.php

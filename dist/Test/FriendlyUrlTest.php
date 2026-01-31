@@ -1053,12 +1053,12 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
              */
             if (isset($singleUrl['is_json']) && $singleUrl['is_json']) {
                 /**
-                 * @phpstan-ignore-next-line Parameter #1 $json of function json_decode expects string, mixed given.
+                 * @xx phpstan-ignore-next-line Parameter #1 $json of function json_decode expects string, mixed given.
                  */
                 $jsonArr = json_decode($result['message_body'], true);
                 $tempString = "Result isn't array, so the input on URL {$url} wasn't JSON: ";
                 /**
-                 * @phpstan-ignore-next-line Parameter #1 $json of function json_decode expects string, mixed given.
+                 * @xx phpstan-ignore-next-line Parameter #1 $json of function json_decode expects string, mixed given.
                  */
                 $this->assertTrue(is_array($jsonArr), $tempString . substr($result['message_body'], 0, 20));
             }

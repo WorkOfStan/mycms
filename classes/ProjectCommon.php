@@ -25,13 +25,13 @@ class ProjectCommon extends MyCommon
      * @param array<mixed> $arr
      * @return array<string>
      */
-    private function assertStringArray(array $arr)
+    private function assertStringArray(array $arr): array
     {
         foreach ($arr as $string) {
             Assert::string($string);
         }
         /**
-         * @phpstan-ignore-next-line should return array<string> but returns array
+         * @xx phpstan-ignore-next-line should return array<string> but returns array
          */
         return $arr;
     }
@@ -45,7 +45,7 @@ class ProjectCommon extends MyCommon
      * @return string
      * @throws Exception in case of preg_replace error
      */
-    public function correctLineBreak($text, array $addReplacePatterns = [])
+    public function correctLineBreak(string $text, array $addReplacePatterns = []): string
     {
         $replacePatterns = array_merge([
             '/ a /' => ' a ',
@@ -96,7 +96,13 @@ class ProjectCommon extends MyCommon
      *     i.e. use where 'code' is needed
      * @return string
      */
-    public function getLinkSql($idPrefix, $language, $fieldName = 'link', $sourceTable = null, $sourceField = 'id')
+    public function getLinkSql(
+        string $idPrefix,
+        string $language,
+        string $fieldName = 'link',
+        string $sourceTable = null,
+        string $sourceField = 'id'
+    ): string
     {
         $addLanguageDirectory = ($language != DEFAULT_LANGUAGE) // other than default language should have its directory
             && !preg_match("~/$language/~", $this->requestUri); // unless the page already has it
