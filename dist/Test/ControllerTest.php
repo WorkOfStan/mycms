@@ -2,6 +2,7 @@
 
 namespace WorkOfStan\mycmsprojectnamespace\Test;
 
+use PHPUnit\Framework\TestCase;
 use Tracy\Debugger;
 use WorkOfStan\Backyard\Backyard;
 use WorkOfStan\MyCMS\LogMysqli;
@@ -14,7 +15,7 @@ require_once __DIR__ . '/../conf/config.php';
  * Tests of Controller (of MVC)
  * (Last MyCMS/dist revision: 2022-03-06, v0.4.6)
  */
-class ControllerTest extends \PHPUnit_Framework_TestCase
+class ControllerTest extends TestCase
 {
     /** @var mixed[] */
     protected $get;
@@ -35,7 +36,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
      * @global array $backyardConf
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         global $backyardConf;
         error_reporting(E_ALL); // incl E_NOTICE
@@ -80,7 +81,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         // no action
     }

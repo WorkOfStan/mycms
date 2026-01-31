@@ -2,12 +2,13 @@
 
 namespace WorkOfStan\mycmsprojectnamespace\Test;
 
+use PHPUnit\Framework\TestCase;
 use WorkOfStan\Backyard\Backyard;
 use Tracy\Debugger;
 
 require_once __DIR__ . '/../conf/config.php';
 
-class FaviconTest extends \PHPUnit_Framework_TestCase
+class FaviconTest extends TestCase
 {
     /** @var Backyard */
     protected $backyard;
@@ -25,7 +26,7 @@ class FaviconTest extends \PHPUnit_Framework_TestCase
      * @global array $backyardConf
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         global $backyardConf;
         error_reporting(E_ALL); // incl E_NOTICE
@@ -51,7 +52,7 @@ class FaviconTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         // no action
     }
@@ -63,7 +64,7 @@ class FaviconTest extends \PHPUnit_Framework_TestCase
      * @group webserver
      * @return void
      */
-    public function testPageStatusOverHttp()
+    public function testPageStatusOverHttp(): void
     {
         $urlsToBeChecked = [
             'android-icon-144x144.png',

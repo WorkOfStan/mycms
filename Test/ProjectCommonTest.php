@@ -2,6 +2,7 @@
 
 namespace WorkOfStan\MyCMS\Test;
 
+use PHPUnit\Framework\TestCase;
 use WorkOfStan\Backyard\Backyard;
 use WorkOfStan\MyCMS\MyCMS;
 use WorkOfStan\MyCMS\ProjectCommon;
@@ -9,7 +10,7 @@ use Tracy\Debugger;
 
 require_once __DIR__ . '/../conf/config.php';
 
-class ProjectCommonTest extends \PHPUnit_Framework_TestCase
+class ProjectCommonTest extends TestCase
 {
     /** @var ProjectCommon */
     protected $object;
@@ -28,7 +29,7 @@ class ProjectCommonTest extends \PHPUnit_Framework_TestCase
      *
      * @global array $backyardConf
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         global $backyardConf;
         error_reporting(E_ALL); // incl E_NOTICE
@@ -54,7 +55,7 @@ class ProjectCommonTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         // no action
     }

@@ -2,6 +2,7 @@
 
 namespace WorkOfStan\mycmsprojectnamespace\Test;
 
+use PHPUnit\Framework\TestCase;
 use Webmozart\Assert\Assert;
 use WorkOfStan\Backyard\Backyard;
 use WorkOfStan\MyCMS\LogMysqli;
@@ -16,7 +17,7 @@ require_once __DIR__ . '/../conf/config.php';
  * Tests of Friendly URL set-up
  * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
  */
-class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
+class FriendlyUrlTest extends TestCase
 {
     /** @var MyCMSProject */
     protected $myCms;
@@ -44,7 +45,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
      * @global array $myCmsConf
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         global $backyardConf,
         $myCmsConf;
@@ -87,7 +88,7 @@ class FriendlyUrlTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         // no action
     }
