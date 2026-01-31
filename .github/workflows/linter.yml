@@ -48,7 +48,7 @@ jobs:
       # Checkout the code base #
       ##########################
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0  # Fetch all history for all branches and tags. Otherwise github.event.pull_request.base.ref SHA isn't found.
 

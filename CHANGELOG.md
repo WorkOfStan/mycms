@@ -17,6 +17,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Security` in case of vulnerabilities
 
+## [0.5.0] - 2026-01-31
+
+### Fixed
+
+- minor code tweeks to make a code stricter
+
+### Security
+
+- remove support below PHP/7.2, because of CVE-2026-24765 - High-severity PHPUnit Vulnerable to Unsafe Deserialization in PHPT Code Coverage Handling
+
 ## [0.4.10] - 2024-08-03
 ### Added
 - ignore style imperfections in (third-party) JavaScripts
@@ -487,7 +497,8 @@ to
 - Basic structure
 
 
-[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.4.10...HEAD
+[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/WorkOfStan/mycms/compare/v0.4.10...v0.5.0
 [0.4.10]: https://github.com/WorkOfStan/mycms/compare/v0.4.9...v0.4.10
 [0.4.9]: https://github.com/WorkOfStan/mycms/compare/v0.4.8...v0.4.9
 [0.4.8]: https://github.com/WorkOfStan/mycms/compare/v0.4.7...v0.4.8

@@ -5,7 +5,7 @@ XYZ web
 ## Stack
 
 - Linux, Apache (mod_rewrite, mod_header, ssl...)
-- PHP 5.6||7.x
+- PHP >=7.2 <8.0
 - MySQL
 - PHP libraries
   - `xml`

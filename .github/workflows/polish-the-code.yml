@@ -27,7 +27,7 @@ jobs:
     uses: WorkOfStan/seablast-actions/.github/workflows/php-composer-dependencies-reusable.yml@v0.2.4
     with:
       # JSON
-      php-version: '["5.6", "7.0", "7.1", "7.2", "7.3", "7.4"]'
+      php-version: '["7.2", "7.3", "7.4"]'
       # OPTIONAL path with the default database configuration
       #phinx-config: "./conf/phinx.dist.php"
       # OPTIONAL path where the app code is looking for the database configuration
@@ -60,7 +60,7 @@ jobs:
         uses: WorkOfStan/phpcs-fix@v1.0.2
         with:
           commit-changes: ${{ github.event_name != 'schedule' }}
-          php-version: "8.2"
+          php-version: "7.4"
           stop-on-manual-fix: true
 
   super-linter:

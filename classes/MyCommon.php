@@ -14,10 +14,10 @@ class MyCommon
     use \Nette\SmartObject;
 
     // MUST be the same both for Controller extends MyController extends MyCommon and MyFriendlyUrl extends MyCommon
-    const TEMPLATE_NOT_FOUND = 'error404';
+    protected const TEMPLATE_NOT_FOUND = 'error404';
 
     // MUST be the same both for Controller extends MyController extends MyCommon and MyFriendlyUrl extends MyCommon
-    const TEMPLATE_DEFAULT = 'home';
+    protected const TEMPLATE_DEFAULT = 'home';
 
     /** @var MyCMS */
     protected $MyCMS;

@@ -25,7 +25,7 @@ class MyAdminProcess extends MyCommon
     use \Nette\SmartObject;
 
     /** @const int general limit of selected rows and repeated fields in export */
-    const PROCESS_LIMIT = 100;
+    protected const PROCESS_LIMIT = 100;
 
     /** @var int how many seconds may pass before admin's record-editing tab is considered closed */
     protected $ACTIVITY_TIME_LIMIT = 180;
