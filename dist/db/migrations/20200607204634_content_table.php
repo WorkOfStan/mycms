@@ -95,9 +95,10 @@ final class ContentTable extends AbstractMigration
         $product
             ->addColumn('category_id', 'integer', [
                 'comment' => '{"foreign-table":"category","foreign-column":"name_' . DEFAULT_LANGUAGE . '"}',
-                'default' => 1
+                'default' => 1,
+                'signed' => false
             ]) //category.id is expected
-            ->addForeignKey('category_id', 'category', 'id', ['delete' => 'NO_ACTION', 'update' => 'NO_ACTION', 'signed' => false])
+            ->addForeignKey('category_id', 'category', 'id', ['delete' => 'NO_ACTION', 'update' => 'NO_ACTION'])
             ->addIndex('category_id')
             ->create();
 

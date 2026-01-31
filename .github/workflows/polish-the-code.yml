@@ -1,5 +1,6 @@
 ---
 name: Polish the code
+# TODO remove, as dist folder with its own composer.json causes strange behaviour
 
 on:
   push:
