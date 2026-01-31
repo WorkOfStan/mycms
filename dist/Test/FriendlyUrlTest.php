@@ -978,7 +978,7 @@ class FriendlyUrlTest extends TestCase
             $url = $this->apiBaseUrl . $singleUrl['relative_url'];
             $result = $this->backyard->Http->getData(
                 $url,
-                'PHPUnit/' . \PHPUnit_Runner_Version::id() . ' ' . __FUNCTION__
+                'PHPUnit/' . \PHPUnit\Runner\Version::id() . ' ' . __FUNCTION__
             );
             // var_dump("first RESULT for {$url}", $result);
             if (isset($singleUrl['redirect_contains']) && isset($result['REDIRECT_URL'])) {
@@ -999,7 +999,7 @@ class FriendlyUrlTest extends TestCase
                 //fixes e.g. http to https 301 redirect
                 $result = $this->backyard->Http->getData(
                     $this->apiBaseDomain . $result['REDIRECT_URL'],
-                    'PHPUnit/' . \PHPUnit_Runner_Version::id() . ' ' . __FUNCTION__
+                    'PHPUnit/' . \PHPUnit\Runner\Version::id() . ' ' . __FUNCTION__
                 );
                 // var_dump('2nd RESULT', $result);
             }

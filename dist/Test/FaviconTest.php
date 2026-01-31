@@ -100,7 +100,7 @@ class FaviconTest extends TestCase
             $url = $this->apiBaseUrl . $singleUrl;
             $result = $this->backyard->Http->getData(
                 $url,
-                'PHPUnit/' . \PHPUnit_Runner_Version::id() . ' ' . __FUNCTION__
+                'PHPUnit/' . \PHPUnit\Runner\Version::id() . ' ' . __FUNCTION__
             );
             //$this->assertNotFalse(is_array($result), "cURL failed on {$url} with result=" . print_r($result, true));
             $this->assertFalse(

@@ -96,11 +96,11 @@ parameters:
 			count: 1
 			path: ../classes/MyCMSMonoLingual.php
 
-		-
-			message: '#^Call to function is_array\(\) with array\<array\> will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../classes/MyTableAdmin.php
+#		-
+#			message: '#^Call to function is_array\(\) with array\<array\> will always evaluate to true\.$#'
+#			identifier: function.alreadyNarrowedType
+#			count: 1
+#			path: ../classes/MyTableAdmin.php
 
 		-
 			message: '#^Call to static method Webmozart\\Assert\\Assert\:\:keyExists\(\) with array\{id\: non\-empty\-string, class\: ''form\-control''\} and ''id'' will always evaluate to true\.$#'

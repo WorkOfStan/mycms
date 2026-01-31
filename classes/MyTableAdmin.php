@@ -603,7 +603,7 @@ class MyTableAdmin extends MyTableLister
             return false;
         }
         $sql = $where = '';
-        if (is_array($this->fields) && count($this->fields) > 0) { // $this->fields should be an array with at least one element
+        if (count($this->fields) > 0) { // $this->fields should be an array with at least one element
             foreach ($_POST as $key => $value) {
                 if (Tools::begins($key, EXPAND_INFIX) && !Tools::begins($key, EXPAND_INFIX . EXPAND_INFIX)) {
                     $_POST['fields'][$key = substr($key, strlen(EXPAND_INFIX))] = array_combine($_POST[EXPAND_INFIX . $key], $_POST[EXPAND_INFIX . EXPAND_INFIX . $key]);
