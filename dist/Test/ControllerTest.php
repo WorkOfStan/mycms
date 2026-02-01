@@ -101,8 +101,23 @@ class ControllerTest extends TestCase
             ]);
         $controller = $this->object->run();
         //$this->assertArraySubset(['template' => 'home', 'context' => []], $controller);
-        $this->assertSame('home', $controller['template']);
-        $this->assertSame([], $controller['context']);
+        $this->assertSame('home', $controller['template']);        
+        // with PHPUnit 5, the result was []; with PHPUnit 9, the result is as below
+        //$this->assertSame([], $controller['context']);
+        $this->assertTrue(
+            // locally
+            [
+                'pageTitle' => '',
+                'applicationDir' => 'vendor/bin/',
+                'applicationDirLanguage' => 'vendor/bin/en/'
+            ] === $controller['context'] ||
+            // on GitHub
+            [
+                'pageTitle' => '',
+                'applicationDir' => './vendor/bin/',
+                'applicationDirLanguage' => './vendor/bin/en/'
+            ] === $controller['context']
+        );
     }
 
     /**
