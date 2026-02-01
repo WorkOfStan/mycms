@@ -982,10 +982,10 @@ class FriendlyUrlTest extends TestCase
             );
             // var_dump("first RESULT for {$url}", $result);
             if (isset($singleUrl['redirect_contains']) && isset($result['REDIRECT_URL'])) {
-                $this->assertContains(
+                $this->assertStringContainsString(
                     $singleUrl['redirect_contains'],
                     $result['REDIRECT_URL'],
-                    "Redirect '{$singleUrl['redirect_contains']}' needle is not in the haystack {$url}"
+                    "Redirect '{$singleUrl['redirect_contains']}' needle is not in the content of {$url}"
                 );
             }
             /**
@@ -1025,10 +1025,10 @@ class FriendlyUrlTest extends TestCase
             }
             $this->assertArrayHasKey('message_body', $result, "URL {$url} doesn't return content.");
             if (isset($singleUrl['contains_text'])) {
-                $this->assertContains(
+                $this->assertStringContainsString(
                     $singleUrl['contains_text'],
                     $result['message_body'],
-                    "Needle '{$singleUrl['contains_text']}' is not in the haystack {$url}"
+                    "Needle '{$singleUrl['contains_text']}' is not in the content of {$url}"
                 );
             }
             /**
