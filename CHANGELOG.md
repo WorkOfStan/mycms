@@ -104,17 +104,17 @@ feat!: Admin UI can be rendered by Latte & filtering and sorting of tables fixed
 - LogMysqli: add several `$this->showSqlBarPanel();` statements in order to display SQL statements in case of Exception
 - class Render to take care of Latte rendering both for App UI and Admin UI
 - App can use either inherited Latte templates or override it with modified templates
-- Latte inheritance test pages (inheritance-*.latte added where new include inherite.latte is demonstrated) including PHPUnit FriendlyUrlTest::testPageStatusOverHttp
+- Latte inheritance test pages (`inheritance-*.latte` added where new include inherite.latte is demonstrated) including PHPUnit FriendlyUrlTest::testPageStatusOverHttp
 - instead of simply {include $latte} call {include 'inherite.latte', latte => $latte} so that the preferred existing version of latte is used
 - new parameter to MyCustomFilters allows for another translate method (in order to use $tableAdmin->translate instead of $MyCMS->translate for Admin UI)
-- featureFlags to admin-*.latte
+- featureFlags to `admin-*.latte`
 - DivisionProducts, Pages, Products, Translations, `Urls` admin pages are generated in AdminModel classes invoked within Admin::controller (instead as spaghetti code within Admin::projectSpecificSections) (Feature flag 'legacy_admin_methods_instead_of_admin_models' => true forces execution of the old spagetti code)
 
 ### Changed
 - **BREAKING CHANGE (feature flagged)** if $featureFlags['admin_latte_render']===false `dist/styles/admin.css.php` MUST be present (to link rel `admin.css` deep in vendor folder) and admin.php code has to be updated to alternatively use the latte rendering and toggle admin menu special links
 - MyCommon::verboseBarDump Dumper::LOCATION => false hides where the dump originated as this is not the original place anyway, shows it in the title instead
 - nicer formatting Admin UI table SQL statement
-- Logging of untranslated strings when DEBUG_VERBOSE into monthly rotating `'log/translation_missing_' . date("Y-m") . '.log'` (instead of one big swelling translation_missing.log)
+- Logging of untranslated strings when `DEBUG_VERBOSE` into monthly rotating `log/translation_missing_{date("Y-m")}.log` (instead of one big swelling translation_missing.log)
 - Admin UI can be rendered by Latte (instead directly from MyAdmin methods) if $featureFlags['admin_latte_render'] set to true (still experimental because the main part of body is prerendered as HTML)
 - Admin UI in Latte mode receives params including token and authUser (0=anonymous, 1=logged-in)
 - Default Latte templates moved from app part of templates to library part of templates in order to quickly deploy. If you start working with the templates however, you should maintain them in the app folder.
@@ -122,9 +122,9 @@ feat!: Admin UI can be rendered by Latte & filtering and sorting of tables fixed
 - relax dist/FriendlyUrl::switchParametric - if there's no rule to produce a friendly URL, don't report error not changing it, only an info
 - dist/composer.json: Keeps packages sorted by name when adding new one
 - GitHub Actions: only use cache with an exact key hit
-- MyAdmin::renderAdmin() $switches as parameter of Latté instead of working with $_GET in the template
+- MyAdmin::renderAdmin() $switches as parameter of Latté instead of working with `$_GET` in the template
 - MyAdmin table view is rendered by Latte
-- MyAdmin $_GET changed to $this->get
+- MyAdmin `$_GET` changed to $this->get
 - MyCMSMonoLingual::fetchAndReindexStrictArray (softly) moved to LogMysqli::fetchAndReindexStrictArray
 - Translations and `Urls` admin page generation is moved to the the core so that further improvements  are automatically available to the Apps using updated version of MyCMS
 
@@ -150,7 +150,7 @@ refactor!: Less files in the application root folder
 
 ### Changed
 - **BREAKING CHANGE** dist/Test/AdminTest.php TableAdmin declaration expects language and prefixL10n
-- **BREAKING CHANGE** dist/Test/ControllerTest.php MUST accomodate language both in GET and _SESSION as the checks are stricter in L10n
+- **BREAKING CHANGE** dist/Test/ControllerTest.php MUST accomodate language both in GET and `_SESSION` as the checks are stricter in L10n
 - App class handles the request dispatching instead of spagetti code in index.php
 - L10n (Localisation) class with loadLocalisation and translate methods common both for admin UI and MyCMS UI (instead of include php file with array for web UI and parsing yml for admin UI)
 - dist/Admin::sectionTranslations uses new L10n class instead of including language.inc.php file directly

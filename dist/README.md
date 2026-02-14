@@ -42,12 +42,12 @@ script/autotrack.V.V.V.js and script/autotrack.V.V.V.js.map are manually taken f
 * Test: UA-39642385-1
 
 ## MyCMS dist deployment
-* Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder.
-* Replace the string `mycmsprojectnamespace` with your project namespace in composer.json and the used classes.
-* Replace the string `MYCMSPROJECTSPECIFIC` with other site specific information (Brand, Twitter address, phone number, database name, name of icon in manifest.json etc.).
-* Default *admin.php* credentials are *john* / *Ew7Ri561*   - MUST be deleted after the real admin account is set up.
-* Change `define('MYCMS_SECRET', 'u7-r!!T7.&&7y6ru');` //16-byte random string, unique per project in `conf/config.php`
-* Delete this section after the changes above are made
+- Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder.
+- Replace the string `mycmsprojectnamespace` with your project namespace in composer.json and the used classes.
+- Replace the string `MYCMSPROJECTSPECIFIC` with other site specific information (Brand, Twitter address, phone number, database name, name of icon in manifest.json etc.).
+- Default *admin.php* credentials are *john* / *Ew7Ri561*   - MUST be deleted after the real admin account is set up.
+- Change `define('MYCMS_SECRET', 'u7-r!!T7.&&7y6ru');` //16-byte random string, unique per project in `conf/config.php`
+- Delete this section after the changes above are made
 
 ## Deployment
 
@@ -153,8 +153,8 @@ Given that
 Inner workings of friendly URL mechanism are described in [MyCMS/README.md](https://github.com/WorkOfStan/mycms#how-does-friendly-url-works-within-controller)
 
 TODO: make more clear
-* Tabulky `#_content`, `#_product` musí mít sloupce `url_##` (## = dvoumístný kód pro všechny jazykové verze).
-* Do `url_##` se uloží "webalizované" názvy dané stránky/produktu (dle funkce `Tools::webalize`). Výjimkou může být `_content`, který není plnohodnotná stránka – ten může obsahovat `NULL`. Převod lze zprvu udělat programaticky (je to na pár řádků), pak do CMS přidat tlačítko pro převod nebo převod udělat při uložení.
+- Tabulky `#_content`, `#_product` musí mít sloupce `url_##` (## = dvoumístný kód pro všechny jazykové verze).
+- Do `url_##` se uloží "webalizované" názvy dané stránky/produktu (dle funkce `Tools::webalize`). Výjimkou může být `_content`, který není plnohodnotná stránka – ten může obsahovat `NULL`. Převod lze zprvu udělat programaticky (je to na pár řádků), pak do CMS přidat tlačítko pro převod nebo převod udělat při uložení.
 
 TODO: ?article=1 vs ?article&id=1 a souvislost s 'idcode' => true ?
 
@@ -191,7 +191,7 @@ For each language a corresponding file `language-xx.inc.php` is expected.
 (`cs` is considered as the default language, so it is accessible directly in application root),
 where page resouces may be in folders `styles|assets|fonts|images|scripts` which ignore the language directory.
 
-If DEBUG_VERBOSE is true and admin UI uses untranslated string, it is logged to `log/translation_missing_' . date("Y-m-d") . '.log` to be translated. (This log can be safely deleted.)
+If `DEBUG_VERBOSE` is true and admin UI uses untranslated string, it is logged to `log/translation_missing_{date("Y-m-d")}.log` to be translated. (This log can be safely deleted.)
 
 Localised strings for admin UI are loaded from conf/l10n/admin-XX.yml (if present).
 
@@ -270,7 +270,10 @@ $AGENDAS = [
     ],
 ];
 ```
-if path used: 'CONCAT(REPEAT("… ",LENGTH(' . $this->MyCMS->dbms->escapeDbIdentifier($options['path']) . ') / ' . PATH_MODULE . ' - 1),' . $options['table'] . '_' . DEFAULT_LANGUAGE . ')'
+if path used:
+```php
+'CONCAT(REPEAT("… ",LENGTH(' . $this->MyCMS->dbms->escapeDbIdentifier($options['path']) . ') / ' . PATH_MODULE . ' - 1),' . $options['table'] . '_' . DEFAULT_LANGUAGE . ')'
+```
 
 (TODO: explain better with examples.)
 
@@ -375,9 +378,9 @@ Also when variables are passed to included fragments, it MUST happen in the same
 The idea is to have the default templates in the MyCMS library in order to quickly deploy. If you start working with the templates however, you should maintain them in the app folder.
 
 ### Template naming convention
-- @*layout.latte is a layout
-- inc-*.latte is a block to be included
-- *.latte is a page using layout
+- `@*layout.latte` is a layout
+- `inc-*.latte` is a block to be included
+- `*.latte` is a page using layout
 - inherite.latte is a function to secure inheritance
 
 ## Visual style
@@ -498,5 +501,5 @@ $this->loremModel = new LoremModel($MyCMS->dbms);
 * 200712: update Font Awesome --> admin.php expects section
 * 200802: test with 2 categories
 * 200802: image for product and category in assets
-* 200921: (MyCMS) properly fix message: '#Parameter #2 $newvalue of function ini_set expects string, true given.#'    path: /github/workspace/set-environment.php
+- 200921: (MyCMS) properly fix message: `'#Parameter #2 $newvalue of function ini_set expects string, true given.#'    path: /github/workspace/set-environment.php`
 * 210427: admin.js now contains all the F and A code - TODO: simplify it and keep only the essential
