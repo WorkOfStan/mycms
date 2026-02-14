@@ -223,19 +223,19 @@ parameters:
 			path: ../dist/classes/Admin.php
 
 		-
-			message: '#^Binary operation "\*" between \-1\|1 and array\|string results in an error\.$#'
+			message: '#^Binary operation "\*" between \-1\|1 and array\<mixed\>\|string results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
 			path: ../dist/classes/AdminProcess.php
 
 		-
-			message: '#^Binary operation "\+" between float\|int\|string\|null and array\|string results in an error\.$#'
+			message: '#^Binary operation "\+" between float\|int\|string\|null and array\<mixed\>\|string results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
 			path: ../dist/classes/AdminProcess.php
 
 		-
-			message: '#^Binary operation "\+" between non\-falsy\-string and array\|string results in an error\.$#'
+			message: '#^Binary operation \"+\" between non\-falsy\-string and array\<mixed\>\|string results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
 			path: ../dist/classes/AdminProcess.php
