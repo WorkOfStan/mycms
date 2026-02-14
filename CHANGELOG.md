@@ -251,7 +251,7 @@ ci: MyCMS::InitDatabase + PHPUnit tests on GitHub
 
 ### Added
 - ThrowableFunctions/ThrowablePHPFunctions::strtotime
-- phpcbf* branch (no slash allowed) triggers commit of auto PHPCS fixes, controlled by [phpcbf.yml](.github/workflows/phpcbf.yml)
+- `phpcbf*` branch (no slash allowed) triggers commit of auto PHPCS fixes, controlled by [phpcbf.yml](.github/workflows/phpcbf.yml)
 - InitDatabase class to read database configuration from (dist/)phinx.yml
 - cache for composer downloaded libraries into vendor folder for GitHub automated testing
 - added MySQL/8 (part of Ubuntu/20 virtual environment) with native password access used by phinx::testing environment
@@ -302,8 +302,8 @@ refactor!: Dist: api/noun construct replaces separate code in api/noun folders
 
 ### `Changed`
 - api/noun (api/noun/) construct is used instead of separate code in api/noun folders (therefore also sql logs are created in a stadard folder e.g. log/sql*.log.sql instead of within api/apiName/log/sql*.log.sql)
-- dist notest/* branch doesn't trigger GitHub Action tests
-- dist/process.php $_POST['newsletter'] related process uses new $sessionWriteClose parameter 3 of method Tools::redir, that turns off `session_write_close();` so that e.g. Tracy gets info about redirect.
+- dist `notest/*` branch doesn't trigger GitHub Action tests
+- dist/process.php `$_POST['newsletter']` related process uses new $sessionWriteClose parameter 3 of method Tools::redir, that turns off `session_write_close();` so that e.g. Tracy gets info about redirect.
 
 ## [0.4.0] - 2021-05-21
 
@@ -313,7 +313,7 @@ feat!: MyFriendlyURL is routing of Controller + ready-made dist boilerplate
 - **Breaking change**: GodsDev\Backyard switched to WorkOfStan\Backyard - so either the namespace should be changed or original GodsDev\Backyard required instead as temporary fix.
 
 ### Added
-- notest/* branches ignored by GitHub Actions (not to test partial online commits)
+- `notest/*` branches ignored by GitHub Actions (not to test partial online commits)
 - Throwable/ThrowablePHPFunctions.php - replacement for PHP functions that returns false or null instead of the strict type. These functions throw an \Exception instead.
   - filemtime, glob, json_encode, mb_eregi_replace, preg_match, preg_replace
   - preg_replaceString accepts only string as $subject and returns only string (i.e. not string[])
@@ -450,7 +450,7 @@ to
 - fix zobrazování tabulek s foreign key
 - fix řada konstant v conf/config.php je zde v MyCMS zřejmě zbytečně - zakomentovány, aby PHPUnit fungovalo s dist
 - testing: PHPunit tests both mycms and dist (aby se testovalo i jak se chová v jednoduchém nasazení projektu)
-- změny v dist/* aby se lépe nasazovaly nové projekty, např. dist/build.sh as a fast deployment script
+- změny v `dist/*` aby se lépe nasazovaly nové projekty, např. dist/build.sh as a fast deployment script
 - MyCMS added to packagist <https://packagist.org/packages/godsdev/mycms>
 - fix backtick doubling
 - clean-up: `.htaccess` removed as MyCMS is used only as a library, so the application using it SHOULD implement `RedirectMatch 404 vendor\/` statement as proposed in `dist/.htaccess` to keep the library hidden from web access.

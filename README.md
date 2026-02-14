@@ -97,14 +97,14 @@ Element overview:
 ### Main
 - Messages
 - Workspace: one of the following
-  - $_GET['search'] => MyAdmin::outputSearchResults
-  - $_GET['table'] => MyAdmin::outputTable
-    -- $_GET['where'] is array => Admin::outputTableBeforeEdit . MyAdmin::tableAdmin->outputForm . Admin::outputTableAfterEdit
-    -- $_POST['edit-selected'] => MyAdmin::outputTableEditSelected(false)
-    -- $_POST['clone-selected'] => MyAdmin::outputTableEditSelected(true)
+  - `$_GET['search']` => MyAdmin::outputSearchResults
+  - `$_GET['table']` => MyAdmin::outputTable
+    -- `$_GET['where']` is array => Admin::outputTableBeforeEdit . MyAdmin::tableAdmin->outputForm . Admin::outputTableAfterEdit
+    -- `$_POST['edit-selected']` => MyAdmin::outputTableEditSelected(false)
+    -- `$_POST['clone-selected']` => MyAdmin::outputTableEditSelected(true)
     -- else => Admin::outputTableBeforeListing . MyAdmin::tableAdmin->view . Admin::outputTableAfterListing
-  - $_GET['media'] => MyAdmin::outputMedia media upload etc.
-  - $_GET['user'] => MyAdmin::outputUser user operations (logout, change password, create user, delete user)
+  - `$_GET['media']` => MyAdmin::outputMedia media upload etc.
+  - `$_GET['user']` => MyAdmin::outputUser user operations (logout, change password, create user, delete user)
   - Admin::projectSpecificSectionsCondition => Admin::projectSpecificSection project-specific admin sections
 - Dashboard: List of tables MyAdmin::outputDashboard
 
