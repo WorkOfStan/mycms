@@ -1,3 +1,6 @@
+includes:
+      - phpstan-baseline-level-5.neon
+
 # (Last MyCMS/dist revision: 2024-07-24, v0.4.10)
 
 parameters:
