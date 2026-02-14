@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Security` in case of vulnerabilities
 
-## [0.5.0] - 2026-01-31
+## [0.5.0] - 2026-02-14
 
 fix: remove support below PHP/7.2, because of CVE-2026-24765
 
@@ -40,6 +40,9 @@ fix: remove support below PHP/7.2, because of CVE-2026-24765
 - remove support below PHP/7.2, because of CVE-2026-24765 - High-severity PHPUnit Vulnerable to Unsafe Deserialization in PHPT Code Coverage Handling
 
 ## [0.4.10] - 2024-08-03
+
+feat: BackyardError wraps seablast-logger implementation
+
 ### Added
 - ignore style imperfections in (third-party) JavaScripts
 
@@ -54,12 +57,18 @@ fix: remove support below PHP/7.2, because of CVE-2026-24765
 - bump versions of GitHub workflow actions
 
 ## [0.4.9] - 2023-06-16
+
+feat: php-composer-dependencies-reusable.yml OPTIONAL config.local.dist.php
+
 ### Changed
 - php-composer-dependencies-reusable.yml: Copy config.local.dist.php only if present
 - dist/build.sh: Copy config.local.dist.php only if present. Warnings are red.
 - htmlOption(scalar $value,...)
 
 ## [0.4.8] - 2023-03-09
+
+feat: GA4 Analytics, stricter parameter handling
+
 ### Added
 - GA4 Analytics as a new alternative for soon to be obsoleted (2023-07-01) Google Universal Analytics. Empty GA_UID or GA4_STREAM will result in not using the respective JavaScript code.
 - added declaration of @throws in PHPDoc in ThrowablePHPFunctions.php
@@ -81,6 +90,9 @@ fix: remove support below PHP/7.2, because of CVE-2026-24765
 - Legacy (non admin_latte_render) admin UI block all administration pages if not logged-in
 
 ## [0.4.7] - 2022-07-17
+
+feat!: Admin UI can be rendered by Latte & filtering and sorting of tables fixed
+
 - fix filtering and sorting of tables in Admin UI
 - Admin UI can be rendered by Latte (instead directly from MyAdmin methods) if $featureFlags['admin_latte_render'] set to true (still experimental because the main part of body is prerendered as HTML)
 - DivisionProducts, Pages, Products, Translations, `Urls` admin pages are generated in AdminModel classes invoked within Admin::controller (instead as spaghetti code within Admin::projectSpecificSections) (Feature flag 'legacy_admin_methods_instead_of_admin_models' => true forces execution of the old spagetti code)
@@ -130,7 +142,7 @@ fix: remove support below PHP/7.2, because of CVE-2026-24765
 
 ## [0.4.6] - 2022-03-05
 
-- Less files in the application root folder
+refactor!: Less files in the application root folder
 
 ### Added
 - dist: subscriber table, therefore subscription input box is working now
@@ -161,7 +173,7 @@ fix: remove support below PHP/7.2, because of CVE-2026-24765
 
 ## [0.4.5] - 2022-02-10
 
-- PHPStan level=9
+refactor!: PHPStan level=9
 
 ### Added
 - phpstan.sh and phpstan-remove.sh for local testing
@@ -207,6 +219,8 @@ fix: remove support below PHP/7.2, because of CVE-2026-24765
 
 ## [0.4.4] - 2021-10-04
 
+fix: Fix admin table view empty
+
 - fixed MyTableLister::view ternary operator blocking non-empty table output
 - faster dist seed app creation (rector.php + build.sh)
 
@@ -229,6 +243,8 @@ fix: remove support below PHP/7.2, because of CVE-2026-24765
 - dist/classes/TableAdmin.php - line 177: Parameter #2 $multiplier of function str_repeat expects int,  float|int<-1, max> given.
 
 ## [0.4.3] - 2021-07-27
+
+ci: MyCMS::InitDatabase + PHPUnit tests on GitHub
 
 - MyCMS::InitDatabase class to read database configuration from (dist/)phinx.yml
 - GitHub automation improved
@@ -257,7 +273,8 @@ fix: remove support below PHP/7.2, because of CVE-2026-24765
 - dist/.htaccess: no Markdown file can be available on web
 
 ## [0.4.2] - 2021-05-28
-- PHPStan level=max ... Error Zero
+
+refactor!: PHPStan level=max ... Error Zero
 
 ### Added
 - [conf/phpstan.webmozart-assert.neon](conf/phpstan.webmozart-assert.neon) to allow for `phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse . --memory-limit 300M` in GitHub automated testing
@@ -277,6 +294,9 @@ fix: remove support below PHP/7.2, because of CVE-2026-24765
 - MyTableAdmin::recordSave and MyTableAdmin::recordDelete - resolveSQL call treated $messageSuccess and $messageError as strings while they are bool
 
 ## [0.4.1] - 2021-05-26
+
+refactor!: Dist: api/noun construct replaces separate code in api/noun folders
+
 ### `Added`
 - dist HTTP POST BarPanel for Tracy (both web and admin)
 
@@ -286,6 +306,9 @@ fix: remove support below PHP/7.2, because of CVE-2026-24765
 - dist/process.php $_POST['newsletter'] related process uses new $sessionWriteClose parameter 3 of method Tools::redir, that turns off `session_write_close();` so that e.g. Tracy gets info about redirect.
 
 ## [0.4.0] - 2021-05-21
+
+feat!: MyFriendlyURL is routing of Controller + ready-made dist boilerplate
+
 - Release v0.4.0 is expected to be mostly compatible with v0.3.15, but due to sheer volume of changes, let's not mark it as only a patch.
 - **Breaking change**: GodsDev\Backyard switched to WorkOfStan\Backyard - so either the namespace should be changed or original GodsDev\Backyard required instead as temporary fix.
 
