@@ -5,10 +5,10 @@ name: PHPCBF
 on:
   push:
     branches:
-      - 'phpcbf*'
+      - "phpcbf*"
   pull_request:
     branches:
-      - 'phpcbf*'
+      - "phpcbf*"
 
 permissions:
   contents: write

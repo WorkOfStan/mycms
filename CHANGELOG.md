@@ -1,10 +1,12 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
 ### `Added` for new features
 
 ### `Changed` for changes in existing functionality
@@ -44,16 +46,20 @@ fix: remove support below PHP/7.2, because of CVE-2026-24765
 feat: BackyardError wraps seablast-logger implementation
 
 ### Added
+
 - ignore style imperfections in (third-party) JavaScripts
 
 ### Changed
+
 - use Backyard::^3.4.0 where BackyardError wraps \Seablast\Logger\Logger implementation
 
 ### Removed
+
 - VERSION file as git-flow branching model is no longer used
 - `"texy/texy": "^2.7.1"` is no longer used in MyCMS
 
 ### Fixed
+
 - bump versions of GitHub workflow actions
 
 ## [0.4.9] - 2023-06-16
@@ -61,6 +67,7 @@ feat: BackyardError wraps seablast-logger implementation
 feat: php-composer-dependencies-reusable.yml OPTIONAL config.local.dist.php
 
 ### Changed
+
 - php-composer-dependencies-reusable.yml: Copy config.local.dist.php only if present
 - dist/build.sh: Copy config.local.dist.php only if present. Warnings are red.
 - htmlOption(scalar $value,...)
@@ -70,23 +77,28 @@ feat: php-composer-dependencies-reusable.yml OPTIONAL config.local.dist.php
 feat: GA4 Analytics, stricter parameter handling
 
 ### Added
+
 - GA4 Analytics as a new alternative for soon to be obsoleted (2023-07-01) Google Universal Analytics. Empty GA_UID or GA4_STREAM will result in not using the respective JavaScript code.
 - added declaration of @throws in PHPDoc in ThrowablePHPFunctions.php
 
 ### Changed
+
 - Database tests should fire up only if phinx.dist.yml is present
 - PHPUnit tests should fire up only if conf/phpunit-github.xml is present
 - solve stricter analysis by assertion, typecasting and type definition
 
 ### Removed
+
 - dist/rector.php (use just string replace instead of the rector engine)
 
 ### Fixed
+
 - Exception rendering Admin Modules Division and products, Pages, Products, Translations, URL when 'admin_latte_render' => true
 - dist/Controller.php: added Assertion to fix Error: Property WorkOfStan\MyCMS\MyCMSMonoLingual::$context (array<array|int|string|false|null>) does not accept non-empty-array<mixed>. && Error: Parameter #2 $search of function array_key_exists expects array, mixed given.
 - dist/Admin.php: if the product or content piece doesn't have a label in admin language show an explanation instead of null
 
 ### Security
+
 - Legacy (non admin_latte_render) admin UI block all administration pages if not logged-in
 
 ## [0.4.7] - 2022-07-17
@@ -96,10 +108,11 @@ feat!: Admin UI can be rendered by Latte & filtering and sorting of tables fixed
 - fix filtering and sorting of tables in Admin UI
 - Admin UI can be rendered by Latte (instead directly from MyAdmin methods) if $featureFlags['admin_latte_render'] set to true (still experimental because the main part of body is prerendered as HTML)
 - DivisionProducts, Pages, Products, Translations, `Urls` admin pages are generated in AdminModel classes invoked within Admin::controller (instead as spaghetti code within Admin::projectSpecificSections) (Feature flag 'legacy_admin_methods_instead_of_admin_models' => true forces execution of the old spagetti code)
-- where Translations and `Urls` admin page generation is moved to the the core so that further improvements  are automatically available to the Apps using updated version of MyCMS
+- where Translations and `Urls` admin page generation is moved to the the core so that further improvements are automatically available to the Apps using updated version of MyCMS
 - **BREAKING CHANGE (feature flagged)** if $featureFlags['admin_latte_render']===false `dist/styles/admin.css.php` MUST be present (to link rel `admin.css` deep in vendor folder) and admin.php code has to be updated to alternatively use the latte rendering and toggle admin menu special links
 
 ### Added
+
 - admin-de.yml language file for German variant of Admin UI
 - LogMysqli: add several `$this->showSqlBarPanel();` statements in order to display SQL statements in case of Exception
 - class Render to take care of Latte rendering both for App UI and Admin UI
@@ -111,6 +124,7 @@ feat!: Admin UI can be rendered by Latte & filtering and sorting of tables fixed
 - DivisionProducts, Pages, Products, Translations, `Urls` admin pages are generated in AdminModel classes invoked within Admin::controller (instead as spaghetti code within Admin::projectSpecificSections) (Feature flag 'legacy_admin_methods_instead_of_admin_models' => true forces execution of the old spagetti code)
 
 ### Changed
+
 - **BREAKING CHANGE (feature flagged)** if $featureFlags['admin_latte_render']===false `dist/styles/admin.css.php` MUST be present (to link rel `admin.css` deep in vendor folder) and admin.php code has to be updated to alternatively use the latte rendering and toggle admin menu special links
 - MyCommon::verboseBarDump Dumper::LOCATION => false hides where the dump originated as this is not the original place anyway, shows it in the title instead
 - nicer formatting Admin UI table SQL statement
@@ -122,20 +136,23 @@ feat!: Admin UI can be rendered by Latte & filtering and sorting of tables fixed
 - relax dist/FriendlyUrl::switchParametric - if there's no rule to produce a friendly URL, don't report error not changing it, only an info
 - dist/composer.json: Keeps packages sorted by name when adding new one
 - GitHub Actions: only use cache with an exact key hit
-- MyAdmin::renderAdmin() $switches as parameter of Latté instead of working with `$_GET` in the template
+- MyAdmin::renderAdmin() $switches as parameter of Latté instead of working with `$\_GET` in the template
 - MyAdmin table view is rendered by Latte
 - MyAdmin `$_GET` changed to $this->get
 - MyCMSMonoLingual::fetchAndReindexStrictArray (softly) moved to LogMysqli::fetchAndReindexStrictArray
-- Translations and `Urls` admin page generation is moved to the the core so that further improvements  are automatically available to the Apps using updated version of MyCMS
+- Translations and `Urls` admin page generation is moved to the the core so that further improvements are automatically available to the Apps using updated version of MyCMS
 
 ### Deprecated
+
 - dist/rector.php (todo consider using just string replace instead of the rector engine)
 - Admin UI in Latte mode doesn't use Admin::endAdmin(), `Admin::getAdminCss()`, Admin::outputAdmin(), Admin::outputBodyEnd(), Admin::outputFooter(), Admin::outputHead(), Admin::outputImageSelector(), Admin::outputNavigation(), Admin::outputSpecialMenuLinks(), Admin::outputSpecialSettingsLinks(), so before turning on the Admin Latte, move the custom code to the corresponding lattes
 
 ### Removed
+
 - attributes type and charset (as in `<script type="text/javascript" src="scripts/admin.js?v=1" charset="utf-8">`) are obsolete
 
 ### Fixed
+
 - SQL syntax: TAB_PREFIX may need backticks around its name
 - fix filtering of tables in Admin UI (Assert::string instead of integer in MyTableLister)
 - fix sorting of tables in Admin UI with foreign-link
@@ -145,10 +162,12 @@ feat!: Admin UI can be rendered by Latte & filtering and sorting of tables fixed
 refactor!: Less files in the application root folder
 
 ### Added
+
 - dist: subscriber table, therefore subscription input box is working now
 - dist: featureFlag `newletter_input_box` can turn off both the (un)subscribe email input box and the POST value processing
 
 ### Changed
+
 - **BREAKING CHANGE** dist/Test/AdminTest.php TableAdmin declaration expects language and prefixL10n
 - **BREAKING CHANGE** dist/Test/ControllerTest.php MUST accomodate language both in GET and `_SESSION` as the checks are stricter in L10n
 - App class handles the request dispatching instead of spagetti code in index.php
@@ -157,18 +176,22 @@ refactor!: Less files in the application root folder
 - MyAdminProcess::processTranslationsUpdate method created instead of code being spagetti part of dist/AdminProcess::adminProcess
 
 ### Deprecated
+
 - using dist/language-xx.inc.php files (conf/l10n/language-xx.yml will be used instead) - just add $myCmsConf['prefixL10n'] to config.php and resave admin.php?translations to transform to the new format (unless turned off by featureFlag 'languageFileWriteIncOnlyNotYml')
 
 ### Removed
+
 - Texy
 - dist/process.php moved to dist::App class as part of run method
 - files dist/language-xx.inc.php were removed from the seed app, but are still supported by the MyCMS/dist (see deprecated section)
 
 ### Fixed
+
 - yml style, add missing document start "---" (document-start); fix indentation
 - dist/footer.latte Colon as argument separator is deprecated, use comma instead
 
 ### Security
+
 - App class changes touched the CSRF mechanism, so CSRF was successfully tested
 
 ## [0.4.5] - 2022-02-10
@@ -176,6 +199,7 @@ refactor!: Less files in the application root folder
 refactor!: PHPStan level=9
 
 ### Added
+
 - phpstan.sh and phpstan-remove.sh for local testing
 - phpstan-baseline.neon to hide type hint imperfections in PHPStan level=8 (todo fix these)
 - LogMysqli::fetchSingleString for strict string response
@@ -190,6 +214,7 @@ refactor!: PHPStan level=9
 - MyCMSMonoLingual::fetchAndReindexStrictArray displays the SQL bar panel in case of Assertion thrown Exception
 
 ### Changed
+
 - **BREAKING CHANGE** MyFriendlyUrl::determineTemplate change from `@return string|array<string>|true` to `@return string|array<int|string>|true`
 - **BREAKING CHANGE** dist/FriendlyUrlTest.php `Assert::string($templateDetermined['redir']);` added where needed
 - instead of dist specific workflows, use reusable ones (linter.yml, overtrue-phplint.yml, php-composer-dependencies.yml, phpcbf.yml) Note: only scalar value can be passed as input to a reusable workflow input - not an array of strings.
@@ -208,9 +233,11 @@ refactor!: PHPStan level=9
 - ./github/workflows/phpcbf.yml Bump actions-x/commit from 2 to 4
 
 ### Removed
+
 - GitHub automated test rector/rector (todo return when rector ready for phpstan:1.0)
 
 ### Fixed
+
 - some type hint imperfections (especially for nested arrays) in [PHPStan level=8](https://github.com/phpstan/phpstan/releases/tag/1.0.0)
 - some Assertions changed to conditions to test only relevant scenarios and thus prevent Exceptions generated by stricter Assertions
 - uncommented dist/conf/config.php PATH_CATEGORY as it is expected in Admin::projectSpecificSections
@@ -225,22 +252,26 @@ fix: Fix admin table view empty
 - faster dist seed app creation (rector.php + build.sh)
 
 ### Added
+
 - dist/build.sh: if not exists create conf/config.local.php + phinx.yml
 - Faster MyCMS dist deployment by rector.php (GitHub online check include composer require --dev rector/rector)
 - dist/permissions.sh: run if necessary to allow web server user write into cache and log folders
 
 ### Changed
+
 - VALIDATE_GITLEAKS: false because of false positive (todo reconsider later)
 - dist: VALIDATE_GITLEAKS: false because of false positive
 - change github/super-linter master -> main
 
 ### Removed
+
 - unnecessary `sql =` constructs removed
 
 ### Fixed
+
 - MyTableLister::view ternary operator blocking non-empty table output
 - dist: GitHub online composer require --dev rector/rector
-- dist/classes/TableAdmin.php - line 177: Parameter #2 $multiplier of function str_repeat expects int,  float|int<-1, max> given.
+- dist/classes/TableAdmin.php - line 177: Parameter #2 $multiplier of function str_repeat expects int, float|int<-1, max> given.
 
 ## [0.4.3] - 2021-07-27
 
@@ -250,6 +281,7 @@ ci: MyCMS::InitDatabase + PHPUnit tests on GitHub
 - GitHub automation improved
 
 ### Added
+
 - ThrowableFunctions/ThrowablePHPFunctions::strtotime
 - `phpcbf*` branch (no slash allowed) triggers commit of auto PHPCS fixes, controlled by [phpcbf.yml](.github/workflows/phpcbf.yml)
 - InitDatabase class to read database configuration from (dist/)phinx.yml
@@ -258,18 +290,21 @@ ci: MyCMS::InitDatabase + PHPUnit tests on GitHub
 - Note: Apache/2 that is part of Ubuntu/20 virtual environment doesn't have PHP installed by default, so phpunit @group webserver is excluded from automatic GitHub Actions testing
 
 ### Changed
+
 - to Check PHP syntax errors uses: overtrue/phplint@3.0.3 (instead of obsoleted michaelw90/PHP-Lint@master)
 - dist/build.sh uses composer update -a **--prefer-dist --no-progress**
 
 ### Fixed
+
 - MyTableAdmin::outputField case timestamp $value doesn't have to be string
 - phpcbf automatically fixed style in styles/admin.css, dist/styles/admin.css, dist/scripts/admin-specific.js, dist/scripts/admin.js, dist/classes/Admin.php
 - assert array as argument of array_shift in LogMysqli::fetchAndReindex
-- in dist/images/favicon/manifest.json 12x error Unnecessary escape character: \/  jsonc/no-useless-escape
+- in dist/images/favicon/manifest.json 12x error Unnecessary escape character: \/ jsonc/no-useless-escape
 - fix classes/MyAdmin.php line 640: Ternary operator condition is always true.
 - added private ProjectCommon::assertStringArray to fix Parameter #1 $pattern of function WorkOfStan\MyCMS\ThrowableFunctions\preg_replaceString expects array<string>|string, array<int, (int|string)> given.
 
 ### Security
+
 - dist/.htaccess: no Markdown file can be available on web
 
 ## [0.4.2] - 2021-05-28
@@ -277,6 +312,7 @@ ci: MyCMS::InitDatabase + PHPUnit tests on GitHub
 refactor!: PHPStan level=max ... Error Zero
 
 ### Added
+
 - [conf/phpstan.webmozart-assert.neon](conf/phpstan.webmozart-assert.neon) to allow for `phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse . --memory-limit 300M` in GitHub automated testing
 - LogMysqli::queryStrictNonEmptyArray
 - MyCMSMonoLingual::fetchAndReindexStrictArray
@@ -284,11 +320,13 @@ refactor!: PHPStan level=max ... Error Zero
 - many assertions and few type castings and queryStrictObject (instead of query) to eliminate PHPStan level max errors
 
 ### Changed
+
 - **potentially breaking change** MyTableAdmin::outputForm, MyTableLister::pagination, MyTableLister::view, MyTableLister::viewInputs, MyTableLister::viewTable - ignores not-presence of parameter $options['return-output'] and always returns string, never echo string (would result @return mixed void or string issue)
 - MyTableLister::customInputBefore and MyTableLister::customInputAfter - parameter 2 is mixed type (not a string)
 - MyTableAdmin::outputField case:timestamp replaced old way of addressing characters in a string `$value[10]` by more modern `substr($value, 10, 1)`
 
 ### Fixed
+
 - dist ProjectSpecific::getContent,::getCategory - code|ID are used by the SQL statement only if they are present
 - MyAdminProcess::processUserCreate $salt typecasted as string
 - MyTableAdmin::recordSave and MyTableAdmin::recordDelete - resolveSQL call treated $messageSuccess and $messageError as strings while they are bool
@@ -298,9 +336,11 @@ refactor!: PHPStan level=max ... Error Zero
 refactor!: Dist: api/noun construct replaces separate code in api/noun folders
 
 ### `Added`
+
 - dist HTTP POST BarPanel for Tracy (both web and admin)
 
 ### `Changed`
+
 - api/noun (api/noun/) construct is used instead of separate code in api/noun folders (therefore also sql logs are created in a stadard folder e.g. log/sql*.log.sql instead of within api/apiName/log/sql*.log.sql)
 - dist `notest/*` branch doesn't trigger GitHub Action tests
 - dist/process.php `$_POST['newsletter']` related process uses new $sessionWriteClose parameter 3 of method Tools::redir, that turns off `session_write_close();` so that e.g. Tracy gets info about redirect.
@@ -313,13 +353,14 @@ feat!: MyFriendlyURL is routing of Controller + ready-made dist boilerplate
 - **Breaking change**: GodsDev\Backyard switched to WorkOfStan\Backyard - so either the namespace should be changed or original GodsDev\Backyard required instead as temporary fix.
 
 ### Added
+
 - `notest/*` branches ignored by GitHub Actions (not to test partial online commits)
 - Throwable/ThrowablePHPFunctions.php - replacement for PHP functions that returns false or null instead of the strict type. These functions throw an \Exception instead.
   - filemtime, glob, json_encode, mb_eregi_replace, preg_match, preg_replace
   - preg_replaceString accepts only string as $subject and returns only string (i.e. not string[])
 - dist/admin.php: HTTP POST panel
-- LogMysqli::queryStrictObject Logs SQL statement not starting with SELECT or SET. *Throws exception in case response isn't `\mysqli_result`*
-- LogMysqli::queryStrictBool Logs SQL statement not starting with SELECT or SET. *Throws exception in case response isn't `true`*
+- LogMysqli::queryStrictObject Logs SQL statement not starting with SELECT or SET. _Throws exception in case response isn't `\mysqli_result`_
+- LogMysqli::queryStrictBool Logs SQL statement not starting with SELECT or SET. _Throws exception in case response isn't `true`_
 - type hints (especially array iterable value types)
 - CHANGELOG.md
   - .markdown-lint.yml (to ignore same headings in CHANGELOG) replaces the default one, hence SHOULD include the original settings
@@ -351,6 +392,7 @@ feat!: MyFriendlyURL is routing of Controller + ready-made dist boilerplate
 - Recommendation: if you change boilerplate classes, update also info `(Last MyCMS/dist revision: 2021-05-20, v0.4.0)`, so that it is more clear what to update in case of MyCMS core upgrade.
 
 ### Changed
+
 - **breaking change** namespace GodsDev\MyCMS to WorkOfStan\MyCMS
 - **breaking change** namespace GodsDev\mycmsprojectnamespace to WorkOfStan\mycmsprojectnamespace
 - WorkOfStan/MyCMS repository instead of GodsDev\MyCMS repository
@@ -359,7 +401,7 @@ feat!: MyFriendlyURL is routing of Controller + ready-made dist boilerplate
 - Controller is set by Controller::prepareTemplate a Controller::prepareTemplateAll and called by MyController::run (instead of MyController::controller, which still remains for backward compatibility)
 - nette/utils allowed also in version ^3.2.2
 - godsdev/tools bumped to type strict version ^0.3.8
-- LogMysqli::fetchSingle Throws excepetion, when an SQL statement returns true.  
+- LogMysqli::fetchSingle Throws excepetion, when an SQL statement returns true.
 - LogMysqli::fetchAndReindex Error for this function is also an SQL statement that returns true.
 - MyAdminProcess::redir make use of new option in GodsDev\Tools::redir and turns off `session_write_close()` in order to pass info about redirect to Tracy
 - MyCMSMonoLingual if logger is not passed to the class, constructor will throw an Exception (instead of die)
@@ -393,6 +435,7 @@ feat!: MyFriendlyURL is routing of Controller + ready-made dist boilerplate
 - MyController::run should be tested instead of the deprecated MyController::controller
 
 ### Fixed
+
 - Stricter code by type assertion, type casting, type hinting
 - Stricter code by return type specific LogMysqli::queryStrict methods and ThrowablePHPFunctions (i.e. Exception thrown instead of an unexpected type returned on error)
 - PHPStan level=6 => Error Zero
@@ -409,20 +452,27 @@ feat!: MyFriendlyURL is routing of Controller + ready-made dist boilerplate
 - MyController::run MUST work even without MyFriendlyUrl instance
 
 ### Deprecated
+
 - MyTableAdmin::outputSelectPath() - is this function necessary?
 - MyController::controller calls should be replaced by MyController::run calls
 
 ## [0.3.15] - 2020-05-02
+
 ### Fixed
+
 - bulkUpdateSQL: fix `continue` to `break` (not to `continue 2`)
-[as since PHP 7.3.0 continue within a switch that is attempting to act like a break statement for the switch will trigger an E_WARNING.]
+  [as since PHP 7.3.0 continue within a switch that is attempting to act like a break statement for the switch will trigger an E_WARNING.]
 
 ## [0.3.14] - 2020-05-02
+
 ### Changed
+
 - classes Test in separate path so that `/godsdev/mycms/classes/Test/` are not part of `autoload_static.php`
 
 ## [0.3.13] - 2020-05-02
+
 ### Changed
+
 - test related classes moved to autoload-dev section in order to prevent Ambiguous class resolution in `dist\autoload_static.php` from
 
 ```php
@@ -432,7 +482,9 @@ feat!: MyFriendlyURL is routing of Controller + ready-made dist boilerplate
             1 => __DIR__ . '/..' . '/godsdev/mycms/dist/classes',
         ),
 ```
+
 to
+
 ```php
         'GodsDev\\mycmsprojectnamespace\\' =>
         array (
@@ -441,10 +493,13 @@ to
 ```
 
 ## [0.3.12] - 2020-04-20
+
 ### Fixed
+
 - fix test classes namespace and use statements to be PSR-4 compliant
 
 ## [0.3.11] - 2020-03-14
+
 - login and logout and various process fixes
 - Folder dist is a seed of a new project and works out of the box (incl. favicons for various browsers)
 - fix zobrazování tabulek s foreign key
@@ -460,43 +515,54 @@ to
 - MyFriendlyUrl was tested in A and F projects and it worked fine, so it may go to production
 
 ## [0.3.10] - 2019-01-31
+
 - processFilePack(), processFileUpload and processSubfolder() now test class_exist('ZipArchive')
 - MyTableAdmin.php - bugfix in recordSave()
 
 ## [0.3.9] - 2019-01-18
+
 - MyAdmin.php - bugfix in getPageTitle(); minor edits
 - MyAdminProcess.php - +processActivity()
 - MyTableAdmin.php - referer as hidden input field in outputForm()
 - MyTableLister.php - bugfix in selectSQL()
 
 ## [0.3.8] - 2018-12-12
+
 - Merge branch 'develop' of <https://github.com/GodsDev/mycms> into develop with Conflicts: classes/MyTableAdmin.php
 
 ## [0.3.7] - 2018-10-08
+
 - fix LogMysqli::fetchSingle
 - new LogMysqli::values Extract data from an array and present it as values, field names, or pairs.
 - admin: getPageTitle
 - admin opraveno ukládání and small design fixes
 
 ## [0.3.6] - 2018-09-20
+
 - fix environment dependant CAST(AS)
 
 ## [0.3.5] - 2018-09-20
+
 - bump "godsdev/tools": "^0.3.1"
 
 ## [0.3.4] - 2018-05-27
+
 - fix i to i transformation
 
 ## [0.3.3] - 2018-06-01
+
 - ProjectCommon::correctLineBreak Replace spaces with \0160
 
 ## [0.3.2] - 2018-05-29
+
 - fix submit rename (bug 6691)
 
 ## [0.3.1] - 2018-05-07
+
 - some methods renamed
 
 ## [0.3.0] - 2018-05-07
+
 - Lot of improvements
   - logging
   - Tracy
@@ -504,33 +570,39 @@ to
   - dist folder contains an example project using MyCMS
 
 ## [0.2.5] - 2017-11-24
+
 - changed loadSettings separated from getSessionLanguage
 - added database manipulation fetchAll, fetchSingle, recordSave
 - changed TableAdmin.php manipulation with JSON columns
 - update TableLister.php translations and formatting
 
 ## [0.2.4] - 2017-11-07
+
 - +fetchSingle(), improved fetchAndReindex()
 
 ## [0.2.3] - 2017-11-05
+
 - TableAdmin update recordSave and outputForm
 
 ## [0.2.2] - 2017-11-05
+
 - options for project customization of getSessionLanguage
 - TableAdmin and TableLister improvements
 
 ## [0.2.1] - 2017-10-12
+
 - fix language in SQL statement
 
 ## [0.2.0] - 2017-10-12
+
 - PSR-3 logger
 - TableAdmin objectified
 - getSessionLanguage is made universal (it also includes langauge files and some database fields)
 
 ## [0.1] - 2017-10-06
+
 - Basic functions
 - Basic structure
-
 
 [Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.5.0...HEAD
 [0.5.0]: https://github.com/WorkOfStan/mycms/compare/v0.4.10...v0.5.0
