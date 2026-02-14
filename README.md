@@ -19,6 +19,7 @@ MyCMS is designed to be used with following technologies:
 - [WorkOfStan\Backyard\BackyardMysqli](https://github.com/WorkOfStan/backyard/blob/main/classes/BackyardMysqli.php): for wrapping SQL layer
 
 ## Installation
+
 Apache modules `mod_alias` (for hiding non-public files) and `mod_rewrite` (for friendly URL features) are expected.
 
 Once [composer](https://getcomposer.org/) is installed, execute the following command in your project root to install this library:
@@ -50,6 +51,7 @@ Note/todo: MyCMS requires godsdev/tools which is stack with PHP/7. Therefore MyC
 ## Deployment
 
 ### `/dist`
+
 Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder in order to start easily.
 Replace the string `MYCMSPROJECTNAMESPACE` with your project namespace. (TODO: rector...)
 Replace the string `MYCMSPROJECTSPECIFIC` with other site specific information (Brand, Twitter address, phone number, database table_prefix in phinx.yml...).
@@ -68,6 +70,7 @@ For deployment look also to [Deployment chapter](dist/README.md#deployment) and 
 MyCMS is used only as a library, so the project using it SHOULD implement `RedirectMatch 404 vendor\/` statement as prepared in `dist/.htaccess` to keep the library hidden from web access.
 
 ## Admin UI
+
 Admin UI is displayed by MyAdmin::outputAdmin in this structure:
 |Navigation|Search|
 |--|--|
@@ -79,10 +82,12 @@ Element overview:
 |Agendas (as in $AGENDAS in admin.php)|Messages<br>Workspace: table/row/media/user/project-specific<br>Dashboard: List of tables|
 
 ### Navigation
+
 - special Admin::outputSpecialMenuLinks
 - default: Media+User+Settings MyAdmin::outputNavigation
 
 ### Search
+
 - Admin class variable `$searchColumns` defines an array in format database_table => [`id`, list of fields to be searched in], e.g.
 ```php
     protected $searchColumns = [
@@ -91,10 +96,12 @@ Element overview:
 ```
 
 ### Agendas
+
 - MyAdmin::outputAgendas
 - defined in $AGENDAS in admin.php
 
 ### Main
+
 - Messages
 - Workspace: one of the following
   - `$_GET['search']` => MyAdmin::outputSearchResults
