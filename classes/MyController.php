@@ -39,9 +39,9 @@ class MyController extends MyCommon
     protected $language = DEFAULT_LANGUAGE;
     /** @var string */
     protected $requestUri = ''; //default is homepage
-    /** @var array<string|int|array> */
+    /** @var array<string|int|array<mixed>> */
     protected $result;
-    /** @var array<array|string> */
+    /** @var array<array<mixed>|string> */
     protected $session;
 
     /**
@@ -80,29 +80,9 @@ class MyController extends MyCommon
     }
 
     /**
-     * Kept only for backward compatibility for apps using 0.3.15 or older; to be replaced by run()
-     * Outputs changed $MyCMS->template and $MyCMS->context as fields of an array
-     *
-     * Expected in Controller:
-     * $this->friendlyUrl->determineTemplate($options);
-     * $this->prepareTemplate($options);
-     * $this->prepareAllTemplates($options);
-     *
-     * @deprecated 0.4.0
-     * @see MyController::run()
-     * @return array<string|int|array>
-     */
-    public function controller()
-    {
-        $this->MyCMS->logger->warning('Deprecated method controller. Use method run instead. Called from ' .
-            print_r(debug_backtrace()[1]['function'], true));
-        return $this->result;
-    }
-
-    /**
      * For PHP Unit test
      *
-     * @return array<array>
+     * @return array<array<mixed>>
      */
     public function getVars()
     {

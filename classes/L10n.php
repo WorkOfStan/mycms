@@ -108,10 +108,10 @@ class L10n
      * @param string $language
      * @return string
      */
-    private function assertLanguage($language)
+    private function assertLanguage(string $language): string
     {
         // Assert ISO 639-1 format
-        Assert::string($language);
+        //Assert::string($language);
         Assert::length($language, 2);
         Assert::inArray($language, $this->enabledLanguages);
         return $language;
@@ -123,7 +123,7 @@ class L10n
      * @param string $language
      * @return void
      */
-    public function loadLocalisation($language)
+    public function loadLocalisation(string $language): void
     {
         $this->selectedLanguage = $this->assertLanguage($language);
         $this->translation = $this->readLocalisation($language);
@@ -133,9 +133,9 @@ class L10n
      * Returns the localisation string array
      *
      * @param string $language
-     * @return string[]
+     * @return array<string>
      */
-    public function readLocalisation($language)
+    public function readLocalisation(string $language): array
     {
         $this->assertLanguage($language);
         $translationFile = $this->prefix . $language . '.yml';
@@ -175,8 +175,13 @@ class L10n
      * @param bool $deleteFlag
      * @return void
      */
-    public function updateLocalisation(array $allStrings, array $newStrings, $oldName, $newName, $deleteFlag)
-    {
+    public function updateLocalisation(
+        array $allStrings,
+        array $newStrings,
+        string $oldName,
+        string $newName,
+        bool $deleteFlag
+    ): void {
         foreach ($this->enabledLanguages as $code) {
             $this->assertLanguage($code);
             $yml = [];

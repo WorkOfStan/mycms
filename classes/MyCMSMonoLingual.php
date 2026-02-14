@@ -63,7 +63,7 @@ class MyCMSMonoLingual
      * @todo - test fully
      * @return void
      */
-    public function csrfStart($checkOnly = false)
+    public function csrfStart(bool $checkOnly = false): void
     {
         if (!isset($_SESSION['token']) || !is_array($_SESSION['token'])) {
             $_SESSION['token'] = [];
@@ -75,10 +75,10 @@ class MyCMSMonoLingual
 
     /**
      * Check for CSRF
-     * @param int $token
+     * @param int|string $token
      * @return bool
      */
-    public function csrfCheck($token)
+    public function csrfCheck($token): bool
     {
         // Variable $token always exists and is not nullable.
         return isset($_SESSION['token']) && is_array($_SESSION['token']) && in_array($token, $_SESSION['token']);
@@ -90,7 +90,7 @@ class MyCMSMonoLingual
      * @param string $string
      * @return string
      */
-    public function escapeSQL($string)
+    public function escapeSQL(string $string): string
     {
         return $this->dbms->escapeSQL($string);
     }
@@ -101,7 +101,7 @@ class MyCMSMonoLingual
      * @return null|string|array<null|string> first selected row (or its first column if only one column is selected),
      *     null on empty SELECT
      */
-    public function fetchSingle($sql)
+    public function fetchSingle(string $sql)
     {
         return $this->dbms->fetchSingle($sql);
     }
@@ -112,7 +112,7 @@ class MyCMSMonoLingual
      * @return array<array<null|string>> array of associative arrays for each result row
      *     or empty array on error or no results
      */
-    public function fetchAll($sql)
+    public function fetchAll(string $sql): array
     {
         return $this->dbms->fetchAll($sql);
     }
@@ -124,7 +124,7 @@ class MyCMSMonoLingual
      *   Result is either associative array, empty array on empty SELECT, or false on error
      *   Error for this function is also an SQL statement that returns true.
      */
-    public function fetchAndReindex($sql)
+    public function fetchAndReindex(string $sql)
     {
         return $this->dbms->fetchAndReindex($sql);
     }
@@ -157,7 +157,7 @@ class MyCMSMonoLingual
      *
      * @throws \Exception on error
      */
-    public function fetchAndReindexStrictArray($sql)
+    public function fetchAndReindexStrictArray(string $sql): array
     {
         return $this->dbms->fetchAndReindexStrictArray($sql);
         /*
@@ -194,7 +194,7 @@ class MyCMSMonoLingual
      * @param array<mixed> $params
      * @return void
      */
-    public function renderLatte($dirTemplateCache, $customFilters, array $params)
+    public function renderLatte(string $dirTemplateCache, $customFilters, array $params): void
     {
         $render = new Render($this->template, $dirTemplateCache, $customFilters);
         $render->renderLatte($params);
@@ -207,9 +207,9 @@ class MyCMSMonoLingual
      * @param array<array<mixed>|false|int|null|string> $arr
      * @return void
      */
-    public function setContext(array $arr)
+    public function setContext(array $arr): void
     {
-        Assert::isArray($arr);
+        //Assert::isArray($arr);
         $this->context = $arr;
     }
 }

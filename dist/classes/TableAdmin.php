@@ -118,19 +118,19 @@ class TableAdmin extends MyTableAdmin
                     . '<select class="form-control" name="path-parent" id="path' . $this->rand . '"><option />';
                 $rows = $this->dbms->fetchAll('SELECT path,category_' . $_SESSION['language'] . ' AS category FROM `'
                     . TAB_PREFIX . 'category` ORDER BY path');
-                if (is_array($rows)) {
-                    foreach ($rows as $row) {
-                        $result .= Tools::htmlOption(
-                            $row['path'],
-                            str_repeat(
-                                '… ',
-                                (int) max(strlen((string) $row['path']) / PATH_MODULE - 1, 0)
-                            ) . $row['category'],
-                            substr($value, 0, -PATH_MODULE),
-                            Tools::begins((string) $row['path'], $value)
-                        );
-                    }
+                //if (is_array($rows)) {
+                foreach ($rows as $row) {
+                    $result .= Tools::htmlOption(
+                        $row['path'],
+                        str_repeat(
+                            '… ',
+                            (int) max(strlen((string) $row['path']) / PATH_MODULE - 1, 0)
+                        ) . $row['category'],
+                        substr($value, 0, -PATH_MODULE),
+                        Tools::begins((string) $row['path'], $value)
+                    );
                 }
+                //}
                 $result .= '</select>';
                 break;
 
@@ -142,17 +142,17 @@ class TableAdmin extends MyTableAdmin
                 $rows = $this->dbms->fetchAll('SELECT p.id,category_' . $_SESSION['language'] . ' AS category,product_'
                     . $_SESSION['language'] . ' AS title FROM `' . TAB_PREFIX . 'product` p LEFT JOIN `'
                     . TAB_PREFIX . 'category` c ON p.category_id = c.id ORDER BY c.path,p.sort');
-                if (is_array($rows)) {
+                //if (is_array($rows)) {
                     $tmp = null;
-                    foreach ($rows as $row) {
-                        if ($tmp != $row['category']) {
-                            $result .= (is_null($tmp) ? '' : '</optgroup>') . '<optgroup label="'
-                                . Tools::h($tmp = (string)$row['category']) . '">' . PHP_EOL;
-                        }
-                        $result .= Tools::htmlOption($row['id'], (string) $row['title'], $value) . PHP_EOL;
+                foreach ($rows as $row) {
+                    if ($tmp != $row['category']) {
+                        $result .= (is_null($tmp) ? '' : '</optgroup>') . '<optgroup label="'
+                            . Tools::h($tmp = (string)$row['category']) . '">' . PHP_EOL;
                     }
-                    $result .= (is_null($tmp) ? '' : '</optgroup>');
+                    $result .= Tools::htmlOption($row['id'], (string) $row['title'], $value) . PHP_EOL;
                 }
+                    $result .= (is_null($tmp) ? '' : '</optgroup>');
+                //}
                 $result .= '</select>';
                 break;
         }

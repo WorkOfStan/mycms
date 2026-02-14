@@ -1,0 +1,91 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: ../admin.php
+
+		-
+			message: '#^Parameter \#2 \.\.\.\$args of function array_merge expects array, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../classes/Admin.php
+
+		-
+			message: '#^Binary operation "\*" between \-1\|1 and array\<mixed\>\|string results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: ../classes/AdminProcess.php
+
+		-
+			message: '#^Binary operation "\+" between float\|int\|string\|null and array\<mixed\>\|string results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: ../classes/AdminProcess.php
+
+		-
+			message: '#^Binary operation "\+" between non\-falsy\-string and array\<mixed\>\|string results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: ../classes/AdminProcess.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<array\<mixed\>\|string\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: ../classes/AdminProcess.php
+
+		-
+			message: '#^Offset 0 on non\-empty\-list\<string\> in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: ../classes/AdminProcess.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: ../classes/App.php
+
+		-
+			message: '#^Comparison operation "\>\=" between 1 and 0 is always true\.$#'
+			identifier: greaterOrEqual.alwaysTrue
+			count: 1
+			path: ../classes/Mail.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between false and false will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 1
+			path: ../classes/Mail.php
+
+		-
+			message: '#^Call to function method_exists\(\) with WorkOfStan\\MyCMS\\LogMysqli and ''getStatementsError'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: ../classes/MyCMSProject.php
+
+		-
+			message: '#^Call to function method_exists\(\) with WorkOfStan\\MyCMS\\Tracy\\BarPanelTemplate and ''setError'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: ../classes/MyCMSProject.php
+
+		-
+			message: '#^Call to static method Webmozart\\Assert\\Assert\:\:integer\(\) with int and ''product MUST be…'' will always evaluate to true\.$#'
+			identifier: staticMethod.alreadyNarrowedType
+			count: 1
+			path: ../classes/ProjectSpecific.php
+
+		-
+			message: '#^Parameter &\$totalRows by\-ref type of method WorkOfStan\\mycmsprojectnamespace\\ProjectSpecific\:\:searchResults\(\) expects string\|null, array\<string\|null\>\|string\|null given\.$#'
+			identifier: parameterByRef.type
+			count: 1
+			path: ../classes/ProjectSpecific.php
+
+		-
+			message: '#^Call to function array_key_exists\(\) with ''mail_for_admin…'' and array\{logging_level\: 3, error_log_message_type\: 3, logging_file\: literal\-string&non\-falsy\-string, mail_for_admin_enabled\: false\} will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: ../conf/config.php

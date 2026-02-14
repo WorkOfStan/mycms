@@ -5,18 +5,17 @@ on:
   push:
     branches-ignore:
       # notest branches to ignore testing of partial online commits
-      - 'notest/**'
+      - "notest/**"
   pull_request:
     branches-ignore:
       # notest branches to ignore testing of partial online commits
-      - 'notest/**'
+      - "notest/**"
 
 permissions:
   contents: read
 
 jobs:
   build:
-
     runs-on: ${{ matrix.operating-system }}
     # Limit the running time
     timeout-minutes: 10
@@ -24,7 +23,7 @@ jobs:
       matrix:
         operating-system:
           - "ubuntu-latest"
-        php-version: ['5.6', '7.0', '7.2', '7.3', '7.4']
+        php-version: ["7.2", "7.3", "7.4"]
         # 7.1 is not checked, as due to https://bugs.php.net/bug.php?id=73803
         # ZipArchive class has public properties, that are not visible via reflection.
         # Therefore using tools like PHPStan generates error: Access to an undefined property ZipArchive::$numFiles. in class\MyAdminProcess
@@ -33,19 +32,20 @@ jobs:
       # same as phinx.dist.yml-testing
       DB_DATABASE: testing_db
       DB_USER: root
-      DB_PASSWORD: 'root'
+      DB_PASSWORD: "root"
       #DB_HOST: localhost
 
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: "Install PHP ${{ matrix.php-version }} Test on ${{ matrix.operating-system }}"
         uses: "shivammathur/setup-php@v2"
         with:
           php-version: "${{ matrix.php-version }}"
-          tools: composer:v2, phpstan
-          # Note: phpstan call fails for PHP<7.1
+          tools: composer:v2
+          # phpstan added by tools is the latest one, which may not be supported: e.g. phpstan:2.0.1 fails php:7.2,7.3
+          # Note: when phpstan is added by tools phpstan call fails for PHP<7.1
           # coverage none turns off Xdebug as in PHP 5.6,7.0 it would change (format) var_dump output
           coverage: none
         env:
@@ -65,7 +65,7 @@ jobs:
       # A repository can have up to 5GB of caches. Once the 5GB limit is reached, older caches will be evicted based on when the cache was last accessed.
       # Caches that are not accessed within the last week will also be evicted.
       - name: Cache composer dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: vendor-cache
         with:
           # path to Checkout working directory is /home/runner/work/repo-name/repo-name , so just add /vendor/
@@ -93,7 +93,7 @@ jobs:
       - name: Install no-dev dependencies
         if: ${{ steps.vendor-cache.outputs.cache-hit != 'true' }}
         run: composer update --no-dev --prefer-dist --no-progress
-      
+
       - name: Copy local config files
         run: |
           # to fix `Constant DB_USERNAME not found.` etc not only for phpstan but also for phpunit tests
@@ -166,11 +166,13 @@ jobs:
           #todo return when rector ready for phpstan:1.0#composer require --dev rector/rector --prefer-dist --no-progress
           cd ..
       - name: "PHPStan webmozart-assert (app)"
-        if: ${{ matrix.php-version >= '7.1' }}
+        if: ${{ matrix.php-version >= '7.2' }}
         run: |
           cd dist
-          # Note that phpstan/phpstan is required above but not used below (as shivammathur/setup-php tool is used)
-          phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
+          # show version
+          ./vendor/bin/phpstan.phar -V
+          # analyze
+          ./vendor/bin/phpstan.phar --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
           cd ..
 
       - name: "Composer phpstan-webmozart-assert (library + app)"
@@ -180,8 +182,10 @@ jobs:
           composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
 
       - name: "PHPStan webmozart-assert (library + app)"
-        # alternative syntax # if: ${{ matrix.php-version != '5.3' && matrix.php-version != '5.6' }}
-        if: ${{ matrix.php-version >= '7.1' }}
+        if: ${{ matrix.php-version >= '7.2' }}
         run: |
-          # Note that phpstan/phpstan is required above but not used below (as shivammathur/setup-php tool is used)
-          phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
+          # show version
+          ./vendor/bin/phpstan.phar -V
+          # analyze
+          ./vendor/bin/phpstan.phar --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
+        shell: bash

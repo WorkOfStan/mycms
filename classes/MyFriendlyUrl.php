@@ -10,7 +10,11 @@ class MyFriendlyUrl extends MyCommon
 {
     use \Nette\SmartObject;
 
-    public const PAGE_NOT_FOUND = '404';
+    // The syntax to use public const (and similarly, protected const and private const) within PHP classes was
+    // introduced in PHP 7.1. Prior to PHP 7.1, all class constants were implicitly public and could not have explicit
+    // visibility modifiers.
+    // Todo - for PHP/7.1+ version use: public const PAGE_NOT_FOUND = '404'; // i.e. add `public`
+    public const PAGE_NOT_FOUND = '404'; // lowest supported PHP is now 7.2 because of CVE-2026-24765
 
     /**
      * interestingPath pattern to match `language subpattern` and the `rest of the path`
@@ -336,7 +340,7 @@ class MyFriendlyUrl extends MyCommon
         }
         //$token, $matches - will be expected below for FRIENDLY URL & Redirect calculation
         //(see friendlyIdentifyRedirect PHPDoc for explanation)
-        Assert::isArray($friendlyUrlRedirectVariables);
+        //Assert::isArray($friendlyUrlRedirectVariables);
         $token = $friendlyUrlRedirectVariables['token'];
         Assert::string($token);
         $matches = $friendlyUrlRedirectVariables['matches'];

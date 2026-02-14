@@ -4,27 +4,27 @@ on:
   push:
     branches-ignore:
       # notest branches to ignore testing of partial online commits
-      - 'notest/**'
+      - "notest/**"
   pull_request:
     branches-ignore:
       # notest branches to ignore testing of partial online commits
-      - 'notest/**'
+      - "notest/**"
   workflow_call:
 
 permissions:
   contents: read
 
 jobs:
-# This is how to reuse this workflow:
-#  call-workflow:
-#    uses: WorkOfStan/MyCMS/.github/workflows/overtrue-phplint.yml@main
+  # This is how to reuse this workflow:
+  #  call-workflow:
+  #    uses: WorkOfStan/MyCMS/.github/workflows/overtrue-phplint.yml@main
   phplint:
     runs-on: ubuntu-latest
     # Limit the running time
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Check PHP syntax errors
         uses: overtrue/phplint@9.3.1

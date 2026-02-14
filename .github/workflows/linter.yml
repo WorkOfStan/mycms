@@ -18,11 +18,11 @@ on:
   push:
     branches-ignore:
       # notest branches to ignore testing of partial online commits
-      - 'notest/**'
+      - "notest/**"
   pull_request:
     branches-ignore:
       # notest branches to ignore testing of partial online commits
-      - 'notest/**'
+      - "notest/**"
   workflow_call:
 
 permissions:
@@ -48,9 +48,10 @@ jobs:
       # Checkout the code base #
       ##########################
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
-          fetch-depth: 0  # Fetch all history for all branches and tags. Otherwise github.event.pull_request.base.ref SHA isn't found.
+          # Fetch all history for all branches and tags. Otherwise github.event.pull_request.base.ref SHA isn't found.
+          fetch-depth: 0
 
       ################################
       # Run Linter against code base #
@@ -61,7 +62,7 @@ jobs:
           VALIDATE_ALL_CODEBASE: true
           DEFAULT_BRANCH: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.ref_name }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          JAVASCRIPT_ES_CONFIG_FILE: .eslintrc.yml
+          #JAVASCRIPT_ES_CONFIG_FILE: .eslintrc.yml
           VALIDATE_ANSIBLE: false
           VALIDATE_CSS: false
           # TODO 211017 returns false positive `unknown Webhook event "workflow_call"`
@@ -70,7 +71,7 @@ jobs:
           VALIDATE_GITLEAKS: false
           # 240803, there's no way to configure JAVASCRIPT_PRETTIER, neither it shows what exactly an issue is. Just 'Code style issue found in file.', which is useless.
           VALIDATE_JAVASCRIPT_PRETTIER: false
-          VALIDATE_JAVASCRIPT_STANDARD: false
+          #VALIDATE_JAVASCRIPT_STANDARD: false
           # TODO VALIDATE_JSCPD later
           VALIDATE_JSCPD: false
           # PHPStan run in matrix strategy in php-composer-phpunit.yml

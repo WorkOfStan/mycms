@@ -1,11 +1,12 @@
 # MYCMSPROJECTSPECIFIC
+
 XYZ web
-(Folder *dist* is an instant seed of a new project/application.)
+(Folder _dist_ is an instant seed of a new project/application.)
 
 ## Stack
 
 - Linux, Apache (mod_rewrite, mod_header, ssl...)
-- PHP 5.6||7.x
+- PHP >=7.2 <8.0
 - MySQL
 - PHP libraries
   - `xml`
@@ -20,6 +21,7 @@ apt install libapache2-mod-php7.0 apache2 mysql-server git composer php-xml php-
 
 Check that `phinx.yml` and folder `log` are not accessible. Because `mod_alias` not only has to be enabled, but also
 in the `/etc/apache2/apache2.conf`, there has to be this setting:
+
 ```sh
 <Directory /var/www/>
         AllowOverride All # enables .htaccess
@@ -38,32 +40,37 @@ script/autotrack.V.V.V.js and script/autotrack.V.V.V.js.map are manually taken f
 
 @todo - as GA events
 
-* Production: UA-XYZ
-* Test: UA-39642385-1
+- Production: UA-XYZ
+- Test: UA-39642385-1
 
 ## MyCMS dist deployment
-* Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder.
-* Replace the string `mycmsprojectnamespace` with your project namespace in composer.json and the used classes.
-* Replace the string `MYCMSPROJECTSPECIFIC` with other site specific information (Brand, Twitter address, phone number, database name, name of icon in manifest.json etc.).
-* Default *admin.php* credentials are *john* / *Ew7Ri561*   - MUST be deleted after the real admin account is set up.
-* Change `define('MYCMS_SECRET', 'u7-r!!T7.&&7y6ru');` //16-byte random string, unique per project in `conf/config.php`
-* Delete this section after the changes above are made
+
+- Folder `/dist` contains initial _distribution_ files for a new project using MyCMS, therefore copy it to your new project folder.
+- Replace the string `mycmsprojectnamespace` with your project namespace in composer.json and the used classes.
+- Replace the string `MYCMSPROJECTSPECIFIC` with other site specific information (Brand, Twitter address, phone number, database name, name of icon in manifest.json etc.).
+- Default _admin.php_ credentials are _john_ / _Ew7Ri561_ - MUST be deleted after the real admin account is set up.
+- Change `define('MYCMS_SECRET', 'u7-r!!T7.&&7y6ru');` //16-byte random string, unique per project in `conf/config.php`
+- Delete this section after the changes above are made
 
 ## Deployment
 
 Create database with `Collation=utf8_general_ci` (create also separate testing database so that phinxlog migration_name doesn't overlap)
 
 Run [build.sh](build.sh) to
+
 - create `phinx.yml` based on `phinx.dist.yml` including the name of the database (and testing database) created above
 - create `conf/config.local.php` based on `config.local.dist.php` including the phinx environment to be used and change any settings you like. (OPTIONAL)
 
 Edit these two files; then run `build.sh` again (see [below](#buildsh-runs-the-following-commands))
 
 ### Deployment minutia
+
 `Under construction` mode may be turned on (for non admin IP adresses i.e. not in `$debugIpArray`) by adding
+
 ```php
 define('UNDER_CONSTRUCTION', true);
 ```
+
 to `conf/config.local.php`.
 
 Best practice: Management often uses iPhone or Mac, therefore don't forget to test on Apple devices as well!
@@ -71,14 +78,15 @@ Best practice: Management often uses iPhone or Mac, therefore don't forget to te
 Recommendation: if you change boilerplate classes, update also info `(Last MyCMS/dist revision: YYYY-MM-DD, vX.Y.Z)`, so that it is more clear what to update in case of MyCMS core upgrade.
 
 ### Adding new type of content to be displayed
-| Add to this place | Why |
-|-----------------------------------------------|------|
-| conf/config.php 'templateAssignementParametricRules' | how a GET parameters translate to template |
-| conf/config.php 'typeToTableMapping' | type uses specific table for its records |
-| Controller::prepareTemplate | Retrieves the content for usage in View layer |
-| FriendlyUrl::switchParametric | Checks existence of the content piece and Returns Friendly URL string for type=ID URL if it is available or it returns type=ID |
-| admin.php $AGENDAS | convenient way to administer records within admin.php |
-| template/NEW.latte | View layer |
+
+| Add to this place                                    | Why                                                                                                                            |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| conf/config.php 'templateAssignementParametricRules' | how a GET parameters translate to template                                                                                     |
+| conf/config.php 'typeToTableMapping'                 | type uses specific table for its records                                                                                       |
+| Controller::prepareTemplate                          | Retrieves the content for usage in View layer                                                                                  |
+| FriendlyUrl::switchParametric                        | Checks existence of the content piece and Returns Friendly URL string for type=ID URL if it is available or it returns type=ID |
+| admin.php $AGENDAS                                   | convenient way to administer records within admin.php                                                                          |
+| template/NEW.latte                                   | View layer                                                                                                                     |
 
 ### Ad firewall
 
@@ -86,21 +94,24 @@ If the web will be running behind firewall hence REMOTE_ADDR would contain only 
 So that trusted IPs for debugging may be used.
 For this deployment scenarion only (because otherwise it would be a vulnerability) uncomment `isset($_SERVER['HTTP_CLIENT_IP']) ? in_array($_SERVER['HTTP_CLIENT_IP'], $debugIpArray) :` line in `index.php` and `api\*\index.php`.
 
-
 ### [build.sh](build.sh) runs the following commands
+
 1. `composer update -a --prefer-dist --no-progress` # to download just the necessary code
-2. Note: All changes in database (structure) SHOULD be made by phinx migrations. Create your local `phinx.yml` as a copy of `phinx.dist.yml` to make it work, where you set your database connection into *development* section.
+2. Note: All changes in database (structure) SHOULD be made by phinx migrations. Create your local `phinx.yml` as a copy of `phinx.dist.yml` to make it work, where you set your database connection into _development_ section.
+
 ```bash
 vendor/bin/phinx migrate -e development # or production
 vendor/bin/phinx migrate -e testing # for phpunit, so that tests don't touch normal database
 ```
+
 3. `vendor/bin/phpunit` to always check the functionality
 4. `sass styles/index.sass styles/index.css` to keep order in the generated CSS
 
 Notes
+
 1. To work on low performing environments, the script accepts number of seconds as parameter to be used as a waiting time between steps.
 2. PHPUnit test of FaviconTest may uncover a need for RewriteBase configuration in .htaccess
-So far only the first Test in alphabet is required to call Init to set database constants.
+   So far only the first Test in alphabet is required to call Init to set database constants.
 3. Drop tables in the testing database if changes were made to migrations.
 
 It might be necessary to allow web server user write into cache and log folders.
@@ -109,20 +120,23 @@ Run [permissions.sh](permissions.sh) to perform this operation.
 ### reCAPTCHA
 
 Paste this snippet at the end of the <form> where you want the reCAPTCHA widget to appear:
+
 ```html
 <div class="g-recaptcha" data-sitekey="................"></div>
 ```
 
 ## SEO
 
-Friendly URLs and redirects are *always* processed (if `mod_rewrite` is enabled and Rewrite section in `.htaccess` is present).
+Friendly URLs and redirects are _always_ processed (if `mod_rewrite` is enabled and Rewrite section in `.htaccess` is present).
 If the web runs in the root of the domain, then the default token `PATHINFO_FILENAME` is an empty string;
 if the web does not run in the root directory, set its parent folder name (not the whole path) in `conf\config.local.php`:
+
 ```php
 define('HOME_TOKEN', 'parent-directory');
 ```
 
 Showing Friendly URLs may be turned off in `conf\config.local.php`:
+
 ```php
 define('FRIENDLY_URL', false);
 ```
@@ -135,33 +149,35 @@ Therefore it is not necessary to translate URL within content (e.g. from the par
 Given that
 `/?product&id=1` has friendly URL `/alfa` and `/?product&id=2` has friendly URL `/beta`, then:
 
-| | FRIENDLY_URL = false                          |  FRIENDLY_URL = true |
-|-|-----------------------------------------------|------|
-| **FORCE_301 = false** | | |
-| | `/?product&id=1` displays *`product 1`*            | `/?product&id=1` displays *`product 1`*          |
-| |  `/?product&id=1&x=y` displays *`product 1`*       | `/?product&id=1&x=y` displays *`product 1`*      |
-| |  `/alfa` displays *`product 1`*                    |  `/alfa` displays *`product 1`*                  |
-| |  `/alfa?product&id=2` displays *`product 2`*       |  `/alfa?product&id=2` displays *`product 2`*     |
-| |  ProjectCommon->getLinkSql() generates link to `/?product&id=1` |  **ProjectCommon->getLinkSql() generates link to `/alfa`**  |
-| **FORCE_301 = true**  | | |
-| |  `/?product&id=1` displays *`product 1`*             | **`/?product&id=1` redirects to `/alfa`**      |
-| |  `/?product&id=1&x=y` displays *`product 1`*         | **`/?product&id=1&x=y` redirects to `/alfa`**  |
-| |  `/alfa` displays `product 1`                        |  `/alfa` displays *`product 1`*                |
-| |  **`/alfa?product&id=2` redirects to `/?product&id=2`** |  **`/alfa?product&id=2` redirects to `/beta`** |
-| |  ProjectCommon->getLinkSql() generates link to `/?product&id=1` |  ProjectCommon->getLinkSql() generates link to `/alfa`  |
+|                       | FRIENDLY_URL = false                                           | FRIENDLY_URL = true                                       |
+| --------------------- | -------------------------------------------------------------- | --------------------------------------------------------- |
+| **FORCE_301 = false** |                                                                |                                                           |
+|                       | `/?product&id=1` displays _`product 1`_                        | `/?product&id=1` displays _`product 1`_                   |
+|                       | `/?product&id=1&x=y` displays _`product 1`_                    | `/?product&id=1&x=y` displays _`product 1`_               |
+|                       | `/alfa` displays _`product 1`_                                 | `/alfa` displays _`product 1`_                            |
+|                       | `/alfa?product&id=2` displays _`product 2`_                    | `/alfa?product&id=2` displays _`product 2`_               |
+|                       | ProjectCommon->getLinkSql() generates link to `/?product&id=1` | **ProjectCommon->getLinkSql() generates link to `/alfa`** |
+| **FORCE_301 = true**  |                                                                |                                                           |
+|                       | `/?product&id=1` displays _`product 1`_                        | **`/?product&id=1` redirects to `/alfa`**                 |
+|                       | `/?product&id=1&x=y` displays _`product 1`_                    | **`/?product&id=1&x=y` redirects to `/alfa`**             |
+|                       | `/alfa` displays `product 1`                                   | `/alfa` displays _`product 1`_                            |
+|                       | **`/alfa?product&id=2` redirects to `/?product&id=2`**         | **`/alfa?product&id=2` redirects to `/beta`**             |
+|                       | ProjectCommon->getLinkSql() generates link to `/?product&id=1` | ProjectCommon->getLinkSql() generates link to `/alfa`     |
 
 Inner workings of friendly URL mechanism are described in [MyCMS/README.md](https://github.com/WorkOfStan/mycms#how-does-friendly-url-works-within-controller)
 
 TODO: make more clear
-* Tabulky `#_content`, `#_product` musí mít sloupce `url_##` (## = dvoumístný kód pro všechny jazykové verze).
-* Do `url_##` se uloží "webalizované" názvy dané stránky/produktu (dle funkce `Tools::webalize`). Výjimkou může být `_content`, který není plnohodnotná stránka – ten může obsahovat `NULL`. Převod lze zprvu udělat programaticky (je to na pár řádků), pak do CMS přidat tlačítko pro převod nebo převod udělat při uložení.
+
+- Tabulky `#_content`, `#_product` musí mít sloupce `url_##` (## = dvoumístný kód pro všechny jazykové verze).
+- Do `url_##` se uloží "webalizované" názvy dané stránky/produktu (dle funkce `Tools::webalize`). Výjimkou může být `_content`, který není plnohodnotná stránka – ten může obsahovat `NULL`. Převod lze zprvu udělat programaticky (je to na pár řádků), pak do CMS přidat tlačítko pro převod nebo převod udělat při uložení.
 
 TODO: ?article=1 vs ?article&id=1 a souvislost s 'idcode' => true ?
 
 ### Example of rules
-* `/?product=4` → `/konzultacni-poradenctvi`
-* `/?page=about` → `/o-firme-sro`
-* `/?news=37` → `/news/albus-novak-is-the-new-commercial-director-at-firma-sro`
+
+- `/?product=4` → `/konzultacni-poradenctvi`
+- `/?page=about` → `/o-firme-sro`
+- `/?news=37` → `/news/albus-novak-is-the-new-commercial-director-at-firma-sro`
 
 TODO: explain and translate:
 Jazyk je uveden jako první a to dvoumístným kódem a lomítkem, např. `/cs/logistika`. Defaultní jazyk (čeština) takto uveden být nemá.
@@ -174,7 +190,9 @@ Interně se jazyk do políčka `url_##` pro jiné (nedefaultní) jazyky nevklád
 Languages are identified by two letter combination according to [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).
 
 #### Used languages
+
 Language versions (or translations) are specified when instatiating the MyCMS object in [conf/config.php](conf/config.php). For example:
+
 ```php
 [
     ...
@@ -185,17 +203,19 @@ Language versions (or translations) are specified when instatiating the MyCMS ob
     ],
 ]
 ```
+
 For each language a corresponding file `language-xx.inc.php` is expected.
 
 [.htaccess](.htaccess) is ready for languages `de|en|fr|sk|zh` to show content in the appropriate language folder
 (`cs` is considered as the default language, so it is accessible directly in application root),
 where page resouces may be in folders `styles|assets|fonts|images|scripts` which ignore the language directory.
 
-If DEBUG_VERBOSE is true and admin UI uses untranslated string, it is logged to `log/translation_missing_' . date("Y-m-d") . '.log` to be translated. (This log can be safely deleted.)
+If `DEBUG_VERBOSE` is true and admin UI uses untranslated string, it is logged to `log/translation_missing_{date("Y-m-d")}.log` to be translated. (This log can be safely deleted.)
 
 Localised strings for admin UI are loaded from conf/l10n/admin-XX.yml (if present).
 
 #### Default language
+
 Default language set in [conf/config.php](conf/config.php) as constant `'DEFAULT_LANGUAGE' => 'cs',`
 is the language in which the web starts without any additional information about language
 (such as language folder or session).
@@ -205,24 +225,26 @@ Note: if there's just one language used, set the DEFAULT_LANGUAGE and available 
 
 #### Accepted structures of URL
 
-| URL structure | Effect |
-|-----------------------------------------------|------|
-| /alfa | named page in the DEFAULT_LANGUAGE |
-| /en/alfa | named page in another language |
-| /?product&id=3 | parametric page in the DEFAULT_LANGUAGE |
-| /?category=1 | parametric page in the DEFAULT_LANGUAGE |
-| /en/?product&id=3 | parametric page in another language |
-| /en/?category=1 | parametric page in another language |
-| /?language=de | language switch |
-| /de/ | default page in German |
-| /?product&id=3&language=de | parametric page in another language |
+| URL structure              | Effect                                  |
+| -------------------------- | --------------------------------------- |
+| /alfa                      | named page in the DEFAULT_LANGUAGE      |
+| /en/alfa                   | named page in another language          |
+| /?product&id=3             | parametric page in the DEFAULT_LANGUAGE |
+| /?category=1               | parametric page in the DEFAULT_LANGUAGE |
+| /en/?product&id=3          | parametric page in another language     |
+| /en/?category=1            | parametric page in another language     |
+| /?language=de              | language switch                         |
+| /de/                       | default page in German                  |
+| /?product&id=3&language=de | parametric page in another language     |
 
 ## CMS notes
 
 ### Agenda
+
 Agenda is an item in the `admin.php` left menu that refers to a set of rows in database. (All tables can be also accessed from the bottom of the page.)
 
 Examples of settings:
+
 ```php
 $tmp = $language;
 $AGENDAS = array(
@@ -270,37 +292,45 @@ $AGENDAS = [
     ],
 ];
 ```
-if path used: 'CONCAT(REPEAT("… ",LENGTH(' . $this->MyCMS->dbms->escapeDbIdentifier($options['path']) . ') / ' . PATH_MODULE . ' - 1),' . $options['table'] . '_' . DEFAULT_LANGUAGE . ')'
+
+if path used:
+
+```php
+'CONCAT(REPEAT("… ",LENGTH(' . $this->MyCMS->dbms->escapeDbIdentifier($options['path']) . ') / ' . PATH_MODULE . ' - 1),' . $options['table'] . '_' . DEFAULT_LANGUAGE . ')'
+```
 
 (TODO: explain better with examples.)
 
 ### Asset folder structure
-* `assets/career/` - pro média spojené s pracovními příležitostmi
-* `assets/news/` - pro obrázky novinek
-* `assets/products/` - pro obrázky produktů
-* `assets/product-sheet-cs/` - pro CS verze PDF produktů
-* `assets/product-sheet-en/` - pro EN verze PDF produktů
-* `assets/section-bg/` - background of some product sections
-* `assets/testimonials/` - logos of companies with testimonial
-* `assets/videos/` - videos
-* `assets/slides/` - pro slidy
-* `assets/references/` - logos of companies with reference
-* `images` - other miscelaneous images (logos, page headers, etc.)
+
+- `assets/career/` - pro média spojené s pracovními příležitostmi
+- `assets/news/` - pro obrázky novinek
+- `assets/products/` - pro obrázky produktů
+- `assets/product-sheet-cs/` - pro CS verze PDF produktů
+- `assets/product-sheet-en/` - pro EN verze PDF produktů
+- `assets/section-bg/` - background of some product sections
+- `assets/testimonials/` - logos of companies with testimonial
+- `assets/videos/` - videos
+- `assets/slides/` - pro slidy
+- `assets/references/` - logos of companies with reference
+- `images` - other miscelaneous images (logos, page headers, etc.)
 
 Note: assets expects only ONE sub-level.
 
 #### admin.php expects
-* [Summernote](https://summernote.org/getting-started/#installation) v.0.8.18 (2020-05-20) (styles/summernote.css, styles/font/summernote.*, scripts/summernote.js, scripts/summernote.js.map)
-* `scripts/bootstrap.js`
-* `scripts/admin-specific.js`
-* `scripts/ie10-viewport-bug-workaround.js`
-* `styles/bootstrap.css`
-* `styles/bootstrap-datetimepicker.css`
-* `styles/font-awesome.css`
-* `styles/ie10-viewport-bug-workaround.css`
-* `fonts/fa*.*`
+
+- [Summernote](https://summernote.org/getting-started/#installation) v.0.8.18 (2020-05-20) (styles/summernote.css, styles/font/summernote.\*, scripts/summernote.js, scripts/summernote.js.map)
+- `scripts/bootstrap.js`
+- `scripts/admin-specific.js`
+- `scripts/ie10-viewport-bug-workaround.js`
+- `styles/bootstrap.css`
+- `styles/bootstrap-datetimepicker.css`
+- `styles/font-awesome.css`
+- `styles/ie10-viewport-bug-workaround.css`
+- `fonts/fa*.*`
 
 ### Admin UI
+
 Add protected functions to Admin.php according to MyAdmin.php in order to add menu relevant for the application, such as Translations, FriendlyURL, Divisions and products, etc.
 
 Menu items can be toggled in `$switch` section of `admin.php`
@@ -333,6 +363,7 @@ Note phpunit is only require-dev, so `webmozart/assert` MUST be required in the 
 Note: `header("Content-type: application/json");` in outputJSON hides Tracy
 
 That's how it works and how to set an API:
+
 - It is possible to combine api/noun constructs (conf/config) and api/noun/ folders (e.g. api/dummy - for this, there are exceptions in phpstan.neon.dist)
 - scripts/index.js: `let API_BASE_DIR = API_BASE + 'api/';` to which folder API calls are targeted
 - .htaccess contains API in `RewriteRule ^(de|en|zh)/(api|assets|favicon.ico|fonts|images|scripts|styles)(.*)$ $2$3 [L,QSA]` in order to use api/ even in e.g. de/ context (and not de/api/)
@@ -345,6 +376,7 @@ That's how it works and how to set an API:
 ## Coding style and linting
 
 GitHub Actions run PHPSTAN to identify errors
+
 - the same way as run locally
 - so it might need to know which global constants are used (`.github/linters/conf/constants.php`) on top of standard config files
 - and where to look for present classes (scanDirectories), hence following files:
@@ -359,11 +391,12 @@ GitHub Actions run PHPSTAN to identify errors
 If your IP is among `$debugIpArray` you will see an Exception on screen. Otherwise, you will get "nice" Tracy 500 Internal server error.
 
 Logs are in folder `log`:
-* `exception.log` contains fatal errors by Tracy\Debugger
-* `error.log` contains recoverable erros by Tracy\Debugger
-* `debug.log` contains debug info by Tracy\Debugger
-* `backyard-error.log.YYYY-MM.log` by PSR-3 logger implemented in WorkOfStan\Backyard\BackyardError
-* `sqlYYYY-MM-DD.sql` contains content changes by CMS as SQL statements with timestamp
+
+- `exception.log` contains fatal errors by Tracy\Debugger
+- `error.log` contains recoverable erros by Tracy\Debugger
+- `debug.log` contains debug info by Tracy\Debugger
+- `backyard-error.log.YYYY-MM.log` by PSR-3 logger implemented in WorkOfStan\Backyard\BackyardError
+- `sqlYYYY-MM-DD.sql` contains content changes by CMS as SQL statements with timestamp
 
 ## Templating
 
@@ -375,9 +408,10 @@ Also when variables are passed to included fragments, it MUST happen in the same
 The idea is to have the default templates in the MyCMS library in order to quickly deploy. If you start working with the templates however, you should maintain them in the app folder.
 
 ### Template naming convention
-- @*layout.latte is a layout
-- inc-*.latte is a block to be included
-- *.latte is a page using layout
+
+- `@*layout.latte` is a layout
+- `inc-*.latte` is a block to be included
+- `*.latte` is a page using layout
 - inherite.latte is a function to secure inheritance
 
 ## Visual style
@@ -385,6 +419,7 @@ The idea is to have the default templates in the MyCMS library in order to quick
 Pages have view-TEMPLATE class in <body/> to allow for exceptions.
 
 Convert Sass to CSS (performed also by [build.sh](build.sh)) by
+
 ```sh
 sass styles/index.sass styles/index.css
 ```
@@ -397,6 +432,7 @@ Third tab is `Email test` and if sending emails isn't forbidden by `define('MAIL
 it tries to send a test email to `EMAIL_ADMIN`. One try allowed in 23 hours (as a simple measure against SPAM).
 
 ## Development
+
 Use $featureFlags in `conf/config.php` to convey the default status of a feature for production,
 while in `conf/config.local.php` the flag can be turned on/off as needed on any particular environment.
 Feature flag is propagated to Class Admin, Controller, to JavaScript and to Latte.
@@ -404,32 +440,39 @@ Feature flag is propagated to Class Admin, Controller, to JavaScript and to Latt
 E.g. featureFlag `newletter_input_box` can hide both the (un)subscribe email input box and the POST value processing when set to false.
 
 ### How to add code for flow of the new data collection `Lorem`
-1) Model
+
+1. Model
+
 - phinx create: data structure + default values
 - classes/Models/LoremModel.php with CRUD methods to access data structure
 
-2) View
+2. View
+
 - (uncomment API_BASE and APPLICATION_DIR_LANGUAGE in template/@layout.latte)
 - template/form-add-lorem.latte include to e.g. template/home.latte
 - add a listener of HTML form within form-add-lorem.latte to index.js
+
 ```javascript
-$('form[name="form-lorem"] [type=button]').on('click', function () {
-    let url = API_BASE_DIR + 'lorem?keep-token'; // api set in 'templateAssignementParametricRules' in config.php, see below 
-    let data = {
-        'id': event_id,
-        'quantity': $('input[name="quantity"]').val(),
-        'created': $('input[name="created"]').val(),
-        'token': TOKEN
-    };
-    ajaxPostRequest(url, data);
+$('form[name="form-lorem"] [type=button]').on("click", function () {
+  let url = API_BASE_DIR + "lorem?keep-token"; // api set in 'templateAssignementParametricRules' in config.php, see below
+  let data = {
+    id: event_id,
+    quantity: $('input[name="quantity"]').val(),
+    created: $('input[name="created"]').val(),
+    token: TOKEN,
+  };
+  ajaxPostRequest(url, data);
 });
 ```
+
 - add this data collection as agenda to admin.php
 
-3) Controller
+3. Controller
+
 - config.php `$myCmsConf['templateAssignementParametricRules']['api/lorem'] => ['template' => 'apiLorem'],`
 - FriendlyUrl.php::switchParametric `case 'api-lorem': return null;` // todo (bodylog): is case 'api-lorem' really necessary? or not? explore and explain.
 - Controller.php
+
 ```php
 /** @var LoremModel */
 protected $loremModel;
@@ -465,38 +508,40 @@ $this->loremModel = new LoremModel($MyCMS->dbms);
 
 ## TROUBLESHOOTING
 
-| Issue | Possible solution |
-|-------|-------------------|
-| Home page returns 404 Not found | `define('HOME_TOKEN', 'parent-directory');` in `config.local.php` |
+| Issue                                   | Possible solution                                                                                                                                                                                                                                            |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Home page returns 404 Not found         | `define('HOME_TOKEN', 'parent-directory');` in `config.local.php`                                                                                                                                                                                            |
 | Friendly URL pages return 404 Not found | In rare ocassion, when The original request, and the substitution, are underneath an Alias, see <https://httpd.apache.org/docs/current/mod/mod_rewrite.html#rewritebase>. Solution: in .htaccess, uncomment and properly set RewriteBase "/path/mycms/dist/" |
 
 ## TODO
 
 ### Todo lokalizace
-* 200526: jazykový přepínač rovnou vybere správné URL, pokud pro daný jazyk existuje
-* 200608: describe scenario when no language is `default` in terms that all pages run within /iso-639-1/ folder
+
+- 200526: jazykový přepínač rovnou vybere správné URL, pokud pro daný jazyk existuje
+- 200608: describe scenario when no language is `default` in terms that all pages run within /iso-639-1/ folder
 
 ### Todo CMS
-* 210427: Summernote richtext full screen proper background
-* 200610: bool field show as on/off 1/0 true/false or something else more reasonable than int input box
+
+- 210427: Summernote richtext full screen proper background
+- 200610: bool field show as on/off 1/0 true/false or something else more reasonable than int input box
 
 ### Todo SEO
 
-
 ### Todo vizualizace
-
 
 ### Todo security
 
-
 ### Todo other
-* 190611: add article and search page types including controller tests
-* 190611: Make Sass to CSS conversion automatic (e.g. gulp or GitHub Action?)
-* 200712: migrate popper <https://popper.js.org/docs/v2/migration-guide/> incl. map --> admin.php expects section
-* 200712: update bootstrap <https://getbootstrap.com/> incl. map --> admin.php expects section
-* 200712: update jQuery <https://jquery.com/> incl. map --> admin.php expects section
-* 200712: update Font Awesome --> admin.php expects section
-* 200802: test with 2 categories
-* 200802: image for product and category in assets
-* 200921: (MyCMS) properly fix message: '#Parameter #2 $newvalue of function ini_set expects string, true given.#'    path: /github/workspace/set-environment.php
-* 210427: admin.js now contains all the F and A code - TODO: simplify it and keep only the essential
+
+- 190611: add article and search page types including controller tests
+- 190611: Make Sass to CSS conversion automatic (e.g. gulp or GitHub Action?)
+- 200712: migrate popper <https://popper.js.org/docs/v2/migration-guide/> incl. map --> admin.php expects section
+- 200712: update bootstrap <https://getbootstrap.com/> incl. map --> admin.php expects section
+- 200712: update jQuery <https://jquery.com/> incl. map --> admin.php expects section
+- 200712: update Font Awesome --> admin.php expects section
+- 200802: test with 2 categories
+- 200802: image for product and category in assets
+
+* 200921: (MyCMS) properly fix message: `'#Parameter #2 $newvalue of function ini_set expects string, true given.#'    path: /github/workspace/set-environment.php`
+
+- 210427: admin.js now contains all the F and A code - TODO: simplify it and keep only the essential

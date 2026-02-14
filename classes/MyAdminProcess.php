@@ -25,7 +25,7 @@ class MyAdminProcess extends MyCommon
     use \Nette\SmartObject;
 
     /** @const int general limit of selected rows and repeated fields in export */
-    const PROCESS_LIMIT = 100;
+    protected const PROCESS_LIMIT = 100;
 
     /** @var int how many seconds may pass before admin's record-editing tab is considered closed */
     protected $ACTIVITY_TIME_LIMIT = 180;
@@ -110,7 +110,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "activity" action - update activity column of all admins, delete old tabs.
      *
-     * @param array<string|array> $post $_POST by reference
+     * @param array<string|array<mixed>> $post $_POST by reference
      * @return void (if engaged, outputs JSON and then return never)
      */
     public function processActivity(&$post)
@@ -164,7 +164,7 @@ class MyAdminProcess extends MyCommon
      * Process the "clone" action.
      * TODO check if this code is working as expected by AdminProcess call // clone table rows and fix unreachable code below accordingly (No CRS2 guidance)
      *
-     * @param array<string|array> $post $_POST by reference
+     * @param array<string|array<mixed>> $post $_POST by reference
      * @return void
      */
     public function processClone(&$post)
@@ -201,11 +201,11 @@ class MyAdminProcess extends MyCommon
      * Process the "export" action. If $post[download] is non-zero prompt the output as a download attachment.
      * TODO check if this code does what it should, as ... Metoda filterToSql neexistuje. $errors ani $sql nejsou definovány. (No CRS2 guidance)
      *
-     * @param array<string|array> $post $_POST by reference
-     * @param array<string|array> $get
+     * @param array<string|array<mixed>> $post $_POST by reference
+     * @param array<string|array<mixed>> $get
      * @return void
      */
-    public function processExport(&$post, $get)
+    public function processExport(&$post, $get): void
     {
         //Debugger::barDump([$post, $get, $_GET], 'processExport(&$post, $get)');
         if (isset($post['table-export'], $post['database-table'])) {
@@ -281,7 +281,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "file delete" action.
      *
-     * @param array<string|array> $post $_POST by reference
+     * @param array<string|array<mixed>> $post $_POST by reference
      * @return void and may output array
      *   JSON array containing indexes: "success" (bool), "messages" (string), "processed-files" (int)
      */
@@ -316,7 +316,7 @@ class MyAdminProcess extends MyCommon
      * Files are added into the archive from the current directory and stored without directory.
      * The ZipArchive->addFile() method is used. Standard file/error handling is used.
      *
-     * @param array<string|array> $post $_POST by reference
+     * @param array<string|array<mixed>> $post $_POST by reference
      * @return void and may output array
      *   JSON array containing indexes: "success" (bool), "messages" (string), "processed-files" (int)
      */
@@ -366,7 +366,7 @@ class MyAdminProcess extends MyCommon
      * If the new file exists then the operation is aborted.
      * New file name must keep the same extension and consist only of letters, digits or ( ) . _
      *
-     * @param array<string|array> $post $_POST by reference
+     * @param array<string|array<mixed>> $post $_POST by reference
      * @return void but if engaged return never and outputs JSON
      *   containing indexes: "success" (bool), "messages" (string) and "data" (string) of renamed file, if successful
      */
@@ -417,7 +417,7 @@ class MyAdminProcess extends MyCommon
      * 1) white list of file extentions
      * 2) file size limitation
      *
-     * @param array<string|array> $post $_POST by reference
+     * @param array<string|array<mixed>> $post $_POST by reference
      * @return void but if engaged return never and outputs JSON
      *   JSON array containing indexes: "success" (bool), "messages" (string), "processed-files" (int)
      */
@@ -456,7 +456,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "files upload" action.
      *
-     * @param array<string|array> $post $_POST by reference
+     * @param array<string|array<mixed>> $post $_POST by reference
      * @return void and on success reload the page
      * @todo change to return bool success. Or add $post[redir] as an option
      */
@@ -498,7 +498,7 @@ class MyAdminProcess extends MyCommon
      * Process the "login" action.
      * Also checks for CSRF
      *
-     * @param array<string|array> $post $_POST by reference
+     * @param array<string|array<mixed>> $post $_POST by reference
      * @return void
      */
     public function processLogin(&$post)
@@ -542,10 +542,10 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "logout" action.
      *
-     * @param array<string|array> $post $_POST by reference
+     * @param array<string|array<mixed>> $post $_POST by reference
      * @return void
      */
-    public function processLogout(&$post)
+    public function processLogout(&$post): void
     {
         if (isset($post['logout'])) {
             unset($_SESSION['user'], $_SESSION['rights'], $_SESSION['token']);
@@ -559,10 +559,10 @@ class MyAdminProcess extends MyCommon
     /**
      * Return files in /assets or its subfolder
      *
-     * @param array<string|array> $post $_POST by reference
+     * @param array<string|array<mixed>> $post $_POST by reference
      * @return void
      */
-    public function processSubfolder(&$post)
+    public function processSubfolder(&$post): void
     {
         static $IMAGE_EXTENSIONS = ['jpg', 'gif', 'png', 'jpeg', 'bmp', 'wbmp', 'webp', 'xbm', 'xpm', 'swf', 'tif', 'tiff', 'jpc', 'jp2', 'jpx', 'jb2', 'swc', 'iff', 'ico']; //file extensions the getimagesize() or exif_read_data() can read
         static $IMAGE_TYPE = ['unknown', 'GIF', 'JPEG', 'PNG', 'SWF', 'PSD', 'BMP', 'TIFF_II', 'TIFF_MM', 'JPC', 'JP2', 'JPX', 'JB2', 'SWC', 'IFF', 'WBMP', 'XBM', 'ICO', 'COUNT'];
@@ -636,7 +636,7 @@ class MyAdminProcess extends MyCommon
      * @param array<mixed> $post $_POST (originally by reference, as the $post is changed, but the method dies anyway)
      * @return void
      */
-    public function processTranslationsUpdate($post)
+    public function processTranslationsUpdate(array $post): void
     {
         if (isset($post['translations'])) {
             // new yml before legacy code makes changes to $post
@@ -699,7 +699,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "user change activation" action.
      *
-     * @param array<string|array> $post $_POST by reference
+     * @param array<string|array<mixed>> $post $_POST by reference
      * @return void and output array JSON array containing indexes: "success" (bool), "data" (string) admin name
      */
     public function processUserActivation(&$post)
@@ -718,10 +718,10 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "user change password" action.
      *
-     * @param array<string|array> $post $_POST by reference
+     * @param array<string|array<mixed>> $post $_POST by reference
      * @return void
      */
-    public function processUserChangePassword(&$post)
+    public function processUserChangePassword(&$post): void
     {
         if (!isset($post['change-password'], $post['old-password'], $post['new-password'], $post['retype-password'])) {
             return; // return void
@@ -764,10 +764,10 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "user create" action.
      *
-     * @param array<string|array> $post $_POST by reference
+     * @param array<string|array<mixed>> $post $_POST by reference
      * @return void
      */
-    public function processUserCreate(&$post)
+    public function processUserCreate(&$post): void
     {
         if (isset($post['create-user'], $post['user'], $post['password'], $post['retype-password']) && $post['user'] && $post['password'] && $post['retype-password']) {
             Assert::string($post['user']);
@@ -792,10 +792,10 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "user delete" action.
      *
-     * @param array<string|array> $post $_POST by reference
+     * @param array<string|array<mixed>> $post $_POST by reference
      * @return void
      */
-    public function processUserDelete(&$post)
+    public function processUserDelete(&$post): void
     {
         if (isset($post['delete-user'])) {
             Assert::string($post['delete-user']);
@@ -814,7 +814,7 @@ class MyAdminProcess extends MyCommon
      * @param string $url OPTIONAL
      * @return never
      */
-    protected function redir($url = '')
+    protected function redir(string $url = '')
     {
         $this->endAdmin();
         Tools::redir($url, 303, false);

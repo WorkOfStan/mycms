@@ -20,7 +20,55 @@ class ProjectCommon extends MyCommon
     /** @var string */
     protected $requestUri = ''; //default is homepage
 
-    //TODO: order methods alphabetically
+    /**
+     *
+     * @param array<mixed> $arr
+     * @return array<string>
+     */
+    private function assertStringArray(array $arr): array
+    {
+        foreach ($arr as $string) {
+            Assert::string($string);
+        }
+        /**
+         * @xx phpstan-ignore-next-line should return array<string> but returns array
+         */
+        return $arr;
+    }
+
+    /**
+     * Replace spaces with \0160 after selected short words
+     * The list of selected words may be enlarged or redefined in the ProjectSpecific child
+     *
+     * @param string $text
+     * @param array<string> $addReplacePatterns add or redefine patterns
+     * @return string
+     * @throws Exception in case of preg_replace error
+     */
+    public function correctLineBreak(string $text, array $addReplacePatterns = []): string
+    {
+        $replacePatterns = array_merge([
+            '/ a /' => ' a ',
+            '/ i /' => ' i ',
+            '/ k /' => ' k ',
+            '/ o /' => ' o ',
+            '/ s /' => ' s ',
+            '/ u /' => ' u ',
+            '/ v /' => ' v ',
+            '/ ve /' => ' ve ',
+            '/ z /' => ' z ',
+            '/ %/' => ' %',
+            '/ & /' => ' & ',
+            '/ an /' => ' an ',
+            '/Industry 4.0/' => 'Industry 4.0',
+            ], $addReplacePatterns);
+        // Parameter #1 $pattern of function preg_replaceString expects array<string>|string
+        return preg_replaceString(
+            $this->assertStringArray(array_keys($replacePatterns)),
+            array_values($replacePatterns),
+            $text
+        );
+    }
 
     /**
      * Shortcut for echo'<pre>'; var_dump(); and exit;
@@ -48,8 +96,13 @@ class ProjectCommon extends MyCommon
      *     i.e. use where 'code' is needed
      * @return string
      */
-    public function getLinkSql($idPrefix, $language, $fieldName = 'link', $sourceTable = null, $sourceField = 'id')
-    {
+    public function getLinkSql(
+        string $idPrefix,
+        string $language,
+        string $fieldName = 'link',
+        string $sourceTable = null,
+        string $sourceField = 'id'
+    ): string {
         $addLanguageDirectory = ($language != DEFAULT_LANGUAGE) // other than default language should have its directory
             && !preg_match("~/$language/~", $this->requestUri); // unless the page already has it
         $this->verboseBarDump(
@@ -101,55 +154,5 @@ class ProjectCommon extends MyCommon
         }
         //en
         return date('D, j M Y', $strToTime);
-    }
-
-    /**
-     *
-     * @param array<mixed> $arr
-     * @return array<string>
-     */
-    private function assertStringArray(array $arr)
-    {
-        foreach ($arr as $string) {
-            Assert::string($string);
-        }
-        /**
-         * @phpstan-ignore-next-line should return array<string> but returns array
-         */
-        return $arr;
-    }
-
-    /**
-     * Replace spaces with \0160 after selected short words
-     * The list of selected words may be enlarged or redefined in the ProjectSpecific child
-     *
-     * @param string $text
-     * @param array<string> $addReplacePatterns add or redefine patterns
-     * @return string
-     * @throws Exception in case of preg_replace error
-     */
-    public function correctLineBreak($text, array $addReplacePatterns = [])
-    {
-        $replacePatterns = array_merge([
-            '/ a /' => ' a ',
-            '/ i /' => ' i ',
-            '/ k /' => ' k ',
-            '/ o /' => ' o ',
-            '/ s /' => ' s ',
-            '/ u /' => ' u ',
-            '/ v /' => ' v ',
-            '/ ve /' => ' ve ',
-            '/ z /' => ' z ',
-            '/ %/' => ' %',
-            '/ & /' => ' & ',
-            '/ an /' => ' an ',
-            '/Industry 4.0/' => 'Industry 4.0',
-            ], $addReplacePatterns);
-        // Parameter #1 $pattern of function preg_replaceString expects array<string>|string
-        return preg_replaceString(
-            $this->assertStringArray(array_keys($replacePatterns)),
-            array_values($replacePatterns),
-            $text
-        );
     }
 }

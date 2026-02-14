@@ -42,7 +42,7 @@ class ProductsAdminModel
      *
      * @return string
      */
-    public function htmlOutput()
+    public function htmlOutput(): string
     {
         $output = '';
         // products // TODO make some useful work in Dist
@@ -151,7 +151,7 @@ class ProductsAdminModel
         $output .= $query->num_rows ? '<h4><i>' . $this->tableAdmin->translate('None') . '</i></h4>' . PHP_EOL : '';
         while ($row = $query->fetch_assoc()) {
             $output .= '<a href="?table=' . TAB_PREFIX . 'product&amp;where[id]=' . $row['id'] .
-                '"><i class="fa fa-edit"></i></a> ' . Tools::h($row['title']) . '<br />' . PHP_EOL;
+                '"><i class="fa fa-edit"></i></a> ' . Tools::h((string) $row['title']) . '<br />' . PHP_EOL;
         }
         $output .= '<footer>
                     <button type="button" class="btn btn-sm btn-secondary" id="products-actives" title="'
@@ -162,7 +162,7 @@ class ProductsAdminModel
             . $this->tableAdmin->translate('Toggle image thumbnails') . '"><i class="far fa-image"></i></button>
                 </footer></div>';
 
-        Assert::string($output);
+        //Assert::string($output);
         return $output;
     }
 }

@@ -1,4 +1,5 @@
 # MyCMS
+
 [![Total Downloads](https://img.shields.io/packagist/dt/workofstan/mycms.svg)](https://packagist.org/packages/workofstan/mycms)
 [![Latest Stable Version](https://img.shields.io/packagist/v/workofstan/mycms.svg)](https://packagist.org/packages/workofstan/mycms)
 [![Lint Code Base](https://github.com/WorkOfStan/mycms/actions/workflows/linter.yml/badge.svg)](https://github.com/WorkOfStan/mycms/actions/workflows/linter.yml)
@@ -10,6 +11,7 @@ It works as a devstack which you install and then write your classes specific fo
 The boilerplate project is prepared in `dist` folder to be adapted as needed and it uses this `WorkOfStan\MyCMS` library out-of-the-box.
 
 MyCMS is designed to be used with following technologies:
+
 - [jQuery](https://jquery.org/) and [Bootstrap (version 4)](https://getbootstrap.com/docs/4.0/components/): for presentation
 - [Latte](http://latte.nette.org/): for templating
 - [MySQL](https://dev.mysql.com/)/[MariaDB](http://mariadb.com): for database backend
@@ -19,14 +21,17 @@ MyCMS is designed to be used with following technologies:
 - [WorkOfStan\Backyard\BackyardMysqli](https://github.com/WorkOfStan/backyard/blob/main/classes/BackyardMysqli.php): for wrapping SQL layer
 
 ## Installation
+
 Apache modules `mod_alias` (for hiding non-public files) and `mod_rewrite` (for friendly URL features) are expected.
 
 Once [composer](https://getcomposer.org/) is installed, execute the following command in your project root to install this library:
+
 ```sh
-composer require workofstan/mycms:^0.4.10
+composer require workofstan/mycms:^0.5.0
 ```
+
 Most of library's classes use prefix `My`.
-To develop your project, create your own classes as children inheriting MyCMS' classes in the `./classes/` directory and name them without the initial `My` in its name.  
+To develop your project, create your own classes as children inheriting MyCMS' classes in the `./classes/` directory and name them without the initial `My` in its name.
 
 ```php
 $MyCMS = new \WorkOfStan\MyCMS\MyCMS(
@@ -45,10 +50,13 @@ Files `process.php` and `admin-process.php` MUST exist as they process forms.
 
 Note: `$MyCMS` name is expected by `ProjectSpecific extends ProjectCommon` class (@todo replace global $MyCMS by parameter handling)
 
+Note/todo: MyCMS requires godsdev/tools which is stack with PHP/7. Therefore MyCMS is limited by PHP/7 as well.
+
 ## Deployment
 
 ### `/dist`
-Folder `/dist` contains initial *distribution* files for a new project using MyCMS, therefore copy it to your new project folder in order to start easily.
+
+Folder `/dist` contains initial _distribution_ files for a new project using MyCMS, therefore copy it to your new project folder in order to start easily.
 Replace the string `MYCMSPROJECTNAMESPACE` with your project namespace. (TODO: rector...)
 Replace the string `MYCMSPROJECTSPECIFIC` with other site specific information (Brand, Twitter address, phone number, database table_prefix in phinx.yml...).
 If you want to use your own table name prefix, please change the database related strings before first running [`./build.sh`](dist/build.sh).
@@ -66,6 +74,7 @@ For deployment look also to [Deployment chapter](dist/README.md#deployment) and 
 MyCMS is used only as a library, so the project using it SHOULD implement `RedirectMatch 404 vendor\/` statement as prepared in `dist/.htaccess` to keep the library hidden from web access.
 
 ## Admin UI
+
 Admin UI is displayed by MyAdmin::outputAdmin in this structure:
 |Navigation|Search|
 |--|--|
@@ -77,11 +86,14 @@ Element overview:
 |Agendas (as in $AGENDAS in admin.php)|Messages<br>Workspace: table/row/media/user/project-specific<br>Dashboard: List of tables|
 
 ### Navigation
+
 - special Admin::outputSpecialMenuLinks
 - default: Media+User+Settings MyAdmin::outputNavigation
 
 ### Search
+
 - Admin class variable `$searchColumns` defines an array in format database_table => [`id`, list of fields to be searched in], e.g.
+
 ```php
     protected $searchColumns = [
         'product' => ['id', 'name_#', 'content_#'], // "#" will be replaced by current language
@@ -89,20 +101,22 @@ Element overview:
 ```
 
 ### Agendas
+
 - MyAdmin::outputAgendas
 - defined in $AGENDAS in admin.php
 
 ### Main
+
 - Messages
 - Workspace: one of the following
-  - $_GET['search'] => MyAdmin::outputSearchResults
-  - $_GET['table'] => MyAdmin::outputTable
-    -- $_GET['where'] is array => Admin::outputTableBeforeEdit . MyAdmin::tableAdmin->outputForm . Admin::outputTableAfterEdit
-    -- $_POST['edit-selected'] => MyAdmin::outputTableEditSelected(false)
-    -- $_POST['clone-selected'] => MyAdmin::outputTableEditSelected(true)
+  - `$_GET['search']` => MyAdmin::outputSearchResults
+  - `$_GET['table']` => MyAdmin::outputTable
+    -- `$_GET['where']` is array => Admin::outputTableBeforeEdit . MyAdmin::tableAdmin->outputForm . Admin::outputTableAfterEdit
+    -- `$_POST['edit-selected']` => MyAdmin::outputTableEditSelected(false)
+    -- `$_POST['clone-selected']` => MyAdmin::outputTableEditSelected(true)
     -- else => Admin::outputTableBeforeListing . MyAdmin::tableAdmin->view . Admin::outputTableAfterListing
-  - $_GET['media'] => MyAdmin::outputMedia media upload etc.
-  - $_GET['user'] => MyAdmin::outputUser user operations (logout, change password, create user, delete user)
+  - `$_GET['media']` => MyAdmin::outputMedia media upload etc.
+  - `$_GET['user']` => MyAdmin::outputUser user operations (logout, change password, create user, delete user)
   - Admin::projectSpecificSectionsCondition => Admin::projectSpecificSection project-specific admin sections
 - Dashboard: List of tables MyAdmin::outputDashboard
 
@@ -111,7 +125,7 @@ Element overview:
 ### Database
 
 Columns of tables displayed in admin can use various features set in the comment:
-| comment | feature                               |
+| comment | feature |
 |---------|---------------------------------------|
 | `{"display":"html"}` | HTML editor Summernote |
 | {"display":"layout-row"} | ?? |
@@ -130,7 +144,9 @@ TODO: active=0/1 display as on/off button
 TODO: better explain.
 
 ### clientSideResources
+
 In `class/Admin.php` you can redefine the `clientSideResources` variable with resources to load to the admin. Its default is:
+
 ```php
     protected $clientSideResources = [
         'js' => [
@@ -158,6 +174,7 @@ the content of that standard `admin.css` MUST be available through method `MyAdm
 ## Testing
 
 Run from a command line:
+
 ```sh
 ./vendor/bin/phpunit
 ```
@@ -172,9 +189,11 @@ GitHub Actions' version of PHPUnit uses config file [phpunit-github-actions.xml]
 because MySQLi environment isn't prepared (yet) and HTTP requests to self can't work in CLI only environment.
 
 ### Reusing workflows
+
 As dist/.github/workflows [reuses](https://docs.github.com/en/actions/using-workflows/reusing-workflows) some .github/workflows through workflow_call,
 it is imperative not to introduce ANY BREAKING CHANGES there.
 The reused workflow may be referenced by a branch, tag or commit and doesn't support [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
 ```sh
     # Working examples
     uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@main # ok, but all encompassing
@@ -184,18 +203,21 @@ The reused workflow may be referenced by a branch, tag or commit and doesn't sup
     uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@v0.4
     uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@^v0.4
     uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@^0.4
-    uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@v0    
+    uses: WorkOfStan/MyCMS/.github/workflows/phpcbf.yml@v0
 ```
+
 Therefore, if a breaking change MUST be introduce, create another workflow to be reused instead of changing the existing one!
 
 ### PHPStan
 
 Till PHP<7.1 is supported, neither `phpstan/phpstan-webmozart-assert` nor `rector/rector` can't be required-dev in composer.json.
 Therefore, to properly take into account Assert statements by PHPStan (relevant for level>6), do a temporary (i.e. without commiting it to repository)
+
 ```sh
 composer require --dev phpstan/phpstan-webmozart-assert --prefer-dist --no-progress
 composer require --dev rector/rector --prefer-dist --no-progress
 ```
+
 and use [conf/phpstan.webmozart-assert.neon](conf/phpstan.webmozart-assert.neon) to allow for `phpstan --configuration=conf/phpstan.webmozart-assert.neon analyse . --memory-limit 300M`.
 
 Prepared scripts
@@ -265,23 +287,25 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 ## TODO
 
 ### Todo Administration
-* 200314: administrace FriendlyURL je v F/classes/Admin::outputSpecialMenuLinks() a ::sectionUrls() .. zobecnit do MyCMS a zapnout pokud FRIENDLY_URL == true
-* 200314 v Admin.php mít příslušnou editační sekci FriendlyURL (dle F project) .. pokud lze opravdu zobecnit
-* 200526: CMS: If Texy is used (see only in MyTableAdmin `($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : '')` then describe it. Otherwise remove it from composer.json, Latte\CustomFilters\, ProjectCommon, dist\index.php.
+
+- 200314: administrace FriendlyURL je v F/classes/Admin::outputSpecialMenuLinks() a ::sectionUrls() .. zobecnit do MyCMS a zapnout pokud FRIENDLY_URL == true
+- 200314 v Admin.php mít příslušnou editační sekci FriendlyURL (dle F project) .. pokud lze opravdu zobecnit
+- 200526: CMS: If Texy is used (see only in MyTableAdmin `($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : '')` then describe it. Otherwise remove it from composer.json, Latte\CustomFilters\, ProjectCommon, dist\index.php.
 
 ### Todo Governance
-* 190705: v classes\LogMysqli.php probíhá logování `'log/sql' . date("Y-m-d") . '.log.sql');` do aktuálního adresáře volajícího skriptu - což u API není výhodné. Jak vycházet z APP_ROOT?
-* 200526: describe jQuery dependencies; and also other js libraries (maybe only in dist??)
-* 200529: Minimum of PHP 7.2 required now: PHPUnit latest + Phinx latest <https://github.com/cakephp/phinx/releases> .. planned for release 0.5.0
-* 200608: replace all `array(` by `[`
-* 200819: refactor FORCE_301, FRIENDLY_URL and REDIRECTOR_ENABLED to a variable, so that all scenarios can be PHPUnit tested
-* 200819: consider REQUEST_URI query vs \_GET - shouldn't just one source of truth be used?
-* 200921: for PHP/7.1.0+ version use protected for const in MyCommon, MyFriendlyUrl, MyAdminProcess.php
+
+- 190705: v classes\LogMysqli.php probíhá logování `'log/sql' . date("Y-m-d") . '.log.sql');` do aktuálního adresáře volajícího skriptu - což u API není výhodné. Jak vycházet z APP_ROOT?
+- 200526: describe jQuery dependencies; and also other js libraries (maybe only in dist??)
+- 200608: replace all `array(` by `[`
+- 200819: refactor FORCE_301, FRIENDLY_URL and REDIRECTOR_ENABLED to a variable, so that all scenarios can be PHPUnit tested
+- 200819: consider REQUEST_URI query vs \_GET - shouldn't just one source of truth be used?
 
 ### Todo UI
-* 220716 Admin Translations and `Urls` module should have Tabs displayed by the Core (not the App)
-* 230309 'Pravidla pro užívání portálu': 'Terms & conditions', 'Pravidla pro užívání portálu': 'Terms & Bedingungen' shouldn't show as &amp; - either noescape filter in inc-footer.latte or change `L10n::translate return Tools::h($text);`
+
+- 220716 Admin Translations and `Urls` module should have Tabs displayed by the Core (not the App)
+- 230309 'Pravidla pro užívání portálu': 'Terms & conditions', 'Pravidla pro užívání portálu': 'Terms & Bedingungen' shouldn't show as &amp; - either noescape filter in inc-footer.latte or change `L10n::translate return Tools::h($text);`
 
 ### Todo SECURITY
-* 190723: pokud jsou v té samé doméně dvě různé instance MyCMS, tak přihlášením do jednoho admin.php jsem přihlášen do všech, i když ten uživatel tam ani neexistuje
-* 220513, Latte::2.11.3 Notice: Engine::addFilter(null, ...) is deprecated, use addFilterLoader() since ^2.10.8 which requires php: >=7.1 <8.2 (stop limiting "latte/latte": ">=2.4.6 <2.11.3")
+
+- 190723: pokud jsou v té samé doméně dvě různé instance MyCMS, tak přihlášením do jednoho admin.php jsem přihlášen do všech, i když ten uživatel tam ani neexistuje
+- 220513, Latte::2.11.3 Notice: Engine::addFilter(null, ...) is deprecated, use addFilterLoader() since ^2.10.8 which requires php: >=7.1 <8.2 (stop limiting "latte/latte": ">=2.4.6 <2.11.3")

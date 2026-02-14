@@ -2,6 +2,7 @@
 
 namespace WorkOfStan\mycmsprojectnamespace\Test;
 
+use PHPUnit\Framework\TestCase;
 use Tracy\Debugger;
 use WorkOfStan\Backyard\Backyard;
 use WorkOfStan\MyCMS\LogMysqli;
@@ -15,7 +16,7 @@ require_once __DIR__ . '/../conf/config.php';
  * Tests of Admin UI
  * (Last MyCMS/dist revision: 2022-03-05, v0.4.6)
  */
-class AdminTest extends \PHPUnit_Framework_TestCase
+class AdminTest extends TestCase
 {
     /** @var MyCMSProject */
     protected $myCms;
@@ -30,7 +31,7 @@ class AdminTest extends \PHPUnit_Framework_TestCase
      * @global array $backyardConf
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         global $backyardConf;
         error_reporting(E_ALL); // incl E_NOTICE
@@ -81,7 +82,7 @@ class AdminTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         // no action
     }

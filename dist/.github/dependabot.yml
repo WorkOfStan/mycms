@@ -8,5 +8,7 @@ updates:
     # Location of package manifests
     directory: "/"
     schedule:
-      # Check for updates to GitHub Actions every weekday
-      interval: "daily"
+      # Check for updates to GitHub Actions every month
+      interval: "monthly"
+    cooldown:
+      default-days: 7

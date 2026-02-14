@@ -62,15 +62,18 @@ class LogMysqli extends BackyardMysqli
     /**
      * Logs SQL statement not starting with SELECT or SET
      *
-     * @param string $sql SQL to execute
+     * @param string $sql SQL to execute - Note: #1 $sql (mixed) of method WorkOfStan\Backyard\BackyardMysqli::query().
      * @param int $errorLogOutput optional default=1 turn-off=0
      *   It is int in order to be compatible with
      *   parameter $resultmode (int) of method mysqli::query()
+     *   Note: don't use type int next to the parameter, otherwise triggered PHP Warning:
+     *   Declaration of WorkOfStan\MyCMS\LogMysqli::query($sql, int $errorLogOutput = 1, bool $logQuery = true)
+     *   should be compatible with WorkOfStan\Backyard\BackyardMysqli::query($sql, $errorLogOutput = 1)
      * @param bool $logQuery optional default logging of database changing statement can be (for security reasons)
      *     turned off by value false
      * @return bool|\mysqli_result<object>
      */
-    public function query($sql, $errorLogOutput = 1, $logQuery = true)
+    public function query($sql, $errorLogOutput = 1, bool $logQuery = true)
     {
         if ($logQuery && !preg_match('/^SELECT |^SET |^SHOW /i', $sql)) {
             //mb_eregi_replace does not destroy multi-byte characters such as character Š
@@ -98,7 +101,7 @@ class LogMysqli extends BackyardMysqli
      * @return array<mixed>
      * @throws Exception
      */
-    public function queryStrictNonEmptyArray($sql)
+    public function queryStrictNonEmptyArray(string $sql): array
     {
         $result = $this->queryArray($sql, false); // returns two dimensional array
         if ($result === false) {
@@ -147,7 +150,7 @@ class LogMysqli extends BackyardMysqli
      * @return \mysqli_result<object>
      * @throws Exception if error indicated by `false` result or if result is `true`
      */
-    public function queryStrictObject($sql, $errorLogOutput = 1, $logQuery = true)
+    public function queryStrictObject(string $sql, int $errorLogOutput = 1, bool $logQuery = true): object
     {
         $result = $this->query($sql, $errorLogOutput, $logQuery);
 
@@ -168,7 +171,7 @@ class LogMysqli extends BackyardMysqli
      * @param string $string to escape
      * @return string
      */
-    public function escapeSQL($string)
+    public function escapeSQL(string $string): string
     {
         return $this->real_escape_string($string);
     }
@@ -179,7 +182,7 @@ class LogMysqli extends BackyardMysqli
      * @param string $string to escape
      * @return string escaped identifier
      */
-    public function escapeDbIdentifier($string)
+    public function escapeDbIdentifier(string $string): string
     {
         $string = str_replace('`', '``', $string);
         if (preg_match('/[^a-z0-9_]+/i', $string) || in_array(strtoupper($string), $this->KEYWORDS)) {
@@ -195,7 +198,7 @@ class LogMysqli extends BackyardMysqli
      *     or just "'single','married','divorced'")
      * @return array<string>
      */
-    public function decodeChoiceOptions($list)
+    public function decodeChoiceOptions(string $list): array
     {
         //e.g. value: '0','a''b','c"d','e\\f','','g`h' should be ['0', "a'b", 'c"d', 'e\f', '', 'g`h'
         if (($result = substr($list, 0, 5) == 'enum(') || substr($list, 0, 4) == 'set(') {
@@ -216,7 +219,7 @@ class LogMysqli extends BackyardMysqli
      * @param string $list list of options (e.g. ""
      * @return array<string>
      */
-    public function decodeSetOptions($list)
+    public function decodeSetOptions(string $list): array
     {
         if (substr($list, 0, 4) == 'set(') {
             $list = substr($list, 4, -1);
@@ -235,7 +238,7 @@ class LogMysqli extends BackyardMysqli
      * @param string $interval
      * @return int|false 1=yes, 0=no, false=error
      */
-    public function checkIntervalFormat($interval)
+    public function checkIntervalFormat(string $interval)
     {
         $first = '\s*\-?\d+\s*';
         $int = '\s*\d+\s*';
@@ -255,10 +258,10 @@ class LogMysqli extends BackyardMysqli
      * Return list of columns for use in an SQL statement
      *
      * @param array<string> $columns
-     * @param array<array> $fields info about the columns like in MyTableLister->fields (optional)
+     * @param array<array<mixed>> $fields info about the columns like in MyTableLister->fields (optional)
      * @return string
      */
-    public function listColumns(array $columns, array $fields = [])
+    public function listColumns(array $columns, array $fields = []): string
     {
         $result = '';
         foreach ($columns as $column) {
@@ -298,7 +301,7 @@ class LogMysqli extends BackyardMysqli
      *     null on empty SELECT
      * @throws Exception when a database error occurs or when an SQL statement returns true.
      */
-    public function fetchSingle($sql)
+    public function fetchSingle(string $sql)
     {
         $query = $this->query($sql);
         if ($query === true) {
@@ -322,7 +325,7 @@ class LogMysqli extends BackyardMysqli
      * @param string $sql SQL to be executed
      * @return string first column of the first selected row
      */
-    public function fetchSingleString($sql)
+    public function fetchSingleString(string $sql): string
     {
         $query = $this->fetchSingle($sql);
         if (!is_string($query)) {
@@ -340,7 +343,7 @@ class LogMysqli extends BackyardMysqli
      * @return array<string>|null
      * @throws Exception when a database error occurs or when an SQL statement returns true or string.
      */
-    public function fetchStringArray($sql)
+    public function fetchStringArray(string $sql): ?array
     {
         $arr = $this->fetchSingle($sql);
         if (is_null($arr)) {
@@ -357,7 +360,7 @@ class LogMysqli extends BackyardMysqli
             }
         }
         /**
-         * @phpstan-ignore-next-line FALSE POSITIVE: should return array<string>|null but returns array<string|null>.
+         * xx@ phpstan-ignore-next-line FALSE POSITIVE: should return array<string>|null but returns array<string|null>.
          */
         return $arr;
     }
@@ -369,7 +372,7 @@ class LogMysqli extends BackyardMysqli
      * @return array<array<null|string>> array of associative arrays for each result row
      *     or empty array on error or no results
      */
-    public function fetchAll($sql)
+    public function fetchAll(string $sql): array
     {
         $result = [];
         $query = $this->query($sql);
@@ -404,7 +407,7 @@ class LogMysqli extends BackyardMysqli
      * but returns array<string, array<int|string, array<int|string, array<int|string,
      *   array<string, string>|string|false>|string|false>|string|false>|string|false>.
      */
-    public function fetchAndReindex($sql)
+    public function fetchAndReindex(string $sql)
     {
         $query = $this->query($sql);
         if (is_bool($query)) {
@@ -447,7 +450,7 @@ class LogMysqli extends BackyardMysqli
      *
      * @throws \Exception on other than string or null values
      */
-    private function assertArrayStringNull(array $arr)
+    private function assertArrayStringNull(array $arr): array
     {
         $result = [];
         foreach ($arr as $k2 => $v2) {
@@ -466,7 +469,7 @@ class LogMysqli extends BackyardMysqli
      *
      * @throws \Exception on error
      */
-    public function fetchAndReindexStrictArray($sql)
+    public function fetchAndReindexStrictArray(string $sql): array
     {
         $result = $this->fetchAndReindex($sql); // array<array<string|null|array<string|null>>|string>|false
         if (!is_array($result)) {
@@ -496,7 +499,7 @@ class LogMysqli extends BackyardMysqli
      *
      * @return bool
      */
-    public function getStatementsError()
+    public function getStatementsError(): bool
     {
         return $this->sqlError;
     }
@@ -505,7 +508,7 @@ class LogMysqli extends BackyardMysqli
      *
      * @return array<string>
      */
-    public function getStatementsArray()
+    public function getStatementsArray(): array
     {
         return $this->sqlStatementsArray;
     }
@@ -513,7 +516,7 @@ class LogMysqli extends BackyardMysqli
     /**
      * @return void
      */
-    public function showSqlBarPanel()
+    public function showSqlBarPanel(): void
     {
         if (!empty($this->sqlStatementsArray)) {
             $sqlBarPanel = new BarPanelTemplate('SQL: ' . count($this->sqlStatementsArray), $this->sqlStatementsArray);
@@ -536,7 +539,7 @@ class LogMysqli extends BackyardMysqli
      *      or anything containing %value% for value and %column% for column name that gets replaced
      * @return string
      */
-    public function values($data, $format)
+    public function values(array $data, string $format): string
     {
         $result = '';
         $replace = (strpos($format, '%value%') !== false) || (strpos($format, '%column%') !== false);

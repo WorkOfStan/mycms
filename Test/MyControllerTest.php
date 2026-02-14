@@ -2,13 +2,14 @@
 
 namespace WorkOfStan\MyCMS\Test;
 
+use PHPUnit\Framework\TestCase;
 use WorkOfStan\Backyard\Backyard;
 use WorkOfStan\MyCMS\MyCMS;
 use WorkOfStan\MyCMS\MyController;
 
 require_once __DIR__ . '/../conf/config.php';
 
-class MyControllerTest extends \PHPUnit_Framework_TestCase
+class MyControllerTest extends TestCase
 {
     /**
      * @var MyCMS
@@ -28,7 +29,7 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
      *
      * @global array $backyardConf
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         global $backyardConf;
         error_reporting(E_ALL); // incl E_NOTICE
@@ -55,7 +56,7 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         // no action
     }
@@ -65,7 +66,7 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testControllerNoContext()
+    public function testControllerNoContext(): void
     {
         $controllerOptions = [
             'session' => ['language' => 'tl'],
@@ -82,7 +83,7 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testControllerContext()
+    public function testControllerContext(): void
     {
         $controllerOptions = [
             'session' => ['language' => 'tl'],
@@ -97,7 +98,7 @@ class MyControllerTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testGetVars()
+    public function testGetVars(): void
     {
         $this->myCms->context = ['1' => '2', '3' => '4', 'c'];
         $controllerOptions = [

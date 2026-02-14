@@ -2,6 +2,7 @@
 
 namespace WorkOfStan\mycmsprojectnamespace\Test;
 
+use PHPUnit\Framework\TestCase;
 use Tracy\Debugger;
 use WorkOfStan\Backyard\Backyard;
 use WorkOfStan\MyCMS\LogMysqli;
@@ -14,7 +15,7 @@ require_once __DIR__ . '/../conf/config.php';
  * Tests of Controller (of MVC)
  * (Last MyCMS/dist revision: 2022-03-06, v0.4.6)
  */
-class ControllerTest extends \PHPUnit_Framework_TestCase
+class ControllerTest extends TestCase
 {
     /** @var mixed[] */
     protected $get;
@@ -35,7 +36,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
      * @global array $backyardConf
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         global $backyardConf;
         error_reporting(E_ALL); // incl E_NOTICE
@@ -80,7 +81,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         // no action
     }
@@ -99,7 +100,24 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             'get' => $this->get,
             ]);
         $controller = $this->object->run();
-        $this->assertArraySubset(['template' => 'home', 'context' => []], $controller);
+        //$this->assertArraySubset(['template' => 'home', 'context' => []], $controller);
+        $this->assertSame('home', $controller['template']);
+        // with PHPUnit 5, the result was []; with PHPUnit 9, the result is as below
+        //$this->assertSame([], $controller['context']);
+        $this->assertTrue(
+            // locally
+            [
+                'pageTitle' => '',
+                'applicationDir' => 'vendor/bin/',
+                'applicationDirLanguage' => 'vendor/bin/en/'
+            ] === $controller['context'] ||
+            // on GitHub
+            [
+                'pageTitle' => '',
+                'applicationDir' => './vendor/bin/',
+                'applicationDirLanguage' => './vendor/bin/en/'
+            ] === $controller['context']
+        );
     }
 
     /**
@@ -115,10 +133,13 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
             'session' => $_SESSION,
             'get' => $this->get,
             ]);
-        $this->assertArraySubset(
-            ['template' => 'home', 'context' => $this->myCms->context],
-            $this->object->run()
-        );
+//        $this->assertArraySubset(
+//            ['template' => 'home', 'context' => $this->myCms->context],
+//            $this->object->run()
+//        );
+        $controller = $this->object->run();
+        $this->assertSame('home', $controller['template']);
+        $this->assertSame($this->myCms->context, $controller['context']);
     }
 
     /**
@@ -137,10 +158,10 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         ]);
         $controller = $this->object->run();
         $this->assertArrayHasKey('template', $controller);
-        $this->assertInternalType('string', $controller['template']);
+        $this->assertIsString($controller['template']);
         $this->assertEquals('home', $controller['template']);
         $this->assertArrayHasKey('context', $controller);
-        $this->assertInternalType('array', $controller['context']);
+        $this->assertIsArray($controller['context']);
     }
 
     /**

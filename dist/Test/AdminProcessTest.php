@@ -2,6 +2,7 @@
 
 namespace WorkOfStan\mycmsprojectnamespace\Test;
 
+use PHPUnit\Framework\TestCase;
 use WorkOfStan\Backyard\Backyard;
 use WorkOfStan\MyCMS\InitDatabase;
 use WorkOfStan\MyCMS\LogMysqli;
@@ -15,7 +16,7 @@ require_once __DIR__ . '/../conf/config.php';
  * Tests of AJAX and form handling for Admin UI
  * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
  */
-class AdminProcessTest extends \PHPUnit_Framework_TestCase
+class AdminProcessTest extends TestCase
 {
     /** @var MyCMSProject */
     protected $myCms;
@@ -30,7 +31,7 @@ class AdminProcessTest extends \PHPUnit_Framework_TestCase
      * @global array $backyardConf
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         global $backyardConf;
         error_reporting(E_ALL); // incl E_NOTICE
@@ -80,7 +81,7 @@ class AdminProcessTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         // no action
     }

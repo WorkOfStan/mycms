@@ -34,9 +34,9 @@ class MyTableAdmin extends MyTableLister
     {
         $options['include-fields'] = isset($options['include-fields']) && is_array($options['include-fields']) ? $options['include-fields'] : array_keys($this->fields);
         $options['exclude-fields'] = isset($options['exclude-fields']) && is_array($options['exclude-fields']) ? $options['exclude-fields'] : [];
-        Assert::isArray($options['exclude-fields']);
+        //Assert::isArray($options['exclude-fields']);
         foreach ($options['exclude-fields'] as $key => $value) {
-            Assert::isArray($options['include-fields']);
+            //Assert::isArray($options['include-fields']);
             if (in_array($value, $options['include-fields'])) {
                 unset($options['include-fields'][$key]);
             }
@@ -49,7 +49,7 @@ class MyTableAdmin extends MyTableLister
             foreach ($where as $key => $value) {
                 $sql [] = Tools::escapeDbIdentifier($key) . '="' . $this->escapeSQL((string) $value) . '"';
             }
-            Assert::isArray($options['include-fields']);
+            //Assert::isArray($options['include-fields']);
             $tempOptionsIncludeFields = new ArrayStrict($options['include-fields']);
             $record = $this->dbms->query(
                 'SELECT ' . $this->dbms->listColumns($tempOptionsIncludeFields->arrayString(), $this->fields)
@@ -91,7 +91,7 @@ class MyTableAdmin extends MyTableLister
             $output .= (count($tabs) > 1 ? '<div class="tab-pane fade' . ($tabKey === 0 ? ' show active' : '') . '" id="tab-' . ($tmp = Tools::webalize($this->table . '-' . $tabKey)) . '" role="tabpanel" aria-labelledby="nav-' . $tmp . '">' : '')
                 . ($options['layout-row'] ? '<div class="database">' : '<table class="database">');
             foreach ($tab as $key => $field) {
-                Assert::isArray($options['include-fields']);
+                //Assert::isArray($options['include-fields']);
                 if (!in_array($key, $options['include-fields']) || in_array($key, $options['exclude-fields'])) {
                     continue;
                 }
@@ -249,6 +249,7 @@ class MyTableAdmin extends MyTableLister
                 $output .= '</table>';
             } else {
                 Assert::string($field['type']);
+                // Todo: remove Texyla below
                 $output .= Tools::htmlTextarea("fields[$key]", $value, 60, 5, [
                         'id' => $key . $this->rand, 'data-maxlength' => $field['size'],
                         'class' => 'form-control type-' . Tools::webalize($field['type']) . ($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : '')
@@ -415,7 +416,7 @@ class MyTableAdmin extends MyTableLister
             if (is_null($value)) {
                 $input .= Tools::htmlInput("original-null[$key]", '', 1, 'hidden');
             } else {
-                Assert::isArray($options);
+                //Assert::isArray($options);
                 $input .= Tools::htmlInput("original[$key]", '', isset($options['prefill'][$key]) && is_scalar($options['prefill'][$key]) ? '' : $value, 'hidden');
             }
         }
@@ -440,7 +441,7 @@ class MyTableAdmin extends MyTableLister
         if ($module && $module !== true) {
             $tempArr = $module->fetch_assoc();
             Assert::isArray($tempArr);
-            $module = json_decode($tempArr['Comment'], true);
+            $module = json_decode((string) $tempArr['Comment'], true);
             Assert::isArray($module);
             return isset($module['module']) && $module['module'] ? $module['module'] : 10;
         }
@@ -477,7 +478,11 @@ class MyTableAdmin extends MyTableLister
         $options['path-value'] = isset($options['path-value']) ? $options['path-value'] : false;
         while ($row = $query->fetch_assoc()) {
             if ($row['id'] != $options['exclude']) {
-                $result .= Tools::htmlOption($row['id'], str_repeat('. ', strlen($row['path']) / $module - 1) . $row['category_'], $row['path'] === $options['path-value'] ? $row['id'] : $path_id);
+                $result .= Tools::htmlOption(
+                    $row['id'],
+                    str_repeat('. ', strlen((string) $row['path']) / $module - 1) . $row['category_'],
+                    $row['path'] === $options['path-value'] ? $row['id'] : $path_id
+                );
             }
         }
         return $result . '</select>';
@@ -490,11 +495,17 @@ class MyTableAdmin extends MyTableLister
      * @param string $group
      * @param string|false $lastGroup
      * @param mixed $default
-     * @param array<array|int|string> $options
+     * @param array<array<mixed>|int|string> $options
      * @return string HTML code
      */
-    protected function addForeignOption($value, $text, $group, &$lastGroup, $default, $options)
-    {
+    protected function addForeignOption(
+        $value,
+        string $text,
+        string $group,
+        &$lastGroup,
+        $default,
+        array $options
+    ): string {
         $result = '';
         if ($lastGroup != $group) {
             $result .= ($lastGroup === false ? '' : '</optgroup>')
@@ -511,10 +522,10 @@ class MyTableAdmin extends MyTableLister
      * Output HTML <select name=$field> with $values as its items
      *
      * @param string $field name of the select element
-     * @param string|array<string|array> $values either array of values for the <select>
+     * @param string|array<string|array<mixed>> $values either array of values for the <select>
      *        or string with the SQL SELECT statement
      * @param scalar $default original value
-     * @param array<array|int|string> $options additional options for the element rendition; plus
+     * @param array<array<mixed>|int|string> $options additional options for the element rendition; plus
      *        [exclude] => value to exclude from select's options
      *        [class]
      *        [id]
@@ -524,7 +535,7 @@ class MyTableAdmin extends MyTableLister
      *       Similarly, $values as string can select 2 columns (same as first case)
      *        or 3+ columns (then first will be <option>'s value, second its label, and third <optgroup>)
      */
-    public function outputForeignId($field, $values, $default = null, $options = [])
+    public function outputForeignId(string $field, $values, $default = null, array $options = []): string
     {
         if (isset($options['class'])) {
             Assert::string($options['class']);
@@ -597,7 +608,7 @@ class MyTableAdmin extends MyTableLister
             return false;
         }
         $sql = $where = '';
-        if (is_array($this->fields) && count($this->fields) > 0) { // $this->fields should be an array with at least one element
+        if (count($this->fields) > 0) { // $this->fields should be an array with at least one element
             foreach ($_POST as $key => $value) {
                 if (Tools::begins($key, EXPAND_INFIX) && !Tools::begins($key, EXPAND_INFIX . EXPAND_INFIX)) {
                     $_POST['fields'][$key = substr($key, strlen(EXPAND_INFIX))] = array_combine($_POST[EXPAND_INFIX . $key], $_POST[EXPAND_INFIX . EXPAND_INFIX . $key]);

@@ -5,12 +5,12 @@ on:
   push:
     branches-ignore:
       # notest branches to ignore testing of partial online commits
-      - 'notest/**'
+      - "notest/**"
 
   pull_request:
     branches-ignore:
       # notest branches to ignore testing of partial online commits
-      - 'notest/**'
+      - "notest/**"
 
 permissions:
   contents: read
@@ -21,4 +21,4 @@ jobs:
     uses: WorkOfStan/MyCMS/.github/workflows/php-composer-dependencies-reusable.yml@main
     with:
       # JSON
-      php-version: '["5.6", "7.0", "7.1", "7.2", "7.3", "7.4"]'
+      php-version: '["7.2", "7.3", "7.4"]'

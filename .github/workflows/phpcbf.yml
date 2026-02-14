@@ -5,10 +5,10 @@ name: PHPCBF
 on:
   push:
     branches:
-      - 'phpcbf*'
+      - "phpcbf*"
   pull_request:
     branches:
-      - 'phpcbf*'
+      - "phpcbf*"
   workflow_call:
 
 permissions:
@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: PHP_CodeSniffer phpcbf GitHub Action
         uses: ge-tracker/phpcbf-action@v1

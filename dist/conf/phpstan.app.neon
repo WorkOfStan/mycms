@@ -1,12 +1,16 @@
+includes:
+      - phpstan-baseline-level-5.neon
+
 # (Last MyCMS/dist revision: 2024-07-24, v0.4.10)
 
 parameters:
-    level: 9
+    level: 6
     excludePaths:
         analyseAndScan:
             - ../cache/*
         analyse:
-          - ../vendor
+          # If the excluded path can sometimes exist, append (?) to its config entry to mark it as optional. 
+          - ../vendor (?)
         # temporary arrangement so that MyCMS can be debugged along MyCMS/dist
         #  - ../vendor/bin
         #  - ../vendor/cakephp

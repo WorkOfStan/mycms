@@ -36,7 +36,7 @@ class PagesAdminModel
      *
      * @return string
      */
-    public function htmlOutput()
+    public function htmlOutput(): string
     {
         $output = '';
         // pages // TODO make it do something useful in Dist
@@ -140,7 +140,7 @@ class PagesAdminModel
             . $this->tableAdmin->translate('Open/close') . '" data-open="1"><i class="fas fa-caret-right"></i>'
             . ' <i class="fas fa-caret-down"></i></button></footer></div>';
 
-        Assert::string($output);
+        //Assert::string($output);
         return $output;
     }
 }

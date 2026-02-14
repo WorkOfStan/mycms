@@ -2,12 +2,13 @@
 
 namespace WorkOfStan\MyCMS\Test;
 
+use PHPUnit\Framework\TestCase;
 use WorkOfStan\Backyard\Backyard;
 use WorkOfStan\MyCMS\MyCMS;
 
 require_once __DIR__ . '/../conf/config.php';
 
-class MyCMSTest extends \PHPUnit_Framework_TestCase
+class MyCMSTest extends TestCase
 {
     /** @var MyCMS */
     protected $object;
@@ -20,7 +21,7 @@ class MyCMSTest extends \PHPUnit_Framework_TestCase
      *
      * @global array $backyardConf
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         global $backyardConf;
         error_reporting(E_ALL); // incl E_NOTICE
@@ -41,7 +42,7 @@ class MyCMSTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         // no action
     }

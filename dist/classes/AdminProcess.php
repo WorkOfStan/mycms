@@ -78,7 +78,7 @@ class AdminProcess extends MyAdminProcess
             $this->exitJson($result); // terminates
         }
         // further commands require token
-        if (!isset($post['token']) || !$this->MyCMS->csrfCheck($post['token'])) {
+        if (!isset($post['token']) || !is_scalar($post['token']) || !$this->MyCMS->csrfCheck($post['token'])) {
             Debugger::barDump($post, 'POST - admin CSRF token mismatch');
             $this->MyCMS->logger->warning("admin CSRF token mismatch ");
             //@todo nepotvrdit uložení nějak jinak, než že prostě potichu nenapíše Záznam uložen?
@@ -467,7 +467,7 @@ class AdminProcess extends MyAdminProcess
                     'CONCAT(' . implode(
                         ",'|',",
                         /**
-                         * @phpstan-ignore-next-line
+                         * @xx phpstan-ignore-next-line
                          * Parameter #1 $callback of function array_map expects (callable(mixed): mixed)|null,
                          * array{WorkOfStan\MyCMS\LogMysqli, 'escapeDbIdentifier'} given.
                          */
@@ -489,7 +489,7 @@ class AdminProcess extends MyAdminProcess
             . ' LIMIT ' . $this::PROCESS_LIMIT;
         $query = $this->MyCMS->dbms->queryStrictObject($sql);
         for ($i = 1; $row = $query->fetch_assoc(); $i++) {
-            $row['name'] = Tools::shortify(strip_tags($row['name']), 100);
+            $row['name'] = Tools::shortify(strip_tags((string) $row['name']), 100);
             $result [] = $row;
             if ($agenda === 'product' && isset($row['sort']) && $row['sort'] != $i) {
                 $correctOrder[$row['id']] = $i;

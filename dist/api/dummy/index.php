@@ -18,6 +18,6 @@ if (UNDER_CONSTRUCTION && !(in_array($_SERVER['REMOTE_ADDR'], $debugIpArray))) {
 
 require_once './../../prepare.php';
 
-$directJsonCall = Utils::directJsonCall($_SERVER['HTTP_ACCEPT']);
+$directJsonCall = is_string($_SERVER['HTTP_ACCEPT']) ? Utils::directJsonCall($_SERVER['HTTP_ACCEPT']) : false;
 
 Utils::jsonOrEcho(["dummy" => "Hello world!"], $directJsonCall, $backyard);

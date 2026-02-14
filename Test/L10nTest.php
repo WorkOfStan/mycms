@@ -2,12 +2,13 @@
 
 namespace WorkOfStan\MyCMS\Test;
 
+use PHPUnit\Framework\TestCase;
 use Tracy\Debugger;
 use WorkOfStan\MyCMS\L10n;
 
 require_once __DIR__ . '/../conf/config.php';
 
-class L10nTest extends \PHPUnit_Framework_TestCase
+class L10nTest extends TestCase
 {
     /** @var string */
     protected $encoding;
@@ -21,7 +22,7 @@ class L10nTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         if (!defined('DEBUG_VERBOSE')) {
             define('DEBUG_VERBOSE', false);
@@ -41,7 +42,7 @@ class L10nTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         // no action
     }

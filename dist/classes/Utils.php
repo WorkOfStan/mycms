@@ -28,11 +28,15 @@ class Utils
      * @return string
      * @throws \InvalidArgumentException
      */
-    public static function niceDumpArray(array $ary, $showKey, $delimiter = ': ', $boldWhenHigherThan = 6)
-    {
-        Assert::numeric($boldWhenHigherThan);
-        Assert::isArray($ary);
-        Assert::string($delimiter);
+    public static function niceDumpArray(
+        array $ary,
+        bool $showKey,
+        string $delimiter = ': ',
+        float $boldWhenHigherThan = 6
+    ): string {
+        //Assert::numeric($boldWhenHigherThan);
+        //Assert::isArray($ary);
+        //Assert::string($delimiter);
         $result = '<ol>' . PHP_EOL;
         foreach ($ary as $k => $v) {
             if (is_object($v)) {
