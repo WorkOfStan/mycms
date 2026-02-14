@@ -13,7 +13,6 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ${{ matrix.operating-system }}
     # Limit the running time
     timeout-minutes: 10
@@ -155,4 +154,4 @@ jobs:
           ./vendor/bin/phpstan.phar -V
           # analyze
           ./vendor/bin/phpstan.phar --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
-        shell: bash    
+        shell: bash

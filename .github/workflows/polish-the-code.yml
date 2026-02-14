@@ -71,4 +71,3 @@ jobs:
     uses: WorkOfStan/seablast-actions/.github/workflows/linter.yml@v0.2.8
     with:
       runs-on: "ubuntu-latest"
-      validate-spell-codespell: true
