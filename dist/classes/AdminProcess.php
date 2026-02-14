@@ -78,7 +78,7 @@ class AdminProcess extends MyAdminProcess
             $this->exitJson($result); // terminates
         }
         // further commands require token
-        if (!isset($post['token']) || !$this->MyCMS->csrfCheck($post['token'])) {
+        if (!isset($post['token']) || !is_scalar($post['token']) || !$this->MyCMS->csrfCheck($post['token'])) {
             Debugger::barDump($post, 'POST - admin CSRF token mismatch');
             $this->MyCMS->logger->warning("admin CSRF token mismatch ");
             //@todo nepotvrdit uložení nějak jinak, než že prostě potichu nenapíše Záznam uložen?

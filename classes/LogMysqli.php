@@ -66,11 +66,14 @@ class LogMysqli extends BackyardMysqli
      * @param int $errorLogOutput optional default=1 turn-off=0
      *   It is int in order to be compatible with
      *   parameter $resultmode (int) of method mysqli::query()
+     *   Note: don't use type int next to the parameter, otherwise triggered PHP Warning:
+     *   Declaration of WorkOfStan\MyCMS\LogMysqli::query($sql, int $errorLogOutput = 1, bool $logQuery = true)
+     *   should be compatible with WorkOfStan\Backyard\BackyardMysqli::query($sql, $errorLogOutput = 1)
      * @param bool $logQuery optional default logging of database changing statement can be (for security reasons)
      *     turned off by value false
      * @return bool|\mysqli_result<object>
      */
-    public function query($sql, int $errorLogOutput = 1, bool $logQuery = true)
+    public function query($sql, $errorLogOutput = 1, bool $logQuery = true)
     {
         if ($logQuery && !preg_match('/^SELECT |^SET |^SHOW /i', $sql)) {
             //mb_eregi_replace does not destroy multi-byte characters such as character Š

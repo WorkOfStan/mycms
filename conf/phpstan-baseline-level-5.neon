@@ -252,11 +252,11 @@ parameters:
 			count: 1
 			path: ../dist/classes/AdminProcess.php
 
-		-
-			message: '#^Parameter \#1 \$token of method WorkOfStan\\MyCMS\\MyCMSMonoLingual\:\:csrfCheck\(\) expects int, array\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../dist/classes/AdminProcess.php
+#		-
+#			message: '#^Parameter \#1 \$token of method WorkOfStan\\MyCMS\\MyCMSMonoLingual\:\:csrfCheck\(\) expects int, array\|string given\.$#'
+#			identifier: argument.type
+#			count: 1
+#			path: ../dist/classes/AdminProcess.php
 
 		-
 			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'

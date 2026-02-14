@@ -75,10 +75,10 @@ class MyCMSMonoLingual
 
     /**
      * Check for CSRF
-     * @param int $token
+     * @param int|string $token
      * @return bool
      */
-    public function csrfCheck(int $token): bool
+    public function csrfCheck($token): bool
     {
         // Variable $token always exists and is not nullable.
         return isset($_SESSION['token']) && is_array($_SESSION['token']) && in_array($token, $_SESSION['token']);

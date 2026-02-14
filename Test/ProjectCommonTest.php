@@ -74,19 +74,19 @@ class ProjectCommonTest extends TestCase
         );
     }
 
-    /**
-     * @covers WorkOfStan\MyCMS\ProjectCommon::prepareTexy
-     * @todo   Implement testPrepareTexy().
-     *
-     * @return void
-     */
-    public function testPrepareTexy()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
+//    /**
+//     * @covers WorkOfStan\MyCMS\ProjectCommon::prepareTexy
+//     * @todo   Implement testPrepareTexy().
+//     *
+//     * @return void
+//     */
+//    public function testPrepareTexy()
+//    {
+//        // Remove the following lines when you implement this test.
+//        $this->markTestIncomplete(
+//            'This test has not been implemented yet.'
+//        );
+//    }
 
     /**
      * @covers WorkOfStan\MyCMS\ProjectCommon::localDate

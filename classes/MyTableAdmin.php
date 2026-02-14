@@ -249,6 +249,7 @@ class MyTableAdmin extends MyTableLister
                 $output .= '</table>';
             } else {
                 Assert::string($field['type']);
+                // Todo: remove Texyla below
                 $output .= Tools::htmlTextarea("fields[$key]", $value, 60, 5, [
                         'id' => $key . $this->rand, 'data-maxlength' => $field['size'],
                         'class' => 'form-control type-' . Tools::webalize($field['type']) . ($comment['display'] == 'html' ? ' richtext' : '') . ($comment['display'] == 'texyla' ? ' texyla' : '')

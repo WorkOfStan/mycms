@@ -24,15 +24,15 @@ class MyCMS extends MyCMSMonoLingual
     protected $prefixL10n;
     /** @var array<array<string|bool>> PARAMETRIC URL into TEMPLATE conditions (for FriendlyURL functionality) */
     public $templateAssignementParametricRules;
-    /** @var string[] Type into database table mapping (for MyFriendlyUrl::findFriendlyUrlToken) */
+    /** @var array<string> Type into database table mapping (for MyFriendlyUrl::findFriendlyUrlToken) */
     public $typeToTableMapping;
-    /** @var string[] Available languages */
+    /** @var array<string> Available languages */
     public $TRANSLATIONS;
 
     /**
      * Constructor
      *
-     * @param mixed[] $myCmsConf
+     * @param array<mixed> $myCmsConf
      */
     public function __construct(array $myCmsConf = [])
     {
@@ -43,8 +43,8 @@ class MyCMS extends MyCMSMonoLingual
     /**
      * constant DEFAULT_LANGUAGE expected
      *
-     * @param mixed[] $getArray $_GET or its equivalent
-     * @param mixed[] $sessionArray $_SESSION or its equivalent
+     * @param array<mixed> $getArray $_GET or its equivalent
+     * @param array<mixed> $sessionArray $_SESSION or its equivalent
      * @param bool $makeInclude for testing may be set to false as mycms itself doesn't contain the language-XX.inc.php
      * @return string to be used as $_SESSION['language']
      */
