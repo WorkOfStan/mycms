@@ -28,7 +28,9 @@ jobs:
     uses: WorkOfStan/seablast-actions/.github/workflows/php-composer-dependencies-reusable.yml@v0.2.8
     with:
       # JSON
-      php-version: '["7.2", "7.3", "7.4"]'
+      # Ignored error pattern is different for PHPStan 1.x vs 2.x. So let's test only PHP/7.4 which uses PHPStan 2.x
+      # "7.2", "7.3",
+      php-version: '["7.4"]'
       # OPTIONAL path with the default database configuration
       #phinx-config: "./conf/phinx.dist.php"
       # OPTIONAL path where the app code is looking for the database configuration
