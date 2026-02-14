@@ -50,7 +50,8 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0  # Fetch all history for all branches and tags. Otherwise github.event.pull_request.base.ref SHA isn't found.
+          # Fetch all history for all branches and tags. Otherwise github.event.pull_request.base.ref SHA isn't found.
+          fetch-depth: 0
 
       ################################
       # Run Linter against code base #

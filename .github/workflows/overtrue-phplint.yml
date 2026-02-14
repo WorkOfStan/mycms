@@ -15,9 +15,9 @@ permissions:
   contents: read
 
 jobs:
-# This is how to reuse this workflow:
-#  call-workflow:
-#    uses: WorkOfStan/MyCMS/.github/workflows/overtrue-phplint.yml@main
+  # This is how to reuse this workflow:
+  #  call-workflow:
+  #    uses: WorkOfStan/MyCMS/.github/workflows/overtrue-phplint.yml@main
   phplint:
     runs-on: ubuntu-latest
     # Limit the running time
