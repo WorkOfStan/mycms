@@ -101,7 +101,7 @@ class ControllerTest extends TestCase
             ]);
         $controller = $this->object->run();
         //$this->assertArraySubset(['template' => 'home', 'context' => []], $controller);
-        $this->assertSame('home', $controller['template']);        
+        $this->assertSame('home', $controller['template']);
         // with PHPUnit 5, the result was []; with PHPUnit 9, the result is as below
         //$this->assertSame([], $controller['context']);
         $this->assertTrue(
