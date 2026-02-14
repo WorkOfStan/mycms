@@ -102,8 +102,7 @@ class ProjectCommon extends MyCommon
         string $fieldName = 'link',
         string $sourceTable = null,
         string $sourceField = 'id'
-    ): string
-    {
+    ): string {
         $addLanguageDirectory = ($language != DEFAULT_LANGUAGE) // other than default language should have its directory
             && !preg_match("~/$language/~", $this->requestUri); // unless the page already has it
         $this->verboseBarDump(

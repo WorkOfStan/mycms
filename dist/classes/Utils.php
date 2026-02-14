@@ -29,9 +29,11 @@ class Utils
      * @throws \InvalidArgumentException
      */
     public static function niceDumpArray(
-        array $ary, bool $showKey, string $delimiter = ': ', float $boldWhenHigherThan = 6
-    ): string
-    {
+        array $ary,
+        bool $showKey,
+        string $delimiter = ': ',
+        float $boldWhenHigherThan = 6
+    ): string {
         //Assert::numeric($boldWhenHigherThan);
         //Assert::isArray($ary);
         //Assert::string($delimiter);

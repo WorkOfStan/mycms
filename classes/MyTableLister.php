@@ -701,7 +701,9 @@ class MyTableLister
                             . 'title="'
                             . Tools::h(
                                 mb_substr(
-                                    (string)$row[$key . $this->DEFAULTS['FOREIGNLINK']], 0, $this->DEFAULTS['TEXTSIZE']
+                                    (string)$row[$key . $this->DEFAULTS['FOREIGNLINK']],
+                                    0,
+                                    $this->DEFAULTS['TEXTSIZE']
                                 )
                                 . (mb_strlen((string) $row[$key . $this->DEFAULTS['FOREIGNLINK']])
                                     > $this->DEFAULTS['TEXTSIZE']
@@ -860,11 +862,11 @@ class MyTableLister
         $filterType = strtolower($filterType);
         $result = [];
         //if (is_array($this->fields)) {
-            foreach ($this->fields as $key => $value) {
-                if (isset($value['key']) && strtolower($value['key']) == $filterType) {
-                    $result [] = $key;
-                }
+        foreach ($this->fields as $key => $value) {
+            if (isset($value['key']) && strtolower($value['key']) == $filterType) {
+                $result [] = $key;
             }
+        }
         //}
         return $result;
     }
@@ -947,9 +949,11 @@ class MyTableLister
      * @return bool true for success, false for failure of the query;
      */
     public function resolveSQL(
-        string $sql, string $successMessage, string $errorMessage, $noChangeMessage = false
-    ): bool
-    {
+        string $sql,
+        string $successMessage,
+        string $errorMessage,
+        $noChangeMessage = false
+    ): bool {
         //Assert::string($sql);
         if ($this->dbms->query($sql)) {
             Tools::addMessage(

@@ -499,9 +499,13 @@ class MyTableAdmin extends MyTableLister
      * @return string HTML code
      */
     protected function addForeignOption(
-        $value, string $text, string $group, &$lastGroup, $default, array $options
-    ): string
-    {
+        $value,
+        string $text,
+        string $group,
+        &$lastGroup,
+        $default,
+        array $options
+    ): string {
         $result = '';
         if ($lastGroup != $group) {
             $result .= ($lastGroup === false ? '' : '</optgroup>')

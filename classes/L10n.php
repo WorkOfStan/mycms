@@ -176,9 +176,12 @@ class L10n
      * @return void
      */
     public function updateLocalisation(
-        array $allStrings, array $newStrings, string $oldName, string $newName, bool $deleteFlag
-    ): void
-    {
+        array $allStrings,
+        array $newStrings,
+        string $oldName,
+        string $newName,
+        bool $deleteFlag
+    ): void {
         foreach ($this->enabledLanguages as $code) {
             $this->assertLanguage($code);
             $yml = [];
