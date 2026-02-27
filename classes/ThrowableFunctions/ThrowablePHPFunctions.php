@@ -116,14 +116,14 @@ function mb_eregi_replace($pattern, $replacement, $string, $options = null)
  *
  * @param string $pattern
  * @param string $subject
- * @param string[] $matches
+ * @param array<string>|null $matches
  * @param 0|256|512|768 $flags
  * @param int $offset
  * @return int
  * @throws Exception
  * @throws InvalidArgumentException
  */
-function preg_match($pattern, $subject, array &$matches = null, $flags = 0, $offset = 0)
+function preg_match($pattern, $subject, &$matches = null, $flags = 0, $offset = 0)
 {
     $result = throwOnFalse(\preg_match($pattern, $subject, $matches, $flags, $offset));
     Assert::integer($result);
@@ -134,14 +134,14 @@ function preg_match($pattern, $subject, array &$matches = null, $flags = 0, $off
  *
  * @param string $pattern
  * @param string $subject
- * @param string[] $matches
+ * @param array<array<string>>|null $matches
  * @param int $flags
  * @param int $offset
  * @return int
  * @throws Exception
  * @throws InvalidArgumentException
  */
-function preg_match_all($pattern, $subject, array &$matches = null, $flags = 0, $offset = 0)
+function preg_match_all($pattern, $subject, &$matches = null, $flags = 0, $offset = 0)
 {
     $result = throwOnFalse(\preg_match_all($pattern, $subject, $matches, $flags, $offset));
     Assert::integer($result);

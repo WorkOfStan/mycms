@@ -9,11 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added` for new features
 
-- add support of `PHP/8.0-8.5` (i.e. `>=7.2 <8.6`) incl. PHPStan testing
-
 ### `Changed` for changes in existing functionality
-
-- chore: use secure version of `godsdev/tools` library
 
 ### `Deprecated` for soon-to-be removed features
 
@@ -22,6 +18,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Fixed` for any bugfixes
 
 ### `Security` in case of vulnerabilities
+
+## [0.5.1] - 2026-03-01
+
+chore: use secure version of `godsdev/tools` library
+
+### Added
+
+- add support of `PHP/8.0-8.5` (i.e. `>=7.2 <8.6`) incl. PHPStan testing
+
+### Changed
+
+- chore: use secure version of `godsdev/tools` library (with CVE-2026-24765 fixed)
+
+### Fixed
+
+- fix Parameter `#2` typing of `ThrowablePHPFunctions\preg_match_all`
+- use a proper string as a Parameter `#2` of ini_set in `dist/conf/set-environment.php`
 
 ## [0.5.0] - 2026-02-14
 
@@ -608,7 +621,8 @@ to
 - Basic functions
 - Basic structure
 
-[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/WorkOfStan/mycms/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/WorkOfStan/mycms/compare/v0.4.10...v0.5.0
 [0.4.10]: https://github.com/WorkOfStan/mycms/compare/v0.4.9...v0.4.10
 [0.4.9]: https://github.com/WorkOfStan/mycms/compare/v0.4.8...v0.4.9
