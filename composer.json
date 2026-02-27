@@ -9,7 +9,7 @@
     }
   ],
   "require": {
-    "php": ">=7.2 <8.0",
+    "php": ">=7.2 <8.6",
     "ext-session": "*",
     "ext-mbstring": "*",
     "godsdev/tools": "dev-chore/update-phpunit",

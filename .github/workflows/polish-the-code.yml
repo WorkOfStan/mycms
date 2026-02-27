@@ -30,7 +30,7 @@ jobs:
       # JSON
       # Ignored error pattern is different for PHPStan 1.x vs 2.x. So let's test only PHP/7.4 which uses PHPStan 2.x
       # "7.2", "7.3",
-      php-version: '["7.4"]'
+      php-version: '["7.4", "8.0", "8.1", "8.2", "8.3", "8.4", "8.5"]'
       # OPTIONAL path with the default database configuration
       #phinx-config: "./conf/phinx.dist.php"
       # OPTIONAL path where the app code is looking for the database configuration

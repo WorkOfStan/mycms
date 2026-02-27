@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added` for new features
 
+- add support of `PHP/8.0-8.5` (i.e. `>=7.2 <8.6`) incl. PHPStan testing
+
 ### `Changed` for changes in existing functionality
 
 - chore: use secure version of `godsdev/tools` library
