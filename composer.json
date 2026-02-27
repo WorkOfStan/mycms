@@ -13,7 +13,7 @@
     "ext-session": "*",
     "ext-mbstring": "*",
     "godsdev/tools": "dev-chore/update-phpunit",
-    "latte/latte": ">=2.4.6 <2.11.3",
+    "latte/latte": ">=2.10.8 <4",
     "nette/utils": "^2.4.8 || ^3.2.2 || ^4.0.5",
     "symfony/yaml": "^4 || ^5",
     "tracy/tracy": "^2.4.10",
