@@ -3,7 +3,7 @@
   "description": "MYCMSPROJECTSPECIFIC xyz website 202x",
   "type": "project",
   "require": {
-    "php": ">=7.2 <8.0",
+    "php": ">=7.2 <8.6",
     "workofstan/mycms": "^0.4.10 || ^0.5",
     "robmorgan/phinx": "^0.12.13 || ^0.13.4 || ^0.14.0 || ^0.15.5 || ^0.16.5",
     "swiftmailer/swiftmailer": "^6.3",
