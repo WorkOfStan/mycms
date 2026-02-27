@@ -6,11 +6,11 @@ parameters:
 			count: 1
 			path: ../admin.php
 
-		-
-			message: '#^Parameter \#2 \.\.\.\$args of function array_merge expects array, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../classes/Admin.php
+#		-
+#			message: '#^Parameter \#2 \.\.\.\$args of function array_merge expects array, string given\.$#'
+#			identifier: argument.type
+#			count: 1
+#			path: ../classes/Admin.php
 
 		-
 			message: '#^Binary operation "\*" between \-1\|1 and array\<mixed\>\|string results in an error\.$#'

@@ -134,7 +134,7 @@ function preg_match($pattern, $subject, &$matches = null, $flags = 0, $offset = 
  *
  * @param string $pattern
  * @param string $subject
- * @param array<array<string>>|null $matches
+ * @param array<mixed>|null $matches If not necessary to be compliant to the original: `array<array<string>>|null`
  * @param int $flags
  * @param int $offset
  * @return int
