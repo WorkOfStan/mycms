@@ -132,11 +132,11 @@ parameters:
 			count: 1
 			path: ../classes/ThrowableFunctions/ThrowablePHPFunctions.php
 
-		-
-			message: '#^Function WorkOfStan\\MyCMS\\ThrowableFunctions\\preg_match_all\(\) never assigns null to &\$matches so it can be removed from the by\-ref type\.$#'
-			identifier: parameterByRef.unusedType
-			count: 1
-			path: ../classes/ThrowableFunctions/ThrowablePHPFunctions.php
+#		-
+#			message: '#^Function WorkOfStan\\MyCMS\\ThrowableFunctions\\preg_match_all\(\) never assigns null to &\$matches so it can be removed from the by\-ref type\.$#'
+#			identifier: parameterByRef.unusedType
+#			count: 1
+#			path: ../classes/ThrowableFunctions/ThrowablePHPFunctions.php
 
 		-
 			message: '#^Function WorkOfStan\\MyCMS\\ThrowableFunctions\\preg_replace\(\) never assigns null to &\$count so it can be removed from the by\-ref type\.$#'

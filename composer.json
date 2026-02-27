@@ -16,7 +16,7 @@
     "latte/latte": ">=2.10.8 <4",
     "nette/utils": "^2.4.8 || ^3.2.2 || ^4.0.5",
     "symfony/yaml": "^4 || ^5",
-    "tracy/tracy": "^2.4.10",
+    "tracy/tracy": "^2.9.8 || ^2.10.9 || ^2.11.0",
     "webmozart/assert": "^1.10.0",
     "workofstan/backyard": "^3.4.2 || ^4.1.2.1"
   },
