@@ -50,7 +50,7 @@ class Mail extends MyCommon
 //        }
         // Create the Transport
         $this->logger->debug("SMTP transport uses " . SMTP_HOST . ":" . SMTP_PORT);
-        $transport = //$this->atLeastPHP7 ? 
+        $transport = //$this->atLeastPHP7 ?
             (new Swift_SmtpTransport(SMTP_HOST, SMTP_PORT))
             //:
             /** xx@ phpstan-ignore-next-line as it is for PHP/5.6 */
@@ -72,8 +72,8 @@ class Mail extends MyCommon
           $transport = Swift_MailTransport::newInstance();
          */
         // Create the Mailer using your created Transport
-        return //$this->atLeastPHP7 ? 
-            new Swift_Mailer($transport) 
+        return //$this->atLeastPHP7 ?
+            new Swift_Mailer($transport)
             //:
             /** xx@ phpstan-ignore-next-line as it is for PHP/5.6 */
             //Swift_Mailer::newInstance($transport)
@@ -120,7 +120,7 @@ class Mail extends MyCommon
 //        $filename = 'temp/' . 'test.html';
 //        $filenameTxt = 'temp/' . 'test.txt';
 
-        $message = //$this->atLeastPHP7 ? 
+        $message = //$this->atLeastPHP7 ?
             (new Swift_Message($subject))
             //:
             /** xx@ phpstan-ignore-next-line as it is for PHP/5.6 */
