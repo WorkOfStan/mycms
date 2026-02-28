@@ -301,7 +301,7 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 - 200526: describe jQuery dependencies; and also other js libraries (maybe only in dist??)
 - 200608: replace all `array(` by `[`
 - 200819: refactor FORCE_301, FRIENDLY_URL and REDIRECTOR_ENABLED to a variable, so that all scenarios can be PHPUnit tested
-- 200819: consider REQUEST_URI query vs \_GET - shouldn't just one source of truth be used?
+- 200819: consider REQUEST_URI query vs `_GET` - shouldn't just one source of truth be used?
 
 ### Todo UI
 
