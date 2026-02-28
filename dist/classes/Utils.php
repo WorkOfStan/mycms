@@ -7,7 +7,7 @@ use WorkOfStan\Backyard\Backyard;
 
 /**
  * Frequently used methods that are candidates to become part of MyCMS library as MyCMS\Utils
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
+ * (Last MyCMS/dist revision: 2026-02-28, v0.5.1)
  *
  * @author rejthar@stanislavrejthar.com
  */
@@ -63,7 +63,7 @@ class Utils
      * @param string $str
      * @return string
      */
-    public static function getDateFromMySQLTimestamp($str)
+    public static function getDateFromMySQLTimestamp(string $str): string
     {
         //TODO jistě je nějaká bezpečnější metoda,
         //jak vytáhnout datum z MySQL timestamp políčka než prvních 10 znaků
@@ -78,7 +78,7 @@ class Utils
      *
      * TODO: PHPUnit test
      */
-    public static function directJsonCall($httpAccept)
+    public static function directJsonCall(string $httpAccept): bool
     {
         // Chrome 76 jQuery $.ajax Accept: application/json, text/javascript, */*; q=0.01
         $result = (
@@ -102,7 +102,7 @@ class Utils
      *
      * @return void
      */
-    public static function jsonOrEcho($value, $directJsonCall, Backyard $backyard)
+    public static function jsonOrEcho($value, bool $directJsonCall, Backyard $backyard)
     {
         $response = json_encode($value);
         Assert::string($response);

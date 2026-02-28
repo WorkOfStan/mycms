@@ -15,7 +15,7 @@ use WorkOfStan\mycmsprojectnamespace\ProjectSpecific;
 
 /**
  * Controller (of MVC)
- * (Last MyCMS/dist revision: 2023-06-16, v0.4.9)
+ * (Last MyCMS/dist revision: 2026-02-28, v0.5.1)
  */
 class Controller extends MyController
 {
@@ -72,7 +72,7 @@ class Controller extends MyController
      * @param array<mixed> $options
      * @return bool true on success, false on error
      */
-    protected function prepareAllTemplates(array $options = [])
+    protected function prepareAllTemplates(array $options = []): bool
     {
         return true;
     }
@@ -85,7 +85,7 @@ class Controller extends MyController
      * @param array<mixed> $options ['REQUEST_URI']
      * @return bool true on success, false on error
      */
-    protected function prepareTemplate(array $options = [])
+    protected function prepareTemplate(array $options = []): bool
     {
         $this->verboseBarDump(
             ['template' => $this->MyCMS->template, 'language' => $this->language],
@@ -310,7 +310,7 @@ class Controller extends MyController
      *
      * @return array<array<mixed>>
      */
-    public function getVars()
+    public function getVars(): array
     {
         return [
             'get' => $this->get,

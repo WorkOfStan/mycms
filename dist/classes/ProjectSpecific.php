@@ -11,7 +11,7 @@ use WorkOfStan\MyCMS\ProjectCommon;
 
 /**
  * Functions specific to the project (that are not in its own model)
- * (Last MyCMS/dist revision: 2023-06-16, v0.4.9)
+ * (Last MyCMS/dist revision: 2026-02-28, v0.5.1)
  */
 class ProjectSpecific extends ProjectCommon
 {
@@ -24,13 +24,13 @@ class ProjectSpecific extends ProjectCommon
      * @param string $text being searched for
      * @param int $offset
      * @param int $limit
-     * @param string $totalRows //TODO or?? mixed $totalRows first selected row
+     * @param string|null|false $totalRows //TODO or?? mixed $totalRows first selected row
      *     (or its first column if only one column is selected),
      *     null on empty SELECT, or false on error
      * @return array<array<string>> search result
      * @throws Exception
      */
-    public function searchResults($text, $offset = 0, $limit = 10, &$totalRows = null)
+    public function searchResults(string $text, int $offset = 0, int $limit = 10, &$totalRows = null): array
     {
         $result = [];
         $q = preg_quote($text);
@@ -117,12 +117,12 @@ class ProjectSpecific extends ProjectCommon
      * Fetch from database details of content of given id/code
      * TODO: make this method useful for dist project as a demonstration (inspired by A project)
      *
-     * @param scalar $id of the content OPTIONAL
-     * @param string $code OPTIONAL
+     * @param scalar|null $id of the content OPTIONAL
+     * @param string|null $code OPTIONAL
      * @param array<string> $options OPTIONAL
      * @return array<array<int|string>|string> resultset
      */
-    public function getContent($id = null, $code = null, array $options = [])
+    public function getContent($id = null, $code = null, array $options = []): array
     {
         if (is_null($id) && is_null($code)) {
             return [];
@@ -179,11 +179,11 @@ class ProjectSpecific extends ProjectCommon
      * TODO: make this method useful for dist project as a demonstration (inspired by A project)
      *
      * @param scalar $id of the content OPTIONAL
-     * @param string $code OPTIONAL
+     * @param string|null $code OPTIONAL
      * @param array<string> $options OPTIONAL
      * @return array<string>|null resultset
      */
-    public function getCategory($id = null, $code = null, array $options = [])
+    public function getCategory($id = null, ?string $code = null, array $options = [])
     {
         $result = $this->MyCMS->dbms->fetchStringArray(
             'SELECT id AS category_id, ' // . 'path,'
@@ -212,7 +212,7 @@ class ProjectSpecific extends ProjectCommon
      * @param int $id
      * @return array<string|null>|null array first selected row, null on empty SELECT
      */
-    public function getProduct($id)
+    public function getProduct(int $id): ?array
     {
         Assert::integer($id, 'product MUST be identified by id');
         $result = $this->MyCMS->dbms->fetchStringArray(

@@ -13,7 +13,7 @@ use WorkOfStan\mycmsprojectnamespace\Utils;
 /**
  * Class for a MyCMS object.
  * It holds all specific variables needed for this application.
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
+ * (Last MyCMS/dist revision: 2026-02-28, v0.5.1)
  */
 class MyCMSProject extends MyCMS
 {
@@ -48,10 +48,10 @@ class MyCMSProject extends MyCMS
      * @return void
      */
     public function renderJson(
-        $directJsonCall,
+        bool $directJsonCall,
         Backyard $backyard,
-        $humanReadable = false
-    ) {
+        bool $humanReadable = false
+    ): void {
         if (array_key_exists('json', $this->context) && is_array($this->context['json'])) {
             // TODO remove after Controller.php refactor all context['message... to    Tools::addMessage('error',
             if (

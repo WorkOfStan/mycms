@@ -14,17 +14,17 @@ use WorkOfStan\MyCMS\MyCommon;
 
 /**
  * Ready-made mail component
- * (Last MyCMS/dist revision: 2021-05-20, v0.4.0)
+ * (Last MyCMS/dist revision: 2026-02-28, v0.5.1)
  */
 class Mail extends MyCommon
 {
     use \Nette\SmartObject;
 
-    /** @var bool */
-    private $atLeastPHP7;
+    /** xx @ var bool */
+    //private $atLeastPHP7;
     /** @var LoggerInterface */
     private $logger;
-    /** @var Swift_Mailer */
+    /** @var Swift_Mailer|null */
     private $mailer = null;
 
     /**
@@ -34,7 +34,7 @@ class Mail extends MyCommon
     public function __construct(MyCMS $MyCMS, array $options = [])
     {
         parent::__construct($MyCMS, $options);
-        $this->atLeastPHP7 = (version_compare(PHP_VERSION, '7.0.0') >= 0);
+        //$this->atLeastPHP7 = (version_compare(PHP_VERSION, '7.0.0') >= 0);
         $this->logger = $this->MyCMS->logger;
         $this->mailer = $this->getMailerInstance();
     }
@@ -50,9 +50,12 @@ class Mail extends MyCommon
 //        }
         // Create the Transport
         $this->logger->debug("SMTP transport uses " . SMTP_HOST . ":" . SMTP_PORT);
-        $transport = $this->atLeastPHP7 ? (new Swift_SmtpTransport(SMTP_HOST, SMTP_PORT)) :
-            /** @phpstan-ignore-next-line as it is for PHP/5.6 */
-            Swift_SmtpTransport::newInstance(SMTP_HOST, SMTP_PORT);
+        $transport = //$this->atLeastPHP7 ? 
+            (new Swift_SmtpTransport(SMTP_HOST, SMTP_PORT))
+            //:
+            /** xx@ phpstan-ignore-next-line as it is for PHP/5.6 */
+            //Swift_SmtpTransport::newInstance(SMTP_HOST, SMTP_PORT)
+            ;
         $transport
             ->setUsername('')
             ->setPassword('')
@@ -69,9 +72,12 @@ class Mail extends MyCommon
           $transport = Swift_MailTransport::newInstance();
          */
         // Create the Mailer using your created Transport
-        return $this->atLeastPHP7 ? new Swift_Mailer($transport) :
-            /** @phpstan-ignore-next-line as it is for PHP/5.6 */
-            Swift_Mailer::newInstance($transport);
+        return //$this->atLeastPHP7 ? 
+            new Swift_Mailer($transport) 
+            //:
+            /** xx@ phpstan-ignore-next-line as it is for PHP/5.6 */
+            //Swift_Mailer::newInstance($transport)
+            ;
 
 //        // Create a message (PHP/5.6)
 //        $message = Swift_Message::newInstance($subject)
@@ -114,9 +120,12 @@ class Mail extends MyCommon
 //        $filename = 'temp/' . 'test.html';
 //        $filenameTxt = 'temp/' . 'test.txt';
 
-        $message = $this->atLeastPHP7 ? (new Swift_Message($subject)) :
-            /** @phpstan-ignore-next-line as it is for PHP/5.6 */
-            \Swift_Message::newInstance($subject);
+        $message = //$this->atLeastPHP7 ? 
+            (new Swift_Message($subject))
+            //:
+            /** xx@ phpstan-ignore-next-line as it is for PHP/5.6 */
+            // \Swift_Message::newInstance($subject)
+            ;
 
         $message
             ->setFrom(array(NOTIFY_FROM_ADDRESS => NOTIFY_FROM_NAME))

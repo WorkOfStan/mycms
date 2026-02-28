@@ -60,17 +60,17 @@ parameters:
 			count: 1
 			path: ../classes/Mail.php
 
-		-
-			message: '#^Call to function method_exists\(\) with WorkOfStan\\MyCMS\\LogMysqli and ''getStatementsError'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../classes/MyCMSProject.php
-
-		-
-			message: '#^Call to function method_exists\(\) with WorkOfStan\\MyCMS\\Tracy\\BarPanelTemplate and ''setError'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../classes/MyCMSProject.php
+#		-
+#			message: '#^Call to function method_exists\(\) with WorkOfStan\\MyCMS\\LogMysqli and ''getStatementsError'' will always evaluate to true\.$#'
+#			identifier: function.alreadyNarrowedType
+#			count: 1
+#			path: ../classes/MyCMSProject.php
+#
+#		-
+#			message: '#^Call to function method_exists\(\) with WorkOfStan\\MyCMS\\Tracy\\BarPanelTemplate and ''setError'' will always evaluate to true\.$#'
+#			identifier: function.alreadyNarrowedType
+#			count: 1
+#			path: ../classes/MyCMSProject.php
 
 		-
 			message: '#^Call to static method Webmozart\\Assert\\Assert\:\:integer\(\) with int and ''product MUST be…'' will always evaluate to true\.$#'

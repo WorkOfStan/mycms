@@ -9,7 +9,7 @@ use WorkOfStan\MyCMS\MyTableAdmin;
 
 /**
  * Project specific adaptations of database tables in Admin UI
- * (Last MyCMS/dist revision: 2022-07-17, v0.4.7)
+ * (Last MyCMS/dist revision: 2026-02-28, v0.5.1)
  */
 class TableAdmin extends MyTableAdmin
 {
@@ -21,7 +21,7 @@ class TableAdmin extends MyTableAdmin
      * @param string $table table name
      * @param array<string|array<string>> $options
      */
-    public function __construct(LogMysqli $dbms, $table, array $options = [])
+    public function __construct(LogMysqli $dbms, string $table, array $options = [])
     {
         parent::__construct($dbms, $table, $options);
     }
@@ -35,7 +35,7 @@ class TableAdmin extends MyTableAdmin
      * @return bool|string - true = method was applied so don't proceed with the default, false = method wasn't applied
      * @throws \InvalidArgumentException
      */
-    public function customInput($field, $value, array $record = [])
+    public function customInput(string $field, string $value, array $record = [])
     {
         $result = false;
         $fieldLang = '##';
@@ -167,7 +167,7 @@ class TableAdmin extends MyTableAdmin
      * @param array<string> $record
      * @return string HTML
      */
-    public function customInputAfter($field, $value, array $record = [])
+    public function customInputAfter(string $field, string $value, array $record = []): string
     {
         $result = '';
         switch ($this->table . "\\$field") {
@@ -198,7 +198,7 @@ class TableAdmin extends MyTableAdmin
      *
      * @return bool - true = method was applied so don't proceed with the default, false = method wasn't applied
      */
-    public function customSave()
+    public function customSave(): bool
     {
         if (!isset($_POST['record-save']) || !$this->authorized()) {
             return false;
@@ -265,7 +265,7 @@ class TableAdmin extends MyTableAdmin
      *
      * @return bool - true = method was applied so don't proceed with the default, false = method wasn't applied
      */
-    public function customDelete()
+    public function customDelete(): bool
     {
         if (!isset($_POST['record-delete']) || !$this->authorized()) {
             return false;
@@ -330,7 +330,7 @@ class TableAdmin extends MyTableAdmin
      * @param array<mixed> $row
      * @return mixed
      */
-    public function customValue($column, array $row)
+    public function customValue(string $column, array $row)
     {
         return $row[$column];
     }

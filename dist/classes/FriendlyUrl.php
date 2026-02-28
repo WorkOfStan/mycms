@@ -10,7 +10,7 @@ use WorkOfStan\mycmsprojectnamespace\ProjectSpecific;
 
 /**
  * Friendly URL set-up
- * (Last MyCMS/dist revision: 2022-07-17, v0.4.7)
+ * (Last MyCMS/dist revision: 2026-02-28, v0.5.1)
  */
 class FriendlyUrl extends MyFriendlyUrl
 {
@@ -73,7 +73,7 @@ class FriendlyUrl extends MyFriendlyUrl
      *     null: do not change the output even if it means returning "?{$outputKey}={$outputValue}"
      *     string: URL - friendly or parametric
      */
-    protected function switchParametric($outputKey, $outputValue)
+    protected function switchParametric(string $outputKey, string $outputValue): ?string
     {
         Debugger::barDump("{$outputKey} => {$outputValue}", 'switchParametric started');
         $this->projectSpecific->language($this->language);

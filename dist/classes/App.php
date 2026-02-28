@@ -15,7 +15,7 @@ use WorkOfStan\mycmsprojectnamespace\Utils;
 
 /**
  * App class handles the request dispatching in index.php
- * (Last MyCMS/dist revision: 2022-08-13, v0.4.7+)
+ * (Last MyCMS/dist revision: 2026-02-28, v0.5.1)
  */
 class App extends MyCommon
 {
@@ -55,7 +55,7 @@ class App extends MyCommon
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         // TODO move part of this function to MyCMS core (either run or construct?) based on how much changes needed
         // Process POST, especially form submits
