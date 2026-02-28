@@ -48,11 +48,11 @@ parameters:
 			count: 1
 			path: ../classes/App.php
 
-		-
-			message: '#^Comparison operation "\>\=" between 1 and 0 is always true\.$#'
-			identifier: greaterOrEqual.alwaysTrue
-			count: 1
-			path: ../classes/Mail.php
+#		-
+#			message: '#^Comparison operation "\>\=" between 1 and 0 is always true\.$#'
+#			identifier: greaterOrEqual.alwaysTrue
+#			count: 1
+#			path: ../classes/Mail.php
 
 		-
 			message: '#^Strict comparison using \=\=\= between false and false will always evaluate to true\.$#'

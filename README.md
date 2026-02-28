@@ -27,7 +27,7 @@ Apache modules `mod_alias` (for hiding non-public files) and `mod_rewrite` (for 
 Once [composer](https://getcomposer.org/) is installed, execute the following command in your project root to install this library:
 
 ```sh
-composer require workofstan/mycms:^0.5.0
+composer require workofstan/mycms:^0.5.1
 ```
 
 Most of library's classes use prefix `My`.
@@ -308,4 +308,3 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 ### Todo SECURITY
 
 - 190723: pokud jsou v té samé doméně dvě různé instance MyCMS, tak přihlášením do jednoho admin.php jsem přihlášen do všech, i když ten uživatel tam ani neexistuje
-- 220513, Latte::2.11.3 Notice: Engine::addFilter(null, ...) is deprecated, use addFilterLoader() since ^2.10.8 which requires php: >=7.1 <8.2 (stop limiting "latte/latte": ">=2.4.6 <2.11.3")

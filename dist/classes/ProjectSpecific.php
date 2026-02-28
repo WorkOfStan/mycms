@@ -24,7 +24,7 @@ class ProjectSpecific extends ProjectCommon
      * @param string $text being searched for
      * @param int $offset
      * @param int $limit
-     * @param string|null|false $totalRows //TODO or?? mixed $totalRows first selected row
+     * @param array<string|null>|string|false|null $totalRows //TODO or?? mixed $totalRows first selected row
      *     (or its first column if only one column is selected),
      *     null on empty SELECT, or false on error
      * @return array<array<string>> search result

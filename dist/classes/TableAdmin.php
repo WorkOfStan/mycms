@@ -35,7 +35,7 @@ class TableAdmin extends MyTableAdmin
      * @return bool|string - true = method was applied so don't proceed with the default, false = method wasn't applied
      * @throws \InvalidArgumentException
      */
-    public function customInput(string $field, string $value, array $record = [])
+    public function customInput($field, $value, array $record = [])
     {
         $result = false;
         $fieldLang = '##';
@@ -167,7 +167,7 @@ class TableAdmin extends MyTableAdmin
      * @param array<string> $record
      * @return string HTML
      */
-    public function customInputAfter(string $field, string $value, array $record = []): string
+    public function customInputAfter($field, $value, array $record = []): string
     {
         $result = '';
         switch ($this->table . "\\$field") {
@@ -330,7 +330,7 @@ class TableAdmin extends MyTableAdmin
      * @param array<mixed> $row
      * @return mixed
      */
-    public function customValue(string $column, array $row)
+    public function customValue($column, array $row)
     {
         return $row[$column];
     }
