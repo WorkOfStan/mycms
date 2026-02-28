@@ -78,11 +78,11 @@ parameters:
 			count: 1
 			path: ../classes/ProjectSpecific.php
 
-		-
-			message: '#^Parameter &\$totalRows by\-ref type of method WorkOfStan\\mycmsprojectnamespace\\ProjectSpecific\:\:searchResults\(\) expects string\|null, array\<string\|null\>\|string\|null given\.$#'
-			identifier: parameterByRef.type
-			count: 1
-			path: ../classes/ProjectSpecific.php
+#		-
+#			message: '#^Parameter &\$totalRows by\-ref type of method WorkOfStan\\mycmsprojectnamespace\\ProjectSpecific\:\:searchResults\(\) expects string\|null, array\<string\|null\>\|string\|null given\.$#'
+#			identifier: parameterByRef.type
+#			count: 1
+#			path: ../classes/ProjectSpecific.php
 
 		-
 			message: '#^Call to function array_key_exists\(\) with ''mail_for_admin…'' and array\{logging_level\: 3, error_log_message_type\: 3, logging_file\: literal\-string&non\-falsy\-string, mail_for_admin_enabled\: false\} will always evaluate to true\.$#'

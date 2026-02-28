@@ -82,11 +82,7 @@ class MyCMSProject extends MyCMS
         $sqlStatementsArray = $this->dbms->getStatementsArray();
         if (!empty($sqlStatementsArray)) {
             $sqlBarPanel = new BarPanelTemplate('SQL: ' . count($sqlStatementsArray), $sqlStatementsArray);
-            // TODO method_exists($this->dbms, 'getStatementsError') may be deleted with WoS/MyCMS v0.4.0
-            if (
-                method_exists($this->dbms, 'getStatementsError') && $this->dbms->getStatementsError() &&
-                method_exists($sqlBarPanel, 'setError')
-            ) {
+            if ($this->dbms->getStatementsError()) {
                 $sqlBarPanel->setError();
             }
             Debugger::getBar()->addPanel($sqlBarPanel);
