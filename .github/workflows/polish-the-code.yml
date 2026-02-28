@@ -68,6 +68,6 @@ jobs:
 
   super-linter:
     needs: phpcs-phpcbf
-    uses: WorkOfStan/seablast-actions/.github/workflows/linter.yml@v0.2.8
+    uses: WorkOfStan/seablast-actions/.github/workflows/linter.yml@chore/multi-composer-rename
     with:
       runs-on: "ubuntu-latest"
