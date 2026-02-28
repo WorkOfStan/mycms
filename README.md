@@ -76,14 +76,16 @@ MyCMS is used only as a library, so the project using it SHOULD implement `Redir
 ## Admin UI
 
 Admin UI is displayed by MyAdmin::outputAdmin in this structure:
-|Navigation|Search|
-|--|--|
-|Agendas|Main|
+
+| Navigation | Search |
+| ---------- | ------ |
+| Agendas    | Main   |
 
 Element overview:
-|Navigation = SpecialMenuLinks + Media+User+Settings|Search|
-|--|--|
-|Agendas (as in $AGENDAS in admin.php)|Messages<br>Workspace: table/row/media/user/project-specific<br>Dashboard: List of tables|
+
+| Navigation = SpecialMenuLinks + Media+User+Settings | Search                                                                                    |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Agendas (as in $AGENDAS in admin.php)               | Messages<br>Workspace: table/row/media/user/project-specific<br>Dashboard: List of tables |
 
 ### Navigation
 
@@ -125,19 +127,20 @@ Element overview:
 ### Database
 
 Columns of tables displayed in admin can use various features set in the comment:
-| comment | feature |
-|---------|---------------------------------------|
-| `{"display":"html"}` | HTML editor Summernote |
-| {"display":"layout-row"} | ?? |
-| {"display":"option"} | Existing values are offered in select box |
-| {"display":"option","display-own":1} | ... and an input box for adding previously unused values |
-| {"display":"path"} | ?? |
-| {"display":"texyla"} | ?? Texyla editor |
-| {"edit": "input"} | zatím nic: todo: natáhnout string z prvního pole na stránce a webalize |
-| {"edit":"json"} | rozpadne interní json do příslušných polí --- ovšem pokud prázdné, je potřeba vložit JSON (proto je default '{}') |
-| {"foreign-table":"category","foreign-column":"category_en"} | odkaz do jiné tabulky ke snadnému výběru |
-| {"foreign-table":"category","foreign-column":"category_en","foreign-path":"path"} | ?? |
-| {"required":true} | ?? |
+
+| comment                                                                           | feature                                                                                                           |
+| --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `{"display":"html"}`                                                              | HTML editor Summernote                                                                                            |
+| {"display":"layout-row"}                                                          | ??                                                                                                                |
+| {"display":"option"}                                                              | Existing values are offered in select box                                                                         |
+| {"display":"option","display-own":1}                                              | ... and an input box for adding previously unused values                                                          |
+| {"display":"path"}                                                                | ??                                                                                                                |
+| {"display":"texyla"}                                                              | ?? Texyla editor                                                                                                  |
+| {"edit": "input"}                                                                 | zatím nic: todo: natáhnout string z prvního pole na stránce a webalize                                            |
+| {"edit":"json"}                                                                   | rozpadne interní JSON do příslušných polí --- ovšem pokud prázdné, je potřeba vložit JSON (proto je default '{}') |
+| {"foreign-table":"category","foreign-column":"category_en"}                       | odkaz do jiné tabulky ke snadnému výběru                                                                          |
+| {"foreign-table":"category","foreign-column":"category_en","foreign-path":"path"} | ??                                                                                                                |
+| {"required":true}                                                                 | ??                                                                                                                |
 
 TODO: active=0/1 display as on/off button
 

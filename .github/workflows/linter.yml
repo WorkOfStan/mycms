@@ -52,6 +52,8 @@ jobs:
         with:
           # Fetch all history for all branches and tags. Otherwise github.event.pull_request.base.ref SHA isn't found.
           fetch-depth: 0
+          # git credentials are needed later, `false` would be safer: token not left in git config
+          persist-credentials: true
 
       ################################
       # Run Linter against code base #

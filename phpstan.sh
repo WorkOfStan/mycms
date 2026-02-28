@@ -2,10 +2,10 @@
 
 # output string param1 with color highlighting
 section_title() {
-    # color constants
-    #HIGHLIGHT='\033[1;36m' # light cyan
-    #NC='\033[0m' # No Color
-    printf "\033[1;36m%s\033[0m\n" "$1"
+	# color constants
+	#HIGHLIGHT='\033[1;36m' # light cyan
+	#NC='\033[0m' # No Color
+	printf "\033[1;36m%s\033[0m\n" "$1"
 }
 
 section_title "* initialize the vendor folder, if needed"

@@ -15,36 +15,43 @@
 body > .container-fluid {
     padding-right: 0;
 }
+
 body > .container-fluid > .col-md-3 {
     position: fixed;
 }
+
 .btn-xs, .btn-group-xs > .btn {
     padding: 1px 5px;
     font-size: 12px;
     line-height: 1.5;
     border-radius: 3px;
 }
+
 .navbar-expand-md .nav-item.mr-2, .navbar-expand-md .nav-item.mr-2:hover {
     color: white;
     text-decoration: none;
 }
+
 #nav-search-form {
     position: absolute;
     left: 0;
     top: 51px;
-    padding: 0 15px 10px 15px;
+    padding: 0 15px 10px;
     width: 100%;
     background-color: #343a40!important;
 }
+
 #nav-search-button {
     background-color: transparent;
     position: absolute;
     right: 15px;
     top: 15px;
 }
-.search-div input.form-control[type=search] {
+
+.search-div input.form-control[type="search"] {
     width:7em;
 }
+
 #v-divider {
     background: #ccc;
     width: 3px;
@@ -52,7 +59,7 @@ body > .container-fluid > .col-md-3 {
     position: fixed;
     top: 0;
     left: 25%;
-    z-index: 1029; /*z-index of nav.fixed-top is 1030*/
+    z-index: 1029; /* z-index of nav.fixed-top is 1030 */
     cursor: col-resize;
     opacity: 0.5;
 }
@@ -64,6 +71,7 @@ body > .container-fluid > .col-md-3 {
 div.database > label {
     font-weight: bold;
 }
+
 .database label {
     margin-right: 0.5ex;
 }
@@ -75,10 +83,12 @@ div.database > label {
 .database textarea {
     min-height: 5em;
 }
+
 .database textarea[name="fields[context]"],
 .database textarea[name="fields[code]"], #subfolder, .input-image{
     font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
 }
+
 .database i.fa.input-limit {
     position: absolute;
     margin-top: -10px;
@@ -111,24 +121,30 @@ form.table-controls > fieldset label > .fa {
 details summary h2 {
     display:initial;
 }
+
 details.ml-4 summary, #category-hierarchy details summary {
     display: inline-block;
 }
+
 #category-hierarchy details summary a {
     padding-left: 0.3ex;
     padding-right: 0.7ex;
 }
+
 .table-admin tr .column-menu {
     display: inline-block;
 }
+
 .table-admin .column-menu .op, .table-admin .column-menu .op{
     background: beige;
     display: none;
 }
+
 .table-admin .column-menu:hover .op, .table-admin .column-menu:hover .op {
     display: inline-block;
     position: absolute;
 }
+
 .ImageFiles {
     height: 252px;
     overflow-y: scroll;
@@ -136,6 +152,7 @@ details.ml-4 summary, #category-hierarchy details summary {
     background: #f4f4f4;
     margin-top: 4px;
 }
+
 .ImageFiles > a {
     display: inline-block;
     width: 100px;
@@ -145,38 +162,42 @@ details.ml-4 summary, #category-hierarchy details summary {
     margin: 2px;
     border: 1px dotted;
 }
+
 .ImageFiles > a > img {
     position: absolute;
-    left: -1000%;
-    right: -1000%;
-    top: -1000%;
-    bottom: -1000%;
+    inset: -1000%;
     margin: auto;
     min-height: 100%;
     min-width: 100%;
     width: 100%;
 }
+
 .ImageFiles > a > span {
     position: absolute;
     font-size: xx-small;
     color: silver;
-    text-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+    text-shadow: 0 0 1px rgb(255 255 255 / 50%);
     text-overflow: clip;
 }
+
 fieldset.input-expanded {
     padding: 0.5rem 0.75rem;
-    border: 1px solid rgba(0, 0, 0, 0.15);
+    border: 1px solid rgb(0 0 0 / 15%);
     border-radius: 0.25rem;
 }
+
 details.product-linked-content footer{
     margin-top: 0.5em;
 }
+
 details.product-linked-content footer a{
     margin-right: 1em;
 }
+
 #agenda-products footer, #agenda-pages footer{
     margin-top: 1em;
 }
+
 .AdminRecordName {
     font-weight: normal;
     color: red;
@@ -184,58 +205,73 @@ details.product-linked-content footer a{
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .input-group-inline { /* TODO is this F code needed? */
     display: inline-block;
     position: relative;
     top: 5px;
 }
+
 #file-rename-fieldset { /* TODO is this F code needed? */
     top: 2px;
     width: initial;
 }
+
 #file-rename-folder { /* TODO is this F code needed? */
     position: relative;
     top: 10px;
     width: initial;
 }
+
 #agenda-translations table td, #agenda-translations table th{
     padding: .25rem;
 }
+
 #agenda-translations table td label {
     margin-bottom: 0;
 }
+
 .uploaded-files #rename-fieldset { /* TODO is this F code needed? */
     top: 10px;
 }
+
 .media-ops {
     margin-top: 1em;
 }
+
 .w-initial {
     width: initial;
 }
+
 .lh-1 {
     line-height: 1;
 }
+
 .ml-6 {
     margin-left: 4.5em !important;
 }
+
 .font-weight-normal {
     font-weight: normal !important;
 }
+
 /* Media queries */
-@media (max-width: 767px) {
+@media (width <= 767px) {
     #nav-search-button {
         right: 90px;
     }
+
     body > div.container-fluid {
         padding-left: 0;
         padding-right: 0;
         margin-left: 0;
         margin-right: 0;
     }
+
     #admin-sidebar {
         position: initial;
     }
+
     #admin-main {
         margin-right: 15px;
     }

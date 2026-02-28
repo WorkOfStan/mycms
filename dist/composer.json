@@ -2,6 +2,12 @@
   "name": "workofstan/mycmsprojectnamespace",
   "description": "MYCMSPROJECTSPECIFIC xyz website 202x",
   "type": "project",
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/WorkOfStan/tools"
+    }
+  ],
   "require": {
     "php": ">=7.2 <8.6",
     "workofstan/mycms": "dev-feature/tools-update",

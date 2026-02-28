@@ -359,7 +359,7 @@ refactor!: Dist: api/noun construct replaces separate code in api/noun folders
 
 ### `Changed`
 
-- api/noun (api/noun/) construct is used instead of separate code in api/noun folders (therefore also sql logs are created in a stadard folder e.g. log/sql*.log.sql instead of within api/apiName/log/sql*.log.sql)
+- api/noun (api/noun/) construct is used instead of separate code in api/noun folders (therefore also SQL logs are created in a stadard folder e.g. log/sql*.log.sql instead of within api/apiName/log/sql*.log.sql)
 - dist `notest/*` branch doesn't trigger GitHub Action tests
 - dist/process.php `$_POST['newsletter']` related process uses new $sessionWriteClose parameter 3 of method Tools::redir, that turns off `session_write_close();` so that e.g. Tracy gets info about redirect.
 
