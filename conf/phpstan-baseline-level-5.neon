@@ -155,9 +155,3 @@ parameters:
 			identifier: parameterByRef.type
 			count: 1
 			path: ../classes/ThrowableFunctions/ThrowablePHPFunctions.php
-
-#		-
-#			message: '#^Parameter &\$matches by\-ref type of function WorkOfStan\\MyCMS\\ThrowableFunctions\\preg_match_all\(\) expects array\<string\>\|null, array\<mixed\> given\.$#'
-#			identifier: parameterByRef.type
-#			count: 1
-#			path: ../classes/ThrowableFunctions/ThrowablePHPFunctions.php

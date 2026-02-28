@@ -12,4 +12,3 @@ parameters:
     bootstrapFiles:
       - config.php
       #- ../.github/linters/conf/constants.php # (un)comment as needed
-    ignoreErrors:

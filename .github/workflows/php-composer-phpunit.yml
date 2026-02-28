@@ -172,8 +172,6 @@ jobs:
         if: ${{ matrix.php-version >= '7.2' }}
         run: |
           cd dist
-          echo "/home/runner/work/mycms/mycms/dist/classes/Utils.php"
-          cat /home/runner/work/mycms/mycms/dist/classes/Utils.php
           # show version
           ./vendor/bin/phpstan.phar -V
           # make sure the current files are analyzed
