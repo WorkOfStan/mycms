@@ -35,7 +35,6 @@
     "issues": "https://github.com/WorkOfStan/mycms/issues",
     "source": "https://github.com/WorkOfStan/mycms"
   },
-  "prefer-stable": true,
   "config": {
     "sort-packages": true
   },

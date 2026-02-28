@@ -17,9 +17,9 @@ log/*
 /vendor/
 #disable composer lock file
 /composer.lock
+/package-lock.json
 
 #disable IDE files
-/nbproject/private/
 /nbproject/
 /.idea/
 
