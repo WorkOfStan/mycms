@@ -1,0 +1,13 @@
+---
+rules:
+  # disables the check - i.e. allows refering to version instead of an exact hash
+  unpinned-uses:
+    config:
+      policies:
+        "*": any
+
+  # ignore the specific finding in linter.yml at line 64, column 9
+  # super-linter v7.2.1 has vulnerability, but it's the last version that works on MyCMS, use seablast-actions/linter.yml instead
+  known-vulnerable-actions:
+    ignore:
+      - linter.yml:64:9
