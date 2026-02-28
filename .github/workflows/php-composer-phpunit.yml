@@ -174,6 +174,8 @@ jobs:
           cd dist
           # show version
           ./vendor/bin/phpstan.phar -V
+          # make sure the current files are analyzed
+          ./vendor/bin/phpstan clear-result-cache
           # analyze
           ./vendor/bin/phpstan.phar --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
           cd ..
@@ -189,6 +191,8 @@ jobs:
         run: |
           # show version
           ./vendor/bin/phpstan.phar -V
+          # make sure the current files are analyzed
+          ./vendor/bin/phpstan clear-result-cache
           # analyze
           ./vendor/bin/phpstan.phar --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
         shell: bash

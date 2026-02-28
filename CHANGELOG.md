@@ -32,6 +32,7 @@ chore: use secure version of `godsdev/tools` library
 - chore: use secure version of `godsdev/tools` library (with CVE-2026-24765 fixed)
 - fix linter.yml - use v7.2.1 which doesn't invoke composer, yet. Use slim (instead of main) for sake of efficiency as these linters are not used in PHP anyway: Rustfmt, Rust Clippy, Azure Resource Manager Template Toolkit (arm-ttk), PSScriptAnalyzer, dotnet (.NET) commands and subcommands.
 - ignore `dist/scripts/**` from `JAVASCRIPT_STANDARD` by `package.json`
+- ci(php-composer-unit): make sure the current files are analyzed by PHPStan
 
 ### Fixed
 
