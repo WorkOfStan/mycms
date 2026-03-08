@@ -76,7 +76,7 @@ class Render
         }
         $Latte = new \Latte\Engine();
         $Latte->setTempDirectory($this->dirTemplateCache);
-        //$Latte->addFilter(null, $this->customFilters); // TODO replace addFilter by addFilterLoader below:
+        //$Latte->addFilter(null, $this->customFilters); // legacy code for PHP/5.6 and PHP/7
         $Latte->addFilterLoader($this->customFilters); // requires latte/latte::^2.10.8 which requires php: >=7.1 <8.2
         Debugger::barDump($params, 'Params');
         Debugger::barDump($_SESSION, 'Session'); // mainly for $_SESSION['language']

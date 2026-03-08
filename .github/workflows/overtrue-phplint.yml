@@ -29,4 +29,4 @@ jobs:
           persist-credentials: false
 
       - name: Check PHP syntax errors
-        uses: overtrue/phplint@9.7.1
+        uses: overtrue/phplint@10.0

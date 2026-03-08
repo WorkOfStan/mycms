@@ -19,9 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Security` in case of vulnerabilities
 
-## [0.5.1] - 2026-03-01
+## [0.5.1] - 2026-03-08
 
-chore: use secure version of `godsdev/tools` library
+chore!: use secure version of `godsdev/tools` library
 
 ### Added
 
@@ -33,6 +33,7 @@ chore: use secure version of `godsdev/tools` library
 - fix linter.yml - use v7.2.1 which doesn't invoke composer, yet. Use slim (instead of main) for sake of efficiency as these linters are not used in PHP anyway: Rustfmt, Rust Clippy, Azure Resource Manager Template Toolkit (arm-ttk), PSScriptAnalyzer, dotnet (.NET) commands and subcommands.
 - ignore `dist/scripts/**` from `JAVASCRIPT_STANDARD` by `package.json`
 - ci(php-composer-unit): make sure the current files are analyzed by PHPStan
+- **BREAKING-CHANGE** Parameter `#2` of `$this->MyCMS->renderLatte` is 'loader' - see dist/classes/App.php fot the change - and use exactly dist/Latte/CustomFilters.php where this `loader` is prepared (if the original Latte/CustomFilters.php is similar to Latte/MyCustomFilters.php)
 
 ### Fixed
 
