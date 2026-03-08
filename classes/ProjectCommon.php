@@ -90,7 +90,7 @@ class ProjectCommon extends MyCommon
      * @param string $idPrefix e.g. ?article=
      * @param string $language
      * @param string $fieldName OPTIONAL field name with URL of the resulting array - default is 'link'
-     * @param string $sourceTable OPTIONAL name of the source table where default is null,
+     * @param string|null $sourceTable OPTIONAL name of the source table where default is null,
      *     i.e. there is no risk of ambiguous column url_XX
      * @param string $sourceField OPTIONAL name of the source field where default is 'id',
      *     i.e. use where 'code' is needed
@@ -100,7 +100,7 @@ class ProjectCommon extends MyCommon
         string $idPrefix,
         string $language,
         string $fieldName = 'link',
-        string $sourceTable = null,
+        ?string $sourceTable = null,
         string $sourceField = 'id'
     ): string {
         $addLanguageDirectory = ($language != DEFAULT_LANGUAGE) // other than default language should have its directory

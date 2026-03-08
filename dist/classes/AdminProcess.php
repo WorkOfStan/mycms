@@ -18,7 +18,7 @@ define('PROCESS_LIMIT', 100); // used in self::getAgenda
 
 /**
  * AJAX and form handling for Admin UI
- * (Last MyCMS/dist revision: 2022-07-17, v0.4.7)
+ * (Last MyCMS/dist revision: 2026-02-28, v0.5.1)
  */
 class AdminProcess extends MyAdminProcess
 {
@@ -39,7 +39,7 @@ class AdminProcess extends MyAdminProcess
      *
      * @return void
      */
-    public function adminProcess(&$post)
+    public function adminProcess(array &$post)
     {
         // commands are saved in $post[] array - if it's empty, don't continue
         if (!is_array($post) || !$post) {
@@ -446,7 +446,7 @@ class AdminProcess extends MyAdminProcess
      * @return array<array<string|array<mixed>>>
      *   Todo: mixed is result of fetch_assoc - string??
      */
-    public function getAgenda($agenda)
+    public function getAgenda(string $agenda): array
     {
         if (!isset($this->agendas[$agenda])) {
             return [];

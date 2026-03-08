@@ -19,6 +19,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Security` in case of vulnerabilities
 
+## [0.5.1] - 2026-03-08
+
+chore!: use secure version of `godsdev/tools` library
+
+### Added
+
+- add support of `PHP/8.0-8.5` (i.e. `>=7.2 <8.6`) incl. PHPStan testing
+
+### Changed
+
+- chore: use secure version of `godsdev/tools` library (with CVE-2026-24765 fixed)
+- fix linter.yml - use v7.2.1 which doesn't invoke composer, yet. Use slim (instead of main) for sake of efficiency as these linters are not used in PHP anyway: Rustfmt, Rust Clippy, Azure Resource Manager Template Toolkit (arm-ttk), PSScriptAnalyzer, dotnet (.NET) commands and subcommands.
+- ignore `dist/scripts/**` from `JAVASCRIPT_STANDARD` by `package.json`
+- ci(php-composer-unit): make sure the current files are analyzed by PHPStan
+- **BREAKING-CHANGE** Field `#2` of the array in the parameter `#2` of `$this->MyCMS->renderLatte` is 'loader' - see dist/classes/App.php for the change - and use exactly dist/Latte/CustomFilters.php where this `loader` is prepared (if the original Latte/CustomFilters.php is similar to Latte/MyCustomFilters.php)
+- chore: bump workofstan/backyard to 4.1.2.2 to bump seablast/logger to 2.0.5, which uses typed properties internally
+
+### Fixed
+
+- fix Parameter `#2` typing of `ThrowablePHPFunctions\preg_match_all`
+- use a proper string as a Parameter `#2` of ini_set in `dist/conf/set-environment.php`
+
 ## [0.5.0] - 2026-02-14
 
 fix: remove support below PHP/7.2, because of CVE-2026-24765
@@ -341,7 +363,7 @@ refactor!: Dist: api/noun construct replaces separate code in api/noun folders
 
 ### `Changed`
 
-- api/noun (api/noun/) construct is used instead of separate code in api/noun folders (therefore also sql logs are created in a stadard folder e.g. log/sql*.log.sql instead of within api/apiName/log/sql*.log.sql)
+- api/noun (api/noun/) construct is used instead of separate code in api/noun folders (therefore also SQL logs are created in a stadard folder e.g. log/sql*.log.sql instead of within api/apiName/log/sql*.log.sql)
 - dist `notest/*` branch doesn't trigger GitHub Action tests
 - dist/process.php `$_POST['newsletter']` related process uses new $sessionWriteClose parameter 3 of method Tools::redir, that turns off `session_write_close();` so that e.g. Tracy gets info about redirect.
 
@@ -604,7 +626,8 @@ to
 - Basic functions
 - Basic structure
 
-[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/WorkOfStan/mycms/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/WorkOfStan/mycms/compare/v0.4.10...v0.5.0
 [0.4.10]: https://github.com/WorkOfStan/mycms/compare/v0.4.9...v0.4.10
 [0.4.9]: https://github.com/WorkOfStan/mycms/compare/v0.4.8...v0.4.9

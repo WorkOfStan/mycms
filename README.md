@@ -27,7 +27,7 @@ Apache modules `mod_alias` (for hiding non-public files) and `mod_rewrite` (for 
 Once [composer](https://getcomposer.org/) is installed, execute the following command in your project root to install this library:
 
 ```sh
-composer require workofstan/mycms:^0.5.0
+composer require workofstan/mycms:^0.5.1
 ```
 
 Most of library's classes use prefix `My`.
@@ -76,14 +76,16 @@ MyCMS is used only as a library, so the project using it SHOULD implement `Redir
 ## Admin UI
 
 Admin UI is displayed by MyAdmin::outputAdmin in this structure:
-|Navigation|Search|
-|--|--|
-|Agendas|Main|
+
+| Navigation | Search |
+| ---------- | ------ |
+| Agendas    | Main   |
 
 Element overview:
-|Navigation = SpecialMenuLinks + Media+User+Settings|Search|
-|--|--|
-|Agendas (as in $AGENDAS in admin.php)|Messages<br>Workspace: table/row/media/user/project-specific<br>Dashboard: List of tables|
+
+| Navigation = SpecialMenuLinks + Media+User+Settings | Search                                                                                    |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Agendas (as in $AGENDAS in admin.php)               | Messages<br>Workspace: table/row/media/user/project-specific<br>Dashboard: List of tables |
 
 ### Navigation
 
@@ -125,19 +127,20 @@ Element overview:
 ### Database
 
 Columns of tables displayed in admin can use various features set in the comment:
-| comment | feature |
-|---------|---------------------------------------|
-| `{"display":"html"}` | HTML editor Summernote |
-| {"display":"layout-row"} | ?? |
-| {"display":"option"} | Existing values are offered in select box |
-| {"display":"option","display-own":1} | ... and an input box for adding previously unused values |
-| {"display":"path"} | ?? |
-| {"display":"texyla"} | ?? Texyla editor |
-| {"edit": "input"} | zatím nic: todo: natáhnout string z prvního pole na stránce a webalize |
-| {"edit":"json"} | rozpadne interní json do příslušných polí --- ovšem pokud prázdné, je potřeba vložit JSON (proto je default '{}') |
-| {"foreign-table":"category","foreign-column":"category_en"} | odkaz do jiné tabulky ke snadnému výběru |
-| {"foreign-table":"category","foreign-column":"category_en","foreign-path":"path"} | ?? |
-| {"required":true} | ?? |
+
+| comment                                                                           | feature                                                                                                           |
+| --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `{"display":"html"}`                                                              | HTML editor Summernote                                                                                            |
+| {"display":"layout-row"}                                                          | ??                                                                                                                |
+| {"display":"option"}                                                              | Existing values are offered in select box                                                                         |
+| {"display":"option","display-own":1}                                              | ... and an input box for adding previously unused values                                                          |
+| {"display":"path"}                                                                | ??                                                                                                                |
+| {"display":"texyla"}                                                              | ?? Texyla editor                                                                                                  |
+| {"edit": "input"}                                                                 | zatím nic: todo: natáhnout string z prvního pole na stránce a webalize                                            |
+| {"edit":"json"}                                                                   | rozpadne interní JSON do příslušných polí --- ovšem pokud prázdné, je potřeba vložit JSON (proto je default '{}') |
+| {"foreign-table":"category","foreign-column":"category_en"}                       | odkaz do jiné tabulky ke snadnému výběru                                                                          |
+| {"foreign-table":"category","foreign-column":"category_en","foreign-path":"path"} | ??                                                                                                                |
+| {"required":true}                                                                 | ??                                                                                                                |
 
 TODO: active=0/1 display as on/off button
 
@@ -298,7 +301,7 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 - 200526: describe jQuery dependencies; and also other js libraries (maybe only in dist??)
 - 200608: replace all `array(` by `[`
 - 200819: refactor FORCE_301, FRIENDLY_URL and REDIRECTOR_ENABLED to a variable, so that all scenarios can be PHPUnit tested
-- 200819: consider REQUEST_URI query vs \_GET - shouldn't just one source of truth be used?
+- 200819: consider REQUEST_URI query vs `_GET` - shouldn't just one source of truth be used?
 
 ### Todo UI
 
@@ -308,4 +311,3 @@ new Controller(['requestUri' => $_SERVER['REQUEST_URI']])
 ### Todo SECURITY
 
 - 190723: pokud jsou v té samé doméně dvě různé instance MyCMS, tak přihlášením do jednoho admin.php jsem přihlášen do všech, i když ten uživatel tam ani neexistuje
-- 220513, Latte::2.11.3 Notice: Engine::addFilter(null, ...) is deprecated, use addFilterLoader() since ^2.10.8 which requires php: >=7.1 <8.2 (stop limiting "latte/latte": ">=2.4.6 <2.11.3")

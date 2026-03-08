@@ -35,6 +35,8 @@ jobs:
     steps:
       - name: "Checkout"
         uses: actions/checkout@v6
+        with:
+          persist-credentials: true
 
       - name: "Install PHP ${{ matrix.php-version }} Test on ${{ runner.os }}"
         uses: "shivammathur/setup-php@v2"

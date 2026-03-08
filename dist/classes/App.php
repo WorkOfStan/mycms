@@ -15,7 +15,7 @@ use WorkOfStan\mycmsprojectnamespace\Utils;
 
 /**
  * App class handles the request dispatching in index.php
- * (Last MyCMS/dist revision: 2022-08-13, v0.4.7+)
+ * (Last MyCMS/dist revision: 2026-02-28, v0.5.1)
  */
 class App extends MyCommon
 {
@@ -27,17 +27,17 @@ class App extends MyCommon
     protected $developmentEnvironment;
     /** @var array<bool> Feature flags that bubble down to latte and controller */
     protected $featureFlags;
-    /** @var mixed[] */
+    /** @var array<mixed> */
     protected $get;
     /** @var MyCMSProject extends the inherited MyCMS */
     protected $MyCMS;
-    /** @var mixed[] */
+    /** @var array<mixed> */
     protected $myCmsConf;
-    /** @var mixed[] */
+    /** @var array<mixed> */
     protected $post;
-    /** @var mixed[] */
+    /** @var array<mixed> */
     protected $session;
-    /** @var string[] */
+    /** @var array<string> */
     protected $server;
     /** @var array<array<array<string|array<array<string>>>>> (TODO: explore - one more array layer??) */
     protected $WEBSITE;
@@ -55,7 +55,7 @@ class App extends MyCommon
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         // TODO move part of this function to MyCMS core (either run or construct?) based on how much changes needed
         // Process POST, especially form submits
@@ -157,8 +157,10 @@ class App extends MyCommon
 
         $this->MyCMS->renderLatte(
             DIR_TEMPLATE_CACHE,
-            //[$customFilters, 'loader'], // TODO use this with $Latte->addFilterLoader($this->customFilters)
-            [$customFilters, 'common'],
+            //$Latte->addFilter(null, $this->customFilters); // legacy code for PHP/5.6 and PHP/7
+            //[$customFilters, 'common'], // legacy code for PHP/5.6 and PHP/7 when
+            //$Latte->addFilterLoader($this->customFilters), // req latte/latte::^2.10.8 which requires php: >=7.1 <8.2
+            [$customFilters, 'loader'], // use this with $Latte->addFilterLoader($this->customFilters)
             array_merge(
                 [
                     'WEBSITE' => $this->MyCMS->WEBSITE,

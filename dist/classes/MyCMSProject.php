@@ -13,7 +13,7 @@ use WorkOfStan\mycmsprojectnamespace\Utils;
 /**
  * Class for a MyCMS object.
  * It holds all specific variables needed for this application.
- * (Last MyCMS/dist revision: 2022-02-04, v0.4.5)
+ * (Last MyCMS/dist revision: 2026-02-28, v0.5.1)
  */
 class MyCMSProject extends MyCMS
 {
@@ -48,10 +48,10 @@ class MyCMSProject extends MyCMS
      * @return void
      */
     public function renderJson(
-        $directJsonCall,
+        bool $directJsonCall,
         Backyard $backyard,
-        $humanReadable = false
-    ) {
+        bool $humanReadable = false
+    ): void {
         if (array_key_exists('json', $this->context) && is_array($this->context['json'])) {
             // TODO remove after Controller.php refactor all context['message... to    Tools::addMessage('error',
             if (
@@ -82,11 +82,7 @@ class MyCMSProject extends MyCMS
         $sqlStatementsArray = $this->dbms->getStatementsArray();
         if (!empty($sqlStatementsArray)) {
             $sqlBarPanel = new BarPanelTemplate('SQL: ' . count($sqlStatementsArray), $sqlStatementsArray);
-            // TODO method_exists($this->dbms, 'getStatementsError') may be deleted with WoS/MyCMS v0.4.0
-            if (
-                method_exists($this->dbms, 'getStatementsError') && $this->dbms->getStatementsError() &&
-                method_exists($sqlBarPanel, 'setError')
-            ) {
+            if ($this->dbms->getStatementsError()) {
                 $sqlBarPanel->setError();
             }
             Debugger::getBar()->addPanel($sqlBarPanel);

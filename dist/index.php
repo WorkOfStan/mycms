@@ -27,16 +27,19 @@ if (
 require_once './prepare.php';
 
 // Request dispatching
-$app = new App($MyCMS, [
-    'featureFlags' => $featureFlags,
-    'backyard' => $backyard,
-    'developmentEnvironment' => $developmentEnvironment,
-    'myCmsConf' => $myCmsConf,
-    'get' => $_GET,
-    'post' => $_POST,
-    'session' => $_SESSION,
-    'server' => $_SERVER,
-    'WEBSITE' => $WEBSITE
-    ]);
+$app = new App(
+    $MyCMS,
+    [
+        'featureFlags' => $featureFlags,
+        'backyard' => $backyard,
+        'developmentEnvironment' => $developmentEnvironment,
+        'myCmsConf' => $myCmsConf,
+        'get' => $_GET,
+        'post' => $_POST,
+        'session' => $_SESSION,
+        'server' => $_SERVER,
+        'WEBSITE' => $WEBSITE
+    ]
+);
 
 $app->run();

@@ -24,13 +24,10 @@ RewriteRule ^(de/|en/|fr/|sk/|zh/)?(.*)$ index.php?language=$1&$2 [L,QSA]
 
 # Hide composer, logs
 # If mod_alias is not enabled, the Apache should fail to show anything in order to always hide the files in the section below
-#<IfModule mod_alias.c>
 RedirectMatch 404 /\.git
 RedirectMatch 404 vendor\/
 RedirectMatch 404 composer\.
 RedirectMatch 404 phpunit\.xml
-RedirectMatch 404 \.gitignore
-RedirectMatch 404 \.stylelintignore
 RedirectMatch 404 \/cache\/
 RedirectMatch 404 \/temp\/
 RedirectMatch 404 \/db\/
@@ -38,8 +35,6 @@ RedirectMatch 404 classes\/
 RedirectMatch 404 Test\/
 RedirectMatch 404 \/logs\/
 RedirectMatch 404 conf\/
-RedirectMatch 404 /VERSION$
-RedirectMatch 404 /\.sass-cache
 RedirectMatch 404 /package\.json
 RedirectMatch 404 /package\-lock\.json
 RedirectMatch 404 phpstan.neon.dist
@@ -47,4 +42,5 @@ RedirectMatch 404 \.md$
 RedirectMatch 404 \.neon$
 RedirectMatch 404 \.sh$
 RedirectMatch 404 \.yml$
-#</IfModule>
+# hide all the files in any directory that have no filename but only an extension (like .prettierignore)
+RedirectMatch 404 /(\.[^.]+)$

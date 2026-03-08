@@ -5,7 +5,7 @@ XYZ web
 
 ## Stack
 
-- Linux, Apache (mod_rewrite, mod_header, ssl...)
+- Linux, Apache (mod_rewrite, mod_header, SSL...)
 - PHP >=7.2 <8.0
 - MySQL
 - PHP libraries
@@ -369,8 +369,8 @@ That's how it works and how to set an API:
 - .htaccess contains API in `RewriteRule ^(de|en|zh)/(api|assets|favicon.ico|fonts|images|scripts|styles)(.*)$ $2$3 [L,QSA]` in order to use api/ even in e.g. de/ context (and not de/api/)
 - SET TEMPLATE FOR EACH API: conf/config.php `$myCmsConf['templateAssignementParametricRules'][] = ['api/amount' => ['template' => 'apiAmount'];` etc. sets in which template the API call should be terminated
 - index.php $controller = new Controller($MyCMS, ['requestUri'] => preg_replace necessary for FriendlyURL feature: /api/item?id=14 => ?api-item&id=14
-- EACH API TEMPLATE MUST CREATE JSON FIELD: Controller::prepareTemplate creates `['context']['json']` as array to be returned as json by an API
-- index.php: if (array_key_exists('json', $MyCMS->context)) $MyCMS->renderJson
+- EACH API TEMPLATE MUST CREATE JSON FIELD: Controller::prepareTemplate creates `['context']['json']` as array to be returned as JSON by an API
+- index.php: `if (array_key_exists('json', $MyCMS->context)) $MyCMS->renderJson`
 - MyCMSProject::renderJson renders JSON for an API
 
 ## Coding style and linting
