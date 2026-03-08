@@ -18,7 +18,7 @@
     "symfony/yaml": "^4 || ^5",
     "tracy/tracy": "^2.9.8 || ^2.10.9 || ^2.11.0",
     "webmozart/assert": "^1.10.0",
-    "workofstan/backyard": "dev-feature/logger-types"
+    "workofstan/backyard": "dev-feature/logger-typed"
   },
   "require-dev": {
     "phpunit/phpunit": "^8.5.52 || ^9 || ^10 || ^11 || ^12 || ^13",
