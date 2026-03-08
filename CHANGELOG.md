@@ -34,6 +34,7 @@ chore!: use secure version of `godsdev/tools` library
 - ignore `dist/scripts/**` from `JAVASCRIPT_STANDARD` by `package.json`
 - ci(php-composer-unit): make sure the current files are analyzed by PHPStan
 - **BREAKING-CHANGE** Parameter `#2` of `$this->MyCMS->renderLatte` is 'loader' - see dist/classes/App.php fot the change - and use exactly dist/Latte/CustomFilters.php where this `loader` is prepared (if the original Latte/CustomFilters.php is similar to Latte/MyCustomFilters.php)
+- chore: bump seablast/logger to 2.0.5, which uses typed properties internally
 
 ### Fixed
 
