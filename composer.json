@@ -17,7 +17,7 @@
     "nette/utils": "^2.4.8 || ^3.2.2 || ^4.0.5",
     "symfony/yaml": "^4 || ^5",
     "tracy/tracy": "^2.9.8 || ^2.10.9 || ^2.11.0",
-    "webmozart/assert": "^1.10.0",
+    "webmozart/assert": "^1.10.0 || ^2.1.6",
     "workofstan/backyard": "dev-feature/logger-typed"
   },
   "require-dev": {
@@ -47,6 +47,7 @@
     "issues": "https://github.com/WorkOfStan/mycms/issues",
     "source": "https://github.com/WorkOfStan/mycms"
   },
+  "minimum-stability": "dev",
   "prefer-stable": true,
   "config": {
     "sort-packages": true
