@@ -27,17 +27,17 @@ class App extends MyCommon
     protected $developmentEnvironment;
     /** @var array<bool> Feature flags that bubble down to latte and controller */
     protected $featureFlags;
-    /** @var mixed[] */
+    /** @var array<mixed> */
     protected $get;
     /** @var MyCMSProject extends the inherited MyCMS */
     protected $MyCMS;
-    /** @var mixed[] */
+    /** @var array<mixed> */
     protected $myCmsConf;
-    /** @var mixed[] */
+    /** @var array<mixed> */
     protected $post;
-    /** @var mixed[] */
+    /** @var array<mixed> */
     protected $session;
-    /** @var string[] */
+    /** @var array<string> */
     protected $server;
     /** @var array<array<array<string|array<array<string>>>>> (TODO: explore - one more array layer??) */
     protected $WEBSITE;
