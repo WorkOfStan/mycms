@@ -41,8 +41,8 @@ class TableAdmin extends MyTableAdmin
         $fieldLang = '##';
         $fieldName = $field;
         if (substr($field, -3, 1) === '_' && in_array(substr($field, -2), array_keys($this->TRANSLATIONS))) {
-            // Localised fields may have language independant behaviour, so switch below handles type dependant code
-            // Language dependant conditions can however be added as well in separate switch
+            // Localised fields may have language independent behaviour, so switch below handles type dependent code
+            // Language dependent conditions can however be added as well in separate switch
             $fieldLang = substr($field, -2); // language of the field
             $fieldName = substr($field, 0, -2) . '##';
         }

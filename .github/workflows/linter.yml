@@ -75,11 +75,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           #JAVASCRIPT_ES_CONFIG_FILE: .eslintrc.yml
           VALIDATE_ANSIBLE: false
+          VALIDATE_BIOME_FORMAT: false
+          VALIDATE_BIOME_LINT: false
           VALIDATE_CSS: false
           # TODO 211017 returns false positive `unknown Webhook event "workflow_call"`
           VALIDATE_GITHUB_ACTIONS: false
           # TODO 211003 returns false positive: {"line":"                    <li><a href=\"https://www.linkedin.com/company/MYCMSPROJECTSPECIFIC\" title=\"{=\"MYCMSPROJECTSPECIFIC na LinkedIn\"|translate}\"><i class=\"fa fa-linkedin\" aria-hidden=\"true\"></i></a></li>","lineNumber":56,"offender":"linkedin.com/company/MYCMSPROJECTSPECIFIC","offenderEntropy":-1,"commit":"","repo":"","repoURL":"","leakURL":"","rule":"LinkedIn Secret Key","commitMessage":"","author":"","email":"","file":".","date":"0001-01-01T00:00:00Z","tags":"secret, LinkedIn"}
           VALIDATE_GITLEAKS: false
+          # Prettier is applied anyway and I don't want to have `.eslintrc.yml` configured
+          VALIDATE_JAVASCRIPT_ES: false
           # 240803, there's no way to configure JAVASCRIPT_PRETTIER, neither it shows what exactly an issue is. Just 'Code style issue found in file.', which is useless.
           VALIDATE_JAVASCRIPT_PRETTIER: false
           #VALIDATE_JAVASCRIPT_STANDARD: false
@@ -90,3 +94,5 @@ jobs:
           VALIDATE_PHP_PSALM: false
           # 240519 .shfmt is not taken into account, so far
           VALIDATE_SHELL_SHFMT: false
+          # Let's leave SPELL_CODESPELL to seablast-actions, where it is configurable
+          VALIDATE_SPELL_CODESPELL: false
