@@ -19,6 +19,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Security` in case of vulnerabilities
 
+## [0.5.2] - 2026-03-10
+
+fix: use 'loader' in MyAdmin::renderAdmin()
+
+### Fixed
+
+- use 'loader' in MyAdmin::renderAdmin()
+
+### Security
+
+- ci: bump super-linter/slim@v7.2.1 which works as intended but is vulnerable by v8.5.0 which requires the removal of all composer.json files before invoking not to check for environment parameters that doesn't make sense in context of a GitHub Action static test
+
 ## [0.5.1] - 2026-03-08
 
 chore!: use secure version of `godsdev/tools` library
@@ -129,7 +141,7 @@ feat!: Admin UI can be rendered by Latte & filtering and sorting of tables fixed
 
 - fix filtering and sorting of tables in Admin UI
 - Admin UI can be rendered by Latte (instead directly from MyAdmin methods) if $featureFlags['admin_latte_render'] set to true (still experimental because the main part of body is prerendered as HTML)
-- DivisionProducts, Pages, Products, Translations, `Urls` admin pages are generated in AdminModel classes invoked within Admin::controller (instead as spaghetti code within Admin::projectSpecificSections) (Feature flag 'legacy_admin_methods_instead_of_admin_models' => true forces execution of the old spagetti code)
+- DivisionProducts, Pages, Products, Translations, `Urls` admin pages are generated in AdminModel classes invoked within Admin::controller (instead as spaghetti code within Admin::projectSpecificSections) (Feature flag 'legacy_admin_methods_instead_of_admin_models' => true forces execution of the old spaghetti code)
 - where Translations and `Urls` admin page generation is moved to the the core so that further improvements are automatically available to the Apps using updated version of MyCMS
 - **BREAKING CHANGE (feature flagged)** if $featureFlags['admin_latte_render']===false `dist/styles/admin.css.php` MUST be present (to link rel `admin.css` deep in vendor folder) and admin.php code has to be updated to alternatively use the latte rendering and toggle admin menu special links
 
@@ -143,7 +155,7 @@ feat!: Admin UI can be rendered by Latte & filtering and sorting of tables fixed
 - instead of simply {include $latte} call {include 'inherite.latte', latte => $latte} so that the preferred existing version of latte is used
 - new parameter to MyCustomFilters allows for another translate method (in order to use $tableAdmin->translate instead of $MyCMS->translate for Admin UI)
 - featureFlags to `admin-*.latte`
-- DivisionProducts, Pages, Products, Translations, `Urls` admin pages are generated in AdminModel classes invoked within Admin::controller (instead as spaghetti code within Admin::projectSpecificSections) (Feature flag 'legacy_admin_methods_instead_of_admin_models' => true forces execution of the old spagetti code)
+- DivisionProducts, Pages, Products, Translations, `Urls` admin pages are generated in AdminModel classes invoked within Admin::controller (instead as spaghetti code within Admin::projectSpecificSections) (Feature flag 'legacy_admin_methods_instead_of_admin_models' => true forces execution of the old spaghetti code)
 
 ### Changed
 
@@ -192,10 +204,10 @@ refactor!: Less files in the application root folder
 
 - **BREAKING CHANGE** dist/Test/AdminTest.php TableAdmin declaration expects language and prefixL10n
 - **BREAKING CHANGE** dist/Test/ControllerTest.php MUST accomodate language both in GET and `_SESSION` as the checks are stricter in L10n
-- App class handles the request dispatching instead of spagetti code in index.php
+- App class handles the request dispatching instead of spaghetti code in index.php
 - L10n (Localisation) class with loadLocalisation and translate methods common both for admin UI and MyCMS UI (instead of include php file with array for web UI and parsing yml for admin UI)
 - dist/Admin::sectionTranslations uses new L10n class instead of including language.inc.php file directly
-- MyAdminProcess::processTranslationsUpdate method created instead of code being spagetti part of dist/AdminProcess::adminProcess
+- MyAdminProcess::processTranslationsUpdate method created instead of code being spaghetti part of dist/AdminProcess::adminProcess
 
 ### Deprecated
 
@@ -561,7 +573,7 @@ to
 
 ## [0.3.6] - 2018-09-20
 
-- fix environment dependant CAST(AS)
+- fix environment dependent CAST(AS)
 
 ## [0.3.5] - 2018-09-20
 
@@ -626,7 +638,8 @@ to
 - Basic functions
 - Basic structure
 
-[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.5.1...HEAD
+[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.5.2...HEAD
+[0.5.2]: https://github.com/WorkOfStan/mycms/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/WorkOfStan/mycms/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/WorkOfStan/mycms/compare/v0.4.10...v0.5.0
 [0.4.10]: https://github.com/WorkOfStan/mycms/compare/v0.4.9...v0.4.10
