@@ -1,0 +1,7 @@
+---
+rules:
+  # disables the check - i.e. allows referring to version instead of an exact hash
+  unpinned-uses:
+    config:
+      policies:
+        "*": any
