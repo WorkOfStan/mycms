@@ -19,6 +19,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Security` in case of vulnerabilities
 
+## [0.5.2] - 2026-03-10
+
+fix: use 'loader' in MyAdmin::renderAdmin()
+
+### Fixed
+
+- use 'loader' in MyAdmin::renderAdmin()
+
+### Security
+
+- ci: bump super-linter/slim@v7.2.1 which works as intended but is vulnerable by v8.5.0 which requires the removal of all composer.json files before invoking not to check for environment parameters that doesn't make sense in context of a GitHub Action static test
+
 ## [0.5.1] - 2026-03-08
 
 chore!: use secure version of `godsdev/tools` library
@@ -626,7 +638,8 @@ to
 - Basic functions
 - Basic structure
 
-[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.5.1...HEAD
+[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.5.2...HEAD
+[0.5.2]: https://github.com/WorkOfStan/mycms/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/WorkOfStan/mycms/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/WorkOfStan/mycms/compare/v0.4.10...v0.5.0
 [0.4.10]: https://github.com/WorkOfStan/mycms/compare/v0.4.9...v0.4.10

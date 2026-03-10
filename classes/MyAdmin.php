@@ -1061,8 +1061,10 @@ class MyAdmin extends MyCommon
             }
         }
         $customFilters = new MyCustomFilters($this->MyCMS, [$this->tableAdmin, 'translate']);
-        // TODO use [$customFilters, 'loader'] with $Latte->addFilterLoader($this->customFilters)
-        $render = new Render($this->template, DIR_TEMPLATE_CACHE, [$customFilters, 'common']);
+        // with $Latte->addFilter(null, $this->customFilters); // legacy code for PHP/5.6 and PHP/7
+        //$render = new Render($this->template, DIR_TEMPLATE_CACHE, [$customFilters, 'common']);
+        // with $Latte->addFilterLoader($this->customFilters) // req latte/latte::^2.10.8 which requires php: >=7.1 <8.2
+        $render = new Render($this->template, DIR_TEMPLATE_CACHE, [$customFilters, 'loader']);
         $render->renderLatte($params);
         $this->MyCMS->dbms->showSqlBarPanel();
     }
