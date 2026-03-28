@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Security` in case of vulnerabilities
 
-## [0.5.3] - 2026-03-10
+## [0.5.3] - 2026-03-28
 
 fix: remove support for Latte 3.1
 
