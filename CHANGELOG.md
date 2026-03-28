@@ -23,6 +23,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 fix: remove support for Latte 3.1
 
+### Changed
+
+- clear PHPStan result cache explicitly in CI and `phpstan.sh` before analysis, and stop including the empty `conf/phpstan-baseline-level-6.neon` baseline
+
 ### Removed
 
 - fix: remove support for Latte 3.1 as it deprecates `Engine::addFilterLoader()` which would require rewriting Render::renderLatte()
@@ -30,6 +34,7 @@ fix: remove support for Latte 3.1
 ### Fixed
 
 - adjust `MyAdmin` and `MyAdminProcess` for newer PHPStan/Webmozart Assert checks: remove redundant `isset()`/`Assert::isArray()` branches, relax by-ref `$_POST` PHPDoc to `array<string, mixed>`, and clean obsolete baseline ignores
+- refine admin process `$_POST` typing to `array<string, array<mixed>|string>`, remove the unnecessary by-reference parameter from `dist/classes/AdminProcess.php`, replace mutating `Tools::set()`/`Tools::setifnotset()` guards with non-mutating checks, and clean obsolete PHPStan baseline ignores
 
 ## [0.5.2] - 2026-03-10
 

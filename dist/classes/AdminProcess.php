@@ -34,12 +34,12 @@ class AdminProcess extends MyAdminProcess
      * Commands with all required variables cause page redirection.
      * $_SESSION is manipulated by this function - mainly [messages] get added
      *
-     * @param array<string, mixed> $post $_POST by reference
+     * @param array<string, array<mixed>|string> $post $_POST by reference
      * @todo refactor, so that $this->endAdmin(); is called automatically
      *
      * @return void
      */
-    public function adminProcess(array &$post)
+    public function adminProcess(array $post)
     {
         // commands are saved in $post[] array - if it's empty, don't continue
         if (!$post) {

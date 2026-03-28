@@ -21,4 +21,5 @@ section_title "* phpunit"
 vendor/bin/phpunit
 
 section_title "* phpstan"
+vendor/bin/phpstan.phar clear-result-cache --configuration=conf/phpstan.webmozart-assert.neon
 vendor/bin/phpstan.phar --configuration=conf/phpstan.webmozart-assert.neon analyse . --memory-limit 300M --pro

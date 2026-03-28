@@ -1,7 +1,6 @@
 # TODO fix these old imperfections
 includes:
       - phpstan-baseline-level-5.neon
-      - phpstan-baseline-level-6.neon
 
 parameters:
     excludePaths:
