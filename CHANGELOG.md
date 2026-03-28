@@ -19,6 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Security` in case of vulnerabilities
 
+## [0.5.3] - 2026-03-10
+
+fix: remove support for Latte 3.1
+
+### Removed
+
+- fix: remove support for Latte 3.1 as it deprecates `Engine::addFilterLoader()` which would require rewriting Render::renderLatte()
+
 ## [0.5.2] - 2026-03-10
 
 fix: use 'loader' in MyAdmin::renderAdmin()
@@ -638,7 +646,8 @@ to
 - Basic functions
 - Basic structure
 
-[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.5.2...HEAD
+[Unreleased]: https://github.com/WorkOfStan/mycms/compare/v0.5.3...HEAD
+[0.5.3]: https://github.com/WorkOfStan/mycms/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/WorkOfStan/mycms/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/WorkOfStan/mycms/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/WorkOfStan/mycms/compare/v0.4.10...v0.5.0
