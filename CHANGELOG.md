@@ -27,6 +27,10 @@ fix: remove support for Latte 3.1
 
 - fix: remove support for Latte 3.1 as it deprecates `Engine::addFilterLoader()` which would require rewriting Render::renderLatte()
 
+### Fixed
+
+- adjust `MyAdmin` and `MyAdminProcess` for newer PHPStan/Webmozart Assert checks: remove redundant `isset()`/`Assert::isArray()` branches, relax by-ref `$_POST` PHPDoc to `array<string, mixed>`, and clean obsolete baseline ignores
+
 ## [0.5.2] - 2026-03-10
 
 fix: use 'loader' in MyAdmin::renderAdmin()

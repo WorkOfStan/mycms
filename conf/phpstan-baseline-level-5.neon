@@ -25,21 +25,9 @@ parameters:
 			path: ../classes/MyAdmin.php
 
 		-
-			message: '#^Call to static method Webmozart\\Assert\\Assert\:\:isArray\(\) with non\-empty\-array will always evaluate to true\.$#'
-			identifier: staticMethod.alreadyNarrowedType
-			count: 2
-			path: ../classes/MyAdmin.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
-			path: ../classes/MyAdmin.php
-
-		-
-			message: '#^Offset ''user'' on non\-empty\-array in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.offset
-			count: 2
 			path: ../classes/MyAdmin.php
 
 		-
