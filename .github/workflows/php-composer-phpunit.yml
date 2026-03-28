@@ -175,7 +175,7 @@ jobs:
           # show version
           ./vendor/bin/phpstan.phar -V
           # make sure the current files are analyzed
-          ./vendor/bin/phpstan clear-result-cache
+          ./vendor/bin/phpstan.phar clear-result-cache --configuration=conf/phpstan.webmozart-assert.neon
           # analyze
           ./vendor/bin/phpstan.phar --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
           cd ..
@@ -192,7 +192,7 @@ jobs:
           # show version
           ./vendor/bin/phpstan.phar -V
           # make sure the current files are analyzed
-          ./vendor/bin/phpstan clear-result-cache
+          ./vendor/bin/phpstan.phar clear-result-cache --configuration=conf/phpstan.webmozart-assert.neon
           # analyze
           ./vendor/bin/phpstan.phar --configuration=conf/phpstan.webmozart-assert.neon analyse --no-interaction --no-progress .
         shell: bash

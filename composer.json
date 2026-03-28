@@ -7,7 +7,7 @@
     "ext-session": "*",
     "ext-mbstring": "*",
     "godsdev/tools": "^0.3.8 || ^0.4.0",
-    "latte/latte": ">=2.10.8 <4",
+    "latte/latte": ">=2.10.8 <3.1",
     "nette/utils": "^2.4.8 || ^3.2.2 || ^4.0.5",
     "symfony/yaml": "^4 || ^5 || ^6 || ^7 || ^8",
     "tracy/tracy": "^2.9.8 || ^2.10.9 || ^2.11.0",
@@ -15,6 +15,7 @@
     "workofstan/backyard": "^3.4.2 || ^4.1.2.2"
   },
   "require-dev": {
+    "phpstan/phpstan-webmozart-assert": "^2.0",
     "phpunit/phpunit": "^8.5.52 || ^9 || ^10 || ^11 || ^12 || ^13",
     "robmorgan/phinx": "^0.12.13 || ^0.13.4 || ^0.14.0 || ^0.15.5 || ^0.16.5",
     "swiftmailer/swiftmailer": "^6.3"

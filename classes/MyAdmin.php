@@ -141,7 +141,7 @@ class MyAdmin extends MyCommon
         }
 
         if // search results may be combined with table listing etc. below
-        (isset($_SESSION['user']) && array_key_exists('search', $this->get) && !empty($this->get['search'])) {
+        (!empty($_SESSION['user']) && array_key_exists('search', $this->get) && !empty($this->get['search'])) {
             Assert::string($this->get['search']);
             $this->renderParams['htmlOutput'] = $this->outputSearchResults($this->get['search']);
             $this->renderParams['pageTitle'] = $this->tableAdmin->translate('Search');
@@ -667,11 +667,9 @@ class MyAdmin extends MyCommon
             $this->renderParams['table']['htmlOutputForm'] = $this->tableAdmin->outputForm($this->get['where'], $tempOutputFormOptions);
         } elseif (isset($_POST['edit-selected'])) {
             $this->renderParams['table']['edit-selected'] = true;
-            Assert::isArray($this->renderParams['table']);
             $this->renderParams['table']['htmlOutputForm'] =  $this->outputTableEditSelected();
         } elseif (isset($_POST['clone-selected'])) {
             $this->renderParams['table']['clone-selected'] = true;
-            Assert::isArray($this->renderParams['table']);
             $this->renderParams['table']['htmlOutputForm'] =  $this->outputTableEditSelected(true);
         } else {
             // table listing
@@ -1101,7 +1099,7 @@ class MyAdmin extends MyCommon
             ) {
                 $output .= $this->outputLogin();
             // search results may be combined with table listing etc. below
-            } elseif (isset($_SESSION['user']) && Tools::set($this->get['search']) && is_scalar($this->get['search'])) {
+            } elseif (!empty($_SESSION['user']) && Tools::set($this->get['search']) && is_scalar($this->get['search'])) {
                 $output .= $this->outputSearchResults((string) $this->get['search']);
             }
             if (

@@ -34,15 +34,15 @@ class AdminProcess extends MyAdminProcess
      * Commands with all required variables cause page redirection.
      * $_SESSION is manipulated by this function - mainly [messages] get added
      *
-     * @param array<string|array<mixed>> $post $_POST by reference
+     * @param array<string, array<mixed>|string> $post $_POST by reference
      * @todo refactor, so that $this->endAdmin(); is called automatically
      *
      * @return void
      */
-    public function adminProcess(array &$post)
+    public function adminProcess(array $post)
     {
         // commands are saved in $post[] array - if it's empty, don't continue
-        if (!is_array($post) || !$post) {
+        if (!$post) {
             return;
         }
         // commands for unsigned users:
@@ -140,16 +140,20 @@ class AdminProcess extends MyAdminProcess
         $this->processActivity($post);
         // move category up/down
         if (
-            isset($post['category-switch'], $post['id']) && ($path = $this->MyCMS->fetchSingle(
+            isset($post['category-switch'], $post['id']) &&
+            is_scalar($post['category-switch']) &&
+            in_array((string) $post['category-switch'], ['-1', '1'], true) &&
+            ($path = $this->MyCMS->fetchSingle(
                 'SELECT path FROM `' . TAB_PREFIX . 'category` WHERE id=' . $post['id']
             ))
         ) {
             Assert::string($path);
+            $categorySwitch = (int) $post['category-switch'];
             $strlen = strlen($path);
             $neighbour = substr($path, 0, -PATH_MODULE)
                 . str_pad(
                     // TODO better describe: button category-switch Admin::projectSpecificSections implies +-1 value
-                    (string) (substr($path, -PATH_MODULE) + $post['category-switch']),
+                    (string) ((int) substr($path, -PATH_MODULE) + $categorySwitch),
                     PATH_MODULE,
                     '0',
                     STR_PAD_LEFT
@@ -173,10 +177,10 @@ class AdminProcess extends MyAdminProcess
                 foreach ($edits as $key => $value) {
                     Assert::string($value);
                     $tmp = substr($value, 0, $strlen - PATH_MODULE)
-                        . str_pad((string) (intval(substr($value, $strlen - PATH_MODULE, PATH_MODULE)) + (Tools::begins(
+                        . str_pad((string) ((int) substr($value, $strlen - PATH_MODULE, PATH_MODULE) + (Tools::begins(
                             $value,
                             $path
-                        ) ? 1 : -1) * $post['category-switch']), PATH_MODULE, '0', STR_PAD_LEFT)
+                        ) ? 1 : -1) * $categorySwitch), PATH_MODULE, '0', STR_PAD_LEFT)
                         . substr($value, $strlen);
                     $this->MyCMS->dbms->query('UPDATE `' . TAB_PREFIX . 'category` SET path="'
                         . $this->MyCMS->escapeSQL($tmp) . '" WHERE id="' . $this->MyCMS->escapeSQL($key) . '"');
@@ -194,19 +198,23 @@ class AdminProcess extends MyAdminProcess
         if (
             // Note: F code uses also $post['product-delta']
             isset($post['product-switch'], $post['id']) &&
+            is_scalar($post['product-switch']) &&
+            in_array((string) $post['product-switch'], ['-1', '1'], true) &&
             ($product = $this->MyCMS->dbms->queryStrictObject(
                 'SELECT category_id,sort FROM `' . TAB_PREFIX . 'product` WHERE id=' . (int) $post['id']
             )->fetch_assoc())
         ) {
+            $productSwitch = (int) $post['product-switch'];
+            $productSort = (int) $product['sort'];
             $id = $this->MyCMS->fetchSingle('SELECT id FROM `' . TAB_PREFIX . 'product` WHERE category_id='
-                . (int) $product['category_id'] . ' AND sort' . ($post['product-switch'] == 1 ? '>' : '<')
-                . $product['sort'] . ' ORDER BY sort' . ($post['product-switch'] == 1 ? '' : ' DESC') . ' LIMIT 1');
+                . (int) $product['category_id'] . ' AND sort' . ($productSwitch === 1 ? '>' : '<')
+                . $productSort . ' ORDER BY sort' . ($productSwitch === 1 ? '' : ' DESC') . ' LIMIT 1');
             if ($id) {
                 Assert::string($id);
                 $this->MyCMS->dbms->query('UPDATE `' . TAB_PREFIX . 'product` SET sort='
-                    . $product['sort'] . ' WHERE id=' . $id);
+                    . $productSort . ' WHERE id=' . $id);
                 $this->MyCMS->dbms->query('UPDATE `' . TAB_PREFIX . 'product` SET sort='
-                    . ($product['sort'] + $post['product-switch']) . ' WHERE id=' . (int) $post['id']);
+                    . ($productSort + $productSwitch) . ' WHERE id=' . (int) $post['id']);
                 Tools::addMessage('info', $this->tableAdmin->translate('Order change processed.'));
                 die(json_encode(['success' => 1, 'errors' => '']));
             } else {

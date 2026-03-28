@@ -110,7 +110,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "activity" action - update activity column of all admins, delete old tabs.
      *
-     * @param array<string|array<mixed>> $post $_POST by reference
+     * @param array<string, array<mixed>|string> $post $_POST by reference
      * @return void (if engaged, outputs JSON and then return never)
      */
     public function processActivity(&$post)
@@ -164,7 +164,7 @@ class MyAdminProcess extends MyCommon
      * Process the "clone" action.
      * TODO check if this code is working as expected by AdminProcess call // clone table rows and fix unreachable code below accordingly (No CRS2 guidance)
      *
-     * @param array<string|array<mixed>> $post $_POST by reference
+     * @param array<string, array<mixed>|string> $post $_POST by reference
      * @return void
      */
     public function processClone(&$post)
@@ -173,9 +173,9 @@ class MyAdminProcess extends MyCommon
             Assert::isArray($post['check']);
             if (
                 (//isset($post['check']) && // redundant as `Assert::isArray($post['check']);` above
-                count($post['check'])) || Tools::set($post['total-rows'])
+                count($post['check'])) || !empty($post['total-rows'])
             ) {
-                if (Tools::set($post['total-rows'])) {
+                if (!empty($post['total-rows'])) {
                     $sql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $_GET);
                     Tools::dump($sql, $post);
                     exit; //@todo
@@ -201,8 +201,8 @@ class MyAdminProcess extends MyCommon
      * Process the "export" action. If $post[download] is non-zero prompt the output as a download attachment.
      * TODO check if this code does what it should, as ... Metoda filterToSql neexistuje. $errors ani $sql nejsou definovány. (No CRS2 guidance)
      *
-     * @param array<string|array<mixed>> $post $_POST by reference
-     * @param array<string|array<mixed>> $get
+     * @param array<string, array<mixed>|string> $post $_POST by reference
+     * @param array<string, mixed> $get
      * @return void
      */
     public function processExport(&$post, $get): void
@@ -212,9 +212,9 @@ class MyAdminProcess extends MyCommon
             //Assert::isArray($post['check']);
             if (
                 (isset($post['check']) && is_array($post['check']) && count($post['check']))
-                || Tools::set($post['total-rows'])
+                || !empty($post['total-rows'])
             ) {
-                if (Tools::set($post['total-rows'])) { //export whole resultset (regard possible $get limitations)
+                if (!empty($post['total-rows'])) { //export whole resultset (regard possible $get limitations)
                     $tempSql = $this->tableAdmin->selectSQL($this->tableAdmin->getColumns([]), $get);
                     $sql = $tempSql['select'];
                 //Debugger::barDump($sql, 'SQL array');
@@ -281,7 +281,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "file delete" action.
      *
-     * @param array<string|array<mixed>> $post $_POST by reference
+     * @param array<string, array<mixed>|string> $post $_POST by reference
      * @return void and may output array
      *   JSON array containing indexes: "success" (bool), "messages" (string), "processed-files" (int)
      */
@@ -316,7 +316,7 @@ class MyAdminProcess extends MyCommon
      * Files are added into the archive from the current directory and stored without directory.
      * The ZipArchive->addFile() method is used. Standard file/error handling is used.
      *
-     * @param array<string|array<mixed>> $post $_POST by reference
+     * @param array<string, array<mixed>|string> $post $_POST by reference
      * @return void and may output array
      *   JSON array containing indexes: "success" (bool), "messages" (string), "processed-files" (int)
      */
@@ -366,7 +366,7 @@ class MyAdminProcess extends MyCommon
      * If the new file exists then the operation is aborted.
      * New file name must keep the same extension and consist only of letters, digits or ( ) . _
      *
-     * @param array<string|array<mixed>> $post $_POST by reference
+     * @param array<string, array<mixed>|string> $post $_POST by reference
      * @return void but if engaged return never and outputs JSON
      *   containing indexes: "success" (bool), "messages" (string) and "data" (string) of renamed file, if successful
      */
@@ -417,7 +417,7 @@ class MyAdminProcess extends MyCommon
      * 1) white list of file extentions
      * 2) file size limitation
      *
-     * @param array<string|array<mixed>> $post $_POST by reference
+     * @param array<string, array<mixed>|string> $post $_POST by reference
      * @return void but if engaged return never and outputs JSON
      *   JSON array containing indexes: "success" (bool), "messages" (string), "processed-files" (int)
      */
@@ -456,7 +456,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "files upload" action.
      *
-     * @param array<string|array<mixed>> $post $_POST by reference
+     * @param array<string, array<mixed>|string> $post $_POST by reference
      * @return void and on success reload the page
      * @todo change to return bool success. Or add $post[redir] as an option
      */
@@ -498,7 +498,7 @@ class MyAdminProcess extends MyCommon
      * Process the "login" action.
      * Also checks for CSRF
      *
-     * @param array<string|array<mixed>> $post $_POST by reference
+     * @param array<string, array<mixed>|string> $post $_POST by reference
      * @return void
      */
     public function processLogin(&$post)
@@ -542,7 +542,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "logout" action.
      *
-     * @param array<string|array<mixed>> $post $_POST by reference
+     * @param array<string, array<mixed>|string> $post $_POST by reference
      * @return void
      */
     public function processLogout(&$post): void
@@ -559,7 +559,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Return files in /assets or its subfolder
      *
-     * @param array<string|array<mixed>> $post $_POST by reference
+     * @param array<string, array<mixed>|string> $post $_POST by reference
      * @return void
      */
     public function processSubfolder(&$post): void
@@ -575,8 +575,8 @@ class MyAdminProcess extends MyCommon
             ];
             if (is_dir(DIR_ASSETS . $post['subfolder'])) {
                 $_SESSION['assetsSubfolder'] = $post['subfolder'];
-                Tools::setifnotset($post['info'], null);
-                if ($post['info'] && class_exists('\ZipArchive')) {
+                $info = isset($post['info']) ? $post['info'] : '';
+                if ($info && class_exists('\ZipArchive')) {
                     $ZipArchive = new \ZipArchive();
                 }
                 Assert::string($post['subfolder'], 'Expected a string. Got: %s');
@@ -595,7 +595,7 @@ class MyAdminProcess extends MyCommon
                             'modified' => date("Y-m-d H:i:s", filemtime($file)),
                             'info' => ''
                         ];
-                        if ($post['info']) {
+                        if ($info) {
                             Assert::keyExists($pathinfo, 'extension');
                             if (in_array($pathinfo['extension'], $IMAGE_EXTENSIONS)) {
                                 $size = getimagesize($file);
@@ -699,7 +699,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "user change activation" action.
      *
-     * @param array<string|array<mixed>> $post $_POST by reference
+     * @param array<string, array<mixed>|string> $post $_POST by reference
      * @return void and output array JSON array containing indexes: "success" (bool), "data" (string) admin name
      */
     public function processUserActivation(&$post)
@@ -718,7 +718,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "user change password" action.
      *
-     * @param array<string|array<mixed>> $post $_POST by reference
+     * @param array<string, array<mixed>|string> $post $_POST by reference
      * @return void
      */
     public function processUserChangePassword(&$post): void
@@ -764,7 +764,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "user create" action.
      *
-     * @param array<string|array<mixed>> $post $_POST by reference
+     * @param array<string, array<mixed>|string> $post $_POST by reference
      * @return void
      */
     public function processUserCreate(&$post): void
@@ -792,7 +792,7 @@ class MyAdminProcess extends MyCommon
     /**
      * Process the "user delete" action.
      *
-     * @param array<string|array<mixed>> $post $_POST by reference
+     * @param array<string, array<mixed>|string> $post $_POST by reference
      * @return void
      */
     public function processUserDelete(&$post): void
