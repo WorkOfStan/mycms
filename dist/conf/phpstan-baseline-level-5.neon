@@ -7,24 +7,6 @@ parameters:
 			path: ../admin.php
 
 		-
-			message: '#^Binary operation "\*" between \-1\|1 and array\<mixed\>\|string results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: ../classes/AdminProcess.php
-
-		-
-			message: '#^Binary operation "\+" between float\|int\|string\|null and array\<mixed\>\|string results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: ../classes/AdminProcess.php
-
-		-
-			message: '#^Binary operation "\+" between non\-falsy\-string and array\<mixed\>\|string results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: ../classes/AdminProcess.php
-
-		-
 			message: '#^Call to function is_array\(\) with array\<array\<mixed\>\|string\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
